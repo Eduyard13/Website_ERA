@@ -1,3 +1,4 @@
+import {presentationMedia} from './presentation.mjs';
 export const categories=['Подготовка и подача','Сухая сепарация и очистка','Измельчение и мойка','Обезвоживание','Очистка рабочей жидкости','Фасовка'];
 const rows=[
  ['predvaritelnyy-izmelchitel','Предварительный измельчитель',0,'Растюковка, разрыв и крупное измельчение перед дальнейшей переработкой.'],
@@ -20,11 +21,12 @@ export const lines=[
  {slug:'separatsiya-03',title:'Сепарация 03',group:'Сепарация',enabled:false},
  {slug:'moyka-plenki',title:'Мойка плёнки',group:'Мойка',enabled:true}
 ].map(l=>({...l,path:'/catalog/lines/'+l.slug,status:'draft',equipment:[],optionalEquipment:[],documents:[]}));
-export const media=[
+const equipmentMedia=[
  {id:'assembly',title:'Сборка узла со стороны привода',type:'photo',topic:'Сборка',file:'assembly.webp'},
  {id:'mechanism',title:'Сборка механизма подвижной щеки',type:'photo',topic:'Сборка',file:'mechanism.webp'},
  {id:'delivery',title:'Готовый узел на транспортной платформе',type:'photo',topic:'Сборка',file:'delivery.webp'},
  {id:'scheme',title:'Конструктивная схема измельчителя',type:'scheme',topic:'Схемы и визуализации',file:'scheme.webp'},
  {id:'shredder',title:'Визуализация базового узла',type:'visualization',topic:'Схемы и визуализации',file:'shredder.webp'}
 ].map(m=>({...m,product:nodes[0].path,productTitle:nodes[0].title,source:'Предоставленное КП предварительного измельчителя'}));
+export const media=[...equipmentMedia,...presentationMedia];
 export const mediaType={photo:'Фотография',video:'Видео',scheme:'Схема',visualization:'Визуализация'};
