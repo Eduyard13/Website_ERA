@@ -25,3 +25,15 @@ test('Данные карточки различают сырьё и расчё�
  assert.match(html,/это не замер/);
  assert.match(html,/Ширина указана при открытой боковой щеке/);
 });
+test('Реестр содержит 12 уникальных узлов, линии расширяются через данные, медиа имеют реальные файлы',async()=>{
+ const {nodes,lines,media}=await import('../content/catalog.mjs');
+ assert.equal(nodes.length,12);assert.equal(new Set(nodes.map(n=>n.path)).size,12);
+ assert.equal(lines.filter(l=>l.enabled).length,3);
+ assert.equal(lines.filter(l=>l.group==='Сепарация').length,3);
+ assert.equal(lines.filter(l=>l.group==='Мойка').length,1);
+ assert.equal(nodes.filter(n=>n.status==='source-checked').length,1);
+ for(const m of media){assert.ok(nodes.some(n=>n.path===m.product));await stat('dist/assets/'+m.file);}
+ const html=await readFile('dist/media/index.html','utf8');
+ assert.ok(html.includes(`data-image="${basePath}/assets/assembly.webp"`));
+ assert.ok(html.includes(`data-product="${basePath}${product}"`));
+});
