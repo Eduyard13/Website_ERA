@@ -50,7 +50,7 @@ with TemporaryDirectory(prefix='era-player-test-') as temp:
     assert page.locator('#media-viewer').is_visible()
     assert not page.locator('#viewer-image').is_visible()
     assert page.locator('#viewer-video').evaluate('(v)=>v.controls&&v.playsInline&&!v.muted')
-    assert page.locator('#viewer-video').evaluate('(v)=>v.duration')>7
+    assert 7<page.locator('#viewer-video').evaluate('(v)=>v.duration')<9
     assert not page.locator('#viewer-video-error').is_visible()
     page.locator('#viewer-video').evaluate('(v)=>{v.pause();v.currentTime=5;v.play()}')
     page.wait_for_function("document.querySelector('#viewer-video').currentTime>5.1")

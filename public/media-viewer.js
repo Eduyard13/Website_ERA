@@ -42,7 +42,9 @@ if(mediaViewer){
   document.body.classList.add('viewer-open');
   mediaViewer.querySelector('[data-close]').focus();
  }));
- mediaViewer.querySelector('[data-close]').addEventListener('click',()=>mediaViewer.close());
+ function closeViewer(){stopVideo();mediaViewer.close();}
+ mediaViewer.querySelector('[data-close]').addEventListener('click',closeViewer);
+ mediaViewer.addEventListener('cancel',stopVideo);
  mediaViewer.querySelector('[data-next]').addEventListener('click',()=>showEntry(activeIndex+1,true));
  mediaViewer.querySelector('[data-prev]').addEventListener('click',()=>showEntry(activeIndex-1,true));
  video.addEventListener('error',()=>{if(video.hasAttribute('src'))error.hidden=false;});
@@ -55,7 +57,7 @@ if(mediaViewer){
  mediaViewer.addEventListener('click',event=>{
   if(event.target!==mediaViewer)return;
   const r=mediaViewer.getBoundingClientRect();
-  if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)mediaViewer.close();
+  if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)closeViewer();
  });
  mediaViewer.addEventListener('keydown',event=>{
   if(!['ArrowRight','ArrowLeft'].includes(event.key)||event.target.closest('video'))return;

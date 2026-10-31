@@ -177,3 +177,31 @@ test('Видеоблок появляется у своего узла, а ро�
   assert.ok(!gallery.includes(`src="${basePath}/assets/videos/__player-test.mp4"`));
  }finally{media.pop();}
 });
+test('Опубликованный ролик сохранён полностью и готов к последовательному воспроизведению',async()=>{
+ const {equipmentVideos}=await import('../content/equipment-videos.mjs');
+ const {createHash}=await import('node:crypto');
+ const films=equipmentVideos.filter(v=>v.ready);
+ assert.ok(films.some(v=>v.slug==='predvaritelnyy-izmelchitel'));
+ for(const film of films){
+  const data=await readFile('dist/assets/'+film.file);
+  assert.equal(data.length,film.bytes);
+  assert.equal(createHash('sha256').update(data).digest('hex'),film.sourceSha256);
+  assert.equal(film.sha256,film.sourceSha256);
+  assert.equal(data.toString('ascii',4,8),'ftyp');
+  const atoms=[];
+  for(let offset=0;offset+8<=data.length;){
+   let size=data.readUInt32BE(offset);const type=data.toString('ascii',offset+4,offset+8);
+   if(size===1)size=Number(data.readBigUInt64BE(offset+8));
+   else if(size===0)size=data.length-offset;
+   assert.ok(size>=8&&offset+size<=data.length);
+   atoms.push(type);offset+=size;
+  }
+  assert.ok(atoms.includes('moov')&&atoms.includes('mdat'));
+  assert.ok(atoms.indexOf('moov')<atoms.indexOf('mdat'),'MP4 metadata must precede video data');
+  assert.ok(film.durationSeconds>0&&film.width>0&&film.height>0);
+  await stat('dist/assets/'+film.poster);await stat('dist/assets/'+film.thumbnail);
+  const html=await readFile('dist/catalog/equipment/'+film.slug+'/index.html','utf8');
+  assert.ok(html.includes(`data-video="${basePath}/assets/${film.file}"`));
+  assert.ok(html.includes(`data-poster="${basePath}/assets/${film.poster}"`));
+ }
+});

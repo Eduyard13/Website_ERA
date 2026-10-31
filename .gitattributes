@@ -1,2 +1,3 @@
-# Preserve the exact source document bytes on every checkout.
+# Preserve the exact source media bytes on every checkout.
 *.pdf binary
+*.mp4 binary
