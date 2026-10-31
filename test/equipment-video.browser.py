@@ -12,7 +12,7 @@ out=Path(os.environ.get('ERA_SCREENSHOT_DIR','/tmp/era-equipment-video'));out.mk
 films=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {equipmentVideos} from './content/equipment-videos.mjs';console.log(JSON.stringify(equipmentVideos.filter(v=>v.ready)))"],cwd=repo,text=True))
 assert films,'No ready customer videos to verify'
 with sync_playwright() as p:
- browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'])
+ browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'],proxy={'server':os.environ.get('HTTPS_PROXY') or os.environ.get('HTTP_PROXY'),'bypass':'127.0.0.1,localhost'} if os.environ.get('HTTPS_PROXY') or os.environ.get('HTTP_PROXY') else None)
  page=browser.new_page();errors=[];requests=[];failures=[]
  page.on('pageerror',lambda e:errors.append(str(e)))
  page.on('request',lambda r:requests.append(r.url) if '.mp4' in r.url else None)

@@ -1,13 +1,13 @@
 {
   "name": "era-website",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
     "dev": "node scripts/server.mjs",
     "start": "node scripts/server.mjs",
-    "test": "node --input-type=module -e \"await import('./test/site.test.mjs')\""
+    "test": "node --input-type=module -e \"await import('./test/cbr-rates.test.mjs'); await import('./test/site.test.mjs')\""
   },
   "engines": {
     "node": ">=22"

@@ -177,7 +177,7 @@ test('Видеоблок появляется у своего узла, а ро�
   assert.ok(!gallery.includes(`src="${basePath}/assets/videos/__player-test.mp4"`));
  }finally{media.pop();}
 });
-test('Опубликованный ролик сохранён полностью и готов к последовательному воспроизведению',async()=>{
+test('Полные ролики проверены по контрольным суммам и готовы к последовательному воспроизведению',async()=>{
  const {equipmentVideos}=await import('../content/equipment-videos.mjs');
  const {createHash}=await import('node:crypto');
  const films=equipmentVideos.filter(v=>v.ready);
@@ -185,8 +185,13 @@ test('Опубликованный ролик сохранён полность�
  for(const film of films){
   const data=await readFile('dist/assets/'+film.file);
   assert.equal(data.length,film.bytes);
-  assert.equal(createHash('sha256').update(data).digest('hex'),film.sourceSha256);
-  assert.equal(film.sha256,film.sourceSha256);
+  assert.equal(createHash('sha256').update(data).digest('hex'),film.sha256);
+  if(film.webOptimized){
+   assert.match(film.sourceSha256,/^[a-f0-9]{64}$/);
+   assert.ok(film.sourceBytes>film.bytes);
+   assert.equal(film.frames,film.sourceFrames);
+   assert.ok(Math.abs(film.durationSeconds-film.sourceDurationSeconds)<0.05);
+  }else assert.equal(film.sha256,film.sourceSha256);
   assert.equal(data.toString('ascii',4,8),'ftyp');
   const atoms=[];
   for(let offset=0;offset+8<=data.length;){
@@ -203,5 +208,17 @@ test('Опубликованный ролик сохранён полность�
   const html=await readFile('dist/catalog/equipment/'+film.slug+'/index.html','utf8');
   assert.ok(html.includes(`data-video="${basePath}/assets/${film.file}"`));
   assert.ok(html.includes(`data-poster="${basePath}/assets/${film.poster}"`));
+ }
+});
+
+test('Панель ЦБ РФ доступна на всех страницах и не содержит выдуманных курсов',async()=>{
+ const {version}=JSON.parse(await readFile('package.json','utf8'));
+ for(const route of new Set(routes)){
+  const html=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
+  assert.equal([...html.matchAll(/data-fx-bar /g)].length,1,route);
+  assert.ok(html.includes('https://www.cbr.ru/currency_base/daily/'));
+  assert.ok(html.includes('refs/heads/data/cbr-rates/cbr.json'));
+  for(const code of ['USD','EUR','CNY'])assert.ok(html.includes(`data-fx-value="${code}">—</dd>`));
+  assert.ok(html.includes(`src="${basePath}/fx.js?v=${version}"`));
  }
 });

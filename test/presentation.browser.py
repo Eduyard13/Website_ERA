@@ -4,7 +4,7 @@ import os
 out=Path(os.environ.get('ERA_SCREENSHOT_DIR','/tmp/era-presentation-screenshots'));out.mkdir(parents=True,exist_ok=True)
 base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3002/Website_ERA').rstrip('/')
 with sync_playwright() as p:
- b=p.chromium.launch(executable_path='/usr/bin/chromium',headless=True,args=['--no-sandbox'])
+ b=p.chromium.launch(executable_path='/usr/bin/chromium',headless=True,args=['--no-sandbox'],proxy={'server':os.environ.get('HTTPS_PROXY') or os.environ.get('HTTP_PROXY'),'bypass':'127.0.0.1,localhost'} if os.environ.get('HTTPS_PROXY') or os.environ.get('HTTP_PROXY') else None)
  page=b.new_page();errors=[];failed=[]
  page.on('pageerror',lambda error:errors.append(str(error)))
  page.on('response',lambda r:failed.append((r.status,r.url)) if r.status>=400 else None)

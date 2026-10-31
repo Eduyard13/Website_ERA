@@ -7,7 +7,7 @@ base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3004/Website_ERA').rstri
 out=Path(os.environ.get('ERA_SCREENSHOT_DIR','/tmp/era-media-screenshots'));out.mkdir(parents=True,exist_ok=True)
 product='/Website_ERA/catalog/equipment/vintovoy-press'
 with sync_playwright() as p:
- b=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'])
+ b=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'],proxy={'server':os.environ.get('HTTPS_PROXY') or os.environ.get('HTTP_PROXY'),'bypass':'127.0.0.1,localhost'} if os.environ.get('HTTPS_PROXY') or os.environ.get('HTTP_PROXY') else None)
  page=b.new_page();errors=[];failed=[]
  page.on('pageerror',lambda e:errors.append(str(e)))
  page.on('response',lambda r:failed.append((r.status,r.url)) if r.status>=400 else None)

@@ -1,4 +1,4 @@
-// Verified full customer video. Unready records stay outside the public media library.
+// Verified full customer videos. Unready records stay outside the public media library.
 export const equipmentVideos=[
   {
     "id": "predvaritelnyy-izmelchitel-film",
@@ -28,6 +28,42 @@ export const equipmentVideos=[
     "hasAudio": true,
     "fastStart": true,
     "posterTimeSeconds": 10,
+    "ready": true
+  },
+  {
+    "id": "ballisticheskiy-separator-film",
+    "slug": "ballisticheskiy-separator",
+    "title": "Баллистический сепаратор — видеопрезентация",
+    "description": "Рабочие лотки, привод и разделение смешанного потока на фракции — баллистический сепаратор ЭРА в работе.",
+    "type": "video",
+    "topic": "Работа",
+    "file": "videos/ballisticheskiy-separator.mp4",
+    "poster": "videos/ballisticheskiy-separator-poster.webp",
+    "thumbnail": "videos/ballisticheskiy-separator-thumb.webp",
+    "thumbWidth": 800,
+    "thumbHeight": 450,
+    "source": "Видео предоставлено ЭРА. Полная версия.",
+    "sourceFile": "ERA_Ballistic_Separator_Avito_1080p.mp4",
+    "sourceUrl": "https://github.com/Eduyard13/Website_ERA/releases/download/v0.5.0/ERA_Ballistic_Separator_Avito_1080p.mp4",
+    "bytes": 48009962,
+    "sha256": "7b82876d7904ae2ddbe514e6d66259098648f4f6f84cf204a6e7986731a92698",
+    "sourceBytes": 105802252,
+    "sourceSha256": "2022b91d8a68b863054128fde5cfa75c487996420836f350a46312eee1c9f6b5",
+    "durationSeconds": 100.12,
+    "sourceDurationSeconds": 100.101016,
+    "durationLabel": "1:40",
+    "width": 1920,
+    "height": 1080,
+    "frameRate": 25,
+    "frames": 2502,
+    "sourceFrames": 2502,
+    "videoCodec": "h264",
+    "audioCodec": "aac",
+    "audioStreamSha256": "a8161ed9c13ba04d5c7754d98619c270d767f37da2b63f4f662b3b51e0a7d238",
+    "hasAudio": true,
+    "fastStart": true,
+    "webOptimized": true,
+    "posterTimeSeconds": 36,
     "ready": true
   }
 ];

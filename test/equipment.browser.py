@@ -5,7 +5,7 @@ out=Path(os.environ.get('ERA_SCREENSHOT_DIR','/tmp/era-equipment-screenshots'));
 base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3003/Website_ERA').rstrip('/')
 slugs=['predvaritelnyy-izmelchitel','predvaritelnyy-raspushitel','ballisticheskiy-separator','rotornyy-raspushitel','bunker-nakopitel','vertikalno-rotornyy-izmelchitel','plenochnyy-flotator','rotornaya-tsentrifuga','vintovoy-press','kapsulyator','ochistka-stokov','rama-napolnitel']
 with sync_playwright() as p:
- b=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox']);page=b.new_page();errors=[];failed=[]
+ b=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'],proxy={'server':os.environ.get('HTTPS_PROXY') or os.environ.get('HTTP_PROXY'),'bypass':'127.0.0.1,localhost'} if os.environ.get('HTTPS_PROXY') or os.environ.get('HTTP_PROXY') else None);page=b.new_page();errors=[];failed=[]
  page.on('pageerror',lambda e:errors.append(str(e)))
  page.on('response',lambda r:failed.append((r.status,r.url)) if r.status>=400 else None)
  for width in [360,768,1440]:

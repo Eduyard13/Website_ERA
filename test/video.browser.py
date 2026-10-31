@@ -32,7 +32,7 @@ with TemporaryDirectory(prefix='era-player-test-') as temp:
   else:raise AssertionError('An impossible range must return 416')
   print('MP4 MIME, streaming ranges, suffix, seek ranges and HEAD: OK',flush=True)
   with sync_playwright() as p:
-   browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'])
+   browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'],proxy={'server':os.environ.get('HTTPS_PROXY') or os.environ.get('HTTP_PROXY'),'bypass':'127.0.0.1,localhost'} if os.environ.get('HTTPS_PROXY') or os.environ.get('HTTP_PROXY') else None)
    page=browser.new_page();errors=[];requests=[]
    page.on('pageerror',lambda e:errors.append(str(e)))
    page.on('request',lambda r:requests.append(r.url) if '.mp4' in r.url else None)
