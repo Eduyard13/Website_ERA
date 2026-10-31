@@ -34,8 +34,62 @@ test('Реестр содержит 12 уникальных узлов, лини
  assert.equal(nodes.filter(n=>n.status==='source-checked').length,12);
  for(const m of media){assert.ok(routes.includes(m.product.split('#')[0]));await stat('dist/assets/'+m.file);}
  const html=await readFile('dist/media/index.html','utf8');
- assert.ok(html.includes(`data-image="${basePath}/assets/assembly.webp"`));
+ assert.ok(html.includes(`data-image="${basePath}/assets/photos/predvaritelnyy-izmelchitel/02.webp"`));
  assert.ok(html.includes(`data-product="${basePath}${product}"`));
+});
+test('Фото распределены по 11 узлам, а каталог сохраняет прежние иллюстрации',async()=>{
+ const {nodes,media}=await import('../content/catalog.mjs');
+ const {customerPhotos}=await import('../content/customer-photos.mjs');
+ assert.equal(customerPhotos.length,65);
+ assert.equal(new Set(customerPhotos.map(m=>m.slug)).size,11);
+ assert.equal(new Set(customerPhotos.map(m=>m.id)).size,65);
+ const catalogue=await readFile('dist/catalog/equipment/index.html','utf8');
+ for(const n of nodes){
+  assert.ok(catalogue.includes(`${basePath}/assets/${n.cardImage}.webp`),n.slug);
+  assert.ok(!n.cardImage.startsWith('photos/'),n.slug);
+  const pictures=media.filter(m=>m.product===n.path&&m.type==='photo');
+  const html=await readFile('dist'+n.path+'/index.html','utf8');
+  if(n.slug==='ochistka-stokov'){
+   assert.equal(pictures.length,0);
+   assert.ok(html.includes('Фотографии этого узла пока не опубликованы'));
+  }else{
+   assert.equal(pictures.filter(m=>m.primary).length,1,n.slug);
+   assert.ok(pictures.every(m=>m.processed&&m.slug===n.slug),n.slug);
+   const primary=pictures.find(m=>m.primary);
+   assert.ok(html.includes(`<img src="${basePath}/assets/${primary.file}"`),n.slug);
+  }
+ }
+ for(const m of customerPhotos){
+  assert.equal(m.processed,true);assert.match(m.sourceSha256,/^[a-f0-9]{64}$/);
+  assert.ok(m.width<=1920&&m.height<=1920);
+  assert.ok((await stat('dist/assets/'+m.thumbnail)).size>0);
+ }
+ const gallery=await readFile('dist/media/index.html','utf8');
+ assert.ok(gallery.includes('data-default-type="photo"'));
+ assert.equal([...gallery.matchAll(/data-album data-product=/g)].length,11);
+ assert.ok(gallery.includes(`src="${basePath}/assets/photos/predvaritelnyy-izmelchitel/02-thumb.webp"`));
+});
+test('Краткие параметры содержат мощность по КП, а схемы имеют свои легенды',async()=>{
+ const {nodes}=await import('../content/catalog.mjs');
+ const missing=nodes.filter(n=>n.quickSpecs.some(s=>s.missing)).map(n=>n.slug).sort();
+ assert.deepEqual(missing,['ballisticheskiy-separator','predvaritelnyy-raspushitel','rama-napolnitel']);
+ for(const n of nodes){
+  assert.equal(n.quickSpecs.length,6,n.slug);
+  assert.ok(n.quickSpecs.some(s=>s.power&&!s.missing),n.slug);
+  for(const s of n.quickSpecs.filter(s=>!s.missing))assert.ok(n.specs.some(([label,value])=>label===s.label&&value===s.value),n.slug);
+  const html=await readFile('dist'+n.path+'/index.html','utf8');
+  assert.ok(html.includes('class="quick-spec-panel"'),n.slug);
+  assert.ok(html.includes('class="scheme-reading"'),n.slug);
+  assert.ok(n.reading.parts.length>=3,n.slug);
+  assert.equal(new Set(n.reading.parts.map(p=>p[0])).size,n.reading.parts.length,n.slug);
+  assert.ok(html.includes('href="#photos"'));
+  if(n.slug!=='ochistka-stokov')assert.ok(html.includes(`data-photo-gallery data-product="${basePath}${n.path}"`));
+ }
+ const rotor=nodes.find(n=>n.slug==='rotornyy-raspushitel');
+ assert.equal(rotor.reading.functional,true);
+ assert.equal(rotor.scheme,'equipment/rotornyy-raspushitel/working-principle.svg');
+ const svg=await readFile('dist/assets/'+rotor.scheme,'utf8');
+ assert.match(svg,/>1<\/text>/);assert.match(svg,/>2<\/text>/);assert.match(svg,/>3<\/text>/);
 });
 test('Адаптивные изображения и презентационные переходы учитывают путь публикации',async()=>{
  const html=await readFile('dist/index.html','utf8');

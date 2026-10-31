@@ -34,6 +34,7 @@ with sync_playwright() as p:
   page.goto(base+'/');page.locator('.detail-doors').get_by_role('link',name=title,exact=False).click();assert page.url.endswith(ending)
  page.goto(base+'/media')
  count=page.locator('[data-media]:visible').count();assert page.locator('[data-media][data-image*="/presentation/"]').count()>0
+ page.get_by_role('button',name='Схемы',exact=True).click()
  page.locator('[name=product]').select_option('/Website_ERA/technology#dry-separation')
  assert page.locator('[data-media]:visible').count()==1
  opener=page.locator('[data-media]:visible .media-open');opener.click();assert page.locator('#media-viewer').is_visible()

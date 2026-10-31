@@ -1,4 +1,4 @@
-export const equipmentAssets = [
+const sourceAssets = [
   {
     "id": "ballisticheskiy-separator-hero",
     "slug": "ballisticheskiy-separator",
@@ -430,3 +430,16 @@ export const equipmentAssets = [
     "source": "КП_Роторный_Распушитель.pdf"
   }
 ];
+
+export const equipmentAssets=[...sourceAssets,...[
+  {
+    "id": "rotornyy-raspushitel-functional",
+    "slug": "rotornyy-raspushitel",
+    "title": "Три ступени роторного распушителя — функциональная схема",
+    "type": "scheme",
+    "topic": "Схемы и визуализации",
+    "file": "equipment/rotornyy-raspushitel/working-principle.svg",
+    "page": "3–4",
+    "source": "Схема по описанию КП роторного распушителя; не конструктивный чертёж"
+  }
+]];
