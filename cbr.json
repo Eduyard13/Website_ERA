@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "source": "CBR",
+  "sourceUrl": "https://www.cbr.ru/scripts/XML_daily.asp?date_req=01%2F11%2F2026",
+  "requestedDate": "2026-11-01",
+  "effectiveDate": "2026-10-31",
+  "fetchedAt": "2026-10-31T22:16:35.070Z",
+  "rates": {
+    "USD": {
+      "nominal": 1,
+      "value": 80.5573,
+      "rate": 80.5573
+    },
+    "EUR": {
+      "nominal": 1,
+      "value": 89.6603,
+      "rate": 89.6603
+    },
+    "CNY": {
+      "nominal": 1,
+      "value": 12.0873,
+      "rate": 12.0873
+    }
+  },
+  "sourceSha256": "9fe8ba0edf72aa93cd4d91ed9cd979eb6a22acd921481e60b66ecf7f835b9319"
+}
