@@ -42,7 +42,8 @@ with sync_playwright() as p:
  assert '/Website_ERA/assets/presentation/' in page.locator('#viewer-image').get_attribute('src')
  page.keyboard.press('Escape');assert not page.locator('#media-viewer').is_visible();assert opener.evaluate('(e)=>e===document.activeElement')
  page.get_by_role('button',name='Сбросить',exact=True).click();page.wait_for_timeout(100)
- page.get_by_role('button',name='Видео',exact=True).click();assert page.locator('[data-media]:visible').count()==0;assert page.locator('#media-empty').is_visible()
+ video_count=page.locator('[data-media][data-type=video]').count()
+ page.get_by_role('button',name='Видео',exact=True).click();assert page.locator('[data-media]:visible').count()==video_count;assert page.locator('#media-empty').is_visible()==(video_count==0)
  assert not errors,errors
  assert not failed,failed
  print('Story transitions, stages, nested refresh, mailto, detail routes, new gallery media, dialog: OK',flush=True)

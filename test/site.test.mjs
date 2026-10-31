@@ -32,7 +32,7 @@ test('Реестр содержит 12 уникальных узлов, лини
  assert.equal(lines.filter(l=>l.group==='Сепарация').length,3);
  assert.equal(lines.filter(l=>l.group==='Мойка').length,1);
  assert.equal(nodes.filter(n=>n.status==='source-checked').length,12);
- for(const m of media){assert.ok(routes.includes(m.product.split('#')[0]));await stat('dist/assets/'+m.file);}
+ for(const m of media){assert.ok(routes.includes(m.product.split('#')[0]));await stat('dist/assets/'+m.file);if(m.type==='video')await stat('dist/assets/'+m.poster);}
  const html=await readFile('dist/media/index.html','utf8');
  assert.ok(html.includes(`data-image="${basePath}/assets/photos/predvaritelnyy-izmelchitel/02.webp"`));
  assert.ok(html.includes(`data-product="${basePath}${product}"`));
@@ -149,4 +149,31 @@ test('Навигация различает главную, текущую ст�
  assert.match(navigation('/documents'),/class="nav-section nav-entry" data-active-section="true"/);
  assert.match(navigation('/documents'),/href="\/documents" aria-current="page"/);
  assert.ok(navigation('/technology').includes('Знакомство с ERA'));
+});
+test('Видеоблок появляется у своего узла, а ролик загружается после выбора пользователя',async()=>{
+ const {media,nodes}=await import('../content/catalog.mjs');
+ const {equipmentVideos}=await import('../content/equipment-videos.mjs');
+ const {render}=await import('../scripts/build.mjs');
+ const {equipmentCinema}=await import('../scripts/video.mjs');
+ assert.equal(equipmentCinema([]),'');
+ for(const pending of equipmentVideos.filter(v=>!v.ready))assert.ok(!media.some(m=>m.id===pending.id));
+ const node=nodes.find(n=>n.slug==='predvaritelnyy-izmelchitel');
+ const fixture={...equipmentVideos[0],id:'player-test',title:'Проверка: "видео" & ERA',file:'videos/__player-test.mp4',product:node.path,productTitle:node.title,ready:true};
+ media.push(fixture);
+ try{
+  const html=render(node.path);
+  assert.match(html,/id="video"/);
+  assert.ok(html.includes(`data-video="${basePath}/assets/videos/__player-test.mp4"`));
+  assert.ok(html.includes(`data-poster="${basePath}/assets/${fixture.poster}"`));
+  assert.ok(html.includes('href="#video"'));
+  assert.ok(html.indexOf('id="video"')<html.indexOf('id="purpose"'));
+  assert.ok(!/<video[^>]*\s(?:src|autoplay)=?/.test(html));
+  assert.ok(html.includes('playsinline preload="none"'));
+  assert.ok(html.includes('data-title="Проверка: &quot;видео&quot; &amp; ERA"'));
+  const other=render(nodes.find(n=>n.slug==='vintovoy-press').path);
+  assert.ok(!other.includes('href="#video"'));assert.ok(!other.includes('id="video"'));
+  const gallery=render('/media');
+  assert.ok(gallery.includes(`data-video="${basePath}/assets/videos/__player-test.mp4"`));
+  assert.ok(!gallery.includes(`src="${basePath}/assets/videos/__player-test.mp4"`));
+ }finally{media.pop();}
 });

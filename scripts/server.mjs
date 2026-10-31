@@ -1,7 +1,4 @@
-import {createServer} from 'node:http';
-import {readFile,stat} from 'node:fs/promises';
-import {resolve,extname,sep} from 'node:path';
+import {createStaticServer} from './static-server.mjs';
 const {basePath}=await import('./build.mjs');
-const root=resolve('dist');
-const types={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.webp':'image/webp','.png':'image/png','.svg':'image/svg+xml','.txt':'text/plain; charset=utf-8','.pdf':'application/pdf'};
-createServer(async(req,res)=>{try{let pathname=decodeURIComponent(new URL(req.url,'http://localhost').pathname);if(basePath){if(pathname!==basePath&&!pathname.startsWith(basePath+'/'))throw new Error('Not found');pathname=pathname.slice(basePath.length)||'/';}let p=resolve(root,'.'+pathname);if(p!==root&&!p.startsWith(root+sep)){res.writeHead(403);return res.end();}if((await stat(p)).isDirectory())p+='/index.html';res.writeHead(200,{'Content-Type':types[extname(p)]||'application/octet-stream','X-Content-Type-Options':'nosniff'});res.end(await readFile(p));}catch{res.writeHead(404,{'Content-Type':'text/html; charset=utf-8'});res.end(await readFile(root+'/404.html'));}}).listen(Number(process.env.PORT||3000),'0.0.0.0',()=>console.log('ERA server on port '+(process.env.PORT||3000)));
+const port=Number(process.env.PORT||3000);
+createStaticServer({root:'dist',basePath}).listen(port,'0.0.0.0',()=>console.log('ERA server on port '+port));

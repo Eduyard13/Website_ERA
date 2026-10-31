@@ -4,6 +4,7 @@ import {documentManifest} from './document-manifest.mjs';
 import {equipmentAssets} from './equipment-media.mjs';
 import {presentationMedia} from './presentation.mjs';
 import {customerPhotos} from './customer-photos.mjs';
+import {equipmentVideos} from './equipment-videos.mjs';
 export const categories=['Подготовка и подача','Сухая сепарация и очистка','Измельчение и мойка','Обезвоживание','Очистка рабочей жидкости','Фасовка'];
 const rows=[
  ['predvaritelnyy-izmelchitel','Предварительный измельчитель',0,'Растюковка, разрыв и крупное измельчение перед дальнейшей переработкой.'],
@@ -50,6 +51,6 @@ const equipmentMedia=[
 ].map(m=>({...m,product:nodes[0].path,productTitle:nodes[0].title,source:'Предоставленное КП предварительного измельчителя'}));
 const photographedSlugs=new Set(customerPhotos.map(m=>m.slug));
 const sourceMedia=[...equipmentMedia,...presentationMedia,...equipmentAssets.map(m=>({...m,product:nodes.find(n=>n.slug===m.slug).path,productTitle:nodes.find(n=>n.slug===m.slug).title,source:m.source+', стр. '+m.page}))];
-export const media=[...customerPhotos.map(m=>({...m,product:nodes.find(n=>n.slug===m.slug).path,productTitle:nodes.find(n=>n.slug===m.slug).title})),...sourceMedia.filter(m=>m.type!=='photo'||!nodes.some(n=>n.path===m.product&&photographedSlugs.has(n.slug)))];
+export const media=[...customerPhotos.map(m=>({...m,product:nodes.find(n=>n.slug===m.slug).path,productTitle:nodes.find(n=>n.slug===m.slug).title})),...equipmentVideos.filter(m=>m.ready).map(m=>({...m,product:nodes.find(n=>n.slug===m.slug).path,productTitle:nodes.find(n=>n.slug===m.slug).title})),...sourceMedia.filter(m=>m.type!=='photo'||!nodes.some(n=>n.path===m.product&&photographedSlugs.has(n.slug)))];
 for(const n of nodes)n.media=media.filter(m=>m.product===n.path).map(m=>m.id);
 export const mediaType={frame:'Кадр из видео',photo:'Фотография',video:'Видео',scheme:'Схема',visualization:'Визуализация'};

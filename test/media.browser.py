@@ -17,6 +17,7 @@ with sync_playwright() as p:
   assert page.locator('[data-media]:visible').count()==71
   assert page.locator('[data-media]:visible').evaluate_all("items=>items.every(i=>i.dataset.type==='photo')")
   assert page.locator('[data-album]').count()==11
+  video_count=page.locator('[data-media][data-type=video]').count()
   page.locator('.photo-albums summary').click()
   page.locator('[data-album] img').evaluate_all("imgs=>imgs.forEach(i=>i.loading='eager')")
   page.wait_for_function("Array.from(document.querySelectorAll('[data-album] img')).every(i=>i.complete&&i.naturalWidth>0)")
@@ -44,8 +45,8 @@ with sync_playwright() as p:
   assert page.locator('[data-media]:visible').count()>20
   assert page.locator('[data-media]:visible').evaluate_all("items=>items.every(i=>['scheme','visualization'].includes(i.dataset.type))")
   page.get_by_role('button',name='Все',exact=True).click();assert page.locator('[data-media]:visible').count()>90
-  page.get_by_role('button',name='Видео',exact=True).click();assert page.locator('[data-media]:visible').count()==0
-  assert page.locator('#media-empty').is_visible()
+  page.get_by_role('button',name='Видео',exact=True).click();assert page.locator('[data-media]:visible').count()==video_count
+  assert page.locator('#media-empty').is_visible()==(video_count==0)
   print('Albums, photo/scheme/video filters, URLs, viewer and focus:',width,'OK',flush=True)
  for slug in ['predvaritelnyy-izmelchitel','vertikalno-rotornyy-izmelchitel','rotornyy-raspushitel','ballisticheskiy-separator']:
   for width in [360,1440]:
