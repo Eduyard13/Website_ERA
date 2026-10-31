@@ -54,7 +54,7 @@ with sync_playwright() as p:
    assert page.locator('.equipment-photo img').count()==1
    assert '/photos/'+slug+'/' in page.locator('.equipment-photo img').get_attribute('src')
    assert page.locator('.equipment-quick-specs>div').count()==6
-   assert page.locator('.equipment-quick-specs .metric-missing').count()==(1 if slug=='ballisticheskiy-separator' else 0)
+   assert page.locator('.equipment-quick-specs .metric-missing').count()==0
    assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),(slug,width)
    page.screenshot(path=str(out/f'{slug}-hero-{width}.png'))
    if slug=='vertikalno-rotornyy-izmelchitel':
@@ -67,10 +67,10 @@ with sync_playwright() as p:
     page.wait_for_function("document.querySelector('#viewer-image').naturalWidth>0")
     assert page.locator('#viewer-image').get_attribute('src').endswith('/working-principle.svg')
     page.keyboard.press('Escape')
-   page.locator('.scheme-reading').scroll_into_view_if_needed();page.screenshot(path=str(out/f'{slug}-legend-{width}.png'))
+   page.locator('[data-diagram]' if slug=='predvaritelnyy-izmelchitel' else '.scheme-reading').scroll_into_view_if_needed();page.screenshot(path=str(out/f'{slug}-legend-{width}.png'))
   page.locator('[data-photo-gallery]').click()
   assert page.locator('[data-media]:visible').count()>=5
   assert page.locator('[data-media]:visible').evaluate_all("items=>items.every(i=>i.dataset.product.endsWith('/"+slug+"')&&i.dataset.type==='photo')")
  assert not errors,errors;assert not failed,failed
- print('Photo heroes, six parameters, missing power, numbered keys and product links: OK',flush=True)
+ print('Photo heroes, six parameters, calculated power, numbered keys and product links: OK',flush=True)
  b.close()

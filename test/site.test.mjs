@@ -22,7 +22,7 @@ test('Данные карточки различают сырьё и расчё�
  assert.match(html,/Плёнки, пакеты и биг-бэги<\/th><td>1 500–3 000 кг\/ч/);
  assert.match(html,/Другие полимерные отходы<\/th><td>3 000–7 000 кг\/ч/);
  assert.match(html,/Расчётная потребляемая мощность/);
- assert.match(html,/это не замер/);
+ assert.match(html,/70% от установленной/);
  assert.match(html,/Ширина указана при открытой боковой щеке/);
 });
 test('Реестр содержит 12 уникальных узлов, линии расширяются через данные, медиа имеют реальные файлы',async()=>{
@@ -69,17 +69,17 @@ test('Фото распределены по 11 узлам, а каталог с
  assert.equal([...gallery.matchAll(/data-album data-product=/g)].length,11);
  assert.ok(gallery.includes(`src="${basePath}/assets/photos/predvaritelnyy-izmelchitel/02-thumb.webp"`));
 });
-test('Краткие параметры содержат мощность по КП, а схемы имеют свои легенды',async()=>{
+test('Краткие параметры содержат мощность, а схемы имеют свои легенды',async()=>{
  const {nodes}=await import('../content/catalog.mjs');
  const missing=nodes.filter(n=>n.quickSpecs.some(s=>s.missing)).map(n=>n.slug).sort();
- assert.deepEqual(missing,['ballisticheskiy-separator','predvaritelnyy-raspushitel','rama-napolnitel']);
+ assert.deepEqual(missing,[]);
  for(const n of nodes){
   assert.equal(n.quickSpecs.length,6,n.slug);
   assert.ok(n.quickSpecs.some(s=>s.power&&!s.missing),n.slug);
   for(const s of n.quickSpecs.filter(s=>!s.missing))assert.ok(n.specs.some(([label,value])=>label===s.label&&value===s.value),n.slug);
   const html=await readFile('dist'+n.path+'/index.html','utf8');
   assert.ok(html.includes('class="quick-spec-panel"'),n.slug);
-  assert.ok(html.includes('class="scheme-reading"'),n.slug);
+  assert.ok(html.includes(n.diagram?'data-diagram data-view=':'class="scheme-reading"'),n.slug);
   assert.ok(n.reading.parts.length>=3,n.slug);
   assert.equal(new Set(n.reading.parts.map(p=>p[0])).size,n.reading.parts.length,n.slug);
   assert.ok(html.includes('href="#photos"'));
@@ -136,7 +136,7 @@ test('Единицы, мощность и условия разных узлов
  assert.ok(get('kapsulyator').description.includes('отжимной пресс'));
  assert.ok(get('rotornaya-tsentrifuga').notes.some(n=>n.includes('37,62 кВт')));
  assert.ok(get('vertikalno-rotornyy-izmelchitel').notes.some(n=>n.includes('Не включает внешний нагрев')));
- assert.ok(!get('predvaritelnyy-raspushitel').specs.some(([k])=>k.includes('Расчётная потребляемая')));
+ assert.equal(value('predvaritelnyy-raspushitel','Расчётная потребляемая мощность'),'25,9 кВт');
  assert.equal(get('rama-napolnitel').documents[0].type,'Паспорт и коммерческое описание');
 });
 test('Навигация различает главную, текущую страницу и родительский раздел',async()=>{
@@ -221,4 +221,43 @@ test('Панель ЦБ РФ доступна на всех страницах �
   for(const code of ['USD','EUR','CNY'])assert.ok(html.includes(`data-fx-value="${code}">—</dd>`));
   assert.ok(html.includes(`src="${basePath}/fx.js?v=${version}"`));
  }
+});
+
+test('Все узлы рассчитывают 70% мощности с десятичным округлением до одного знака',async()=>{
+ const {nodes}=await import('../content/catalog.mjs');
+ const {calculatedPower}=await import('../content/power.mjs');
+ const expected=['33,0','25,9','17,4','86,7','17,9','54,3','135,1','26,3','52,5','133,0','8,2','0,3'];
+ for(const [i,n] of nodes.entries()){
+  const rows=n.specs.filter(([k])=>k==='Расчётная потребляемая мощность');
+  assert.equal(rows.length,1,n.slug);assert.equal(rows[0][1],expected[i]+' кВт',n.slug);
+  assert.ok(n.quickSpecs.some(s=>s.label===rows[0][0]&&s.value===rows[0][1]),n.slug);
+  assert.equal(n.power.factor,0.7);
+ }
+ // Exact decimal half-up rounding, including the 17.85 and 54.25 boundaries.
+ assert.equal(calculatedPower('25,5 кВт'),'17,9 кВт');
+ assert.equal(calculatedPower('77,5 кВт'),'54,3 кВт');
+ assert.equal(calculatedPower('0,37 кВт'),'0,3 кВт');
+ assert.equal(calculatedPower('1 000 кВт'),'700,0 кВт');
+});
+
+test('Интерактивная схема сохраняет 12 обозначений КП и два прозрачных вида',async()=>{
+ const {equipmentDiagrams}=await import('../content/equipment-diagrams.mjs');
+ const {schemeReading}=await import('../content/equipment-reading.mjs');
+ const d=equipmentDiagrams['predvaritelnyy-izmelchitel'];
+ assert.equal(d.views.length,2);assert.equal(d.parts.length,12);
+ assert.deepEqual(d.parts.map(p=>[p.number,p.label]),schemeReading['predvaritelnyy-izmelchitel'].parts);
+ for(const p of d.parts){
+  assert.ok(d.views.some(v=>v.id===p.view));assert.ok(p.description);
+  for(const [x,y] of [p.pin,...p.targets])assert.ok(x>0&&x<1000&&y>0&&y<1000);
+ }
+ for(const v of d.views){
+  const bytes=await readFile('dist/assets/'+v.file);
+  assert.equal(bytes.toString('ascii',0,4),'RIFF');assert.equal(bytes.toString('ascii',8,12),'WEBP');
+  assert.ok(bytes.includes(Buffer.from('VP8L')),'Transparent image must retain its lossless export');
+ }
+ const html=await readFile('dist'+product+'/index.html','utf8');
+ assert.equal([...html.matchAll(/class="diagram-pin" /g)].length,12);
+ assert.ok(html.includes('href="#construction"'));
+ assert.ok(!html.includes('class="equipment-scheme"'));
+ for(const v of d.views)assert.ok(html.includes(`href="${basePath}/assets/${v.file}"`));
 });

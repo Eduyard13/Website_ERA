@@ -1,4 +1,6 @@
 import {quickParameters,schemeReading} from './equipment-reading.mjs';
+import {withCalculatedPower} from './power.mjs';
+import {equipmentDiagrams} from './equipment-diagrams.mjs';
 import {equipmentDetails} from './equipment-details.mjs';
 import {documentManifest} from './document-manifest.mjs';
 import {equipmentAssets} from './equipment-media.mjs';
@@ -21,7 +23,7 @@ const rows=[
  ['rama-napolnitel','Рама-наполнитель для биг-бэгов',5,'Организация наполнения и смены тары.']
 ];
 export const nodes=rows.map(([slug,title,category])=>{
- const details=equipmentDetails[slug];
+ const details=withCalculatedPower(slug,equipmentDetails[slug]);
  const doc=documentManifest.find(d=>d.slug===slug);
  if(!details||!doc)throw new Error('Missing equipment data: '+slug);
  const hero=equipmentAssets.find(m=>m.slug===slug&&m.id===slug+'-hero');
@@ -30,7 +32,7 @@ export const nodes=rows.map(([slug,title,category])=>{
   cardImage:details.cardImage||'equipment/'+slug+'/card',
   imageType:details.imageType||hero?.type,
   imageAlt:hero?.title||'Визуализация предварительного измельчителя',
-  documents:[doc],
+  documents:[doc],diagram:equipmentDiagrams[slug],
   media:[],
   scheme:schemeReading[slug].functional?'equipment/'+slug+'/working-principle.svg':details.scheme||'equipment/'+slug+'/scheme.webp',
   schemeCaption:details.schemeCaption||equipmentAssets.find(m=>m.id===slug+'-scheme')?.title,

@@ -2,7 +2,7 @@ import {currencyCodes,moscowDay,shortDay,validateRates} from './fx-core.js';
 const bar=document.querySelector('[data-fx-bar]');
 if(bar){
  const key='era-cbr-rates-v1',date=bar.querySelector('[data-fx-date]'),status=bar.querySelector('[data-fx-status]');
- const formatter=new Intl.NumberFormat('ru-RU',{minimumFractionDigits:4,maximumFractionDigits:4});
+ const formatter=new Intl.NumberFormat('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2});
  let current=null,inFlight=false,offline=false,lastDay=moscowDay();
  const setStatus=text=>{if(status.textContent!==text)status.textContent=text;};
  function render(){
@@ -34,7 +34,10 @@ if(bar){
    else{bar.dataset.state='unavailable';date.textContent='Курсы недоступны';date.removeAttribute('datetime');setStatus('Повторим автоматически');}
   }finally{clearTimeout(timeout);inFlight=false;}
  }
- if('ResizeObserver' in window)new ResizeObserver(()=>document.documentElement.style.setProperty('--fx-space',bar.getBoundingClientRect().height+'px')).observe(bar);
+ const header=bar.closest('.site-header');
+ if(header&&'ResizeObserver' in window)new ResizeObserver(()=>document.documentElement.style.setProperty('--site-header-space',header.getBoundingClientRect().height+'px')).observe(header);
+ document.addEventListener('click',event=>{if(!bar.contains(event.target))bar.querySelector('.fx-details').open=false;});
+ document.addEventListener('keydown',event=>{if(event.key==='Escape')bar.querySelector('.fx-details').open=false;});
  refresh();
  setInterval(()=>{if(!document.hidden)refresh();},15*60*1000);
  setInterval(()=>{if(moscowDay()!==lastDay){lastDay=moscowDay();refresh();}if(current)render();},60000);
