@@ -31,7 +31,7 @@ test('Реестр содержит 12 уникальных узлов, лини
  assert.equal(lines.filter(l=>l.enabled).length,3);
  assert.equal(lines.filter(l=>l.group==='Сепарация').length,3);
  assert.equal(lines.filter(l=>l.group==='Мойка').length,1);
- assert.equal(nodes.filter(n=>n.status==='source-checked').length,1);
+ assert.equal(nodes.filter(n=>n.status==='source-checked').length,12);
  for(const m of media){assert.ok(routes.includes(m.product.split('#')[0]));await stat('dist/assets/'+m.file);}
  const html=await readFile('dist/media/index.html','utf8');
  assert.ok(html.includes(`data-image="${basePath}/assets/assembly.webp"`));
@@ -54,4 +54,45 @@ test('Адаптивные изображения и презентационн�
  assert.ok(!html.includes('eduard@ros-um.ru'));
  assert.ok(!html.includes('data-node'));
  assert.ok(!html.includes('Материалы готовятся'));
+});
+test('Все 12 карточек содержат свои параметры и действительные исходные PDF',async()=>{
+ const {nodes}=await import('../content/catalog.mjs');const {createHash}=await import('node:crypto');
+ for(const n of nodes){
+  const html=await readFile('dist'+n.path+'/index.html','utf8');
+  assert.ok(!html.includes('КАРТОЧКА В ПОДГОТОВКЕ'),n.slug);
+  assert.ok(n.specs.length>=10,n.slug);assert.ok(n.highlights.length>=2,n.slug);
+  assert.equal(n.documents.length,1);const d=n.documents[0];
+  assert.ok(html.includes(`${basePath}/documents/${d.file}`));
+  const pdf=await readFile('dist/documents/'+d.file);
+  assert.equal(pdf.subarray(0,4).toString(),'%PDF');assert.equal(pdf.length,d.bytes);
+  assert.equal(createHash('sha256').update(pdf).digest('hex'),d.sha256);
+  await stat('dist/assets/'+n.cardImage+'.webp');await stat('dist/assets/'+n.scheme);
+ }
+});
+test('Единицы, мощность и условия разных узлов не смешиваются',async()=>{
+ const {nodes}=await import('../content/catalog.mjs');
+ const get=slug=>nodes.find(n=>n.slug===slug);
+ const value=(slug,label)=>get(slug).specs.find(([k])=>k===label)?.[1];
+ assert.equal(value('ballisticheskiy-separator','Производительность по объёму подачи'),'до 60 м³/ч');
+ assert.equal(value('bunker-nakopitel','Ёмкость бункера'),'4,7 м³');
+ assert.equal(value('rotornaya-tsentrifuga','Производительность по плёнке'),'1 000 кг/ч');
+ assert.equal(value('rotornaya-tsentrifuga','Производительность по жёсткому пластику'),'3 000 кг/ч');
+ assert.equal(value('vintovoy-press','Установленная мощность основного привода'),'75 кВт');
+ assert.equal(value('kapsulyator','Установленная мощность'),'190 кВт');
+ assert.ok(get('kapsulyator').description.includes('отжимной пресс'));
+ assert.ok(get('rotornaya-tsentrifuga').notes.some(n=>n.includes('37,62 кВт')));
+ assert.ok(get('vertikalno-rotornyy-izmelchitel').notes.some(n=>n.includes('Не включает внешний нагрев')));
+ assert.ok(!get('predvaritelnyy-raspushitel').specs.some(([k])=>k.includes('Расчётная потребляемая')));
+ assert.equal(get('rama-napolnitel').documents[0].type,'Паспорт и коммерческое описание');
+});
+test('Навигация различает главную, текущую страницу и родительский раздел',async()=>{
+ const {navigation}=await import('../scripts/navigation.mjs');
+ assert.match(navigation('/'),/href="\/" aria-current="page"/);
+ assert.match(navigation(product),/href="\/catalog" aria-current="location"/);
+ const line=navigation('/catalog/lines/separatsiya-01');
+ assert.match(line,/href="\/catalog\/lines" aria-current="location"/);
+ assert.ok(!line.includes('href="/catalog" aria-current='));
+ assert.match(navigation('/documents'),/class="nav-section nav-entry" data-active-section="true"/);
+ assert.match(navigation('/documents'),/href="\/documents" aria-current="page"/);
+ assert.ok(navigation('/technology').includes('Знакомство с ERA'));
 });

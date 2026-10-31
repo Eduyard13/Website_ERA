@@ -31,7 +31,7 @@ export const presentationStages = [
 ];
 export const presentationOutputs = [
   {id:'clean-film',title:'Очищенная плёнка',description:'Подготовленный материал для следующего этапа переработки.',image:'clean-film',slide:13},
-  {id:'compacted-material',title:'Материал после капсулятора',description:'Уплотнённый промежуточный продукт для дальнейшей обработки.',image:'compacted-material',slide:13},
+  {id:'compacted-material',title:'Материал после капсулятора',description:'Отжатый материал для следующей стадии переработки.',image:'compacted-material',slide:13},
   {id:'granules',title:'Вторичная ПЭ-гранула',description:'Продукт после соответствующей стадии гранулирования.',image:'granules',slide:13},
 ];
 export const projectSteps = [

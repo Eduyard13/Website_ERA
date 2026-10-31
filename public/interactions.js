@@ -31,3 +31,14 @@ if(mediaFilters){
  const apply=()=>{let count=0;entries.forEach(entry=>{entry.hidden=!( (activeType==='all'||(activeType==='photo'?entry.dataset.type==='photo':entry.dataset.type==='video'))&&(!mediaFilters.elements.product.value||entry.dataset.product===mediaFilters.elements.product.value)&&(!mediaFilters.elements.topic.value||entry.dataset.topic===mediaFilters.elements.topic.value));if(!entry.hidden)count++;});document.querySelectorAll('[data-media-type]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mediaType===activeType)));document.querySelector('#media-result').textContent=`Материалов: ${count}`;document.querySelector('#media-empty').hidden=count>0;updateUrl({type:activeType==='all'?'':activeType,product:mediaFilters.elements.product.value,topic:mediaFilters.elements.topic.value});};
  document.querySelectorAll('[data-media-type]').forEach(b=>b.addEventListener('click',()=>{activeType=b.dataset.mediaType;apply();}));mediaFilters.addEventListener('submit',e=>e.preventDefault());mediaFilters.addEventListener('change',apply);mediaFilters.addEventListener('reset',()=>{activeType='all';setTimeout(apply,0);});apply();
 }
+const documentsForm=document.querySelector('#document-filters');
+if(documentsForm){
+ const cards=[...document.querySelectorAll('[data-document]')];
+ for(const key of ['q','product','kind'])documentsForm.elements[key].value=params.get(key)||'';
+ const apply=()=>{const q=documentsForm.elements.q.value.trim().toLocaleLowerCase('ru'),product=documentsForm.elements.product.value,kind=documentsForm.elements.kind.value;let count=0;
+  cards.forEach(card=>{card.hidden=!(card.dataset.title.includes(q)&&(!product||card.dataset.product===product)&&(!kind||card.dataset.kind===kind));if(!card.hidden)count++;});
+  document.querySelector('#document-result').textContent=`Документов: ${count} из ${cards.length}`;
+  document.querySelector('#document-empty').hidden=count>0;updateUrl({q,product,kind});
+ };
+ documentsForm.addEventListener('submit',e=>e.preventDefault());documentsForm.addEventListener('input',apply);documentsForm.addEventListener('change',apply);documentsForm.addEventListener('reset',()=>setTimeout(apply,0));apply();
+}
