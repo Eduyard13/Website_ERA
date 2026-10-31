@@ -1,0 +1,53 @@
+name: Update official CBR rates
+on:
+  schedule:
+    - cron: '3 * * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/rates.yml'
+      - 'scripts/cbr-rates.mjs'
+      - 'scripts/update-rates.mjs'
+      - 'public/fx-core.js'
+      - 'test/cbr-rates.test.mjs'
+permissions:
+  contents: read
+concurrency:
+  group: cbr-rates
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify CBR parsing and date handling
+        run: node --input-type=module -e "await import('./test/cbr-rates.test.mjs')"
+      - name: Fetch official rates for today in Moscow
+        run: node scripts/update-rates.mjs "$RUNNER_TEMP/cbr.json"
+      - name: Publish the small rates feed
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if git ls-remote --exit-code origin refs/heads/data/cbr-rates > "$RUNNER_TEMP/cbr-ref"; then
+            git fetch --no-tags origin data/cbr-rates
+            git switch --detach FETCH_HEAD
+          else
+            probe_status=$?
+            if [ "$probe_status" -ne 2 ]; then exit "$probe_status"; fi
+            git switch --orphan data/cbr-rates
+          fi
+          cp "$RUNNER_TEMP/cbr.json" cbr.json
+          cp "$RUNNER_TEMP/cbr.xml" cbr.xml
+          git add cbr.json cbr.xml
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Update official CBR exchange rates'
+          git push origin HEAD:refs/heads/data/cbr-rates
