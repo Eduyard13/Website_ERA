@@ -1,0 +1,46 @@
+name: Test and deploy ERA preview
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Test root deployment
+        run: npm test
+      - name: Test project deployment
+        run: npm test
+        env:
+          BASE_PATH: /Website_ERA
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Build preview
+        run: npm run build
+        env:
+          BASE_PATH: /Website_ERA
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy preview
+        id: deployment
+        uses: actions/deploy-pages@v4
