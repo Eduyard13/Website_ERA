@@ -1,0 +1,29 @@
+{
+  "source": "/workspace/generated_images/exec-30f0a578-968a-4934-8707-209942c13ef3.png",
+  "selection": "Existing second, closer equipment illustration selected by the owner; no new generation or content editing.",
+  "encoding": "WebP quality 88, full 1536x1024 and responsive 768x512.",
+  "equipmentBoundsIn1536x1024": [
+    280,
+    70,
+    1225,
+    915
+  ],
+  "assets": {
+    "catalog-nodes-close-768.webp": {
+      "dimensions": [
+        768,
+        512
+      ],
+      "bytes": 63064,
+      "sha256": "21dd74d9ea87241d28dd4e446e2148eb3c8074cc0d3392d441b9631c12434932"
+    },
+    "catalog-nodes-close.webp": {
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 186142,
+      "sha256": "c7a42fbf84522ee8c33d822d1b9fa7c0129099034ebdf418f78a42b74f523f92"
+    }
+  }
+}
