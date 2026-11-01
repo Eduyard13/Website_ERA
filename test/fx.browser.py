@@ -1,4 +1,4 @@
-"""Verify the real CBR feed, compact header, automatic refresh and dated fallback."""
+"""Verify the real CBR feed, grouped footer, automatic refresh and dated fallback."""
 from pathlib import Path
 from datetime import datetime,timezone
 from urllib.request import urlopen
@@ -27,13 +27,16 @@ with sync_playwright() as p:
     assert expected in page.locator(f'[data-fx-value={code}]').inner_text()
    assert page.locator('[data-fx-date]').get_attribute('datetime')==live['requestedDate']
    assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),(width,route)
-   assert page.locator('[data-fx-bar]').evaluate('(e)=>e.closest(".site-header")!==null&&e.getBoundingClientRect().height<=28')
-   assert not page.locator('[data-fx-date]').is_visible()
+   assert page.locator('[data-fx-bar]').evaluate('(e)=>e.closest("footer")!==null')
+   assert page.locator('.site-header [data-fx-bar]').count()==0
+   assert page.locator('[data-fx-bar]').count()==1
+   assert not page.locator('.fx-popover').is_visible()
    page.locator('.fx-details summary').click()
    assert page.locator('[data-fx-date]').is_visible()
+   assert page.locator('.fx-popover').is_visible()
    assert page.locator('.fx-popover').evaluate('(e)=>e.getBoundingClientRect().left>=0&&e.getBoundingClientRect().right<=innerWidth')
    page.keyboard.press('Escape')
-   assert not page.locator('[data-fx-date]').is_visible()
+   assert not page.locator('.fx-popover').is_visible()
    page.evaluate('window.scrollTo({top:document.documentElement.scrollHeight,behavior:"instant"})')
    assert page.locator('[data-fx-bar]').is_visible()
    assert page.locator('.site-header').evaluate('(e)=>Math.abs(e.getBoundingClientRect().top)<1')

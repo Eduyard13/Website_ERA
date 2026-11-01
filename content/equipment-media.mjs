@@ -192,7 +192,7 @@ const sourceAssets = [
   {
     "id": "ochistka-stokov-operation",
     "slug": "ochistka-stokov",
-    "title": "Прохождение моющей среды через сито — кадр из видео в КП",
+    "title": "Прохождение моющей среды через сито — кадр из видео",
     "type": "frame",
     "topic": "Работа",
     "file": "equipment/ochistka-stokov/operation.webp",
@@ -252,7 +252,7 @@ const sourceAssets = [
   {
     "id": "rotornaya-tsentrifuga-body",
     "slug": "rotornaya-tsentrifuga",
-    "title": "Рабочая зона центрифуги — визуализация из КП",
+    "title": "Рабочая зона центрифуги — визуализация",
     "type": "visualization",
     "topic": "Схемы и визуализации",
     "file": "equipment/rotornaya-tsentrifuga/body.webp",

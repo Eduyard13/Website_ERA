@@ -34,8 +34,6 @@ if(bar){
    else{bar.dataset.state='unavailable';date.textContent='Курсы недоступны';date.removeAttribute('datetime');setStatus('Повторим автоматически');}
   }finally{clearTimeout(timeout);inFlight=false;}
  }
- const header=bar.closest('.site-header');
- if(header&&'ResizeObserver' in window)new ResizeObserver(()=>document.documentElement.style.setProperty('--site-header-space',header.getBoundingClientRect().height+'px')).observe(header);
  document.addEventListener('click',event=>{if(!bar.contains(event.target))bar.querySelector('.fx-details').open=false;});
  document.addEventListener('keydown',event=>{if(event.key==='Escape')bar.querySelector('.fx-details').open=false;});
  refresh();

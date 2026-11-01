@@ -37,7 +37,7 @@ if(mediaViewer){
   }
  }
  entries.forEach(entry=>entry.querySelector('.media-open').addEventListener('click',event=>{
-  event.preventDefault();opener=event.currentTarget;
+  event.preventDefault();opener=document.activeElement?.matches('[data-kair-inspect]')?document.activeElement:event.currentTarget;
   mediaViewer.showModal();showEntry(visibleEntries().indexOf(entry),true);
   document.body.classList.add('viewer-open');
   mediaViewer.querySelector('[data-close]').focus();

@@ -22,7 +22,7 @@ export function withCalculatedPower(slug,details){
  const notes=details.notes.filter(note=>!/(?:расч[её]т|0[,\.]70|коэффициент)/i.test(note));
  notes.push(`Расчётная потребляемая мощность: 70% от установленной, ${value}. Округление до одного знака после запятой.`);
  if(slug==='vertikalno-rotornyy-izmelchitel')notes.push('Не включает внешний нагрев воды и транспортёры.');
- if(slug==='rotornaya-tsentrifuga')notes.push('В КП установленная мощность округлена до 37,6 кВт; сумма трёх приводов — 37,62 кВт.');
+ if(slug==='rotornaya-tsentrifuga')notes.push('Установленная мощность округлена до 37,6 кВт; сумма трёх приводов — 37,62 кВт.');
  if(slug==='vintovoy-press')notes.push('Указанная мощность относится к основному приводу винтового пресса.');
  if(slug==='rama-napolnitel')notes.push('Указанная мощность относится к приводу подъёма каретки.');
  const highlights=details.highlights.map(([v,k])=>[/расч[её]тн.*потреб/i.test(k)?value:v,k]);

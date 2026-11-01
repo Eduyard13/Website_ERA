@@ -2,6 +2,8 @@
 'use strict';
 const menu=document.querySelector('#site-menu');
 const toggle=document.querySelector('[data-menu-toggle]');
+const siteHeader=document.querySelector('.site-header');
+if(siteHeader){const measure=()=>document.documentElement.style.setProperty('--site-header-space',siteHeader.getBoundingClientRect().height+'px');measure();if('ResizeObserver' in window)new ResizeObserver(measure).observe(siteHeader);}
 if(menu&&toggle){
  const header=document.querySelector('.site-header');
  const align=()=>{const r=header.getBoundingClientRect();menu.style.setProperty('--drawer-top',Math.max(0,r.bottom)+'px');menu.style.setProperty('--drawer-mobile-top',Math.max(0,r.top)+'px');};

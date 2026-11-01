@@ -51,7 +51,7 @@ test('Фото распределены по 11 узлам, а каталог и
   const html=await readFile('dist'+n.path+'/index.html','utf8');
   if(n.slug==='ochistka-stokov'){
    assert.equal(pictures.length,0);
-   assert.ok(html.includes('Фотографии этого узла пока не опубликованы'));
+   assert.ok(!html.includes('id="photos"'));assert.ok(html.includes('data-diagram data-view='));
   }else{
    assert.equal(pictures.filter(m=>m.primary).length,1,n.slug);
    assert.ok(pictures.every(m=>m.processed&&m.slug===n.slug),n.slug);
@@ -82,7 +82,7 @@ test('Краткие параметры содержат мощность, а с
   assert.ok(html.includes(n.diagram?'data-diagram data-view=':'class="scheme-reading"'),n.slug);
   assert.ok(n.reading.parts.length>=3,n.slug);
   assert.equal(new Set(n.reading.parts.map(p=>p[0])).size,n.reading.parts.length,n.slug);
-  assert.ok(html.includes('href="#photos"'));
+  assert.equal(html.includes('href="#photos"'),n.slug!=='ochistka-stokov');
   if(n.slug!=='ochistka-stokov')assert.ok(html.includes(`data-photo-gallery data-product="${basePath}${n.path}"`));
  }
  const rotor=nodes.find(n=>n.slug==='rotornyy-raspushitel');
@@ -343,8 +343,8 @@ test('Общий каталог предлагает две ветки, а ст�
  assert.equal(lines.filter(l=>l.enabled&&l.group==='Сепарация').length,2);
  assert.equal(lines.filter(l=>l.enabled&&l.group==='Мойка').length,1);
  const home=await readFile('dist/index.html','utf8');
- assert.ok(home.includes('id="about-era"'));assert.ok(home.includes('описания сырья и целей'));
- assert.ok(home.includes('ERA — проект по возвращению вторичных полимерных материалов'));
+ assert.ok(home.includes('id="about-era"'));assert.ok(home.includes('Начинаем с вашего сырья и нужного результата'));
+ assert.ok(home.includes('ЭРА — проект по возвращению вторичных полимерных материалов'));
  const about=await readFile('dist/about/index.html','utf8');
  assert.ok(about.includes(`content="0; url=${basePath}/"`));
  assert.ok(about.includes(`rel="canonical" href="${basePath}/"`));
@@ -352,4 +352,48 @@ test('Общий каталог предлагает две ветки, а ст�
   const html=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
   assert.ok(!html.includes(`href="${basePath}/about"`));
  }
+});
+
+test('Счётчики различают типы и не дублируют файлы, миниатюры и ссылки на PDF',async()=>{
+ const {countMedia,mediaCountLabels}=await import('../public/media-counts.js');
+ const counts=countMedia([
+  {type:'photo',file:'photo.webp',thumbnail:'photo-small.webp'},
+  {type:'photo',file:'photo.webp?v=2'},
+  {type:'video',file:'film.mp4'},{type:'video',file:'film.mp4#t=10'},
+  {type:'scheme',file:'drawing.svg'},{type:'visualization',file:'view.webp'},
+  {type:'frame',file:'frame.webp'},
+ ],[{file:'description.pdf'},{file:'description.pdf#page=2'}]);
+ assert.deepEqual(counts,{photos:1,videos:1,schemes:2,visualizations:true,frames:1,documents:1});
+ assert.equal(mediaCountLabels(counts).find(c=>c.key==='schemes').label,'Схемы и визуализации');
+ assert.deepEqual(mediaCountLabels(countMedia([],[])),[]);
+});
+test('Клиентский режим: единый кириллический бренд, групповой подвал и один валютный блок',async()=>{
+ const {navigationGroups}=await import('../content/navigation.mjs');
+ for(const route of new Set(routes.filter(r=>r!=='/about'))){
+  const html=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
+  const header=html.match(/<header[\s\S]*?<\/header>/)[0];
+  const footer=html.match(/<footer[\s\S]*?<\/footer>/)[0];
+  assert.ok(!header.includes('data-fx-bar'),route);
+  assert.equal([...html.matchAll(/data-fx-bar /g)].length,1,route);
+  assert.ok(footer.includes('data-fx-bar'),route);
+  for(const group of navigationGroups){assert.ok(footer.includes(group.label));for(const link of group.links)assert.ok(footer.includes(`href="${basePath}${link.href}"`));}
+  const visible=html.replace(/<script[\s\S]*?<\/script>/g,'').replace(/<[^>]+>/g,' ');
+  const labels=[...html.matchAll(/(?:aria-label|alt|title|data-source|data-title|content)="([^"]*)"/g)].map(m=>m[1]).join(' ');
+  const copy=visible+' '+labels;
+  assert.doesNotMatch(copy,/\bERA\b|прототип|для согласования|из презентации|в презентации|предоставленному КП|источник:|слайд №|сайт объединяет/iu,route);
+  assert.match(html,/noindex,nofollow/,route);
+ }
+ const notFound=await readFile('dist/404.html','utf8');assert.equal([...notFound.matchAll(/data-fx-bar /g)].length,1);
+});
+test('Светлое обращение отделено от подвала, монитор показывает один реальный экран без автосмены',async()=>{
+ const {kairSlides,kairPresentation}=await import('../content/kair.mjs');
+ const {kairMonitor}=await import('../scripts/kair.mjs');
+ assert.equal(kairSlides.length,1);assert.equal(kairPresentation.autoplay,false);
+ assert.equal(kairSlides[0].width,616);assert.equal(kairSlides[0].height,361);
+ await stat('dist/assets/'+kairSlides[0].file);
+ const component=kairMonitor();assert.ok(!component.includes('data-kair-next'));assert.ok(!component.includes('data-kair-pause'));assert.ok(!component.includes('1 из 1'));
+ const html=await readFile('dist/index.html','utf8');
+ assert.match(html,/<section class="story-section discuss-story" id="discuss"/);
+ assert.ok(html.includes('data-kair-inspect'));assert.ok(html.includes('Подробнее о КАИР'));
+ assert.ok(html.includes(`data-image="${basePath}/assets/presentation/kair.webp"`));
 });

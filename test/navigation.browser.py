@@ -19,7 +19,7 @@ with sync_playwright() as p:
    page.goto(base+route)
    assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),(width,route)
    header=page.locator('.site-header');toggle=page.locator('[data-menu-toggle]');menu=page.locator('#site-menu')
-   assert 76<=header.bounding_box()['height']<=88,(width,route,header.bounding_box())
+   assert (64 if width<1000 else 72)<=header.bounding_box()['height']<=80,(width,route,header.bounding_box())
    assert page.locator('.primary-nav a').all_text_contents()==['О проекте','Оборудование','Технология']
    assert page.locator('.primary-nav').is_visible()==(width>=1000)
    expected={'project':'/','equipment':'/catalog','technology':'/technology'}.get(section)

@@ -26,7 +26,7 @@ with sync_playwright() as p:
  page.get_by_role('link',name='Как это работает',exact=True).click();assert page.url.endswith('#solution')
  page.get_by_role('link',name='Узнать подробнее',exact=True).nth(1).click();assert page.url.endswith('/technology#hot-washing');assert page.locator('#hot-washing').is_visible()
  page.reload();assert page.locator('#hot-washing').is_visible()
- page.goto(base+'/');page.get_by_role('link',name='Подробнее об управлении',exact=True).click();assert page.url.endswith('/automation')
+ page.goto(base+'/');page.get_by_role('link',name='Подробнее о КАИР',exact=True).click();assert page.url.endswith('/automation')
  page.goto(base+'/');page.get_by_role('link',name='Обсудить мой проект',exact=True).click();assert page.url.endswith('#discuss')
  assert page.get_by_role('link',name='Написать о проекте',exact=True).get_attribute('href').startswith('mailto:edkom.office@mail.ru?subject=')
  for title,ending in [('Технология','/technology'),('Линии и комплектации','/catalog/lines'),('Каталог оборудования','/catalog/equipment')]:
