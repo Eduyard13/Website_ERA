@@ -26,7 +26,7 @@ function page(path){
  const entry=simplePages[path];if(!entry)throw new Error('Missing page: '+path);
  return `<section class="section page-intro"><p class="eyebrow">ЭРА / ${entry.title.toUpperCase()}</p><h1>${entry.heading}</h1><p class="lead">${entry.lead}</p></section><section class="section"><p>${entry.text}</p>${button(entry.action,entry.href||'/contacts')}</section>`;
 }
-const styles=path=>['style','equipment','documents','fx',...(['/','/technology','/automation'].includes(path)?['presentation']:[]),'navigation','diagram','footer','kair','surfaces'].map(file=>`<link rel="stylesheet" href="/${file}.css?v=${version}">`).join('');
+const styles=path=>['style','equipment','documents','fx',...(['/','/technology','/automation'].includes(path)?['presentation']:[]),'navigation','diagram','footer','kair','surfaces',...(path==='/catalog'?['catalog']:[])].map(file=>`<link rel="stylesheet" href="/${file}.css?v=${version}">`).join('');
 const scripts=()=>`<script src="/navigation.js?v=${version}" defer></script><script src="/app.js?v=${version}" defer></script><script type="module" src="/interactions.js?v=${version}"></script><script src="/media-viewer.js?v=${version}" defer></script><script type="module" src="/fx.js?v=${version}"></script><script src="/diagram.js?v=${version}" defer></script><script type="module" src="/kair.js?v=${version}"></script>`;
 const arrows=html=>html.replaceAll('↗','<svg class="arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13 13 3M3 3h10v10" stroke="currentColor" stroke-width="1.4"/></svg>');
 export function render(path){

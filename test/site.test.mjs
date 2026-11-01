@@ -334,8 +334,10 @@ test('24 документа переименованы, разложены по 
 test('Общий каталог предлагает две ветки, а старое О проекте перенесено на главную',async()=>{
  const {nodes,lines}=await import('../content/catalog.mjs');
  const hub=await readFile('dist/catalog/index.html','utf8');
- assert.equal([...hub.matchAll(/class="catalog-door" /g)].length,2);
- assert.ok(hub.indexOf('01 / ЛИНИИ И КОМПЛЕКСЫ')<hub.indexOf('02 / ОТДЕЛЬНЫЕ УЗЛЫ'));
+ assert.equal([...hub.matchAll(/class="catalog-door catalog-exhibit /g)].length,2);
+ assert.ok(hub.indexOf('id="catalog-lines-title"')<hub.indexOf('id="catalog-nodes-title"'));
+ assert.equal([...hub.matchAll(/class="catalog-exhibit-scene"/g)].length,2);
+ assert.ok(!hub.includes('catalog-door-stats'));
  assert.ok(!hub.includes('id="catalog-filters"'));
  const equipment=await readFile('dist/catalog/equipment/index.html','utf8');
  assert.ok(equipment.includes('id="catalog-filters"'));

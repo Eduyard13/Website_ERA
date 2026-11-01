@@ -1,0 +1,28 @@
+/* Category artwork is supplied in full. No crop, mask, filter or image zoom. */
+.catalog-exhibition-intro{padding:38px max(32px,calc((100vw - 1280px)/2)) 28px}
+.catalog-exhibition-intro .eyebrow{font-size:11px;margin-bottom:12px}
+.catalog-exhibition-intro h1{font-size:clamp(34px,3.6vw,50px);line-height:1.12;margin:0;letter-spacing:-.04em}
+.catalog-exhibition{padding:0 max(32px,calc((100vw - 1280px)/2)) 64px}
+.catalog-exhibition .catalog-doors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.catalog-exhibition .catalog-exhibit{display:flex;flex-direction:column;min-width:0;border:0;border-radius:0;overflow:visible;transition:none}
+.catalog-exhibition .catalog-exhibit--lines{background:var(--era-deep);color:var(--era-on-dark)}
+.catalog-exhibition .catalog-exhibit--nodes{background:var(--era-white);color:var(--era-blue)}
+.catalog-exhibit-scene{position:relative;aspect-ratio:1122/1402;flex:none;min-width:0}
+.catalog-exhibit-scene img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;filter:none;opacity:1;transform:none;mix-blend-mode:normal}
+.catalog-exhibit-copy{display:flex;flex:1;flex-direction:column;align-items:stretch;padding:26px 34px 32px}
+/* Continue the supplied floor edge, sampled across its width, below the intact image. */
+.catalog-exhibit--lines .catalog-exhibit-copy{background:linear-gradient(180deg,transparent 0%,var(--era-deep) 180px),linear-gradient(90deg,#050918 0%,#060a1b 12.5%,#070d1c 25%,#090f1f 37.5%,#0c1426 50%,#0d1426 62.5%,#111729 75%,#0a1020 87.5%,#050c1c 100%)}
+.catalog-exhibit--nodes .catalog-exhibit-copy{background:linear-gradient(180deg,transparent 0%,var(--era-white) 180px),linear-gradient(90deg,#faecde 0%,#f8e9d9 12.5%,#f9e5d1 25%,#fdf8e6 37.5%,#deccbb 50%,#e2d1c0 62.5%,#d9c8b4 75%,#f7e8d4 87.5%,#faebd9 100%)}
+.catalog-exhibit-copy h2{font-size:clamp(36px,3.7vw,52px);line-height:1.04;font-weight:500;letter-spacing:-.04em;margin:0 0 20px}
+.catalog-exhibit-copy h2>span{display:block}
+.catalog-exhibit-action{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-top:auto;min-height:44px;font-size:16px;line-height:1.4}
+.catalog-exhibit-action>span{padding-bottom:4px;border-bottom:1px solid currentColor;transition:border-color .6s ease-out}
+.catalog-exhibit-arrow{width:52px;height:24px;flex:none;color:var(--era-gold);transition:transform .6s ease-out,color .6s ease-out}
+.catalog-exhibit--nodes .catalog-exhibit-arrow{color:var(--era-gold-dark)}
+.catalog-exhibit:where(:hover,:focus-visible) .catalog-exhibit-action>span{border-color:var(--era-gold)}
+.catalog-exhibit--nodes:where(:hover,:focus-visible) .catalog-exhibit-action>span{border-color:var(--era-blue)}
+.catalog-exhibit:where(:hover,:focus-visible) .catalog-exhibit-arrow{transform:translateX(5px)}
+.catalog-exhibition .catalog-exhibit:focus-visible{outline:3px solid var(--era-blue);outline-offset:5px}
+@media(max-width:899px){.catalog-exhibition .catalog-doors{grid-template-columns:minmax(0,1fr);gap:24px}.catalog-exhibit-copy{padding:26px 32px 30px}.catalog-exhibit-copy h2{font-size:44px}}
+@media(max-width:767px){.catalog-exhibition-intro{padding:28px 20px 22px}.catalog-exhibition-intro h1{font-size:34px}.catalog-exhibition{padding:0 20px 44px}.catalog-exhibit-copy{padding:24px 24px 26px}.catalog-exhibit-copy h2{font-size:36px;margin-bottom:16px}.catalog-exhibit-action{font-size:15px;gap:12px}.catalog-exhibit-arrow{width:42px}}
+@media(prefers-reduced-motion:reduce){.catalog-exhibit-action>span,.catalog-exhibit-arrow{transition:none}.catalog-exhibit:where(:hover,:focus-visible) .catalog-exhibit-arrow{transform:none}}

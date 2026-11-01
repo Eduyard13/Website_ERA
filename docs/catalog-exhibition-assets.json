@@ -1,0 +1,22 @@
+{
+  "catalog-lines-exhibition": {
+    "width": 1122,
+    "height": 1402,
+    "webp_bytes": 366094,
+    "small_width": 768,
+    "small_height": 960
+  },
+  "catalog-nodes-museum": {
+    "width": 1122,
+    "height": 1402,
+    "webp_bytes": 350866,
+    "small_width": 768,
+    "small_height": 960
+  },
+  "sha256": {
+    "catalog-lines-exhibition-768.webp": "b2d33f7eaffe00503e080fa9509a4e92570cada0aa46fed007b636a2bb5398bc",
+    "catalog-lines-exhibition.webp": "55ab57f070a65d1a24548cf5a053e9cc0b3a90a16218cbb1b06f8acdc34b3444",
+    "catalog-nodes-museum-768.webp": "72f6eda8ec942e8008116d680a1065d646e64cf1cc13ca126a5131be6cd2d7c8",
+    "catalog-nodes-museum.webp": "a1b48fa152bb1b68e3397f27af078fbb7ec15c032ce3f6f9661d9df1d536c69d"
+  }
+}
