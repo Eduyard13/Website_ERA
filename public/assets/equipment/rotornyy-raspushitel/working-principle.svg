@@ -1,18 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1050 490" role="img" aria-labelledby="title desc">
 <title id="title">Три ступени роторного распушителя</title><desc id="desc">Один: барабан и ротор раскрывают плёнку; два: диски отделяют загрязнения; три: воздух отбирает лёгкую плёнку. Примеси отводятся отдельно.</desc>
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10Z" fill="#102b46"/></marker><marker id="waste" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#86651e"/></marker></defs>
+<defs><style>:root{--era-blue:#10132E;--era-text-muted:rgb(16 19 46 / 72%)}</style><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10Z" fill="var(--era-blue)"/></marker><marker id="waste" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#86651e"/></marker></defs>
 <rect width="1050" height="490" fill="#f7f4ee" rx="10"/>
-<g font-family="Arial,sans-serif" text-anchor="middle" fill="#102b46">
+<g font-family="Arial,sans-serif" text-anchor="middle" fill="var(--era-blue)">
 <text x="525" y="43" font-size="23">Роторная обработка → диски → воздушный отбор</text>
-<text x="525" y="77" font-size="15" fill="#596878">Функциональная схема по описанию КП · не конструктивный чертёж</text>
-<g stroke="#102b46" stroke-width="2" fill="white"><rect x="58" y="145" width="265" height="160" rx="7"/><rect x="393" y="145" width="265" height="160" rx="7"/><rect x="728" y="145" width="265" height="160" rx="7"/></g>
-<g stroke="#102b46" stroke-width="3" marker-end="url(#arrow)"><path d="M323 220h58"/><path d="M658 220h58"/></g>
-<g fill="#102b46"><circle cx="190" cy="145" r="23"/><circle cx="525" cy="145" r="23"/><circle cx="860" cy="145" r="23"/></g>
+<text x="525" y="77" font-size="15" fill="var(--era-text-muted)">Функциональная схема по описанию КП · не конструктивный чертёж</text>
+<g stroke="var(--era-blue)" stroke-width="2" fill="white"><rect x="58" y="145" width="265" height="160" rx="7"/><rect x="393" y="145" width="265" height="160" rx="7"/><rect x="728" y="145" width="265" height="160" rx="7"/></g>
+<g stroke="var(--era-blue)" stroke-width="3" marker-end="url(#arrow)"><path d="M323 220h58"/><path d="M658 220h58"/></g>
+<g fill="var(--era-blue)"><circle cx="190" cy="145" r="23"/><circle cx="525" cy="145" r="23"/><circle cx="860" cy="145" r="23"/></g>
 <g fill="#e0c46a" font-size="20"><text x="190" y="152">1</text><text x="525" y="152">2</text><text x="860" y="152">3</text></g>
-<text x="190" y="207" font-size="22">Барабан и ротор</text><text x="190" y="246" font-size="17" fill="#596878">Раскрытие плёнки</text><text x="190" y="274" font-size="17" fill="#596878">и высвобождение примесей</text>
-<text x="525" y="207" font-size="22">Дисковая сепарация</text><text x="525" y="246" font-size="17" fill="#596878">Стряхивание</text><text x="525" y="274" font-size="17" fill="#596878">остаточных загрязнений</text>
-<text x="860" y="207" font-size="22">Воздушный отбор</text><text x="860" y="246" font-size="17" fill="#596878">Лёгкая плёнка</text><text x="860" y="274" font-size="17" fill="#596878">в пневмотранспорт</text>
+<text x="190" y="207" font-size="22">Барабан и ротор</text><text x="190" y="246" font-size="17" fill="var(--era-text-muted)">Раскрытие плёнки</text><text x="190" y="274" font-size="17" fill="var(--era-text-muted)">и высвобождение примесей</text>
+<text x="525" y="207" font-size="22">Дисковая сепарация</text><text x="525" y="246" font-size="17" fill="var(--era-text-muted)">Стряхивание</text><text x="525" y="274" font-size="17" fill="var(--era-text-muted)">остаточных загрязнений</text>
+<text x="860" y="207" font-size="22">Воздушный отбор</text><text x="860" y="246" font-size="17" fill="var(--era-text-muted)">Лёгкая плёнка</text><text x="860" y="274" font-size="17" fill="var(--era-text-muted)">в пневмотранспорт</text>
 <g stroke="#86651e" stroke-width="2" marker-end="url(#waste)"><path d="M190 305v60"/><path d="M525 305v60"/><path d="M860 305v60"/></g>
 <g fill="#86651e" font-size="17"><text x="190" y="397">Мелкие примеси</text><text x="525" y="397">Отделённая мелочь</text><text x="860" y="397">Неподхваченные</text><text x="860" y="422">включения</text></g>
-<text x="525" y="467" font-size="14" fill="#596878">Описание ступеней: КП роторного распушителя, страницы 3–4.</text>
+<text x="525" y="467" font-size="14" fill="var(--era-text-muted)">Описание ступеней: КП роторного распушителя, страницы 3–4.</text>
 </g></svg>

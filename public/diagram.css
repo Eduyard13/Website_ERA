@@ -9,7 +9,7 @@
 .diagram-view-switch [aria-pressed=true]{background:var(--era-blue);color:var(--era-cream)}
 .diagram-select-label{display:flex;max-width:100%;margin-left:auto;gap:14px;align-items:center;color:var(--muted);font-size:12px;min-width:0}
 .diagram-select-label select{height:44px;font-size:13px;background:transparent;width:290px;max-width:100%;border-color:#a3926d70;border-radius:3px}
-.diagram-canvas{background-color:var(--era-beige);position:relative;margin-top:20px;background:radial-gradient(ellipse at 28% 60%,#c6a43b0d,transparent 43%),radial-gradient(ellipse at 76% 65%,#102b4608,transparent 40%),var(--era-beige)}
+.diagram-canvas{background-color:var(--era-beige);position:relative;margin-top:20px;background:radial-gradient(ellipse at 28% 60%,#c6a43b0d,transparent 43%),radial-gradient(ellipse at 76% 65%,rgb(var(--era-blue-rgb) / 3.13725%),transparent 40%),var(--era-beige)}
 .diagram-view-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px}
 .diagram-view{min-width:0;position:relative}.diagram-view h4{position:static;font-size:10px;font-weight:400;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:0 0 12px 8px;z-index:1}
 .diagram-projection{position:relative;aspect-ratio:1;min-width:0}.diagram-projection svg{display:block;width:100%;height:100%;overflow:visible}
@@ -20,10 +20,10 @@
 .diagram-guides [data-active=true] .guide-line{stroke:var(--era-gold-dark);stroke-width:1.6;opacity:1}
 .diagram-guides [data-active=true] .guide-end{fill:var(--era-gold-dark);opacity:1}
 .diagram-pin{-webkit-tap-highlight-color:transparent;position:absolute;left:var(--pin-x);top:var(--pin-y);transform:translate(-50%,-50%);display:grid;place-items:center;min-width:44px;width:44px;min-height:44px;height:44px;padding:0;border:0;border-radius:50%;background:transparent;z-index:2;touch-action:manipulation}
-.diagram-pin span{display:grid;place-items:center;width:29px;height:29px;border:1px solid #a3926d99;border-radius:50%;background:var(--era-cream);color:var(--era-blue);font-size:12px;font-variant-numeric:tabular-nums;line-height:1;box-shadow:0 2px 7px #102b4608;transition:border-color .15s,box-shadow .15s}
-.diagram-pin:hover{background:transparent}.diagram-pin:hover span,.diagram-pin[aria-pressed=true] span{background:var(--era-blue);color:var(--era-cream);border-color:var(--era-gold);box-shadow:0 0 0 5px #c6a43b14,0 4px 14px #102b4620}
+.diagram-pin span{display:grid;place-items:center;width:29px;height:29px;border:1px solid #a3926d99;border-radius:50%;background:var(--era-cream);color:var(--era-blue);font-size:12px;font-variant-numeric:tabular-nums;line-height:1;box-shadow:0 2px 7px rgb(var(--era-blue-rgb) / 3.13725%);transition:border-color .15s,box-shadow .15s}
+.diagram-pin:hover{background:transparent}.diagram-pin:hover span,.diagram-pin[aria-pressed=true] span{background:var(--era-blue);color:var(--era-cream);border-color:var(--era-gold);box-shadow:0 0 0 5px #c6a43b14,0 4px 14px rgb(var(--era-blue-rgb) / 12.54902%)}
 .diagram-pin:focus-visible{outline:2px solid var(--era-gold-dark);outline-offset:1px}
-.diagram-tooltip{position:absolute;z-index:4;display:flex;align-items:center;gap:11px;max-width:min(290px,calc(100% - 16px));padding:11px 15px;border:1px solid #c6a43b80;border-radius:3px;background:var(--era-blue);color:var(--era-cream);box-shadow:0 8px 24px #102b461a;pointer-events:none;font-size:13px;line-height:1.4}
+.diagram-tooltip{position:absolute;z-index:4;display:flex;align-items:center;gap:11px;max-width:min(290px,calc(100% - 16px));padding:11px 15px;border:1px solid #c6a43b80;border-radius:3px;background:var(--era-blue);color:var(--era-cream);box-shadow:0 8px 24px rgb(var(--era-blue-rgb) / 10.19608%);pointer-events:none;font-size:13px;line-height:1.4}
 .diagram-tooltip span{color:#e5cd88;font-size:11px;font-variant-numeric:tabular-nums}.diagram-tooltip strong{font-weight:400}
 .diagram-details{display:flex;align-items:center;gap:22px;min-height:124px;padding:24px 0;border-top:1px solid #a3926d55;border-bottom:1px solid #a3926d55}
 .diagram-detail-number{align-self:flex-start;flex-shrink:0;font-size:32px;line-height:1.2;font-variant-numeric:tabular-nums;color:var(--era-gold-dark);letter-spacing:-.04em}
