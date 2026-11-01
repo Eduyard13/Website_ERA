@@ -34,6 +34,7 @@ if(documentsForm){
  for(const key of ['q','product','kind'])documentsForm.elements[key].value=params.get(key)||'';
  const apply=()=>{const q=documentsForm.elements.q.value.trim().toLocaleLowerCase('ru'),product=documentsForm.elements.product.value,kind=documentsForm.elements.kind.value;let count=0;
   cards.forEach(card=>{card.hidden=!(card.dataset.title.includes(q)&&(!product||card.dataset.product===product)&&(!kind||card.dataset.kind===kind));if(!card.hidden)count++;});
+  document.querySelectorAll('[data-document-folder]').forEach(folder=>{const found=[...folder.querySelectorAll('[data-document]')].filter(card=>!card.hidden).length;folder.hidden=found===0;folder.querySelector('[data-folder-count]').textContent=found;if(found&&(q||product||kind))folder.open=true;});
   document.querySelector('#document-result').textContent=`Документов: ${count} из ${cards.length}`;
   document.querySelector('#document-empty').hidden=count>0;updateUrl({q,product,kind});
  };

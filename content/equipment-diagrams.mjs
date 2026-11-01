@@ -1,3 +1,4 @@
+import {additionalDiagrams} from './equipment-diagrams-extra.mjs';
 import {schemeReading} from './equipment-reading.mjs';
 const labels=new Map(schemeReading['predvaritelnyy-izmelchitel'].parts);
 const data={
@@ -210,4 +211,4 @@ const data={
     }
   ]
 };
-export const equipmentDiagrams={'predvaritelnyy-izmelchitel':{...data,parts:data.parts.map(p=>({...p,label:labels.get(p.number)}))}};
+export const equipmentDiagrams={...additionalDiagrams,'predvaritelnyy-izmelchitel':{...data,parts:data.parts.map(p=>({...p,label:labels.get(p.number)}))}};

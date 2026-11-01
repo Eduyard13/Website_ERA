@@ -2,10 +2,10 @@ for(const root of document.querySelectorAll('[data-diagram]')){
  const pins=[...root.querySelectorAll('[data-part]')],guides=[...root.querySelectorAll('[data-part-guide]')];
  const selector=root.querySelector('[data-diagram-select]'),tooltip=root.querySelector('[data-diagram-tooltip]'),canvas=root.querySelector('.diagram-canvas');
  const viewButtons=[...root.querySelectorAll('[data-view-switch]')],fullscreen=root.querySelector('[data-diagram-fullscreen]');
- let selected=root.querySelector('[data-part][aria-pressed=true]');
+ let selected=root.querySelector('[data-part][aria-pressed=true]'),suppressHover=false,focusDriven=false;
  function hideTip(){tooltip.hidden=true;}
  function switchView(view){
-  root.dataset.view=view;viewButtons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.viewSwitch===view)));
+  root.dataset.view=view;root.querySelectorAll('[data-diagram-view]').forEach(node=>node.dataset.current=String(node.dataset.diagramView===view));viewButtons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.viewSwitch===view)));
  }
  function choose(pin){
   selected=pin;switchView(pin.dataset.view);selector.value=pin.dataset.part;
@@ -24,24 +24,30 @@ for(const root of document.querySelectorAll('[data-diagram]')){
   tooltip.style.left=left+'px';tooltip.style.top=top+'px';
  }
  pins.forEach(pin=>{
-  pin.addEventListener('pointerenter',()=>{choose(pin);showTip(pin);});
-  pin.addEventListener('pointerleave',()=>{if(!pin.matches(':focus-visible'))hideTip();});
-  pin.addEventListener('focus',()=>{choose(pin);showTip(pin);});
-  pin.addEventListener('blur',hideTip);
-  pin.addEventListener('click',()=>{choose(pin);showTip(pin);});
+  pin.addEventListener('pointerenter',()=>{if(!suppressHover&&!focusDriven){choose(pin);showTip(pin);}});
+  pin.addEventListener('pointerleave',()=>{if(!focusDriven)hideTip();});
+  pin.addEventListener('focus',()=>{suppressHover=false;focusDriven=true;choose(pin);showTip(pin);});
+  pin.addEventListener('blur',()=>{focusDriven=false;hideTip();});
+  pin.addEventListener('click',()=>{suppressHover=false;focusDriven=false;choose(pin);showTip(pin);});
  });
  guides.forEach(g=>{
-  g.addEventListener('pointerenter',()=>{const pin=pins.find(p=>p.dataset.part===g.dataset.partGuide);choose(pin);showTip(pin);});
-  g.addEventListener('pointerleave',hideTip);
+  g.addEventListener('pointerenter',()=>{if(suppressHover||focusDriven)return;const pin=pins.find(p=>p.dataset.part===g.dataset.partGuide);choose(pin);showTip(pin);});
+  g.addEventListener('pointerleave',()=>{if(!focusDriven)hideTip();});
  });
  viewButtons.forEach(button=>button.addEventListener('click',()=>{
-  switchView(button.dataset.viewSwitch);hideTip();
+  suppressHover=false;focusDriven=false;switchView(button.dataset.viewSwitch);hideTip();
   const pin=pins.find(p=>p.dataset.view===button.dataset.viewSwitch&&p===selected)||pins.find(p=>p.dataset.view===button.dataset.viewSwitch);
   choose(pin);
  }));
- selector.addEventListener('change',()=>{const pin=pins.find(p=>p.dataset.part===selector.value);choose(pin);showTip(pin);});
+ selector.addEventListener('change',()=>{suppressHover=false;focusDriven=false;const pin=pins.find(p=>p.dataset.part===selector.value);choose(pin);showTip(pin);});
  document.addEventListener('pointerdown',event=>{if(!event.target.closest('[data-part]'))hideTip();});
- root.addEventListener('keydown',event=>{if(event.key==='Escape')hideTip();});
+ root.addEventListener('keydown',event=>{if(event.key==='Escape'){suppressHover=true;hideTip();}});
+ root.addEventListener('pointermove',event=>{
+  if((suppressHover||focusDriven)&&(event.movementX||event.movementY)){
+   suppressHover=false;focusDriven=false;const pin=event.target.closest('[data-part]');
+   if(pin){choose(pin);showTip(pin);}
+  }
+ });
  window.addEventListener('resize',hideTip);
  fullscreen.hidden=!root.requestFullscreen;
  fullscreen.addEventListener('click',async()=>{

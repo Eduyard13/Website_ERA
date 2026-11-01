@@ -57,17 +57,12 @@ with sync_playwright() as p:
    assert page.locator('.equipment-quick-specs .metric-missing').count()==0
    assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),(slug,width)
    page.screenshot(path=str(out/f'{slug}-hero-{width}.png'))
-   if slug=='vertikalno-rotornyy-izmelchitel':
-    assert page.locator('.scheme-key-list:visible li').count()==6
-    page.locator('.scheme-more summary').click();assert page.locator('.scheme-key-list:visible li').count()==25
+   assert page.locator('[data-diagram]').count()==1
+   if slug=='vertikalno-rotornyy-izmelchitel':assert page.locator('.diagram-pin').count()==25
    if slug=='rotornyy-raspushitel':
-    schematic=page.locator('.equipment-scheme img');schematic.scroll_into_view_if_needed()
-    page.wait_for_function("document.querySelector('.equipment-scheme img').naturalWidth>0")
-    page.locator('.equipment-scheme .media-open').click()
-    page.wait_for_function("document.querySelector('#viewer-image').naturalWidth>0")
-    assert page.locator('#viewer-image').get_attribute('src').endswith('/working-principle.svg')
-    page.keyboard.press('Escape')
-   page.locator('[data-diagram]' if slug=='predvaritelnyy-izmelchitel' else '.scheme-reading').scroll_into_view_if_needed();page.screenshot(path=str(out/f'{slug}-legend-{width}.png'))
+    page.locator('[data-diagram-select]').select_option('2')
+    assert 'Дисковая' in page.locator('[data-detail-label]').inner_text()
+   page.locator('[data-diagram]').scroll_into_view_if_needed();page.screenshot(path=str(out/f'{slug}-legend-{width}.png'))
   page.locator('[data-photo-gallery]').click()
   assert page.locator('[data-media]:visible').count()>=5
   assert page.locator('[data-media]:visible').evaluate_all("items=>items.every(i=>i.dataset.product.endsWith('/"+slug+"')&&i.dataset.type==='photo')")

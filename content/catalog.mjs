@@ -1,6 +1,8 @@
 import {quickParameters,schemeReading} from './equipment-reading.mjs';
 import {withCalculatedPower} from './power.mjs';
 import {equipmentDiagrams} from './equipment-diagrams.mjs';
+import {catalogueIllustrations} from './catalogue-illustrations.mjs';
+import {equipmentMarketing} from './equipment-marketing.mjs';
 import {equipmentDetails} from './equipment-details.mjs';
 import {documentManifest} from './document-manifest.mjs';
 import {equipmentAssets} from './equipment-media.mjs';
@@ -24,15 +26,16 @@ const rows=[
 ];
 export const nodes=rows.map(([slug,title,category])=>{
  const details=withCalculatedPower(slug,equipmentDetails[slug]);
- const doc=documentManifest.find(d=>d.slug===slug);
+ const doc=documentManifest.find(d=>d.slug===slug&&d.category==='technical');
  if(!details||!doc)throw new Error('Missing equipment data: '+slug);
  const hero=equipmentAssets.find(m=>m.slug===slug&&m.id===slug+'-hero');
  return {slug,title,category:categories[category],...details,status:'source-checked',quickSpecs:quickParameters(slug,details.specs),reading:schemeReading[slug],
   image:details.image||'equipment/'+slug+'/hero',
   cardImage:details.cardImage||'equipment/'+slug+'/card',
+  catalogueIllustration:catalogueIllustrations[slug],cardFile:catalogueIllustrations[slug].file,
   imageType:details.imageType||hero?.type,
   imageAlt:hero?.title||'Визуализация предварительного измельчителя',
-  documents:[doc],diagram:equipmentDiagrams[slug],
+  documents:documentManifest.filter(d=>d.slug===slug),diagram:equipmentDiagrams[slug]?{...equipmentDiagrams[slug],title}:undefined,marketing:equipmentMarketing[slug],
   media:[],
   scheme:schemeReading[slug].functional?'equipment/'+slug+'/working-principle.svg':details.scheme||'equipment/'+slug+'/scheme.webp',
   schemeCaption:details.schemeCaption||equipmentAssets.find(m=>m.id===slug+'-scheme')?.title,
@@ -50,9 +53,9 @@ const equipmentMedia=[
  {id:'delivery',title:'Готовый узел на транспортной платформе',type:'photo',topic:'Сборка',file:'delivery.webp'},
  {id:'scheme',title:'Конструктивная схема измельчителя',type:'scheme',topic:'Схемы и визуализации',file:'scheme.webp'},
  {id:'shredder',title:'Визуализация базового узла',type:'visualization',topic:'Схемы и визуализации',file:'shredder.webp'}
-].map(m=>({...m,product:nodes[0].path,productTitle:nodes[0].title,source:'Предоставленное КП предварительного измельчителя'}));
+].map(m=>({...m,product:nodes[0].path,productTitle:nodes[0].title,source:'Техническое описание предварительного измельчителя'}));
 const photographedSlugs=new Set(customerPhotos.map(m=>m.slug));
-const sourceMedia=[...equipmentMedia,...presentationMedia,...equipmentAssets.map(m=>({...m,product:nodes.find(n=>n.slug===m.slug).path,productTitle:nodes.find(n=>n.slug===m.slug).title,source:m.source+', стр. '+m.page}))];
+const sourceMedia=[...equipmentMedia,...presentationMedia,...equipmentAssets.map(m=>({...m,product:nodes.find(n=>n.slug===m.slug).path,productTitle:nodes.find(n=>n.slug===m.slug).title,source:documentManifest.find(d=>d.slug===m.slug&&d.category==='technical').title+', стр. '+m.page}))];
 export const media=[...customerPhotos.map(m=>({...m,product:nodes.find(n=>n.slug===m.slug).path,productTitle:nodes.find(n=>n.slug===m.slug).title})),...equipmentVideos.filter(m=>m.ready).map(m=>({...m,product:nodes.find(n=>n.slug===m.slug).path,productTitle:nodes.find(n=>n.slug===m.slug).title})),...sourceMedia.filter(m=>m.type!=='photo'||!nodes.some(n=>n.path===m.product&&photographedSlugs.has(n.slug)))];
 for(const n of nodes)n.media=media.filter(m=>m.product===n.path).map(m=>m.id);
 export const mediaType={frame:'Кадр из видео',photo:'Фотография',video:'Видео',scheme:'Схема',visualization:'Визуализация'};

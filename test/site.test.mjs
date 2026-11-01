@@ -37,7 +37,7 @@ test('Реестр содержит 12 уникальных узлов, лини
  assert.ok(html.includes(`data-image="${basePath}/assets/photos/predvaritelnyy-izmelchitel/02.webp"`));
  assert.ok(html.includes(`data-product="${basePath}${product}"`));
 });
-test('Фото распределены по 11 узлам, а каталог сохраняет прежние иллюстрации',async()=>{
+test('Фото распределены по 11 узлам, а каталог использует схемы из технических описаний',async()=>{
  const {nodes,media}=await import('../content/catalog.mjs');
  const {customerPhotos}=await import('../content/customer-photos.mjs');
  assert.equal(customerPhotos.length,65);
@@ -45,7 +45,7 @@ test('Фото распределены по 11 узлам, а каталог с
  assert.equal(new Set(customerPhotos.map(m=>m.id)).size,65);
  const catalogue=await readFile('dist/catalog/equipment/index.html','utf8');
  for(const n of nodes){
-  assert.ok(catalogue.includes(`${basePath}/assets/${n.cardImage}.webp`),n.slug);
+  assert.ok(catalogue.includes(`${basePath}/assets/${n.cardFile}`),n.slug);
   assert.ok(!n.cardImage.startsWith('photos/'),n.slug);
   const pictures=media.filter(m=>m.product===n.path&&m.type==='photo');
   const html=await readFile('dist'+n.path+'/index.html','utf8');
@@ -115,12 +115,14 @@ test('Все 12 карточек содержат свои параметры и
   const html=await readFile('dist'+n.path+'/index.html','utf8');
   assert.ok(!html.includes('КАРТОЧКА В ПОДГОТОВКЕ'),n.slug);
   assert.ok(n.specs.length>=10,n.slug);assert.ok(n.highlights.length>=2,n.slug);
-  assert.equal(n.documents.length,1);const d=n.documents[0];
+  assert.equal(n.documents.length,2);
+  for(const d of n.documents){
   assert.ok(html.includes(`${basePath}/documents/${d.file}`));
   const pdf=await readFile('dist/documents/'+d.file);
   assert.equal(pdf.subarray(0,4).toString(),'%PDF');assert.equal(pdf.length,d.bytes);
   assert.equal(createHash('sha256').update(pdf).digest('hex'),d.sha256);
-  await stat('dist/assets/'+n.cardImage+'.webp');await stat('dist/assets/'+n.scheme);
+  }
+  await stat('dist/assets/'+n.cardFile);await stat('dist/assets/'+n.scheme);
  }
 });
 test('Единицы, мощность и условия разных узлов не смешиваются',async()=>{
@@ -137,7 +139,7 @@ test('Единицы, мощность и условия разных узлов
  assert.ok(get('rotornaya-tsentrifuga').notes.some(n=>n.includes('37,62 кВт')));
  assert.ok(get('vertikalno-rotornyy-izmelchitel').notes.some(n=>n.includes('Не включает внешний нагрев')));
  assert.equal(value('predvaritelnyy-raspushitel','Расчётная потребляемая мощность'),'25,9 кВт');
- assert.equal(get('rama-napolnitel').documents[0].type,'Паспорт и коммерческое описание');
+ assert.equal(get('rama-napolnitel').documents[0].type,'Паспорт и техническое описание');
 });
 test('Навигация различает главную, текущую страницу и родительский раздел',async()=>{
  const {navigation}=await import('../scripts/navigation.mjs');
@@ -260,4 +262,59 @@ test('Интерактивная схема сохраняет 12 обознач
  assert.ok(html.includes('href="#construction"'));
  assert.ok(!html.includes('class="equipment-scheme"'));
  for(const v of d.views)assert.ok(html.includes(`href="${basePath}/assets/${v.file}"`));
+});
+
+test('Все 12 интерактивных схем сохраняют исходные обозначения и правильные файлы видов',async()=>{
+ const {nodes}=await import('../content/catalog.mjs');
+ let count=0;
+ for(const n of nodes){
+  const d=n.diagram;assert.ok(d,n.slug);count+=d.parts.length;
+  assert.deepEqual(d.parts.map(p=>[p.number,p.label]),n.reading.parts,n.slug);
+  assert.ok(d.views.some(v=>v.id===d.parts.find(p=>p.number===d.defaultPart)?.view),n.slug);
+  for(const v of d.views){
+   await stat('dist/assets/'+v.file);assert.ok(d.parts.some(p=>p.view===v.id),n.slug+' '+v.id);
+   const h=v.canvasHeight||1000;
+   for(const p of d.parts.filter(p=>p.view===v.id)){
+    assert.ok(p.description,n.slug+' '+p.number);
+    for(const [x,y] of [p.pin,...p.targets])assert.ok(x>0&&x<1000&&y>0&&y<h,`${n.slug} ${p.number}: ${x},${y}`);
+   }
+  }
+  const html=await readFile('dist'+n.path+'/index.html','utf8');
+  assert.equal([...html.matchAll(/class="diagram-pin" /g)].length,d.parts.length);
+  assert.ok(!html.includes('class="equipment-scheme"'));
+  const c=n.catalogueIllustration;
+  assert.equal(c.type,'technical-illustration');assert.equal(c.sourceDocumentId,n.slug+'-technical');
+  assert.ok(c.width>300&&c.height>250);await stat('dist/assets/'+c.file);
+ }
+ assert.equal(count,130);
+});
+
+test('24 документа переименованы, разложены по двум папкам и имеют согласованные ссылки',async()=>{
+ const {nodes}=await import('../content/catalog.mjs');
+ const {documentManifest,documentCategories}=await import('../content/document-manifest.mjs');
+ assert.equal(documentManifest.length,24);assert.equal(documentCategories.length,2);
+ assert.equal(new Set(documentManifest.map(d=>d.id)).size,24);
+ assert.equal(new Set(documentManifest.map(d=>d.file)).size,24);
+ const library=await readFile('dist/documents/index.html','utf8');
+ for(const category of documentCategories){
+  assert.equal(documentManifest.filter(d=>d.category===category.id).length,12);
+  assert.ok(library.includes(`data-document-folder="${category.id}"`));
+ }
+ for(const n of nodes){
+  assert.equal(n.documents.filter(d=>d.category==='brochures').length,1);
+  assert.equal(n.documents.filter(d=>d.category==='technical').length,1);
+  const html=await readFile('dist'+n.path+'/index.html','utf8');
+  assert.ok(n.marketing.slogan&&n.marketing.lead&&n.marketing.benefits.length===3);
+  assert.ok(html.includes(n.marketing.slogan));assert.ok(html.includes('class="equipment-benefits"'));
+  for(const d of n.documents){
+   assert.ok(d.file.startsWith(d.category==='brochures'?'brochures/':'technical/'));
+   assert.ok(!d.downloadName.includes('Визитка')&&!d.downloadName.includes('КП_'));
+   assert.ok(d.downloadName.endsWith('.pdf'));
+   for(const page of [html,library]){
+    assert.ok(page.includes(`href="${basePath}/documents/${d.file}"`));
+    assert.ok(page.includes(`download="${d.downloadName}"`));
+    if(d.legacyFile)assert.ok(!page.includes(`href="${basePath}/documents/${d.legacyFile}"`));
+   }
+  }
+ }
 });
