@@ -41,8 +41,8 @@ with sync_playwright() as p:
    if route=='/':page.screenshot(path=str(out/f'footer-with-rates-{width}.png'))
   if width==360:
    page.goto(base+'/contacts');page.get_by_role('button',name='Меню').click()
-   page.locator('#mobile-nav details').evaluate_all('items=>items.forEach(e=>e.open=true)')
-   assert page.locator('#mobile-nav').evaluate('(e)=>e.getBoundingClientRect().bottom<=innerHeight+1')
+   assert page.locator('#site-menu').is_visible()
+   assert page.locator('#site-menu').evaluate('(e)=>e.getBoundingClientRect().bottom<=innerHeight+1')
    page.keyboard.press('Escape')
   page.goto(base+'/catalog/equipment/ballisticheskiy-separator#video')
   page.wait_for_function("document.querySelector('[data-fx-bar]').dataset.state==='live'")

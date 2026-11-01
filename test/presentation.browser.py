@@ -20,8 +20,7 @@ with sync_playwright() as p:
    if width in [360,1440] and route in ['/','/technology']:
     page.screenshot(path=str(out/f'{name}-{width}.png'),full_page=True)
     if route=='/':page.screenshot(path=str(out/f'home-first-screen-{width}.png'))
-  if width<1200:
-   page.get_by_role('button',name='Меню').click();assert page.locator('#mobile-nav').is_visible();page.keyboard.press('Escape');assert not page.locator('#mobile-nav').is_visible()
+  page.locator('[data-menu-toggle]').click();assert page.locator('#site-menu').is_visible();page.keyboard.press('Escape');assert not page.locator('#site-menu').is_visible()
   print('Pages, responsive images, overflow, menu:',width,'OK',flush=True)
  page.set_viewport_size({'width':1440,'height':1000});page.goto(base+'/')
  page.get_by_role('link',name='Как это работает',exact=True).click();assert page.url.endswith('#solution')

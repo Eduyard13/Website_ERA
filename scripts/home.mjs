@@ -63,9 +63,9 @@ export function presentationHome() {
       <figure class="control-visual"><div class="control-label"><span class="live-dot" aria-hidden="true"></span>КАИР / УПРАВЛЕНИЕ КОМПЛЕКСОМ</div><a href="/automation" aria-label="Система КАИР: описание управления">${image('kair','Изображение интерфейса системы КАИР из презентации проекта ERA')}</a><figcaption>Изображение из презентации проекта. Состав функций и интеграции согласуется для конкретной комплектации.</figcaption></figure>
     </section>
 
-    <section class="story-section launch-story" aria-labelledby="launch-title">
+    <section class="story-section launch-story" id="about-era" aria-labelledby="launch-title">
       <div class="story-heading"><div><p class="eyebrow">05 / ОТ ЗАДАЧИ К ПРОИЗВОДСТВУ</p><h2 id="launch-title">Начинаем с вашего сырья.<br>Двигаемся к решению.</h2></div><p>Технология, комплектация и запуск —<br>последовательные этапы работы над проектом.</p></div>
-      <ol class="launch-steps">${projectSteps.map((s,i)=>`<li><span>0${i+1}</span><h3>${s.title}</h3><p>${s.text}</p></li>`).join('')}</ol>
+      <p class="story-lead">ERA — проект по возвращению вторичных полимерных материалов в производственный оборот.</p><p>Сайт объединяет отдельные узлы, линии и комплексы, систему управления и направление искусственного интеллекта. Работа над проектом начинается с описания сырья и целей, изучения исходных данных, подбора технологии и согласования состава и спецификации.</p><ol class="launch-steps">${projectSteps.map((s,i)=>`<li><span>0${i+1}</span><h3>${s.title}</h3><p>${s.text}</p></li>`).join('')}</ol>
       <div class="manufacturing-story">${mediaLink('manufacture-wide','Оборудование на стадии изготовления, фото из презентации ERA','Фотоотчёт изготовления оборудования · презентация ERA, слайд 24')}<div><p class="eyebrow">ИНЖЕНЕРИЯ В ДЕТАЛЯХ</p><h3>От технологической схемы<br>к собранному оборудованию.</h3><p>Фотографии, компоновки и описания помогают перейти от общего замысла к предметному обсуждению поставки.</p><a class="text-link" href="/media">Фото и схемы проекта ${arrow}</a></div></div>
     </section>
 

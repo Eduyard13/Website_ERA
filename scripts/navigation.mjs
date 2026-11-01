@@ -1,22 +1,35 @@
-const groups = [
- {href:'/',label:'Знакомство с ERA',home:true},
- {href:'/catalog',label:'Каталог',matches:p=>p==='/catalog'||p.startsWith('/catalog/equipment')},
- {href:'/catalog/lines',label:'Линии',matches:p=>p.startsWith('/catalog/lines')},
- {href:'/technology',label:'Технология'},
- {label:'Управление и ИИ',children:[{href:'/automation',label:'Программа управления'},{href:'/ai',label:'Искусственный интеллект'}]},
- {label:'Материалы',children:[{href:'/media',label:'Фото и видео'},{href:'/documents',label:'Документация'},{href:'/news',label:'Новости'},{href:'/blog',label:'Блог'}]},
- {href:'/about',label:'О проекте'},
- {href:'/contacts',label:'Контакты',matches:p=>p==='/contacts'||p==='/company-details'},
-];
-const isCurrent=(item,path)=>item.href===path;
-const isSection=(item,path)=>item.matches?item.matches(path):path===item.href||path.startsWith(item.href+'/');
-const homeMark='<svg class="nav-home-mark" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m10 2 8 8-8 8-8-8 8-8Z" stroke="currentColor" stroke-width="1.2"/><path d="M7 10h6m-3-3v6" stroke="currentColor" stroke-width="1.2"/></svg>';
-function link(item,path,submenu=false){
- const current=isCurrent(item,path);const active=current||(!submenu&&isSection(item,path));
- return `<a class="${submenu?'nav-sub-link':'nav-link nav-entry'}${item.home?' nav-home':''}" href="${item.href}"${current?' aria-current="page"':active?' aria-current="location"':''}${item.home?' title="Знакомство с ERA — главная страница"':''}>${item.home?homeMark:''}<span>${item.label}</span></a>`;
+import {primaryLinks,navigationGroups} from '../content/navigation.mjs';
+import {siteContacts} from '../content/contact.mjs';
+import {exchangeRateBar} from './fx.mjs';
+const escape=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+const belongs=(path,parent)=>path===parent||path.startsWith(parent+'/');
+export function normalizeNavigationPath(value,basePath=''){
+ let path=new URL(value||'/','https://era.invalid').pathname;
+ const base=basePath.replace(/\/+$/,'');
+ if(base&&(path===base||path.startsWith(base+'/')))path=path.slice(base.length)||'/';
+ return path.replace(/\/+$/,'')||'/';
 }
-export function navigation(path){return groups.map(item=>{
- if(!item.children)return link(item,path);
- const active=item.children.some(child=>isSection(child,path));
- return `<details class="nav-section nav-entry"${active?' data-active-section="true"':''}><summary>${item.label}</summary><div>${item.children.map(child=>link(child,path,true)).join('')}</div></details>`;
-}).join('');}
+export function navigationState(value,{basePath=''}={}){
+ const path=normalizeNavigationPath(value,basePath);
+ const section=path==='/'?'project':belongs(path,'/catalog')?'equipment':path==='/technology'?'technology':navigationGroups.flatMap(g=>g.links).some(l=>l.href===path)?'all':null;
+ const panelPath=belongs(path,'/catalog/equipment')?'/catalog/equipment':belongs(path,'/catalog/lines')?'/catalog/lines':path;
+ return {path,section,panelPath};
+}
+const contactHref=path=>path==='/'?'#discuss':'/contacts';
+function primaryLink(item,state){
+ const current=state.path===item.href,active=state.section===item.section;
+ return `<a class="primary-link" href="${item.href}" data-label="${item.label}"${current?' aria-current="page"':''}${active?' data-current-section="true"':''}><span>${item.label}</span></a>`;
+}
+export function navigation(path){const state=navigationState(path);return primaryLinks.map(item=>primaryLink(item,state)).join('');}
+function panelLink(item,state){
+ const exact=state.path===item.href,parent=!exact&&state.panelPath===item.href;
+ return `<a class="drawer-link" href="${item.href}"${exact?' aria-current="page"':''}${parent?' data-current-branch="true"':''}><span>${item.label}</span><span aria-hidden="true">↗</span></a>`;
+}
+export function siteHeader(path){
+ const state=navigationState(path),cta=contactHref(state.path);
+ return `<header class="site-header"><div class="header-primary"><a class="brand" href="/" aria-label="ЭРА — на главную"><img src="/assets/logo.png" alt="ЭРА" width="112" height="44"></a><nav class="primary-nav" aria-label="Основная навигация">${navigation(path)}</nav><div class="header-actions"><button type="button" class="all-sections-toggle" data-menu-toggle data-label="Все разделы" aria-expanded="false" aria-controls="site-menu"${state.section==='all'?' data-current-section="true"':''}><svg class="menu-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.3"/></svg><span class="menu-label-desktop">Все разделы</span><span class="menu-label-mobile">Меню</span></button><a class="header-cta" href="${cta}">Обсудить проект <span aria-hidden="true">↗</span></a></div></div>${exchangeRateBar()}</header>`;
+}
+export function siteMenu(path){
+ const state=navigationState(path),cta=contactHref(state.path);
+ return `<dialog id="site-menu" class="site-menu" aria-labelledby="site-menu-title"><div class="drawer-head"><p id="site-menu-title">Все разделы</p><button type="button" class="drawer-close" data-menu-close aria-label="Закрыть меню">Закрыть <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 4 12 12M16 4 4 16" stroke="currentColor" stroke-width="1.3"/></svg></button><a class="button drawer-top-cta" href="${cta}">Обсудить проект <span aria-hidden="true">↗</span></a></div><div class="drawer-scroll"><div class="drawer-mobile-intro"><nav class="drawer-primary" aria-label="Основные направления">${primaryLinks.map(item=>primaryLink(item,state)).join('')}</nav></div><nav class="drawer-groups" aria-label="Все разделы сайта">${navigationGroups.map((group,i)=>`<section class="drawer-group" aria-labelledby="drawer-group-${i}"><h2 id="drawer-group-${i}">${group.label}</h2>${group.links.map(item=>panelLink(item,state)).join('')}</section>`).join('')}</nav><div class="drawer-footer"><a class="button drawer-contact-cta" href="${cta}">Обсудить проект <span aria-hidden="true">↗</span></a><a class="drawer-phone" href="${siteContacts.phoneHref}">${siteContacts.phone}</a><a class="drawer-email" href="mailto:${escape(siteContacts.email)}">${escape(siteContacts.email)}</a></div></div></dialog>`;
+}

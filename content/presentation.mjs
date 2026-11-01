@@ -41,9 +41,9 @@ export const projectSteps = [
   {title:'Сопровождаем работу',text:'Обучение, обслуживание, запасные части и техническая поддержка по условиям поставки.'},
 ];
 export const presentationMedia = [
-  {id:'project-complex',title:'Комплекс ERA: производственный участок',type:'photo',topic:'Работа',file:'presentation/complex.webp',slide:9,product:'/about',productTitle:'Проект ERA'},
+  {id:'project-complex',title:'Комплекс ERA: производственный участок',type:'photo',topic:'Работа',file:'presentation/complex.webp',slide:9,product:'/',productTitle:'Проект ERA'},
   {id:'project-raw-film',title:'Полигонное плёночное сырьё',type:'photo',topic:'Сырьё',file:'presentation/raw-film.webp',slide:3,product:'/technology',productTitle:'Технология переработки'},
   ...presentationStages.slice(0,2).map(s=>({id:'project-'+s.id,title:s.caption,type:'visualization',topic:'Схемы и визуализации',file:'presentation/'+s.image+'.webp',slide:s.slide,product:'/technology#'+s.id,productTitle:s.title})),
   ...presentationOutputs.map(o=>({id:'project-'+o.id,title:o.title+' — образец из презентации',type:'photo',topic:'Результат',file:'presentation/'+o.image+'.webp',slide:o.slide,product:'/technology#granulation',productTitle:'Результат переработки'})),
-  {id:'project-production',title:'Изготовление оборудования: общий вид',type:'photo',topic:'Сборка',file:'presentation/manufacture-wide.webp',slide:24,product:'/about',productTitle:'Проект ERA'},
+  {id:'project-production',title:'Изготовление оборудования: общий вид',type:'photo',topic:'Сборка',file:'presentation/manufacture-wide.webp',slide:24,product:'/',productTitle:'Проект ERA'},
 ].map(m=>({...m,source:presentationSource+', слайд '+m.slide}));

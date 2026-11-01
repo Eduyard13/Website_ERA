@@ -17,10 +17,12 @@ with sync_playwright() as p:
    assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),f'overflow {width} {route}: '+str(page.evaluate('document.documentElement.scrollWidth'))
    assert page.locator('h1').count()==1
    if width==1440:
-    current=page.locator('.desktop-nav a[aria-current]')
-    assert current.count()==1,(route,current.count())
-    assert current.get_attribute('href')==('/Website_ERA/documents' if route=='/documents' else '/Website_ERA/catalog')
-    assert page.locator('.desktop-nav').evaluate('(e)=>e.getBoundingClientRect().right < document.documentElement.clientWidth')
+    if route=='/documents':assert page.locator('[data-menu-toggle]').get_attribute('data-current-section')=='true'
+    else:
+     current=page.locator('.primary-nav a[data-current-section=true]')
+     assert current.count()==1,(route,current.count())
+     assert current.get_attribute('href')=='/Website_ERA/catalog'
+    assert page.locator('.primary-nav').evaluate('(e)=>e.getBoundingClientRect().right < document.documentElement.clientWidth')
    if route in ['/catalog/equipment','/catalog/equipment/kapsulyator','/catalog/equipment/ballisticheskiy-separator','/documents'] and width in [360,1440]:
     name=route.split('/')[-1];page.screenshot(path=str(out/f'{name}-{width}.png'),full_page=True)
   print('All 12 cards, catalogue, documents, layout and images:',width,'OK',flush=True)
@@ -40,14 +42,19 @@ with sync_playwright() as p:
  page.get_by_role('searchbox').fill('неттакогослова');assert page.locator('#document-empty').is_visible()
  page.goto(base+'/catalog/equipment/plenochnyy-flotator')
  page.locator('.equipment-live-photos .media-open').first.click();assert page.locator('#media-viewer').is_visible();page.keyboard.press('Escape');assert not page.locator('#media-viewer').is_visible()
- # Check ancestor highlights and keyboard/mobile home navigation.
- for route,selector in [('/catalog/lines/separatsiya-01','a[href="/Website_ERA/catalog/lines"]'),('/technology','a[href="/Website_ERA/technology"]'),('/blog','a[href="/Website_ERA/blog"]')]:
-  page.goto(base+route);assert page.locator('.desktop-nav '+selector).get_attribute('aria-current') in ['page','location']
-  if route=='/blog':assert page.locator('.desktop-nav details[data-active-section=true] summary').inner_text()=='Материалы'
- page.set_viewport_size({'width':360,'height':850});page.goto(base+'/documents');page.get_by_role('button',name='Меню').click();assert page.locator('#mobile-nav').is_visible()
- page.locator('#mobile-nav .nav-home').click();assert page.url in [base+'/',base]
- page.get_by_role('button',name='Меню').click();assert page.locator('#mobile-nav .nav-home').get_attribute('aria-current')=='page'
- page.keyboard.press('Escape');assert not page.locator('#mobile-nav').is_visible()
+ # Check ancestor highlights and keyboard/mobile project navigation.
+ for route in ['/catalog/lines/separatsiya-01','/technology','/blog']:
+  page.goto(base+route)
+  if route=='/blog':
+   assert page.locator('[data-menu-toggle]').get_attribute('data-current-section')=='true'
+   page.locator('[data-menu-toggle]').click()
+   assert page.locator('.drawer-groups a[href="/Website_ERA/blog"]').get_attribute('aria-current')=='page'
+   page.keyboard.press('Escape')
+  else:assert page.locator('.primary-nav a[data-current-section=true]').get_attribute('href')==('/Website_ERA/technology' if route=='/technology' else '/Website_ERA/catalog')
+ page.set_viewport_size({'width':360,'height':850});page.goto(base+'/documents');page.get_by_role('button',name='Меню',exact=True).click();assert page.locator('#site-menu').is_visible()
+ page.locator('.drawer-primary a[href="/Website_ERA/"]').click();assert page.url in [base+'/',base]
+ page.get_by_role('button',name='Меню',exact=True).click();assert page.locator('.drawer-primary a[href="/Website_ERA/"]').get_attribute('aria-current')=='page'
+ page.keyboard.press('Escape');assert not page.locator('#site-menu').is_visible()
  assert not errors,errors;assert not failed,failed
  print('Filters, back restoration, PDF download, modal, ancestor selection and mobile home navigation: OK',flush=True)
  page.set_viewport_size({'width':1440,'height':1000});page.goto(base+'/');page.screenshot(path=str(out/'home-menu-1440.png'))

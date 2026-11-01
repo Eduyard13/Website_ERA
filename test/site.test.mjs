@@ -141,16 +141,27 @@ test('Единицы, мощность и условия разных узлов
  assert.equal(value('predvaritelnyy-raspushitel','Расчётная потребляемая мощность'),'25,9 кВт');
  assert.equal(get('rama-napolnitel').documents[0].type,'Паспорт и техническое описание');
 });
-test('Навигация различает главную, текущую страницу и родительский раздел',async()=>{
- const {navigation}=await import('../scripts/navigation.mjs');
- assert.match(navigation('/'),/href="\/" aria-current="page"/);
- assert.match(navigation(product),/href="\/catalog" aria-current="location"/);
- const line=navigation('/catalog/lines/separatsiya-01');
- assert.match(line,/href="\/catalog\/lines" aria-current="location"/);
- assert.ok(!line.includes('href="/catalog" aria-current='));
- assert.match(navigation('/documents'),/class="nav-section nav-entry" data-active-section="true"/);
- assert.match(navigation('/documents'),/href="\/documents" aria-current="page"/);
- assert.ok(navigation('/technology').includes('Знакомство с ERA'));
+test('Навигация различает точную страницу, раздел и полное меню',async()=>{
+ const {navigation,navigationState,siteHeader,siteMenu,normalizeNavigationPath}=await import('../scripts/navigation.mjs');
+ assert.match(navigation('/'),/href="\/"[^>]*aria-current="page"[^>]*data-current-section="true"/);
+ for(const path of [product,'/catalog/equipment','/catalog/lines/separatsiya-01','/catalog/lines']){
+  const state=navigationState(path);assert.equal(state.section,'equipment');
+  assert.match(navigation(path),/href="\/catalog"[^>]*data-current-section="true"/);
+  assert.ok(!navigation(path).includes('aria-current="location"'));
+ }
+ assert.equal(navigationState('/technology/#hot-washing').section,'technology');
+ for(const path of ['/automation','/ai','/media','/documents','/news','/blog','/contacts','/company-details']){
+  assert.equal(navigationState(path).section,'all');
+  assert.match(siteHeader(path),/aria-controls="site-menu" data-current-section="true"/);
+  assert.match(siteMenu(path),new RegExp('href="'+path+'" aria-current="page"'));
+ }
+ assert.match(siteMenu(product),/href="\/catalog\/equipment" data-current-branch="true"/);
+ assert.match(siteMenu('/catalog/lines/separatsiya-01'),/href="\/catalog\/lines" data-current-branch="true"/);
+ assert.equal(normalizeNavigationPath('/Website_ERA/catalog/equipment/?q=x#specs','/Website_ERA/'),'/catalog/equipment');
+ assert.equal(navigationState('/Website_ERA/?q=x#discuss',{basePath:'/Website_ERA'}).section,'project');
+ assert.equal(navigationState('/Website_ERA/catalog/equipment/?q=x#specs',{basePath:'/Website_ERA'}).section,'equipment');
+ for(const path of ['/catalogue','/404','/unknown','/technology-else'])assert.equal(navigationState(path).section,null);
+ assert.ok(!siteHeader('/404').includes('data-current-section="true"'));
 });
 test('Видеоблок появляется у своего узла, а ролик загружается после выбора пользователя',async()=>{
  const {media,nodes}=await import('../content/catalog.mjs');
@@ -216,6 +227,7 @@ test('Полные ролики проверены по контрольным �
 test('Панель ЦБ РФ доступна на всех страницах и не содержит выдуманных курсов',async()=>{
  const {version}=JSON.parse(await readFile('package.json','utf8'));
  for(const route of new Set(routes)){
+  if(route==='/about')continue; // Immediate legacy redirect renders the destination header.
   const html=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
   assert.equal([...html.matchAll(/data-fx-bar /g)].length,1,route);
   assert.ok(html.includes('https://www.cbr.ru/currency_base/daily/'));
@@ -316,5 +328,28 @@ test('24 документа переименованы, разложены по 
     if(d.legacyFile)assert.ok(!page.includes(`href="${basePath}/documents/${d.legacyFile}"`));
    }
   }
+ }
+});
+
+test('Общий каталог предлагает две ветки, а старое О проекте перенесено на главную',async()=>{
+ const {nodes,lines}=await import('../content/catalog.mjs');
+ const hub=await readFile('dist/catalog/index.html','utf8');
+ assert.equal([...hub.matchAll(/class="catalog-door" /g)].length,2);
+ assert.ok(hub.indexOf('01 / ЛИНИИ И КОМПЛЕКСЫ')<hub.indexOf('02 / ОТДЕЛЬНЫЕ УЗЛЫ'));
+ assert.ok(!hub.includes('id="catalog-filters"'));
+ const equipment=await readFile('dist/catalog/equipment/index.html','utf8');
+ assert.ok(equipment.includes('id="catalog-filters"'));
+ assert.equal([...equipment.matchAll(/data-node data-title=/g)].length,nodes.length);
+ assert.equal(lines.filter(l=>l.enabled&&l.group==='Сепарация').length,2);
+ assert.equal(lines.filter(l=>l.enabled&&l.group==='Мойка').length,1);
+ const home=await readFile('dist/index.html','utf8');
+ assert.ok(home.includes('id="about-era"'));assert.ok(home.includes('описания сырья и целей'));
+ assert.ok(home.includes('ERA — проект по возвращению вторичных полимерных материалов'));
+ const about=await readFile('dist/about/index.html','utf8');
+ assert.ok(about.includes(`content="0; url=${basePath}/"`));
+ assert.ok(about.includes(`rel="canonical" href="${basePath}/"`));
+ for(const route of routes.filter(r=>r!=='/about')){
+  const html=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
+  assert.ok(!html.includes(`href="${basePath}/about"`));
  }
 });
