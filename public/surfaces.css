@@ -1,0 +1,18 @@
+/* Shared by the landing page, footer, both film sections and the open player.
+   Loaded after component styles so every dark panel uses this smooth surface. */
+.era-indigo-surface,#media-viewer.is-video{
+ isolation:isolate;
+ color:var(--era-on-dark);
+ background-color:var(--era-blue);
+ background-image:var(--era-blue-gradient);
+ background-size:auto;
+ background-repeat:no-repeat;
+}
+.era-indigo-surface{position:relative}
+/* Explicitly suppress the former texture layers, including with older cached component CSS. */
+.era-indigo-surface::before,.era-indigo-surface::after,
+#media-viewer.is-video::before,#media-viewer.is-video::after{
+ content:none;
+ background-image:none;
+}
+.era-indigo-surface :focus-visible{outline-color:var(--era-gold)}
