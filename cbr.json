@@ -4,7 +4,7 @@
   "sourceUrl": "https://www.cbr.ru/scripts/XML_daily.asp?date_req=01%2F11%2F2026",
   "requestedDate": "2026-11-01",
   "effectiveDate": "2026-10-31",
-  "fetchedAt": "2026-11-01T01:52:31.043Z",
+  "fetchedAt": "2026-11-01T08:44:33.455Z",
   "rates": {
     "USD": {
       "nominal": 1,
