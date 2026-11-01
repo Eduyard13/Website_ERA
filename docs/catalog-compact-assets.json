@@ -1,0 +1,60 @@
+{
+  "purpose": "Landscape artistic adaptations of the supplied category covers, prepared for the owner’s edge-to-edge compact catalog windows. Technical equipment images are unchanged.",
+  "sourceCovers": [
+    "catalog-lines-exhibition.webp",
+    "catalog-nodes-museum.webp"
+  ],
+  "generatedMasters": {
+    "lines": "/workspace/generated_images/exec-5afa2725-5c06-4b95-b7fa-09d039fae258.png",
+    "nodes": "/workspace/generated_images/exec-5759beda-3aa1-4bc4-9335-05dcd54db449.png"
+  },
+  "encoding": "WebP, quality 88, original 1536x1024 and responsive 768x512; no composition edits during encoding.",
+  "equipmentBoundsIn1536x1024": {
+    "lines": [
+      300,
+      110,
+      1205,
+      905
+    ],
+    "nodes": [
+      365,
+      200,
+      1210,
+      885
+    ]
+  },
+  "assets": {
+    "catalog-lines-compact-768.webp": {
+      "dimensions": [
+        768,
+        512
+      ],
+      "bytes": 65240,
+      "sha256": "1d07760a418fba1ec04a7450d7cfd0c38892247d0b1ed2f174da75cd4a72ef2a"
+    },
+    "catalog-lines-compact.webp": {
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 239926,
+      "sha256": "25521d76243e54cb456a53efce29314aacd3a099c40d0d6fe3e9e6319928649c"
+    },
+    "catalog-nodes-compact-768.webp": {
+      "dimensions": [
+        768,
+        512
+      ],
+      "bytes": 50304,
+      "sha256": "c22f6564bd44d33cf50da221b08d8432ba7a3cf493f7822cf1faeecd5da4a057"
+    },
+    "catalog-nodes-compact.webp": {
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 147600,
+      "sha256": "33c112e1f2547d38d59a02db2b0af13feb989993516cd799cf8d16751b1f152a"
+    }
+  }
+}
