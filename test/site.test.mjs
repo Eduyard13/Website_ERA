@@ -387,15 +387,32 @@ test('Клиентский режим: единый кириллический �
  }
  const notFound=await readFile('dist/404.html','utf8');assert.equal([...notFound.matchAll(/data-fx-bar /g)].length,1);
 });
-test('Светлое обращение отделено от подвала, монитор показывает один реальный экран без автосмены',async()=>{
+test('Светлое обращение отделено от подвала, КАИР показывает реальные фотографии с автосменой',async()=>{
  const {kairSlides,kairPresentation}=await import('../content/kair.mjs');
  const {kairMonitor}=await import('../scripts/kair.mjs');
- assert.equal(kairSlides.length,1);assert.equal(kairPresentation.autoplay,false);
- assert.equal(kairSlides[0].width,616);assert.equal(kairSlides[0].height,361);
- await stat('dist/assets/'+kairSlides[0].file);
- const component=kairMonitor();assert.ok(!component.includes('data-kair-next'));assert.ok(!component.includes('data-kair-pause'));assert.ok(!component.includes('1 из 1'));
+ assert.equal(kairSlides.length,23);assert.equal(kairPresentation.autoplay,true);
+ assert.ok(kairPresentation.intervalMs>=6000&&kairPresentation.intervalMs<=12000);
+ const component=kairMonitor();assert.ok(component.includes('data-kair-next'));assert.ok(component.includes('data-kair-pause'));assert.ok(component.includes('1 из 23'));
+ assert.ok(component.includes('data-kair-viewer'));assert.ok(component.includes('Настоящие экраны. Реальное управление.'));
  const html=await readFile('dist/index.html','utf8');
  assert.match(html,/<section class="story-section discuss-story" id="discuss"/);
  assert.ok(html.includes('data-kair-inspect'));assert.ok(html.includes('Подробнее о КАИР'));
- assert.ok(html.includes(`data-image="${basePath}/assets/presentation/kair.webp"`));
+ assert.ok(html.includes(`data-image="${basePath}/assets/${kairSlides[0].original}"`));
+ assert.ok(!kairMonitor([]));
+ const single=kairMonitor([kairSlides[0]],{...kairPresentation,autoplay:false});
+ assert.ok(!single.includes('data-kair-next'));assert.ok(!single.includes('data-kair-pause'));
+});
+test('Все фотографии КАИР из архива имеют действительные оригиналы и адаптивные копии',async()=>{
+ const {createHash}=await import('node:crypto');
+ const {kairSlides}=await import('../content/kair.mjs');
+ const manifest=JSON.parse(await readFile('docs/kair-slides-assets.json','utf8'));
+ assert.equal(manifest.images.length,23);
+ assert.deepEqual(new Set(kairSlides.map(s=>s.original)),new Set(manifest.images.map(s=>s.sourceFile)));
+ for(const slide of kairSlides){
+  const source=manifest.images.find(s=>s.sourceFile===slide.original);
+  for(const [file,sha] of [[slide.original,source.sourceSha256],[slide.file,source.image.sha256],[slide.smallFile,source.small.sha256]]){
+   const bytes=await readFile('dist/assets/'+file);
+   assert.equal(createHash('sha256').update(bytes).digest('hex'),sha,file);
+  }
+ }
 });

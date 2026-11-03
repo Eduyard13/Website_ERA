@@ -1,4 +1,4 @@
-"""Customer-facing refinements and a private fixture for future KAIR slides."""
+"""Customer-facing refinements and a private KAIR failure/pause fixture."""
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 import subprocess,os,json
@@ -16,6 +16,7 @@ fixture=subprocess.check_output(['node','--input-type=module','-e',"""
  ];
  console.log(kairMonitor(slides,{autoplay:true,intervalMs:1000,transitionMs:50}));
 """],cwd=repo,text=True)
+slides=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {kairSlides} from './content/kair.mjs'; console.log(JSON.stringify(kairSlides))"],cwd=repo,text=True))
 
 with sync_playwright() as p:
  proxy=os.environ.get('HTTPS_PROXY') or os.environ.get('HTTP_PROXY')
@@ -31,16 +32,16 @@ with sync_playwright() as p:
    assert page.locator('.footer-nav-group').count()==5
    assert page.locator('.footer-nav a').count()==page.locator('.drawer-groups a').count()==13
    if route in ['/','/automation/']:
-    monitor=page.locator('[data-kair]');assert monitor.get_attribute('data-autoplay')=='false'
-    assert monitor.locator('[data-kair-slide]').count()==1
-    assert monitor.locator('.kair-controls').count()==0
+    monitor=page.locator('[data-kair]');assert monitor.get_attribute('data-autoplay')=='true'
+    assert monitor.locator('[data-kair-slide]').count()==len(slides)
+    assert monitor.locator('.kair-controls').count()==1
     monitor.scroll_into_view_if_needed()
     screen=monitor.locator('.kair-monitor-screen').bounding_box();assert abs(screen['width']/screen['height']-16/9)<.02
-    image=monitor.locator('img');assert image.evaluate('(e)=>getComputedStyle(e).objectFit')=='contain'
-    assert image.get_attribute('src').endswith('/presentation/kair.webp')
-    monitor.locator('[data-kair-inspect]').click();assert page.locator('#media-viewer').is_visible()
-    assert page.locator('#viewer-image').get_attribute('src').endswith('/presentation/kair.webp')
-    page.keyboard.press('Escape');assert monitor.locator('[data-kair-inspect]').evaluate('(e)=>e===document.activeElement')
+    image=monitor.locator('[data-kair-slide][data-current=true] img');assert image.evaluate('(e)=>getComputedStyle(e).objectFit')=='cover'
+    assert image.get_attribute('src').endswith('/'+slides[0]['file'])
+    monitor.locator('[data-kair-inspect]').click();assert monitor.locator('[data-kair-viewer]').is_visible()
+    assert monitor.locator('[data-kair-viewer-image]').get_attribute('src').endswith('/'+slides[0]['original'])
+    monitor.locator('[data-kair-close]').click();page.wait_for_function('!document.fullscreenElement&&!document.querySelector("[data-kair-viewer]").open');assert monitor.locator('[data-kair-inspect]').evaluate('(e)=>e===document.activeElement')
     if width in [360,1440]:monitor.screenshot(path=str(out/f'{name}-monitor-{width}.png'))
    if route=='/':
     discuss=page.locator('#discuss');assert 'era-indigo-surface' not in discuss.get_attribute('class')

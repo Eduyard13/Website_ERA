@@ -1,0 +1,583 @@
+{
+  "archiveName": "каир фото.zip",
+  "archiveBytes": 11513244,
+  "archiveSha256": "18951219d56168aee4a97c371a21c68533b652126d8432cbb6d084d375d7523c",
+  "preparation": "Original JPEGs retained byte-for-byte; proportional WebP copies only. No retouching, generated interface content, or baked-in crop.",
+  "images": [
+    {
+      "id": "kair-01",
+      "number": 1,
+      "caption": "Общий экран линии и сигналы",
+      "sourceName": "KAIR_01_Alarm_Overview.jpg",
+      "sourceFile": "kair/originals/KAIR_01_Alarm_Overview.jpg",
+      "sourceBytes": 720650,
+      "sourceSha256": "6ea79eaa7ca3aa2684ac11cab241c05810a02cbfa626d82f129b4b396a6206f0",
+      "sourceWidth": 1919,
+      "sourceHeight": 1078,
+      "image": {
+        "file": "kair/01.webp",
+        "width": 1919,
+        "height": 1078,
+        "bytes": 323714,
+        "sha256": "a943a507d09435c47c29d71ce3924480bc37bdb2e9920fee954ecd059d08a895"
+      },
+      "small": {
+        "file": "kair/01-768.webp",
+        "width": 768,
+        "height": 431,
+        "bytes": 74070,
+        "sha256": "5e079d80e645afa31e1345e11ce271951c7ed7554ed45804912cf7f63806e972"
+      }
+    },
+    {
+      "id": "kair-02",
+      "number": 2,
+      "caption": "Режим наладки линии",
+      "sourceName": "KAIR_02_Setup_Overview.jpg",
+      "sourceFile": "kair/originals/KAIR_02_Setup_Overview.jpg",
+      "sourceBytes": 539815,
+      "sourceSha256": "3f5e4c06871031924ed9a983a65d6107200262dfb687a37980b15e909620a073",
+      "sourceWidth": 1918,
+      "sourceHeight": 1080,
+      "image": {
+        "file": "kair/02.webp",
+        "width": 1918,
+        "height": 1080,
+        "bytes": 232694,
+        "sha256": "4bfc3517e9b2df4ed062b10e7826dab35841426e461feeb4f3106a1729878394"
+      },
+      "small": {
+        "file": "kair/02-768.webp",
+        "width": 768,
+        "height": 432,
+        "bytes": 58068,
+        "sha256": "a875be59d8251fd141b6c5ce38fdc828f38e618da13e1a441e073baeffca4e8e"
+      }
+    },
+    {
+      "id": "kair-03",
+      "number": 3,
+      "caption": "Автоматический режим",
+      "sourceName": "KAIR_03_Auto_Overview.jpg",
+      "sourceFile": "kair/originals/KAIR_03_Auto_Overview.jpg",
+      "sourceBytes": 670614,
+      "sourceSha256": "d864fc8762c2c2d4246a9a0c3c8820f623a0cbee7d29642831979984d5b34752",
+      "sourceWidth": 1920,
+      "sourceHeight": 1078,
+      "image": {
+        "file": "kair/03.webp",
+        "width": 1920,
+        "height": 1078,
+        "bytes": 309114,
+        "sha256": "0c7f54d6f23c9370d015650f3cd889b0f8fb59eef570b163bc2267d54b93516b"
+      },
+      "small": {
+        "file": "kair/03-768.webp",
+        "width": 768,
+        "height": 431,
+        "bytes": 69204,
+        "sha256": "42b94f5786ae5fa7dbf20b121ee5251e31b1f5846223d9b025ce1f0b58ed6869"
+      }
+    },
+    {
+      "id": "kair-22",
+      "number": 22,
+      "caption": "Настройки распушителя",
+      "sourceName": "KAIR_22_Screen_Opener_Settings.jpg",
+      "sourceFile": "kair/originals/KAIR_22_Screen_Opener_Settings.jpg",
+      "sourceBytes": 910833,
+      "sourceSha256": "78e1c854a14a179a71ef85f5888868626f555193bf61888e2f72bc1ebf1504cc",
+      "sourceWidth": 2048,
+      "sourceHeight": 1228,
+      "image": {
+        "file": "kair/22.webp",
+        "width": 1920,
+        "height": 1151,
+        "bytes": 594498,
+        "sha256": "8a1322d78ec10f6188e3d0b65d514aebb5f045af24e782ef56fcb0bc6b8caa69"
+      },
+      "small": {
+        "file": "kair/22-768.webp",
+        "width": 768,
+        "height": 461,
+        "bytes": 123658,
+        "sha256": "3e54f38e55b60aec135df69448adccd48bead237481c24a5451da766ecf55932"
+      }
+    },
+    {
+      "id": "kair-23",
+      "number": 23,
+      "caption": "Настройки основного привода",
+      "sourceName": "KAIR_23_Screen_Main_Drive_Settings.jpg",
+      "sourceFile": "kair/originals/KAIR_23_Screen_Main_Drive_Settings.jpg",
+      "sourceBytes": 719114,
+      "sourceSha256": "a54cee523a5b3a973b5e66d683406a8194a36f1118f07667ce9a56833c4703e5",
+      "sourceWidth": 2048,
+      "sourceHeight": 1254,
+      "image": {
+        "file": "kair/23.webp",
+        "width": 1920,
+        "height": 1176,
+        "bytes": 477872,
+        "sha256": "989ec43461490c5260d487fef56c638b70d11e5b1906e652eeac39c4c2bfcbb0"
+      },
+      "small": {
+        "file": "kair/23-768.webp",
+        "width": 768,
+        "height": 470,
+        "bytes": 104162,
+        "sha256": "a54caaeddf777b643b6002ede54bc3e62084492aaa771cf47755eab83bc9cb99"
+      }
+    },
+    {
+      "id": "kair-24",
+      "number": 24,
+      "caption": "Калибровка оборудования",
+      "sourceName": "KAIR_24_Screen_Calibration.jpg",
+      "sourceFile": "kair/originals/KAIR_24_Screen_Calibration.jpg",
+      "sourceBytes": 664032,
+      "sourceSha256": "a6038a30d2d61e26fc2ea105dcebeb6a6fc7c7b42a84531d0c45c7efaac179be",
+      "sourceWidth": 2048,
+      "sourceHeight": 1190,
+      "image": {
+        "file": "kair/24.webp",
+        "width": 1920,
+        "height": 1116,
+        "bytes": 423920,
+        "sha256": "8be99f02b4a2344b84aad074344c65d3d0fbda8736f3210a4a3addce7a6424c4"
+      },
+      "small": {
+        "file": "kair/24-768.webp",
+        "width": 768,
+        "height": 446,
+        "bytes": 97368,
+        "sha256": "96c3e4b6b7984fc9185f0f38e6ac046bf13b01c2b6a3b4b6f20022624b395d9d"
+      }
+    },
+    {
+      "id": "kair-25",
+      "number": 25,
+      "caption": "Контроль токов и предупреждений",
+      "sourceName": "KAIR_25_Screen_Current_Monitoring.jpg",
+      "sourceFile": "kair/originals/KAIR_25_Screen_Current_Monitoring.jpg",
+      "sourceBytes": 928496,
+      "sourceSha256": "05e87b647401a32ce67db970d455a66ad26ae9908ebf1b40019a999a07391cd1",
+      "sourceWidth": 2048,
+      "sourceHeight": 1228,
+      "image": {
+        "file": "kair/25.webp",
+        "width": 1920,
+        "height": 1151,
+        "bytes": 648558,
+        "sha256": "0a5dcab55fc5e442410c1da60845017509328044e2360d2cee6cf4b084a5bea9"
+      },
+      "small": {
+        "file": "kair/25-768.webp",
+        "width": 768,
+        "height": 461,
+        "bytes": 129324,
+        "sha256": "61356b2613c1a1ac776d98a8c7e071b5c734eb8765480971ffeff06c10db58c2"
+      }
+    },
+    {
+      "id": "kair-26",
+      "number": 26,
+      "caption": "Управление приводами",
+      "sourceName": "KAIR_26_Screen_HMI_Motor_Control.jpg",
+      "sourceFile": "kair/originals/KAIR_26_Screen_HMI_Motor_Control.jpg",
+      "sourceBytes": 311164,
+      "sourceSha256": "a4bab19f4a31b69663689bd916b7290e151a1f8b53179b958485a5fda47f287a",
+      "sourceWidth": 1600,
+      "sourceHeight": 1000,
+      "image": {
+        "file": "kair/26.webp",
+        "width": 1600,
+        "height": 1000,
+        "bytes": 209984,
+        "sha256": "11da5cadfbd44cf5f7f6068049d5aa4ab5e9d66d27d8d925e650c117d7404389"
+      },
+      "small": {
+        "file": "kair/26-768.webp",
+        "width": 768,
+        "height": 480,
+        "bytes": 78234,
+        "sha256": "9a90199f90d7488483dfb8e983167bbc66944590cb657a1656511ea0d0485cf8"
+      }
+    },
+    {
+      "id": "kair-27",
+      "number": 27,
+      "caption": "Регулировка скоростей",
+      "sourceName": "KAIR_27_Screen_HMI_Speed_Control.jpg",
+      "sourceFile": "kair/originals/KAIR_27_Screen_HMI_Speed_Control.jpg",
+      "sourceBytes": 319606,
+      "sourceSha256": "41829f2f9dbdd9dd48c302be58620382c793345d00cc5da2f92f26b4a9b292b0",
+      "sourceWidth": 1600,
+      "sourceHeight": 1000,
+      "image": {
+        "file": "kair/27.webp",
+        "width": 1600,
+        "height": 1000,
+        "bytes": 226792,
+        "sha256": "f15ce5b970c49c8d9e7f7a707ec9e9917ccff51693748c2bf7fc04a5c637deec"
+      },
+      "small": {
+        "file": "kair/27-768.webp",
+        "width": 768,
+        "height": 480,
+        "bytes": 90152,
+        "sha256": "0ab7a3e8e20d7870eec98f6d5a3a64656217018f118583618bdbe7bb7086a488"
+      }
+    },
+    {
+      "id": "kair-28",
+      "number": 28,
+      "caption": "Экран роторного распушителя",
+      "sourceName": "KAIR_28_Screen_HMI_Purifier.jpg",
+      "sourceFile": "kair/originals/KAIR_28_Screen_HMI_Purifier.jpg",
+      "sourceBytes": 206420,
+      "sourceSha256": "fc99896047d04128a13a391ffc01dff13c740c0ff2c3bee0d3d4ecfd07f03e46",
+      "sourceWidth": 1600,
+      "sourceHeight": 1000,
+      "image": {
+        "file": "kair/28.webp",
+        "width": 1600,
+        "height": 1000,
+        "bytes": 136574,
+        "sha256": "234ecf23fca0ba55840f13e59fe62afd56a750343ea237495fb3f35e01ac1075"
+      },
+      "small": {
+        "file": "kair/28-768.webp",
+        "width": 768,
+        "height": 480,
+        "bytes": 59098,
+        "sha256": "a6c469082376b2e5430d62f6e53ed6ffb5a0e5289b7a11e6e91146e777b27521"
+      }
+    },
+    {
+      "id": "kair-29",
+      "number": 29,
+      "caption": "Технологическая схема всей линии",
+      "sourceName": "KAIR_29_Screen_HMI_Whole_Line.jpg",
+      "sourceFile": "kair/originals/KAIR_29_Screen_HMI_Whole_Line.jpg",
+      "sourceBytes": 173619,
+      "sourceSha256": "0756659a8bf466da243b7f341cbb16cf26a576ec62f846b3751e9c3ce1036277",
+      "sourceWidth": 1600,
+      "sourceHeight": 1000,
+      "image": {
+        "file": "kair/29.webp",
+        "width": 1600,
+        "height": 1000,
+        "bytes": 112272,
+        "sha256": "617bcd3f46be3dfccacd9218e046d0265b12fcb2663439cd18f0270675a0a762"
+      },
+      "small": {
+        "file": "kair/29-768.webp",
+        "width": 768,
+        "height": 480,
+        "bytes": 47508,
+        "sha256": "aa36d0fc67669502e85a269ca3da0193fd9c8b39167eac90f01c18b3b18746ba"
+      }
+    },
+    {
+      "id": "kair-04",
+      "number": 4,
+      "caption": "Настройки распушителя на мониторе",
+      "sourceName": "KAIR_04_Opener_Settings.jpg",
+      "sourceFile": "kair/originals/KAIR_04_Opener_Settings.jpg",
+      "sourceBytes": 1075785,
+      "sourceSha256": "7c04b65f6713c33b6099882c6cea089189cbe6e6e7d9520d2f8eb83c75f45499",
+      "sourceWidth": 2048,
+      "sourceHeight": 1536,
+      "image": {
+        "file": "kair/04.webp",
+        "width": 1920,
+        "height": 1440,
+        "bytes": 693220,
+        "sha256": "ac26c7bc66063c940b22c35502bd5f3e38fe95741f069613c7432ed6145c6bdb"
+      },
+      "small": {
+        "file": "kair/04-768.webp",
+        "width": 768,
+        "height": 576,
+        "bytes": 124026,
+        "sha256": "472885d9c5985fd94b5aac9ae9ec0a1c2eb1ce13eebb60879e51a29f8d7e21b0"
+      }
+    },
+    {
+      "id": "kair-05",
+      "number": 5,
+      "caption": "Настройки основного привода на мониторе",
+      "sourceName": "KAIR_05_Main_Drive_Settings.jpg",
+      "sourceFile": "kair/originals/KAIR_05_Main_Drive_Settings.jpg",
+      "sourceBytes": 867339,
+      "sourceSha256": "0c4d84c9f68fae6aedf6477b8afad7a4ffce7451bfd9a0f7222827c01fd0694b",
+      "sourceWidth": 2048,
+      "sourceHeight": 1536,
+      "image": {
+        "file": "kair/05.webp",
+        "width": 1920,
+        "height": 1440,
+        "bytes": 539576,
+        "sha256": "b138da3e3d9f818f6ffc6966e80ded64877de1d4c232d117b1faa477b1512d3b"
+      },
+      "small": {
+        "file": "kair/05-768.webp",
+        "width": 768,
+        "height": 576,
+        "bytes": 107826,
+        "sha256": "c074c7317794f5699a8a8c25527d1f7e549b7bd0556edd4d6553550a02357712"
+      }
+    },
+    {
+      "id": "kair-06",
+      "number": 6,
+      "caption": "Калибровка на мониторе",
+      "sourceName": "KAIR_06_Calibration.jpg",
+      "sourceFile": "kair/originals/KAIR_06_Calibration.jpg",
+      "sourceBytes": 822869,
+      "sourceSha256": "319471e090666e06f8f070b8757a7d8aa310f48693384eb858967d7c974df7b6",
+      "sourceWidth": 2048,
+      "sourceHeight": 1536,
+      "image": {
+        "file": "kair/06.webp",
+        "width": 1920,
+        "height": 1440,
+        "bytes": 501652,
+        "sha256": "f0eb0b1768a5e9ec9fd2e19ff5979ed8233941eaf6c9d1b37249d6947dfdac0d"
+      },
+      "small": {
+        "file": "kair/06-768.webp",
+        "width": 768,
+        "height": 576,
+        "bytes": 102498,
+        "sha256": "77cc1ddfb827393db566175bd923e8476c59737af43c7721b80745bd3d05605b"
+      }
+    },
+    {
+      "id": "kair-07",
+      "number": 7,
+      "caption": "Контроль токов на мониторе",
+      "sourceName": "KAIR_07_Current_Monitoring.jpg",
+      "sourceFile": "kair/originals/KAIR_07_Current_Monitoring.jpg",
+      "sourceBytes": 1096364,
+      "sourceSha256": "656f344f3587717d7fb73f239bfa0b5fbf881122348797cf2e91511cb5941e55",
+      "sourceWidth": 2048,
+      "sourceHeight": 1536,
+      "image": {
+        "file": "kair/07.webp",
+        "width": 1920,
+        "height": 1440,
+        "bytes": 753626,
+        "sha256": "365a51bf600a906142e7ad8d88880f921d9fa3528037b8e40c7f529f8bb88063"
+      },
+      "small": {
+        "file": "kair/07-768.webp",
+        "width": 768,
+        "height": 576,
+        "bytes": 129188,
+        "sha256": "39d396308c6b7406bd684dde7883e1875c7c41bdb69d6d15ea0b4bd216231fbf"
+      }
+    },
+    {
+      "id": "kair-08",
+      "number": 8,
+      "caption": "Операторская панель: управление приводами",
+      "sourceName": "KAIR_08_HMI_Motor_Control.jpg",
+      "sourceFile": "kair/originals/KAIR_08_HMI_Motor_Control.jpg",
+      "sourceBytes": 235026,
+      "sourceSha256": "d5d83cde0287af001e0c3f0a613b2b00fa7ab55ce93509da851560765bbfa899",
+      "sourceWidth": 1440,
+      "sourceHeight": 1080,
+      "image": {
+        "file": "kair/08.webp",
+        "width": 1440,
+        "height": 1080,
+        "bytes": 197424,
+        "sha256": "16d89429a984a2a70f70810e5c45074b13783c3c37063d7a4c4e84a15d611b13"
+      },
+      "small": {
+        "file": "kair/08-768.webp",
+        "width": 768,
+        "height": 576,
+        "bytes": 74848,
+        "sha256": "2dc7cc06a7614e1ced505e50d15f713dca1b274fc238917f0bbad32c088b1dc7"
+      }
+    },
+    {
+      "id": "kair-09",
+      "number": 9,
+      "caption": "Операторская панель: скорости приводов",
+      "sourceName": "KAIR_09_HMI_Speed_Control.jpg",
+      "sourceFile": "kair/originals/KAIR_09_HMI_Speed_Control.jpg",
+      "sourceBytes": 240917,
+      "sourceSha256": "14aa927d4f1e48d7d6dd205530af7f00dfa08f66711b821829fd4468ea30d13a",
+      "sourceWidth": 1440,
+      "sourceHeight": 1080,
+      "image": {
+        "file": "kair/09.webp",
+        "width": 1440,
+        "height": 1080,
+        "bytes": 220010,
+        "sha256": "cdc62e7a02d4ff1b4499b93c94bf26a803b34be84f0c290af09cae33555403d5"
+      },
+      "small": {
+        "file": "kair/09-768.webp",
+        "width": 768,
+        "height": 576,
+        "bytes": 87376,
+        "sha256": "8db9323709b653fc5e91952d1c4714ac8de7690e17611707855d52841a8dbbf4"
+      }
+    },
+    {
+      "id": "kair-10",
+      "number": 10,
+      "caption": "Операторская панель: роторный распушитель",
+      "sourceName": "KAIR_10_HMI_Purifier.jpg",
+      "sourceFile": "kair/originals/KAIR_10_HMI_Purifier.jpg",
+      "sourceBytes": 207472,
+      "sourceSha256": "e95f4f0c3f17960b59faccf119605e626897714c095423c7fee91b4945d5db65",
+      "sourceWidth": 1440,
+      "sourceHeight": 1080,
+      "image": {
+        "file": "kair/10.webp",
+        "width": 1440,
+        "height": 1080,
+        "bytes": 208418,
+        "sha256": "f940cfa2051084ed161ad51a529fe3c80d073e007b1e1aae10510d7277597af2"
+      },
+      "small": {
+        "file": "kair/10-768.webp",
+        "width": 768,
+        "height": 576,
+        "bytes": 85874,
+        "sha256": "51b5c39eadf95927febf730d9b3619ea737f846705f8764b0379f39fdc2586df"
+      }
+    },
+    {
+      "id": "kair-11",
+      "number": 11,
+      "caption": "Операторская панель: вся линия",
+      "sourceName": "KAIR_11_HMI_Whole_Line.jpg",
+      "sourceFile": "kair/originals/KAIR_11_HMI_Whole_Line.jpg",
+      "sourceBytes": 210445,
+      "sourceSha256": "f1fa27bb78fffd591ffcb2bae4090406b16c94e22efa86e872799170c1a75e9c",
+      "sourceWidth": 1440,
+      "sourceHeight": 1080,
+      "image": {
+        "file": "kair/11.webp",
+        "width": 1440,
+        "height": 1080,
+        "bytes": 215474,
+        "sha256": "00d1a2140ae587e4b1c079b22f42e240d38cea2ba8916b3337964f690589c69e"
+      },
+      "small": {
+        "file": "kair/11-768.webp",
+        "width": 768,
+        "height": 576,
+        "bytes": 88972,
+        "sha256": "1e07e3eb18031ab6102e276cba404852585b695d450deb960d54d018a30f6b4a"
+      }
+    },
+    {
+      "id": "kair-18",
+      "number": 18,
+      "caption": "Общий экран на рабочем мониторе",
+      "sourceName": "KAIR_18_Video3_Monitor_Closeup.jpg",
+      "sourceFile": "kair/originals/KAIR_18_Video3_Monitor_Closeup.jpg",
+      "sourceBytes": 199844,
+      "sourceSha256": "e7839994b272530cbefaffc2b9ab3f065e4f18cac82d524ea95bf35b5a8ceab1",
+      "sourceWidth": 1920,
+      "sourceHeight": 1082,
+      "image": {
+        "file": "kair/18.webp",
+        "width": 1920,
+        "height": 1082,
+        "bytes": 121056,
+        "sha256": "8bc3c3ddffb8fd1271e25ad4fd0384f890c7b67a4cdd66ecefbadf884663fd1f"
+      },
+      "small": {
+        "file": "kair/18-768.webp",
+        "width": 768,
+        "height": 433,
+        "bytes": 41474,
+        "sha256": "524b5cf5ee8961d05c296d7150199ae3aac503a44fda025e0435ddd8a908d68a"
+      }
+    },
+    {
+      "id": "kair-19",
+      "number": 19,
+      "caption": "Параметры оборудования крупным планом",
+      "sourceName": "KAIR_19_Video3_Program_Detail.jpg",
+      "sourceFile": "kair/originals/KAIR_19_Video3_Program_Detail.jpg",
+      "sourceBytes": 256799,
+      "sourceSha256": "e53acdf0dff7bc33cc9e1d2bcdd63913e3999782d686329798bf8a1df93a041b",
+      "sourceWidth": 1920,
+      "sourceHeight": 1082,
+      "image": {
+        "file": "kair/19.webp",
+        "width": 1920,
+        "height": 1082,
+        "bytes": 157168,
+        "sha256": "786607c0af0ffe240900ed0322cf823ba19d0be051152e22037d25b857b8ac8a"
+      },
+      "small": {
+        "file": "kair/19-768.webp",
+        "width": 768,
+        "height": 433,
+        "bytes": 56042,
+        "sha256": "965b3bd2eea51c70f64af21ba6ff11e07db8ae4d68a5bf12e374317c53ea7e94"
+      }
+    },
+    {
+      "id": "kair-20",
+      "number": 20,
+      "caption": "Настройка интерфейса управления",
+      "sourceName": "KAIR_20_Video4_Interface_Editor.jpg",
+      "sourceFile": "kair/originals/KAIR_20_Video4_Interface_Editor.jpg",
+      "sourceBytes": 216921,
+      "sourceSha256": "5e85f059a4012c35efa20e768feb1e80ba50737e1a9cf2e20adc203f7bf22737",
+      "sourceWidth": 1920,
+      "sourceHeight": 1082,
+      "image": {
+        "file": "kair/20.webp",
+        "width": 1920,
+        "height": 1082,
+        "bytes": 148978,
+        "sha256": "6f285fd427a93160ce66a0c74c985612b3df24208f439ff02cec7c42e9015c07"
+      },
+      "small": {
+        "file": "kair/20-768.webp",
+        "width": 768,
+        "height": 433,
+        "bytes": 53158,
+        "sha256": "1e872c07433d7ab0d6b93d44234b8f38aa302d46e5ed8d7c785a269c5aeb3a05"
+      }
+    },
+    {
+      "id": "kair-21",
+      "number": 21,
+      "caption": "Интерфейс линии крупным планом",
+      "sourceName": "KAIR_21_Video4_Runtime_Closeup.jpg",
+      "sourceFile": "kair/originals/KAIR_21_Video4_Runtime_Closeup.jpg",
+      "sourceBytes": 203222,
+      "sourceSha256": "0fd19b07c3368dd469453bfbcc6af87d26c0056561a22fad9a800458d812b136",
+      "sourceWidth": 1920,
+      "sourceHeight": 1082,
+      "image": {
+        "file": "kair/21.webp",
+        "width": 1920,
+        "height": 1082,
+        "bytes": 127768,
+        "sha256": "3e57379bcb9b6d36e57844b95a20cb3f8d5d6e066c8cef1bc624cddea81b99ba"
+      },
+      "small": {
+        "file": "kair/21-768.webp",
+        "width": 768,
+        "height": 433,
+        "bytes": 43030,
+        "sha256": "49ba36e00a3b4080fef411a237db67f3dbd15467021692c20cce04b4dd464e73"
+      }
+    }
+  ]
+}
