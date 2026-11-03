@@ -1,3 +1,11 @@
+/* Match the equipment catalogue's compact spacing above the filters. */
+.page-intro{padding-top:32px;padding-bottom:24px}
+.page-intro>.eyebrow{margin-bottom:10px}
+.page-intro>h1{margin-bottom:16px}
+.page-intro>.lead{margin-bottom:0}
+.page-intro+.section{padding-top:0}
+@media(max-width:767px){.page-intro{padding-top:24px}.page-intro>h1{margin-bottom:14px}}
+
 /* Detailed film-separation page; equipment-node pages keep their own styles. */
 .film-line{--line-soft:#eee8dc80;overflow-wrap:break-word}
 .film-line section[id]{scroll-margin-top:24px}
