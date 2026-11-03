@@ -1,0 +1,21 @@
+{
+  "source": "/workspace/generated_images/exec-5e774ab2-1382-42ec-bb67-08108c29830e.png",
+  "sourceSha256": "c4858579fd60151b42c3862f3a57b9f1053c804a382c418035f0ff6da447f9d6",
+  "provenance": "Adaptation of the owner-supplied image. Only the surrounding indigo background was requested to be adjusted; the complete compact equipment composition was retained.",
+  "encoding": "WebP at original 1536x1024 and proportional 768x512. No crop, nonuniform scale, or further composition editing.",
+  "assets": {
+    "catalog-cover.webp": {
+      "width": 1536,
+      "height": 1024,
+      "bytes": 271522,
+      "sha256": "6c287c05cb55dcf7f05153e94ad18ff02c791d19c9e48de5a878d00bc3ae427b"
+    },
+    "catalog-cover-768.webp": {
+      "width": 768,
+      "height": 512,
+      "bytes": 83816,
+      "sha256": "8b7b4581fef304ded6482e494f12a899c40ae2998d8edc2349cdbd1a4b6bb841"
+    }
+  },
+  "staffingSource": "Owner instruction: 1 operator and 2 loading/material-handling workers per shift; additionally 2–10 sorters as needed."
+}
