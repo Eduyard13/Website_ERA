@@ -71,8 +71,9 @@ with sync_playwright() as p:
  m.locator('[data-kair-pause]').click();live.locator('#control-title').click();live.mouse.move(0,0)
  assert m.locator('[data-kair-pause]').get_attribute('aria-pressed')=='true'
  live.wait_for_timeout(8500);assert m.locator('[data-kair-counter]').inner_text()=='2 из 23'
- m.locator('[data-kair-pause]').click();live.locator('#control-title').click();live.mouse.move(0,0)
+ m.locator('[data-kair-pause]').click()
  live.wait_for_function('document.querySelector("[data-kair-counter]").textContent==="3 из 23"',timeout=12000)
+ assert m.locator('[data-kair-pause]').evaluate('(e)=>e===document.activeElement')
  live.evaluate('scrollTo({top:0,behavior:"instant"})');live.wait_for_timeout(8500)
  assert m.locator('[data-kair-counter]').inner_text()=='3 из 23'
  print('Production 8-second autoplay, persistent pause, resume and offscreen suspension: OK',flush=True)

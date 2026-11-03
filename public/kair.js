@@ -5,10 +5,10 @@ for(const monitor of document.querySelectorAll('[data-kair]')){
  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
  const interval=Math.max(1000,Number(monitor.dataset.interval)||8000),transition=Math.max(0,Number(monitor.dataset.transition)||600);
  let index=0,desired=0,serial=0,timer=null,changing=false,hovered=false,focused=false,inView=false,manualPause=false,opener=null,wasFullscreen=false,closing=false;
- let playing=monitor.dataset.autoplay==='true'&&slides.length>1&&!reduced.matches;
+ let playing=monitor.dataset.autoplay==='true'&&slides.length>1&&!reduced.matches,resumeRequested=false;
  monitor.style.setProperty('--kair-transition',transition+'ms');
  const stop=()=>{clearTimeout(timer);timer=null;};
- const canPlay=()=>playing&&!manualPause&&!hovered&&!focused&&!document.hidden&&inView&&!viewer.open;
+ const canPlay=()=>playing&&!manualPause&&(resumeRequested||(!hovered&&!focused))&&!document.hidden&&inView&&!viewer.open;
  const schedule=()=>{stop();if(canPlay()&&!changing)timer=setTimeout(()=>select(index+1,false),interval);};
  const ready=async image=>{image.loading='eager';if(image.decode)await image.decode();else if(!image.complete)await new Promise((resolve,reject)=>{image.addEventListener('load',resolve,{once:true});image.addEventListener('error',reject,{once:true});});if(!image.naturalWidth)throw new Error('Image unavailable');};
  const preloadNext=()=>{if(inView&&slides.length>1){const image=slides[(index+1)%slides.length].querySelector('img');ready(image).catch(()=>{});}};
@@ -38,12 +38,12 @@ for(const monitor of document.querySelectorAll('[data-kair]')){
  async function select(next,manual=true){
   next=(next+slides.length)%slides.length;desired=next;
   if(next===index){
-   ++serial;stop();changing=false;if(manual)manualPause=true;
+   ++serial;stop();changing=false;if(manual){manualPause=true;resumeRequested=false;}
    slides.forEach((slide,i)=>{slide.hidden=i!==index;slide.dataset.current=String(i===index);slide.style.zIndex='';slide.querySelector('a').tabIndex=i===index?0:-1;});
    updatePause();schedule();return;
   }
   const token=++serial;stop();changing=true;
-  if(manual)manualPause=true;
+  if(manual){manualPause=true;resumeRequested=false;}
   updatePause();
   try{
    await ready(slides[next].querySelector('img'));
@@ -64,7 +64,7 @@ for(const monitor of document.querySelectorAll('[data-kair]')){
   }
  }
  const move=direction=>select(desired+direction);
- function pauseForInspection(){manualPause=true;stop();updatePause();}
+ function pauseForInspection(){manualPause=true;resumeRequested=false;stop();updatePause();}
  async function openInspection(trigger){
   pauseForInspection();opener=trigger||monitor.querySelector('[data-kair-inspect]');
   viewer.querySelector('[data-kair-viewer-error]').hidden=true;
@@ -107,11 +107,11 @@ for(const monitor of document.querySelectorAll('[data-kair]')){
   monitor.querySelector('[data-kair-next]').addEventListener('click',()=>move(1));
   viewer.querySelector('[data-kair-viewer-prev]').addEventListener('click',()=>move(-1));
   viewer.querySelector('[data-kair-viewer-next]').addEventListener('click',()=>move(1));
-  pause.addEventListener('click',()=>{if(!playing||manualPause){playing=true;manualPause=false;}else manualPause=true;updatePause();schedule();});
+  pause.addEventListener('click',()=>{if(!playing||manualPause){playing=true;manualPause=false;resumeRequested=true;}else{manualPause=true;resumeRequested=false;}updatePause();schedule();});
  }
- monitor.addEventListener('pointerenter',()=>{hovered=true;stop();});
+ monitor.addEventListener('pointerenter',()=>{hovered=true;resumeRequested=false;stop();});
  monitor.addEventListener('pointerleave',()=>{hovered=false;schedule();});
- monitor.addEventListener('focusin',()=>{focused=true;stop();});
+ monitor.addEventListener('focusin',()=>{focused=true;resumeRequested=false;stop();});
  monitor.addEventListener('focusout',event=>{if(!monitor.contains(event.relatedTarget)){focused=false;schedule();}});
  document.addEventListener('visibilitychange',schedule);
  reduced.addEventListener('change',()=>{if(reduced.matches)playing=false;updatePause();schedule();});
