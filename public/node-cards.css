@@ -1,3 +1,11 @@
+/* Loaded only for the equipment catalogue. Keep its intro close to the filters. */
+.page-intro{padding-top:32px;padding-bottom:24px}
+.page-intro>.eyebrow{margin-bottom:10px}
+.page-intro>h1{margin-bottom:16px}
+.page-intro>.lead{margin-bottom:0}
+.page-intro+.catalog-section{padding-top:0}
+@media(max-width:767px){.page-intro{padding-top:24px}.page-intro>h1{margin-bottom:14px}}
+
 /* The catalogue's light stone cards. Prepared illustrations remain unchanged. */
 .node-card.node-card--stone{position:relative;isolation:isolate;display:flex;flex-direction:column;padding:0;border:1px solid #a88b6666;border-radius:8px;background:#e4d0ba;color:var(--era-blue);box-shadow:0 8px 24px #3c2a1912,0 2px 5px #3c2a1908;overflow:hidden;min-width:0;transition:box-shadow .25s ease}
 .node-card.node-card--stone:hover{color:var(--era-blue);border-color:#a88b6666;box-shadow:0 14px 32px #3c2a191c,0 2px 5px #3c2a1910}
