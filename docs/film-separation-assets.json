@@ -1,0 +1,328 @@
+{
+  "sourceName": "ТО Линия Сепарации Пленок.pdf",
+  "sourceSha256": "d9a4a879a62cfa9601eba6b54e0a12977e063709192c18841730e1055014d39e",
+  "pages": 32,
+  "bytes": 9616515,
+  "images": [
+    {
+      "id": "hero",
+      "page": 1,
+      "xref": 23,
+      "sourceDimensions": [
+        2056,
+        1384
+      ],
+      "width": 2056,
+      "height": 1384,
+      "thumbWidth": 760,
+      "thumbHeight": 512,
+      "file": "lines/separatsiya-01/hero.webp",
+      "thumbnail": "lines/separatsiya-01/hero-thumb.webp",
+      "sha256": "314b9a2161c6d9d00101c1097bd193a857283ad0d81f375a72d88622bb6e5399"
+    },
+    {
+      "id": "flow",
+      "page": 5,
+      "xref": 361,
+      "sourceDimensions": [
+        2056,
+        2203
+      ],
+      "width": 2053,
+      "height": 2200,
+      "thumbWidth": 709,
+      "thumbHeight": 760,
+      "file": "lines/separatsiya-01/flow.webp",
+      "thumbnail": "lines/separatsiya-01/flow-thumb.webp",
+      "sha256": "e14985dfb94c63dcf6782e2c3f0959381f4ab9a77cea3bd600f9619752ce9bbc"
+    },
+    {
+      "id": "layout",
+      "page": 6,
+      "xref": 382,
+      "sourceDimensions": [
+        1853,
+        1299
+      ],
+      "width": 1853,
+      "height": 1299,
+      "thumbWidth": 760,
+      "thumbHeight": 533,
+      "file": "lines/separatsiya-01/layout.webp",
+      "thumbnail": "lines/separatsiya-01/layout-thumb.webp",
+      "sha256": "36a3922e977980d0d426ce44473128574390cfae68250f1abd4d86a8aed920d1"
+    },
+    {
+      "id": "feeding",
+      "page": 7,
+      "xref": 509,
+      "sourceDimensions": [
+        1263,
+        989
+      ],
+      "width": 1263,
+      "height": 989,
+      "thumbWidth": 760,
+      "thumbHeight": 595,
+      "file": "lines/separatsiya-01/feeding.webp",
+      "thumbnail": "lines/separatsiya-01/feeding-thumb.webp",
+      "sha256": "16833b3b573674c3a2223b7a502a2218ef1e48aab68970f60e7d9bdadfa3ea5e"
+    },
+    {
+      "id": "sorting",
+      "page": 8,
+      "xref": 567,
+      "sourceDimensions": [
+        1286,
+        897
+      ],
+      "width": 1286,
+      "height": 897,
+      "thumbWidth": 760,
+      "thumbHeight": 530,
+      "file": "lines/separatsiya-01/sorting.webp",
+      "thumbnail": "lines/separatsiya-01/sorting-thumb.webp",
+      "sha256": "1ee5977fd3058536d6964c61ce3dc7721ad024a0e87cacf1c07051a41ee0923b"
+    },
+    {
+      "id": "bunkers",
+      "page": 10,
+      "xref": 696,
+      "sourceDimensions": [
+        1286,
+        938
+      ],
+      "width": 1286,
+      "height": 938,
+      "thumbWidth": 760,
+      "thumbHeight": 554,
+      "file": "lines/separatsiya-01/bunkers.webp",
+      "thumbnail": "lines/separatsiya-01/bunkers-thumb.webp",
+      "sha256": "3dc8fcc713920976d8293ad7cd33a7c048feaab3084d5eef772f3361ad6a959c"
+    },
+    {
+      "id": "press",
+      "page": 11,
+      "xref": 744,
+      "sourceDimensions": [
+        888,
+        738
+      ],
+      "width": 888,
+      "height": 738,
+      "thumbWidth": 760,
+      "thumbHeight": 632,
+      "file": "lines/separatsiya-01/press.webp",
+      "thumbnail": "lines/separatsiya-01/press-thumb.webp",
+      "sha256": "9aacff88b2c650db22386e21e4fd3c41ca5b1376e2e13d7c9914b38c9dc4f81f"
+    },
+    {
+      "id": "placement",
+      "page": 25,
+      "xref": 2208,
+      "sourceDimensions": [
+        1706,
+        1275
+      ],
+      "width": 1706,
+      "height": 1275,
+      "thumbWidth": 760,
+      "thumbHeight": 568,
+      "file": "lines/separatsiya-01/placement.webp",
+      "thumbnail": "lines/separatsiya-01/placement-thumb.webp",
+      "sha256": "8a884b022935a7968b0ad6a0c2c6cbf6abb2166aa134113a2f32ddca6daff1cd"
+    },
+    {
+      "id": "rotor",
+      "page": 9,
+      "xref": 623,
+      "sourceDimensions": [
+        1534,
+        876
+      ],
+      "width": 1534,
+      "height": 876,
+      "thumbWidth": 760,
+      "thumbHeight": 434,
+      "file": "lines/separatsiya-01/rotor.webp",
+      "thumbnail": "lines/separatsiya-01/rotor-thumb.webp",
+      "sha256": "f2d085f98ed0d693212a88ff6758f52626e07fc360216f6f1638554bdfe61e78"
+    },
+    {
+      "id": "raw-agricultural",
+      "page": 3,
+      "xref": 243,
+      "sourceDimensions": [
+        1774,
+        887
+      ],
+      "width": 1774,
+      "height": 887,
+      "thumbWidth": 760,
+      "thumbHeight": 380,
+      "file": "lines/separatsiya-01/raw-agricultural.webp",
+      "thumbnail": "lines/separatsiya-01/raw-agricultural-thumb.webp",
+      "sha256": "bd72c4730063cd7c0f027b245a23ca646257b4b1a05b4adeef6741085797d12e"
+    },
+    {
+      "id": "raw-packaging",
+      "page": 3,
+      "xref": 251,
+      "sourceDimensions": [
+        1009,
+        1794
+      ],
+      "width": 1009,
+      "height": 1794,
+      "thumbWidth": 427,
+      "thumbHeight": 760,
+      "file": "lines/separatsiya-01/raw-packaging.webp",
+      "thumbnail": "lines/separatsiya-01/raw-packaging-thumb.webp",
+      "sha256": "7ba41fc079327567859ba387dffbb9ad64291d9dc5b2d360c2a5ecc099e20dc3"
+    },
+    {
+      "id": "raw-bales",
+      "page": 3,
+      "xref": 256,
+      "sourceDimensions": [
+        1009,
+        1794
+      ],
+      "width": 1009,
+      "height": 1794,
+      "thumbWidth": 427,
+      "thumbHeight": 760,
+      "file": "lines/separatsiya-01/raw-bales.webp",
+      "thumbnail": "lines/separatsiya-01/raw-bales-thumb.webp",
+      "sha256": "ff4fb6873d54036916a63785d55126beb250b0946191d394e31fefe37a420721"
+    },
+    {
+      "id": "before",
+      "page": 21,
+      "xref": 1741,
+      "sourceDimensions": [
+        466,
+        262
+      ],
+      "width": 466,
+      "height": 262,
+      "thumbWidth": 466,
+      "thumbHeight": 262,
+      "file": "lines/separatsiya-01/before.webp",
+      "thumbnail": "lines/separatsiya-01/before-thumb.webp",
+      "sha256": "52e3ef765ca2a728a267cbeabf6e74e8e24f8a1ea8448a6e46a12772c1fbd69f"
+    },
+    {
+      "id": "after",
+      "page": 21,
+      "xref": 1746,
+      "sourceDimensions": [
+        466,
+        262
+      ],
+      "width": 466,
+      "height": 262,
+      "thumbWidth": 466,
+      "thumbHeight": 262,
+      "file": "lines/separatsiya-01/after.webp",
+      "thumbnail": "lines/separatsiya-01/after-thumb.webp",
+      "sha256": "d5454de2810e68acbd23ef228f8e14fbeeda1b1b4bf6c0c428df6ad576f418d5"
+    },
+    {
+      "id": "china-assembly",
+      "page": 28,
+      "xref": 2492,
+      "sourceDimensions": [
+        1021,
+        578
+      ],
+      "width": 1021,
+      "height": 578,
+      "thumbWidth": 760,
+      "thumbHeight": 430,
+      "file": "lines/separatsiya-01/china-assembly.webp",
+      "thumbnail": "lines/separatsiya-01/china-assembly-thumb.webp",
+      "sha256": "ca0062ebac6e533d42b5e10c7e2368d517611c61492a440443096798a2e27029"
+    },
+    {
+      "id": "china-ballistic",
+      "page": 28,
+      "xref": 2502,
+      "sourceDimensions": [
+        2000,
+        1127
+      ],
+      "width": 2000,
+      "height": 1127,
+      "thumbWidth": 760,
+      "thumbHeight": 428,
+      "file": "lines/separatsiya-01/china-ballistic.webp",
+      "thumbnail": "lines/separatsiya-01/china-ballistic-thumb.webp",
+      "sha256": "565e6ccfcac446bec7c83c54405528e02f9538be6cce9ebbdeaa66d20028b87e"
+    },
+    {
+      "id": "china-air-separation",
+      "page": 28,
+      "xref": 2515,
+      "sourceDimensions": [
+        1072,
+        602
+      ],
+      "width": 1072,
+      "height": 602,
+      "thumbWidth": 760,
+      "thumbHeight": 427,
+      "file": "lines/separatsiya-01/china-air-separation.webp",
+      "thumbnail": "lines/separatsiya-01/china-air-separation-thumb.webp",
+      "sha256": "703b6e368df5a9fd3bc4e2541b544bb0d52d67039fde44dc144e5f13af517ab6"
+    },
+    {
+      "id": "netherlands-line",
+      "page": 29,
+      "xref": 2539,
+      "sourceDimensions": [
+        2000,
+        771
+      ],
+      "width": 2000,
+      "height": 771,
+      "thumbWidth": 760,
+      "thumbHeight": 293,
+      "file": "lines/separatsiya-01/netherlands-line.webp",
+      "thumbnail": "lines/separatsiya-01/netherlands-line-thumb.webp",
+      "sha256": "76b92aff22db41a7243826a55f0d76494e2abf63cb01178963d00e70634e74e8"
+    },
+    {
+      "id": "netherlands-rotor",
+      "page": 29,
+      "xref": 2560,
+      "sourceDimensions": [
+        1147,
+        684
+      ],
+      "width": 1147,
+      "height": 684,
+      "thumbWidth": 760,
+      "thumbHeight": 453,
+      "file": "lines/separatsiya-01/netherlands-rotor.webp",
+      "thumbnail": "lines/separatsiya-01/netherlands-rotor-thumb.webp",
+      "sha256": "97568f179110ceb6c5eaa4a8eb2c896a44326de0adb487e8b0419aaacaa98727"
+    },
+    {
+      "id": "netherlands-feed",
+      "page": 29,
+      "xref": 2565,
+      "sourceDimensions": [
+        1256,
+        684
+      ],
+      "width": 1256,
+      "height": 684,
+      "thumbWidth": 760,
+      "thumbHeight": 414,
+      "file": "lines/separatsiya-01/netherlands-feed.webp",
+      "thumbnail": "lines/separatsiya-01/netherlands-feed-thumb.webp",
+      "sha256": "7e4ba518986c4f8eedac693b9258206dca46fa9f517ddc79091b1fac7d92a99f"
+    }
+  ]
+}

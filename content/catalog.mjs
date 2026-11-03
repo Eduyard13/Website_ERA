@@ -9,6 +9,7 @@ import {equipmentAssets} from './equipment-media.mjs';
 import {presentationMedia} from './presentation.mjs';
 import {customerPhotos} from './customer-photos.mjs';
 import {equipmentVideos} from './equipment-videos.mjs';
+import {filmSeparation} from './film-separation.mjs';
 export const categories=['Подготовка и подача','Сухая сепарация и очистка','Измельчение и мойка','Обезвоживание','Очистка рабочей жидкости','Фасовка'];
 const rows=[
  ['predvaritelnyy-izmelchitel','Предварительный измельчитель',0,'Растюковка, разрыв и крупное измельчение перед дальнейшей переработкой.'],
@@ -46,7 +47,7 @@ export const lines=[
  {slug:'separatsiya-02',title:'Сепарация 02',group:'Сепарация',enabled:true},
  {slug:'separatsiya-03',title:'Сепарация 03',group:'Сепарация',enabled:false},
  {slug:'moyka-plenki',title:'Мойка плёнки',group:'Мойка',enabled:true}
-].map(l=>({...l,path:'/catalog/lines/'+l.slug,status:'draft',equipment:[],optionalEquipment:[],documents:[]}));
+].map(l=>({...l,path:'/catalog/lines/'+l.slug,status:'draft',equipment:[],optionalEquipment:[],documents:[],...(l.slug==='separatsiya-01'?filmSeparation:{})}));
 const equipmentMedia=[
  {id:'assembly',title:'Сборка узла со стороны привода',type:'photo',topic:'Сборка',file:'assembly.webp'},
  {id:'mechanism',title:'Сборка механизма подвижной щеки',type:'photo',topic:'Сборка',file:'mechanism.webp'},
