@@ -1,0 +1,356 @@
+{
+  "sourceName": "ERA_Equipment_12.zip",
+  "sourceBytes": 26958948,
+  "sourceSha256": "9db5493c20a1e3e15eb4de25963d1b3baab0bbe80ba96f71e5b6ee1d4bbc67af",
+  "preparation": "Original complete 4:3 compositions retained. Proportional WebP encoding only; no cropping, retouching, changes to machinery, podiums or backgrounds.",
+  "images": [
+    {
+      "slug": "rotornaya-tsentrifuga",
+      "sourceName": "01 Роторная центрифуга.png",
+      "sourceBytes": 2286589,
+      "sourceSha256": "14fa4c4fc8db3fc2d148d14450423782bcfaca0608a958aaeaeecded24790286",
+      "sourceWidth": 1448,
+      "sourceHeight": 1086,
+      "lowerEdgeColors": [
+        "#cab29f",
+        "#dbbda5",
+        "#efd4bb",
+        "#ccb099",
+        "#d4bca7"
+      ],
+      "image": {
+        "file": "catalogue/equipment/rotornaya-tsentrifuga.webp",
+        "width": 1448,
+        "height": 1086,
+        "bytes": 231834,
+        "sha256": "6e0d2d68e79ad5119ac87cc09437fd659f416d71df87baa05958de08bd30882e"
+      },
+      "small": {
+        "file": "catalogue/equipment/rotornaya-tsentrifuga-768.webp",
+        "width": 768,
+        "height": 576,
+        "bytes": 80470,
+        "sha256": "5d77f1f95059adac1a93c3eb8fc9758ee31bab6ad434f21908482db314d3373f"
+      }
+    },
+    {
+      "slug": "predvaritelnyy-raspushitel",
+      "sourceName": "02 Предварительный распушитель.png",
+      "sourceBytes": 2095336,
+      "sourceSha256": "948cfe3d7e4a780cbc86e1d607dfae5e767d549d72574393774cd5c941aaf723",
+      "sourceWidth": 1448,
+      "sourceHeight": 1086,
+      "lowerEdgeColors": [
+        "#cab6a6",
+        "#f5ddc8",
+        "#e7ccb2",
+        "#e3c8b2",
+        "#dac4b1"
+      ],
+      "image": {
+        "file": "catalogue/equipment/predvaritelnyy-raspushitel.webp",
+        "width": 1448,
+        "height": 1086,
+        "bytes": 199372,
+        "sha256": "5decf02250de0dd91a1040141913dbf15ed7e720a116aeda0915d7bf850597f1"
+      },
+      "small": {
+        "file": "catalogue/equipment/predvaritelnyy-raspushitel-768.webp",
+        "width": 768,
+        "height": 576,
+        "bytes": 73576,
+        "sha256": "0e54f90608c32bb4d92882ac780e989f8408f83d64682ff58bc6eb8b525fafaa"
+      }
+    },
+    {
+      "slug": "vintovoy-press",
+      "sourceName": "03 Винтовой отжимной пресс.png",
+      "sourceBytes": 2082216,
+      "sourceSha256": "b182052287f10cb590688e50bd343a0adfa99011054fd3052a861eaaeb7d53c0",
+      "sourceWidth": 1448,
+      "sourceHeight": 1086,
+      "lowerEdgeColors": [
+        "#dec8b8",
+        "#ddc2ae",
+        "#d9bfab",
+        "#e9cdb7",
+        "#eed4bf"
+      ],
+      "image": {
+        "file": "catalogue/equipment/vintovoy-press.webp",
+        "width": 1448,
+        "height": 1086,
+        "bytes": 186646,
+        "sha256": "1eef84ca4fbdee961c6a9d51bc2a398e861cc765b9631726cd57ad90f97006e4"
+      },
+      "small": {
+        "file": "catalogue/equipment/vintovoy-press-768.webp",
+        "width": 768,
+        "height": 576,
+        "bytes": 73192,
+        "sha256": "db0bde6ad326c7c920ff3ccafe330485629d227b0d417b3cdb9331c4e5d39eb0"
+      }
+    },
+    {
+      "slug": "kapsulyator",
+      "sourceName": "04 Капсулятор.png",
+      "sourceBytes": 2202708,
+      "sourceSha256": "4f6e1ef2ee2627cfe05f0d752702f25252a0d84c4b6a5b5d9e01992d6c27a173",
+      "sourceWidth": 1448,
+      "sourceHeight": 1086,
+      "lowerEdgeColors": [
+        "#fae4cf",
+        "#d1b8a1",
+        "#d0b59e",
+        "#d9bfa8",
+        "#ebd5c1"
+      ],
+      "image": {
+        "file": "catalogue/equipment/kapsulyator.webp",
+        "width": 1448,
+        "height": 1086,
+        "bytes": 215874,
+        "sha256": "96774a131e775abdeea0b4ed76bc9770f156b9f4ddf97b9c5c71728ce6c393ab"
+      },
+      "small": {
+        "file": "catalogue/equipment/kapsulyator-768.webp",
+        "width": 768,
+        "height": 576,
+        "bytes": 73268,
+        "sha256": "23c98cc1d03e0a6897bc2636e93281f754208535eaf16db863e264af14db4329"
+      }
+    },
+    {
+      "slug": "rotornyy-raspushitel",
+      "sourceName": "05 Роторный распушитель.png",
+      "sourceBytes": 2356931,
+      "sourceSha256": "3ce656de2d758ee411e854df9c84186ae200c72219e9fcc85d11f46892ff94c2",
+      "sourceWidth": 1448,
+      "sourceHeight": 1086,
+      "lowerEdgeColors": [
+        "#ddc5b1",
+        "#efd2ba",
+        "#e8ccb5",
+        "#dfc2ab",
+        "#dac1b0"
+      ],
+      "image": {
+        "file": "catalogue/equipment/rotornyy-raspushitel.webp",
+        "width": 1448,
+        "height": 1086,
+        "bytes": 287898,
+        "sha256": "a027fab5cb627c4b6b250a05f1d62c10ea5e6aa395ace8b5c4b278a8ac2574f5"
+      },
+      "small": {
+        "file": "catalogue/equipment/rotornyy-raspushitel-768.webp",
+        "width": 768,
+        "height": 576,
+        "bytes": 102518,
+        "sha256": "ad7bf5ea40ee64ece7796c4aa210d295d4666a8e811731ae635151c0c13a851f"
+      }
+    },
+    {
+      "slug": "predvaritelnyy-izmelchitel",
+      "sourceName": "06 Предварительный измельчитель.png",
+      "sourceBytes": 2139001,
+      "sourceSha256": "0c468f88715e3af7382cc54f69c8cbfeece90db7031b7121e24cfe548128e1db",
+      "sourceWidth": 1448,
+      "sourceHeight": 1086,
+      "lowerEdgeColors": [
+        "#c4ae9c",
+        "#d3b8a4",
+        "#e2c5aa",
+        "#eed5bf",
+        "#dcc6b1"
+      ],
+      "image": {
+        "file": "catalogue/equipment/predvaritelnyy-izmelchitel.webp",
+        "width": 1448,
+        "height": 1086,
+        "bytes": 199992,
+        "sha256": "7f69daed2fabb9222a204e0d55fc4ae8bb41b6c535f5e11a10091acfe1bcc184"
+      },
+      "small": {
+        "file": "catalogue/equipment/predvaritelnyy-izmelchitel-768.webp",
+        "width": 768,
+        "height": 576,
+        "bytes": 74158,
+        "sha256": "5315407ad53e28785295218c2ebf9d3d628bb0f91a5abd8e26279df658d63707"
+      }
+    },
+    {
+      "slug": "vertikalno-rotornyy-izmelchitel",
+      "sourceName": "07 Роторный измельчитель.png",
+      "sourceBytes": 2035019,
+      "sourceSha256": "cfc202d920cb358ac741706da184b2e903937fad185d125ac75720cf94b18c3a",
+      "sourceWidth": 1448,
+      "sourceHeight": 1086,
+      "lowerEdgeColors": [
+        "#e2c9b2",
+        "#ddbfa3",
+        "#e7c5a4",
+        "#f3d8bf",
+        "#e3cdb8"
+      ],
+      "image": {
+        "file": "catalogue/equipment/vertikalno-rotornyy-izmelchitel.webp",
+        "width": 1448,
+        "height": 1086,
+        "bytes": 175378,
+        "sha256": "b4a634701a350c0a84f8b8c93d9d8650656125ca9d9a081667d6a8e883715e1b"
+      },
+      "small": {
+        "file": "catalogue/equipment/vertikalno-rotornyy-izmelchitel-768.webp",
+        "width": 768,
+        "height": 576,
+        "bytes": 65972,
+        "sha256": "8ad038006ef61b174f6d1a576bf296c952b94b689d6337bb95fcd554b656a378"
+      }
+    },
+    {
+      "slug": "bunker-nakopitel",
+      "sourceName": "08 Бункер-накопитель.png",
+      "sourceBytes": 2295106,
+      "sourceSha256": "2a8b8dc8f41bdc30bd1ee3067f5b0aa3a228d80c85d423c3a1004f77d8f5bca5",
+      "sourceWidth": 1448,
+      "sourceHeight": 1086,
+      "lowerEdgeColors": [
+        "#dbc1b0",
+        "#d7bba6",
+        "#cfb49f",
+        "#e9ccb4",
+        "#ebd2c0"
+      ],
+      "image": {
+        "file": "catalogue/equipment/bunker-nakopitel.webp",
+        "width": 1448,
+        "height": 1086,
+        "bytes": 249934,
+        "sha256": "f844bf255d489657cd60337a8561d0c09497b4e248fa83bedf848fb59f6fb194"
+      },
+      "small": {
+        "file": "catalogue/equipment/bunker-nakopitel-768.webp",
+        "width": 768,
+        "height": 576,
+        "bytes": 92776,
+        "sha256": "efe36ebaab6b6e65abb908309cefa23daf238b9b3383c128f3cef26d92235e2e"
+      }
+    },
+    {
+      "slug": "ochistka-stokov",
+      "sourceName": "09 Комплекс очистки стоков.png",
+      "sourceBytes": 2696158,
+      "sourceSha256": "1918b6a31eec8ac953976096805eac3be874980f6a03bb23833e580cebef32b2",
+      "sourceWidth": 1448,
+      "sourceHeight": 1086,
+      "lowerEdgeColors": [
+        "#8f7f74",
+        "#9f8c81",
+        "#9a887a",
+        "#988679",
+        "#a19085"
+      ],
+      "image": {
+        "file": "catalogue/equipment/ochistka-stokov.webp",
+        "width": 1448,
+        "height": 1086,
+        "bytes": 345158,
+        "sha256": "fdac6cbe7e9dc21eaf1f8dc06ab5fa16b25db2552a35f839bbbcf4b4c59b9da9"
+      },
+      "small": {
+        "file": "catalogue/equipment/ochistka-stokov-768.webp",
+        "width": 768,
+        "height": 576,
+        "bytes": 104252,
+        "sha256": "aca661017a31e0401db3d827143ce17e29ad68d0f5c51cc50fe7e07ec13f5ef7"
+      }
+    },
+    {
+      "slug": "plenochnyy-flotator",
+      "sourceName": "10 Плёночный флотатор.png",
+      "sourceBytes": 2172094,
+      "sourceSha256": "bab6978798e8b4c58caf3c277dab74e0c054db742bccd0d4cec8b4d9ca3c8108",
+      "sourceWidth": 1448,
+      "sourceHeight": 1086,
+      "lowerEdgeColors": [
+        "#dbc8b6",
+        "#dec7b0",
+        "#e9d1ba",
+        "#c4aa93",
+        "#dfcab4"
+      ],
+      "image": {
+        "file": "catalogue/equipment/plenochnyy-flotator.webp",
+        "width": 1448,
+        "height": 1086,
+        "bytes": 227534,
+        "sha256": "3f96cf22a78f78353e92e265d5a2ae93312e8e77319287c83469aa73ee856924"
+      },
+      "small": {
+        "file": "catalogue/equipment/plenochnyy-flotator-768.webp",
+        "width": 768,
+        "height": 576,
+        "bytes": 88554,
+        "sha256": "263d0b62da749f57ac8d82cbfde0a34f7bf98706f19bda24ad377e6cca3603c5"
+      }
+    },
+    {
+      "slug": "rama-napolnitel",
+      "sourceName": "11 Рама для биг-бэгов.png",
+      "sourceBytes": 2289608,
+      "sourceSha256": "15ea2d35103ad7bddbba903a25727bf3f6796186d010d8354e6596a1eea85fb8",
+      "sourceWidth": 1448,
+      "sourceHeight": 1086,
+      "lowerEdgeColors": [
+        "#cfb8a4",
+        "#dbbfa6",
+        "#cbb097",
+        "#e3c9b1",
+        "#d9c1ae"
+      ],
+      "image": {
+        "file": "catalogue/equipment/rama-napolnitel.webp",
+        "width": 1448,
+        "height": 1086,
+        "bytes": 205830,
+        "sha256": "6bfdaf2ea7535071423c87dc97596528cfa15fd42fa1781292b6c7aeae97dd91"
+      },
+      "small": {
+        "file": "catalogue/equipment/rama-napolnitel-768.webp",
+        "width": 768,
+        "height": 576,
+        "bytes": 74636,
+        "sha256": "59f2212defce2f9462902c04c7088be0f6c921ac13782638f349183656654f8c"
+      }
+    },
+    {
+      "slug": "ballisticheskiy-separator",
+      "sourceName": "12 Баллистический сепаратор.png",
+      "sourceBytes": 2306118,
+      "sourceSha256": "88d66e9b40a7e2cea1b6950d57be43b1d4fe5f6a437dc3219dbb6493738f4fce",
+      "sourceWidth": 1448,
+      "sourceHeight": 1086,
+      "lowerEdgeColors": [
+        "#dbc3af",
+        "#f5dcc7",
+        "#d8beaa",
+        "#e4ccb9",
+        "#ddc9bc"
+      ],
+      "image": {
+        "file": "catalogue/equipment/ballisticheskiy-separator.webp",
+        "width": 1448,
+        "height": 1086,
+        "bytes": 228204,
+        "sha256": "f2eeccf63b735f2b82811aca83d22a6cfdf9c26d90088f8aff42b1b4d55d68d5"
+      },
+      "small": {
+        "file": "catalogue/equipment/ballisticheskiy-separator-768.webp",
+        "width": 768,
+        "height": 576,
+        "bytes": 85786,
+        "sha256": "9de451654bcc0a202fd1200f63096448a2b0918d506fbb3f0f051de8c119a06d"
+      }
+    }
+  ]
+}

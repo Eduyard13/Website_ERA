@@ -28,7 +28,7 @@ with sync_playwright() as p:
   print('All 12 cards, catalogue, documents, layout and images:',width,'OK',flush=True)
  page.goto(base+'/catalog/equipment');assert page.locator('[data-node]:visible').count()==12
  page.get_by_role('searchbox').fill('флотатор');assert page.locator('[data-node]:visible').count()==1
- page.get_by_role('link',name='Подробнее',exact=True).filter(visible=True).click();assert page.url.endswith('/plenochnyy-flotator')
+ page.locator('[data-node]:visible').click();assert page.url.endswith('/plenochnyy-flotator')
  page.go_back();assert page.locator('[data-node]:visible').count()==1
  page.goto(base+'/documents');assert page.locator('[data-document]').count()==24
  assert page.locator('[data-document-folder]').count()==2

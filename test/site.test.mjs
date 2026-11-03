@@ -37,15 +37,16 @@ test('Реестр содержит 12 уникальных узлов, лини
  assert.ok(html.includes(`data-image="${basePath}/assets/photos/predvaritelnyy-izmelchitel/02.webp"`));
  assert.ok(html.includes(`data-product="${basePath}${product}"`));
 });
-test('Фото распределены по 11 узлам, а каталог использует схемы из технических описаний',async()=>{
+test('Фото распределены по 11 узлам, а каталог использует готовые иллюстрации владельца',async()=>{
  const {nodes,media}=await import('../content/catalog.mjs');
  const {customerPhotos}=await import('../content/customer-photos.mjs');
+ const {equipmentCardImages}=await import('../content/equipment-card-images.mjs');
  assert.equal(customerPhotos.length,65);
  assert.equal(new Set(customerPhotos.map(m=>m.slug)).size,11);
  assert.equal(new Set(customerPhotos.map(m=>m.id)).size,65);
  const catalogue=await readFile('dist/catalog/equipment/index.html','utf8');
  for(const n of nodes){
-  assert.ok(catalogue.includes(`${basePath}/assets/${n.cardFile}`),n.slug);
+  assert.ok(catalogue.includes(`${basePath}/assets/${equipmentCardImages[n.slug].file}`),n.slug);
   assert.ok(!n.cardImage.startsWith('photos/'),n.slug);
   const pictures=media.filter(m=>m.product===n.path&&m.type==='photo');
   const html=await readFile('dist'+n.path+'/index.html','utf8');
@@ -90,6 +91,29 @@ test('Краткие параметры содержат мощность, а с
  assert.equal(rotor.scheme,'equipment/rotornyy-raspushitel/working-principle.svg');
  const svg=await readFile('dist/assets/'+rotor.scheme,'utf8');
  assert.match(svg,/>1<\/text>/);assert.match(svg,/>2<\/text>/);assert.match(svg,/>3<\/text>/);
+});
+test('Новые карточки используют все 12 иллюстраций и сохраняют единицы подачи',async()=>{
+ const {nodes}=await import('../content/catalog.mjs');
+ const {equipmentCardData}=await import('../content/equipment-cards.mjs');
+ const {createHash}=await import('node:crypto');
+ const manifest=JSON.parse(await readFile('docs/equipment-card-assets.json','utf8'));
+ assert.equal(manifest.images.length,12);
+ assert.deepEqual(new Set(manifest.images.map(i=>i.slug)),new Set(nodes.map(n=>n.slug)));
+ for(const node of nodes){
+  const card=equipmentCardData(node),asset=manifest.images.find(i=>i.slug===node.slug);
+  assert.equal(card.metrics.length,4,node.slug);
+  assert.equal(card.image.file,asset.image.file,node.slug);
+  assert.equal(card.image.width/card.image.height,4/3);
+  for(const image of [asset.image,asset.small])assert.equal(createHash('sha256').update(await readFile('dist/assets/'+image.file)).digest('hex'),image.sha256);
+  assert.equal(card.metrics[2].value,node.power.installed,node.slug);
+  assert.equal(card.metrics[3].value,node.power.value,node.slug);
+ }
+ const get=slug=>equipmentCardData(nodes.find(n=>n.slug===slug));
+ assert.equal(get('ballisticheskiy-separator').metrics[0].value,'до 60 м³/ч');
+ assert.equal(get('bunker-nakopitel').metrics[0].label,'Ёмкость накопления');
+ assert.equal(get('bunker-nakopitel').metrics[0].value,'4,7 м³');
+ assert.equal(get('ochistka-stokov').metrics[0].value,'25 м³/ч');
+ assert.equal(get('rama-napolnitel').metrics[0].value,'до 20 мешков/ч');
 });
 test('Адаптивные изображения и презентационные переходы учитывают путь публикации',async()=>{
  const html=await readFile('dist/index.html','utf8');
