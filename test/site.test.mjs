@@ -28,7 +28,7 @@ test('Данные карточки различают сырьё и расчё�
 test('Реестр содержит 12 уникальных узлов, линии расширяются через данные, медиа имеют реальные файлы',async()=>{
  const {nodes,lines,media}=await import('../content/catalog.mjs');
  assert.equal(nodes.length,12);assert.equal(new Set(nodes.map(n=>n.path)).size,12);
- assert.equal(lines.filter(l=>l.enabled).length,3);
+ assert.equal(lines.filter(l=>l.enabled).length,1);
  assert.equal(lines.filter(l=>l.group==='Сепарация').length,3);
  assert.equal(lines.filter(l=>l.group==='Мойка').length,1);
  assert.equal(nodes.filter(n=>n.status==='source-checked').length,12);
@@ -36,6 +36,42 @@ test('Реестр содержит 12 уникальных узлов, лини
  const html=await readFile('dist/media/index.html','utf8');
  assert.ok(html.includes(`data-image="${basePath}/assets/photos/predvaritelnyy-izmelchitel/02.webp"`));
  assert.ok(html.includes(`data-product="${basePath}${product}"`));
+});
+test('В каталоге четыре линии по порядку; открывается только готовая Сепарация 02',async()=>{
+ const {lines}=await import('../content/catalog.mjs');
+ const {filmSeparationMedia}=await import('../content/film-separation.mjs');
+ const html=await readFile('dist/catalog/lines/index.html','utf8');
+ const cards=[...html.matchAll(/<(a|article)\b([^>]*\bdata-line\b[^>]*)>([\s\S]*?)<\/\1>/g)];
+ assert.deepEqual(cards.map(([,tag])=>tag),['article','a','article','article']);
+ assert.deepEqual(cards.map(([,tag,attrs])=>/data-line-id="([^"]+)"/.exec(attrs)[1]),['separatsiya-01','separatsiya-02','separatsiya-03','moyka-plenki']);
+ assert.ok(!html.includes('name="optional"'));
+ assert.ok(!html.includes('data-optional='));
+ assert.match(cards[1][2],new RegExp(`href="${basePath}/catalog/lines/separatsiya-02"`));
+ assert.match(cards[1][3],/СЕПАРАЦИЯ 02 \/ ГОТОВАЯ ЛИНИЯ/);
+ assert.equal([...cards[1][3].matchAll(/<dt>/g)].length,6);
+ assert.ok(cards[2][3].includes('Линия сепарации и сушки плёнок и пакетов'));
+ assert.ok(cards[2][3].includes('С сортировкой плёнок по видам'));
+ assert.ok(cards[3][3].includes('Линия горячей мойки плёнок и пакетов'));
+ for(const card of [cards[0],cards[2],cards[3]]){
+  assert.ok(!/\b(?:href|tabindex|role)=/.test(card[2]));
+  assert.ok(!/<(?:a|button|input|select)\b/.test(card[3]));
+  assert.ok(card[3].includes('В разработке'));
+ }
+ const ready=lines.find(l=>l.enabled);
+ assert.equal(ready.slug,'separatsiya-02');assert.equal(ready.status,'source-checked');
+ const page=await readFile('dist'+ready.path+'/index.html','utf8');
+ assert.match(page,/<title>Сепарация 02 — ЭРА<\/title>/);
+ assert.ok(page.includes('СЕПАРАЦИЯ 02 / ГОТОВАЯ ЛИНИЯ ЭРА'));
+ assert.ok(page.includes(`href="${basePath}/documents/${ready.documents[0].file}"`));
+ assert.ok(page.includes(`data-product="${basePath}${ready.path}"`));
+ for(const m of Object.values(filmSeparationMedia)){
+  assert.equal(m.product,ready.path);assert.equal(m.productTitle,ready.title);
+  await stat('dist/assets/'+m.file);
+ }
+ for(const line of lines.filter(l=>!l.enabled)){
+  assert.ok(!routes.includes(line.path));
+  await assert.rejects(stat('dist'+line.path+'/index.html'),{code:'ENOENT'});
+ }
 });
 test('Фото распределены по 11 узлам, а каталог использует готовые иллюстрации владельца',async()=>{
  const {nodes,media}=await import('../content/catalog.mjs');
@@ -168,7 +204,7 @@ test('Единицы, мощность и условия разных узлов
 test('Навигация различает точную страницу, раздел и полное меню',async()=>{
  const {navigation,navigationState,siteHeader,siteMenu,normalizeNavigationPath}=await import('../scripts/navigation.mjs');
  assert.match(navigation('/'),/href="\/"[^>]*aria-current="page"[^>]*data-current-section="true"/);
- for(const path of [product,'/catalog/equipment','/catalog/lines/separatsiya-01','/catalog/lines']){
+ for(const path of [product,'/catalog/equipment','/catalog/lines/separatsiya-02','/catalog/lines']){
   const state=navigationState(path);assert.equal(state.section,'equipment');
   assert.match(navigation(path),/href="\/catalog"[^>]*data-current-section="true"/);
   assert.ok(!navigation(path).includes('aria-current="location"'));
@@ -180,7 +216,7 @@ test('Навигация различает точную страницу, ра�
   assert.match(siteMenu(path),new RegExp('href="'+path+'" aria-current="page"'));
  }
  assert.match(siteMenu(product),/href="\/catalog\/equipment" data-current-branch="true"/);
- assert.match(siteMenu('/catalog/lines/separatsiya-01'),/href="\/catalog\/lines" data-current-branch="true"/);
+ assert.match(siteMenu('/catalog/lines/separatsiya-02'),/href="\/catalog\/lines" data-current-branch="true"/);
  assert.equal(normalizeNavigationPath('/Website_ERA/catalog/equipment/?q=x#specs','/Website_ERA/'),'/catalog/equipment');
  assert.equal(navigationState('/Website_ERA/?q=x#discuss',{basePath:'/Website_ERA'}).section,'project');
  assert.equal(navigationState('/Website_ERA/catalog/equipment/?q=x#specs',{basePath:'/Website_ERA'}).section,'equipment');
@@ -366,8 +402,8 @@ test('Общий каталог предлагает две ветки, а ст�
  const equipment=await readFile('dist/catalog/equipment/index.html','utf8');
  assert.ok(equipment.includes('id="catalog-filters"'));
  assert.equal([...equipment.matchAll(/data-node data-title=/g)].length,nodes.length);
- assert.equal(lines.filter(l=>l.enabled&&l.group==='Сепарация').length,2);
- assert.equal(lines.filter(l=>l.enabled&&l.group==='Мойка').length,1);
+ assert.equal(lines.filter(l=>l.enabled&&l.group==='Сепарация').length,1);
+ assert.equal(lines.filter(l=>l.enabled&&l.group==='Мойка').length,0);
  const home=await readFile('dist/index.html','utf8');
  assert.ok(home.includes('id="about-era"'));assert.ok(home.includes('Начинаем с вашего сырья и нужного результата'));
  assert.ok(home.includes('ЭРА — проект по возвращению вторичных полимерных материалов'));

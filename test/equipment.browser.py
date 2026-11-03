@@ -43,7 +43,7 @@ with sync_playwright() as p:
  page.goto(base+'/catalog/equipment/plenochnyy-flotator')
  page.locator('.equipment-live-photos .media-open').first.click();assert page.locator('#media-viewer').is_visible();page.keyboard.press('Escape');assert not page.locator('#media-viewer').is_visible()
  # Check ancestor highlights and keyboard/mobile project navigation.
- for route in ['/catalog/lines/separatsiya-01','/technology','/blog']:
+ for route in ['/catalog/lines/separatsiya-02','/technology','/blog']:
   page.goto(base+route)
   if route=='/blog':
    assert page.locator('[data-menu-toggle]').get_attribute('data-current-section')=='true'

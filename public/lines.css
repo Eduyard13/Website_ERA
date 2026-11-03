@@ -165,14 +165,21 @@
 .film-line .line-documents .document-copy h3{font-size:24px}
 .film-line .line-documents .document-download{width:100%}
 .film-line .line-request{border-top:1px solid var(--line)}
-/* Each line is one native link. The selected card alone receives the gold edge. */
+/* Only published lines are links; drafts reserve their place in the catalogue. */
 .line-grid>.line-card{position:relative;isolation:isolate;min-width:0;overflow:hidden;transition:none}
-.line-grid>.line-card::after{content:'';position:absolute;inset:0;z-index:2;pointer-events:none;border:1px solid var(--era-gold);border-radius:inherit;box-shadow:inset 0 0 0 1px #f4e1a51f,inset 0 0 22px -15px #c6a43b75;opacity:0;transition:opacity .32s ease-out}
-.line-grid>.line-card:focus-visible{outline:2px solid var(--era-gold);outline-offset:4px}
-.line-grid>.line-card:focus-visible::after{opacity:1}
-@media(hover:hover){.line-grid>.line-card:hover::after{opacity:1}}
-.line-grid>.line-card:not(.line-card--complete):hover{color:var(--ink)}
-.line-card.line-card--complete{grid-row:span 2;padding:0;color:var(--era-on-dark);background:linear-gradient(90deg,#010e34 0%,#010e3e 25%,#010a37 50%,#010732 75%,#010a30 100%);border-color:#ffffff20}
+.line-grid>a.line-card::after{content:'';position:absolute;inset:0;z-index:2;pointer-events:none;border:1px solid var(--era-gold);border-radius:inherit;box-shadow:inset 0 0 0 1px #f4e1a51f,inset 0 0 22px -15px #c6a43b75;opacity:0;transition:opacity .32s ease-out}
+.line-grid>a.line-card:focus-visible{outline:2px solid var(--era-gold);outline-offset:4px}
+.line-grid>a.line-card:focus-visible::after{opacity:1}
+@media(hover:hover){.line-grid>a.line-card:hover::after{opacity:1}}
+.line-card.line-card--draft{padding:0;min-height:300px;cursor:default;background:linear-gradient(145deg,#f7f3eb,#ede6d8)}
+.line-card-draft-content{width:100%;padding:30px}
+.line-card-draft-content>.eyebrow{display:block;margin-bottom:14px;font-size:11px}
+.line-card-draft-content>h3{font-size:31px;line-height:1.16;margin:0 0 16px;max-width:540px}
+.line-card-draft-content>.line-card-subtitle{font-size:17px;line-height:1.45;margin:0 0 18px}
+.line-card-draft-content>.status{margin:8px 0 0;border:1px solid #a58b4e33;background:#fff9;color:#756344}
+.line-card-placeholder{display:grid;place-items:center;flex:none;width:100%;aspect-ratio:3/2;border-bottom:1px solid #a58b4e26;background:radial-gradient(ellipse at 50% 35%,#fff8,transparent 70%)}
+.line-card-placeholder>span{font-size:clamp(80px,9vw,140px);line-height:1;letter-spacing:-.06em;color:#a58b4e50}
+.line-card.line-card--complete{padding:0;color:var(--era-on-dark);background:linear-gradient(90deg,#010e34 0%,#010e3e 25%,#010a37 50%,#010732 75%,#010a30 100%);border-color:#ffffff20}
 .line-card.line-card--complete:hover{color:var(--era-on-dark)}
 .line-card--complete>.line-card-cover{width:100%;display:block;flex:none;aspect-ratio:3/2;margin:0;padding:0;border:0;overflow:hidden}
 .line-card--complete>.line-card-cover img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:contain;object-position:center;margin:0;padding:0;transform:none;filter:none}
@@ -197,7 +204,8 @@
  .line-card--complete .line-card-metrics dd small{font-size:11px;margin-left:4px}
 }
 @media(max-width:767px){
- .line-card.line-card--complete{grid-row:auto}
+ .line-card-draft-content{padding:25px 22px}
+ .line-card-draft-content>h3{font-size:29px}
  .line-card--complete>.line-card-content{padding:25px 22px}
  .line-card--complete .line-card-content>h3{font-size:29px}
  .line-card--complete .line-card-metrics{column-gap:18px;row-gap:22px}
@@ -323,4 +331,4 @@
  .film-line .line-documents .document-symbol{display:none}
  .film-line .line-documents .document-copy h3{font-size:22px}
 }
-@media(prefers-reduced-motion:reduce){.film-line .line-image img,.line-grid>.line-card::after{transition:none}.film-line .line-image .media-open:hover img{transform:none}}
+@media(prefers-reduced-motion:reduce){.film-line .line-image img,.line-grid>a.line-card::after{transition:none}.film-line .line-image .media-open:hover img{transform:none}}

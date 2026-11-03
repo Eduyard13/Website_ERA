@@ -12,11 +12,11 @@ function picture(key,{label,caption,hero=false,full=false}={}){
 const rows=items=>items.map(([label,value])=>`<tr><th scope="row">${escape(label)}</th><td>${escape(value)}</td></tr>`).join('');
 
 export function renderFilmSeparation(line){
- const email='mailto:edkom.office@mail.ru?subject='+encodeURIComponent('Запрос ЭРА: Сепарация 01 — линия сухой сепарации плёнок');
+ const email='mailto:edkom.office@mail.ru?subject='+encodeURIComponent(`Запрос ЭРА: ${line.title} — линия сухой сепарации плёнок`);
  return `<div class="film-line">
- <div class="breadcrumbs"><a href="/">Главная</a> / <a href="/catalog">Оборудование</a> / <a href="/catalog/lines">Линии</a> / Сепарация 01</div>
+ <div class="breadcrumbs"><a href="/">Главная</a> / <a href="/catalog">Оборудование</a> / <a href="/catalog/lines">Линии</a> / ${escape(line.title)}</div>
  <section class="section line-hero">
-  <div class="line-hero-copy"><p class="eyebrow">СЕПАРАЦИЯ 01 / ГОТОВАЯ ЛИНИЯ ЭРА</p><h1>Линия сухой сепарации плёнок и пакетов</h1><p class="line-slogan">Из загрязнённой плёнки —<br>в товарные партии.</p><p class="line-lead">Раскрытие пакетов, многоступенчатая очистка, ручной отбор и прессование. Подготовленная плёнка для продажи переработчикам или дальнейшей мойки.</p><div class="actions">${button('Обсудить линию',email)}${button('Схема и состав','#composition',true)}</div><a class="text-link line-document-shortcut" href="#documents">Техническое описание · PDF, 32 страницы ↓</a></div>
+  <div class="line-hero-copy"><p class="eyebrow">${escape(line.title.toLocaleUpperCase('ru'))} / ГОТОВАЯ ЛИНИЯ ЭРА</p><h1>Линия сухой сепарации плёнок и пакетов</h1><p class="line-slogan">Из загрязнённой плёнки —<br>в товарные партии.</p><p class="line-lead">Раскрытие пакетов, многоступенчатая очистка, ручной отбор и прессование. Подготовленная плёнка для продажи переработчикам или дальнейшей мойки.</p><div class="actions">${button('Обсудить линию',email)}${button('Схема и состав','#composition',true)}</div><a class="text-link line-document-shortcut" href="#documents">Техническое описание · PDF, 32 страницы ↓</a></div>
   <div class="line-hero-visual">${picture('hero',{hero:true,caption:'Представленная комплектация: подготовка, сортировка, очистка и выдача тюков'})}<div class="line-hero-tags"><span>Сухая очистка</span><span>5 раздельных потоков</span><span>Автоматическая увязка</span></div></div>
   <div class="line-metrics"><dl>${lineMetrics.map(([value,unit,label])=>`<div><dt>${label}</dt><dd>${value}<small>${unit}</small></dd></div>`).join('')}</dl><p>750 кг/ч — рабочий ориентир при среднем засоре около 50%. Фактический выпуск зависит от состава сырья, влажности и режима. ТО, стр. 2, 21–23.</p></div>
  </section>

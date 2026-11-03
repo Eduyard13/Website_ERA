@@ -43,11 +43,11 @@ export const nodes=rows.map(([slug,title,category])=>{
   path:'/catalog/equipment/'+slug};
 });
 export const lines=[
- {slug:'separatsiya-01',title:'Сепарация 01',group:'Сепарация',enabled:true},
- {slug:'separatsiya-02',title:'Сепарация 02',group:'Сепарация',enabled:true},
- {slug:'separatsiya-03',title:'Сепарация 03',group:'Сепарация',enabled:false},
- {slug:'moyka-plenki',title:'Мойка плёнки',group:'Мойка',enabled:true}
-].map(l=>({...l,path:'/catalog/lines/'+l.slug,status:'draft',equipment:[],optionalEquipment:[],documents:[],...(l.slug==='separatsiya-01'?filmSeparation:{})}));
+ {slug:'separatsiya-01',number:'01',title:'Сепарация 01',group:'Сепарация',enabled:false},
+ {slug:'separatsiya-02',number:'02',title:'Сепарация 02',group:'Сепарация',enabled:true},
+ {slug:'separatsiya-03',number:'03',title:'Линия сепарации и сушки плёнок и пакетов',cardDescription:'С сортировкой плёнок по видам',group:'Сепарация',enabled:false},
+ {slug:'moyka-plenki',title:'Линия горячей мойки плёнок и пакетов',group:'Мойка',enabled:false}
+].map(l=>({...l,path:'/catalog/lines/'+l.slug,status:'draft',equipment:[],optionalEquipment:[],documents:[],...(l.slug==='separatsiya-02'?filmSeparation:{})}));
 const equipmentMedia=[
  {id:'assembly',title:'Сборка узла со стороны привода',type:'photo',topic:'Сборка',file:'assembly.webp'},
  {id:'mechanism',title:'Сборка механизма подвижной щеки',type:'photo',topic:'Сборка',file:'mechanism.webp'},

@@ -14,9 +14,9 @@ if(catalog){
 }
 const lineFilters=document.querySelector('#line-filters');
 if(lineFilters){
- const group=lineFilters.querySelector('[name=group]'),optional=lineFilters.querySelector('[name=optional]');group.value=params.get('group')||'';optional.checked=params.get('optional')==='1';
- const apply=()=>{let count=0;document.querySelectorAll('[data-line]').forEach(card=>{card.hidden=(!optional.checked&&card.dataset.optional==='true')||(group.value&&group.value!==card.dataset.group);if(!card.hidden)count++;});document.querySelector('#line-result').textContent=`Комплектаций: ${count}`;updateUrl({group:group.value,optional:optional.checked?'1':''});};
- lineFilters.addEventListener('change',apply);lineFilters.querySelector('[data-line-reset]').addEventListener('click',()=>{group.value='';optional.checked=false;apply();});apply();
+ const group=lineFilters.querySelector('[name=group]');group.value=params.get('group')||'';
+ const apply=()=>{let count=0;document.querySelectorAll('[data-line]').forEach(card=>{card.hidden=!!group.value&&group.value!==card.dataset.group;if(!card.hidden)count++;});document.querySelector('#line-result').textContent=`Комплектаций: ${count}`;updateUrl({group:group.value,optional:''});};
+ lineFilters.addEventListener('change',apply);lineFilters.querySelector('[data-line-reset]').addEventListener('click',()=>{group.value='';apply();});apply();
 }
 const mediaFilters=document.querySelector('#media-filters');
 document.querySelectorAll('[data-photo-gallery]').forEach(link=>{const target=new URL(link.href);target.searchParams.set('product',link.dataset.product);link.href=target;});

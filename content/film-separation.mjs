@@ -1,7 +1,7 @@
 // Источник: «ТО Линия Сепарации Пленок.pdf», 02.11.2026, 32 страницы.
 // Происхождение оригинальных иллюстраций — docs/film-separation-assets.json.
 export const filmSeparationDocument={
- id:'separatsiya-01-technical',slug:'separatsiya-01',
+ id:'separatsiya-02-technical',slug:'separatsiya-02',
  title:'Техническое описание — Линия сухой сепарации плёнок и пакетов',
  type:'Техническое описание линии',category:'technical',
  file:'technical/era-separatsiya-01-technical-description.pdf',
@@ -54,9 +54,9 @@ const pictures=[
  ['netherlands-feed','photo',29,'Подача загрязнённой плёнки на линию, Нидерланды','Нидерланды'],
 ];
 export const filmSeparationMedia=Object.fromEntries(pictures.map(([key,type,page,title,topic])=>[key,{
- id:'separatsiya-01-'+key,type,page,title,topic,
+ id:'separatsiya-02-'+key,type,page,title,topic,
  file:`lines/separatsiya-01/${key}.webp`,thumbnail:`lines/separatsiya-01/${key}-thumb.webp`,
- product:'/catalog/lines/separatsiya-01',productTitle:'Сепарация 01',
+ product:'/catalog/lines/separatsiya-02',productTitle:'Сепарация 02',
  caption:`${title} · Техническое описание линии, стр. ${page}`,
 }]));
 
