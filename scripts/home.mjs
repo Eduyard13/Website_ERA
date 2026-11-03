@@ -1,4 +1,5 @@
 import {kairMonitor} from './kair.mjs';
+import {feedstockTypes,contaminantGroups} from '../content/feedstock.mjs';
 import {presentationStages, presentationOutputs, projectSteps} from '../content/presentation.mjs';
 
 const arrow = '<span aria-hidden="true">↗</span>';
@@ -30,16 +31,23 @@ export function presentationHome() {
     <section class="story-section raw-story" id="raw-material" aria-labelledby="raw-title">
       <figure class="raw-photo">
         <img src="/assets/presentation/raw-film.webp" srcset="/assets/presentation/raw-film-480.webp 480w, /assets/presentation/raw-film.webp 880w" sizes="(max-width:767px) calc(100vw - 40px), 40vw" alt="Спрессованное загрязнённое плёночное сырьё" width="880" height="1157" loading="lazy">
-        <figcaption><span>С ЧЕГО НАЧИНАЕТСЯ ПРОЦЕСС</span>Полигонные пакеты и плёнки</figcaption>
+        <figcaption><span>С НОВОГО ВЗГЛЯДА НА СЫРЬЁ</span><strong>Перерабатывайте то, что остаётся невостребованным.</strong></figcaption>
       </figure>
       <div class="raw-copy">
         <p class="eyebrow">01 / СЫРЬЁ, С КОТОРОГО ВСЁ НАЧИНАЕТСЯ</p>
-        <h2 id="raw-title">За сложными отходами<br>стоит ценный материал.</h2>
+        <h2 id="raw-title">За невостребованными отходами стоит ценный материал.</h2>
         <p class="story-lead">Бытовой пакет после использования — это полиэтилен, смешанный с остатками того, что его окружало.</p>
         <p>Плёнка слипается, удерживает органику, песок и другие включения. Для дальнейшей переработки её нужно раскрыть и последовательно очистить.</p>
-        <div class="contaminants"><span>Органика</span><span>Песок и земля</span><span>Твёрдые включения</span><span>Масла и клей</span></div>
-        <div class="story-insight"><span aria-hidden="true">→</span><p>Технология ЭРА начинается с подготовки сложного сырья — и связывает стадии очистки в один процесс.</p></div>
+        <h3 class="raw-materials-title">С каким сырьём работаем</h3>
+        <ul class="raw-materials-list">${feedstockTypes.map(t=>`<li>${t}</li>`).join('')}</ul>
+        <p class="raw-feed-note">Полимерный состав и загрязнения определяют комплектацию и режимы переработки.</p>
       </div>
+      <div class="raw-cleaning" aria-labelledby="raw-cleaning-title">
+        <h3 id="raw-cleaning-title">Какие загрязнения удаляем</h3>
+        <dl class="raw-contaminant-groups">${contaminantGroups.map(g=>`<div><dt>${g.title}</dt><dd><p>${g.description}</p><span class="raw-cleaning-stage">${g.stage}</span></dd></div>`).join('')}</dl>
+        <p class="raw-moisture-note">Влажность учитываем отдельно от загрязнений. После мойки материал обезвоживается и сушится перед гранулированием.</p>
+      </div>
+      <div class="story-insight raw-result"><span aria-hidden="true">→</span><p>Полный цикл ЭРА объединяет сухую сепарацию, горячую мойку, сушку и гранулирование в последовательный процесс — от невостребованного сырья к <strong>высококачественному грануляту.</strong></p></div>
     </section>
 
     <section class="story-section solution-story" id="solution" aria-labelledby="solution-title">
