@@ -1,0 +1,21 @@
+.quality-visual{min-width:0;margin:28px 0 0}
+.quality-visual-open{display:block;position:relative}
+.quality-visual-open>img{display:block;width:100%;height:auto}
+.quality-visual-open>span{position:absolute;right:12px;top:12px;display:grid;place-items:center;width:34px;height:34px;border:1px solid #b7a98988;border-radius:50%;background:#faf7f0de;color:var(--era-blue);font-size:22px}
+.quality-captions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;margin-top:12px}
+.quality-captions>div{min-width:0;padding:0 14px}
+.quality-captions span{display:block;color:var(--era-gold-dark);font-size:11px;letter-spacing:.08em;margin-bottom:8px}
+.quality-captions strong{display:block;font-size:18px;line-height:1.35;font-weight:500;color:var(--era-blue)}
+.quality-captions p{font-size:14px;line-height:1.6;margin:9px 0 0;max-width:none}
+.quality-visual>figcaption{font-size:12px;line-height:1.65;margin:24px 0 0;color:var(--era-muted);max-width:950px}
+.quality-technical-copy{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;margin:38px 0}
+.quality-technical-copy p{font-size:16px;line-height:1.75;margin:0}
+.quality-checks{border-top:1px solid var(--era-border);padding-top:28px}
+.quality-checks h3{font-size:23px;margin-bottom:18px}
+.quality-checks ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 36px;padding-left:20px;font-size:16px}
+.quality-checks>p{font-size:14px;margin:20px 0 0}
+.quality-sources{display:flex;flex-wrap:wrap;gap:14px 30px;margin-top:24px;font-size:13px;color:var(--era-gold-dark)}
+.quality-sources a{text-decoration:underline;text-underline-offset:4px}
+.technology-outline{flex-wrap:wrap}
+@media(max-width:900px){.quality-technical-copy{grid-template-columns:1fr;gap:20px}.quality-captions{gap:16px}.quality-captions>div{padding:0}.quality-captions strong{font-size:16px}}
+@media(max-width:600px){.quality-visual-open>img{min-height:135px;object-fit:contain}.quality-visual-open>span{width:30px;height:30px;right:5px;top:5px;font-size:20px}.quality-captions{grid-template-columns:1fr;gap:18px}.quality-captions>div{display:grid;grid-template-columns:28px 1fr;gap:5px 10px}.quality-captions span{grid-row:span 2;margin:4px 0}.quality-captions p{margin:0}.quality-visual>figcaption{margin-top:20px}.quality-checks ul{grid-template-columns:1fr}.quality-technical-copy{margin:28px 0}.quality-sources{flex-direction:column;align-items:start;gap:14px}}

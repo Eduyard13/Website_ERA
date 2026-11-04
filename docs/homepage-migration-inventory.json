@@ -1,0 +1,99 @@
+{
+  "baselineCommit": "37a53f4",
+  "blocks": [
+    {
+      "renderer": "projectHero",
+      "openingTag": "<section class=\"pitch-hero era-indigo-surface\" aria-labelledby=\"pitch-title\">"
+    },
+    {
+      "renderer": "rawMaterialsStory",
+      "openingTag": "<section class=\"story-section raw-story\" id=\"raw-material\" aria-labelledby=\"raw-title\">"
+    },
+    {
+      "renderer": "stageOverview",
+      "openingTag": "<section class=\"story-section solution-story\" id=\"solution\" aria-labelledby=\"solution-title\">"
+    },
+    {
+      "renderer": "processSlogan",
+      "openingTag": "<section class=\"story-slogan era-indigo-surface\" aria-label=\"Наш подход\">"
+    },
+    {
+      "renderer": "outputsStory",
+      "openingTag": "<section class=\"story-section output-story\" aria-labelledby=\"output-title\">"
+    },
+    {
+      "renderer": "controlStory",
+      "openingTag": "<section class=\"story-section control-story era-indigo-surface\" aria-labelledby=\"control-title\">"
+    },
+    {
+      "renderer": "launchStory",
+      "openingTag": "<section class=\"story-section launch-story\" id=\"about-era\" aria-labelledby=\"launch-title\">"
+    },
+    {
+      "renderer": "detailStory",
+      "openingTag": "<section class=\"story-section detail-story\" aria-labelledby=\"detail-title\">"
+    },
+    {
+      "renderer": "projectContactStory",
+      "openingTag": "<section class=\"story-section discuss-story\" id=\"discuss\" aria-labelledby=\"discuss-title\">"
+    }
+  ],
+  "preservedTechnologyAnchors": [
+    "dry-separation",
+    "hot-washing",
+    "granulation"
+  ],
+  "homeAnchors": [
+    "raw-material",
+    "solution",
+    "about-era",
+    "discuss"
+  ],
+  "originalMainContentCounts": {
+    "home": {
+      "ids": 14,
+      "images": 33,
+      "links": 46,
+      "text": 176
+    },
+    "technology": {
+      "ids": 4,
+      "images": 3,
+      "links": 9,
+      "text": 42
+    }
+  },
+  "legacyHeadlineDestinations": {
+    "raw-title": "/technology#raw-title",
+    "raw-cleaning-title": "/technology#raw-cleaning-title",
+    "solution-title": "/technology#solution-title",
+    "output-title": "/technology#output-title",
+    "control-title": "/technology#control-title",
+    "launch-title": "/technology#launch-title",
+    "detail-title": "/technology#detail-title"
+  },
+  "briefSha256": "787b9c3df1a9c5fb323b40dc7943f5669c1154a11dbe2d3b6ecc11324f2ab5d8",
+  "verification": {
+    "baselineCommit": "37a53f4",
+    "checkedTextFragments": 218,
+    "missingText": {
+      "home": [],
+      "technology": []
+    },
+    "missingImages": {
+      "home": [],
+      "technology": []
+    },
+    "changedPages": [
+      "index.html",
+      "technology/index.html"
+    ],
+    "checks": {
+      "rootTests": 33,
+      "basePathTests": 33,
+      "commercialBrowser": "passed",
+      "presentationBrowser": "passed",
+      "kairBrowser": "passed"
+    }
+  }
+}

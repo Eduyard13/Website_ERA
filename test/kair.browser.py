@@ -15,7 +15,7 @@ with sync_playwright() as p:
  page.on('response',lambda r:failures.append((r.status,r.url)) if r.status>=400 and r.url.startswith(base) else None)
  for width in [320,390,768,1024,1440]:
   page.set_viewport_size({'width':width,'height':1000})
-  for route in ['/','/automation']:
+  for route in ['/technology','/automation']:
    assert page.goto(base+route).status==200
    monitor=page.locator('[data-kair]');monitor.scroll_into_view_if_needed()
    page.mouse.move(0,0)
@@ -40,15 +40,15 @@ with sync_playwright() as p:
    viewer.locator('[data-kair-viewer-next]').click();page.wait_for_function('document.querySelector("[data-kair-viewer-counter]").textContent==="3 из 23"')
    page.keyboard.press('End');page.wait_for_function('document.querySelector("[data-kair-viewer-counter]").textContent==="23 из 23"')
    page.keyboard.press('ArrowRight');page.wait_for_function('document.querySelector("[data-kair-viewer-counter]").textContent==="1 из 23"')
-   if width in [390,1440] and route=='/':page.screenshot(path=str(out/f'fullscreen-{width}.png'))
+   if width in [390,1440] and route=='/technology':page.screenshot(path=str(out/f'fullscreen-{width}.png'))
    viewer.locator('[data-kair-close]').click();page.wait_for_function('!document.fullscreenElement&&!document.querySelector("[data-kair-viewer]").open')
    assert not viewer.is_visible()
    assert monitor.locator('[data-kair-inspect]').evaluate('(e)=>e===document.activeElement')
-   if width in [390,1440] and route=='/':monitor.screenshot(path=str(out/f'monitor-{width}.png'))
+   if width in [390,1440] and route=='/technology':monitor.screenshot(path=str(out/f'monitor-{width}.png'))
    results.append({'width':width,'route':route,'fillsScreen':True,'nativeFullscreen':True})
   print('Responsive monitor, frame fit, controls, native fullscreen, keyboard and focus:',width,'OK',flush=True)
  # Every delivered image can be selected without losing the monitor's geometry.
- page.set_viewport_size({'width':1440,'height':1000});page.goto(base+'/');monitor=page.locator('[data-kair]');monitor.scroll_into_view_if_needed()
+ page.set_viewport_size({'width':1440,'height':1000});page.goto(base+'/technology');monitor=page.locator('[data-kair]');monitor.scroll_into_view_if_needed()
  initial=monitor.locator('.kair-monitor-screen').bounding_box()
  for index,slide in enumerate(slides):
   page.wait_for_function('(n)=>document.querySelector("[data-kair-counter]").textContent===`${n} из 23`',arg=index+1)
@@ -66,7 +66,7 @@ with sync_playwright() as p:
  # Actual production interval, pause/resume and leaving the viewport.
  live=browser.new_page(viewport={'width':1440,'height':1000},reduced_motion='no-preference')
  live.on('pageerror',lambda e:errors.append(str(e)))
- live.goto(base+'/');m=live.locator('[data-kair]');m.scroll_into_view_if_needed();live.mouse.move(0,0)
+ live.goto(base+'/technology');m=live.locator('[data-kair]');m.scroll_into_view_if_needed();live.mouse.move(0,0)
  live.wait_for_function('document.querySelector("[data-kair-counter]").textContent==="2 из 23"',timeout=12000)
  m.locator('[data-kair-pause]').click();live.locator('#control-title').click();live.mouse.move(0,0)
  assert m.locator('[data-kair-pause]').get_attribute('aria-pressed')=='true'

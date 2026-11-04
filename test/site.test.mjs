@@ -153,6 +153,7 @@ test('Новые карточки используют все 12 иллюстр�
 });
 test('Адаптивные изображения и презентационные переходы учитывают путь публикации',async()=>{
  const html=await readFile('dist/index.html','utf8');
+ const technology=await readFile('dist/technology/index.html','utf8');
  for(const [,candidates] of html.matchAll(/srcset="([^"]+)"/g)){
   for(const candidate of candidates.split(',')){
    const url=candidate.trim().split(/\s+/)[0];
@@ -160,9 +161,9 @@ test('Адаптивные изображения и презентационн�
    await stat('dist'+url.slice(basePath.length));
   }
  }
- assert.match(html,/Полный цикл переработки плёнки:/);
- assert.match(html,/очистить, переработать, использовать снова/);
- assert.match(html,/href="#solution"/);
+ assert.match(technology,/Полный цикл переработки плёнки:/);
+ assert.match(technology,/очистить, переработать, использовать снова/);
+ assert.ok(html.includes(`href="${basePath}/technology#solution"`));
  assert.match(html,/href="#discuss"/);
  assert.ok(html.includes('mailto:edkom.office@mail.ru'));
  assert.ok(!html.includes('eduard@ros-um.ru'));
@@ -447,20 +448,50 @@ test('Клиентский режим: единый кириллический �
  }
  const notFound=await readFile('dist/404.html','utf8');assert.equal([...notFound.matchAll(/data-fx-bar /g)].length,1);
 });
-test('Светлое обращение отделено от подвала, КАИР показывает реальные фотографии с автосменой',async()=>{
+test('Контакты сохранены, КАИР перенесён в технологию с реальными фотографиями и автосменой',async()=>{
  const {kairSlides,kairPresentation}=await import('../content/kair.mjs');
  const {kairMonitor}=await import('../scripts/kair.mjs');
  assert.equal(kairSlides.length,23);assert.equal(kairPresentation.autoplay,true);
  assert.ok(kairPresentation.intervalMs>=6000&&kairPresentation.intervalMs<=12000);
  const component=kairMonitor();assert.ok(component.includes('data-kair-next'));assert.ok(component.includes('data-kair-pause'));assert.ok(component.includes('1 из 23'));
  assert.ok(component.includes('data-kair-viewer'));assert.ok(component.includes('Настоящие экраны. Реальное управление.'));
- const html=await readFile('dist/index.html','utf8');
+ const home=await readFile('dist/index.html','utf8');
+ assert.ok(home.includes('id="discuss"'));assert.ok(!home.includes('data-kair-inspect'));
+ const html=await readFile('dist/technology/index.html','utf8');
  assert.match(html,/<section class="story-section discuss-story" id="discuss"/);
  assert.ok(html.includes('data-kair-inspect'));assert.ok(html.includes('Подробнее о КАИР'));
  assert.ok(html.includes(`data-image="${basePath}/assets/${kairSlides[0].original}"`));
  assert.ok(!kairMonitor([]));
  const single=kairMonitor([kairSlides[0]],{...kairPresentation,autoplay:false});
  assert.ok(!single.includes('data-kair-next'));assert.ok(!single.includes('data-kair-pause'));
+});
+test('Новая главная отделяет рынок и демонстрационную экономику от подробной технологии',async()=>{
+ const {economicsConfig,marketOffers}=await import('../public/economics-config.js');
+ const {calculateEconomics}=await import('../public/economics-model.js');
+ const {millions}=await import('../public/economics-view.js');
+ const html=await readFile('dist/index.html','utf8'),result=calculateEconomics();
+ assert.ok(html.includes('Из загрязнённой плёнки —'));assert.ok(!html.includes('class="pitch-stage-nav'));
+ assert.ok(!html.includes('class="raw-story"'));assert.ok(!html.includes('data-kair-inspect'));
+ for(const id of ['raw-material','solution','market','economics','about-era','discuss'])assert.equal([...html.matchAll(new RegExp(`id="${id}"`,'g'))].length,1,id);
+ assert.ok(html.includes(economicsConfig.disclosure));assert.ok(html.includes('Все суммы модели без НДС'));
+ for(const value of [result.revenue,result.net])assert.ok(html.includes(millions(value)));
+ for(const marker of ['data-econ-month','data-econ-bridge','data-econ-curve','data-econ-range','data-econ-number','data-econ-lines="3"'])assert.ok(html.includes(marker),marker);
+ assert.ok(html.includes(`src="${basePath}/commercial.js?v=`));
+ assert.ok(html.includes('Все ТКО, образованные в России за 2025 год'));
+ assert.ok(html.includes('Показатель 46,4 млн т охватывает все ТКО'));
+ for(const offer of marketOffers){assert.ok(html.includes(`href="${offer.href}"`));assert.ok(offer.minimum);assert.ok(offer.vat);assert.ok(offer.delivery);}
+ const deployed=await readFile('dist/economics-controller.js','utf8');assert.match(deployed,/from '\.\/economics-model\.js\?v=/);
+});
+test('Технология сохраняет прежние материалы, стадии, результаты, КАИР и путь запуска',async()=>{
+ const {feedstockTypes,contaminantGroups}=await import('../content/feedstock.mjs');
+ const {presentationStages,presentationOutputs,projectSteps}=await import('../content/presentation.mjs');
+ const html=await readFile('dist/technology/index.html','utf8');
+ for(const id of ['raw-material','raw-title','raw-cleaning-title','solution','solution-title','dry-separation','hot-washing','granulation','granule-quality','control-title','output-title','about-era','launch-title','detail-title','discuss','discuss-title'])assert.equal([...html.matchAll(new RegExp(`id="${id}"`,'g'))].length,1,id);
+ for(const text of [...feedstockTypes,...contaminantGroups.flatMap(g=>[g.title,g.description]),...presentationStages.flatMap(s=>[s.summary,s.description,s.result,...s.details]),...presentationOutputs.map(o=>o.description),...projectSteps.map(s=>s.text)])assert.ok(html.includes(text),text);
+ assert.equal([...html.matchAll(/data-kair-slide(?=[\s>])/g)].length,23);
+ assert.ok(html.includes('Технические профили'));assert.ok(html.includes('Тара'));assert.ok(html.includes('Литьевые изделия'));
+ assert.ok(html.includes(`href="${basePath}/catalog/equipment"`));assert.ok(html.includes(`href="${basePath}/automation"`));
+ assert.ok(html.includes('Схематическая иллюстрация'));assert.ok(html.includes('ПТР при заданной температуре и нагрузке'));
 });
 test('Все фотографии КАИР из архива имеют действительные оригиналы и адаптивные копии',async()=>{
  const {createHash}=await import('node:crypto');

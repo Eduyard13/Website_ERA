@@ -13,24 +13,24 @@ with sync_playwright() as p:
   for route,name in [('/','home'),('/technology','technology'),('/automation','automation'),('/media','media'),('/catalog/equipment','catalog')]:
    assert page.goto(base+route).status==200
    page.locator('img[loading=lazy]').evaluate_all("imgs=>imgs.forEach(i=>i.loading='eager')")
-   page.wait_for_function("Array.from(document.images).filter(i=>i.id!=='viewer-image').every(i=>i.complete && i.naturalWidth>0)")
+   page.wait_for_function("Array.from(document.images).filter(i=>i.id!=='viewer-image'&&!i.matches('[data-kair-viewer-image]')).every(i=>i.complete && i.naturalWidth>0)")
    assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),f'overflow {width} {name}'
    assert page.locator('h1').count()==1
-   assert page.locator('img:not(#viewer-image)').evaluate_all("imgs=>imgs.every(i=>new URL(i.currentSrc).pathname.startsWith('/Website_ERA/assets/'))")
+   assert page.locator('img:not(#viewer-image):not([data-kair-viewer-image])').evaluate_all("imgs=>imgs.every(i=>new URL(i.currentSrc).pathname.startsWith('/Website_ERA/assets/'))")
    if width in [360,1440] and route in ['/','/technology']:
     page.screenshot(path=str(out/f'{name}-{width}.png'),full_page=True)
     if route=='/':page.screenshot(path=str(out/f'home-first-screen-{width}.png'))
   page.locator('[data-menu-toggle]').click();assert page.locator('#site-menu').is_visible();page.keyboard.press('Escape');assert not page.locator('#site-menu').is_visible()
   print('Pages, responsive images, overflow, menu:',width,'OK',flush=True)
  page.set_viewport_size({'width':1440,'height':1000});page.goto(base+'/')
- page.get_by_role('link',name='Как это работает',exact=True).click();assert page.url.endswith('#solution')
+ page.get_by_role('link',name='Как это работает',exact=True).click();assert page.url.endswith('/technology#solution')
  page.get_by_role('link',name='Узнать подробнее',exact=True).nth(1).click();assert page.url.endswith('/technology#hot-washing');assert page.locator('#hot-washing').is_visible()
  page.reload();assert page.locator('#hot-washing').is_visible()
- page.goto(base+'/');page.get_by_role('link',name='Подробнее о КАИР',exact=True).click();assert page.url.endswith('/automation')
+ page.goto(base+'/technology');page.get_by_role('link',name='Подробнее о КАИР',exact=True).click();assert page.url.endswith('/automation')
  page.goto(base+'/');page.get_by_role('link',name='Обсудить мой проект',exact=True).click();assert page.url.endswith('#discuss')
- assert page.get_by_role('link',name='Написать о проекте',exact=True).get_attribute('href').startswith('mailto:edkom.office@mail.ru?subject=')
+ assert page.get_by_role('link',name='Рассчитать проект под моё сырьё',exact=True).get_attribute('href').startswith('mailto:edkom.office@mail.ru?subject=')
  for title,ending in [('Технология','/technology'),('Линии и комплектации','/catalog/lines'),('Каталог оборудования','/catalog/equipment')]:
-  page.goto(base+'/');page.locator('.detail-doors').get_by_role('link',name=title,exact=False).click();assert page.url.endswith(ending)
+  page.goto(base+'/technology');page.locator('.detail-doors').get_by_role('link',name=title,exact=False).click();assert page.url.endswith(ending)
  page.goto(base+'/media')
  count=page.locator('[data-media]:visible').count();assert page.locator('[data-media][data-image*="/presentation/"]').count()>0
  page.get_by_role('button',name='Схемы',exact=True).click()
