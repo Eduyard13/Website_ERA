@@ -1,7 +1,7 @@
 export const primaryLinks=[
  {href:'/',label:'О проекте',section:'project'},
- {href:'/catalog',label:'Оборудование',section:'equipment'},
  {href:'/technology',label:'Технология',section:'technology'},
+ {href:'/catalog',label:'Оборудование',section:'equipment'},
 ];
 export const navigationGroups=[
  {label:'Проект и технология',links:[{href:'/',label:'О проекте'},{href:'/technology',label:'Технология переработки'}]},
