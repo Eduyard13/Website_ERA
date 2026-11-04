@@ -1,0 +1,225 @@
+{
+  "sourceFile": "ТО Линия Сепарации Пленок (мини).pdf",
+  "sourceSha256": "07e383f99d3abd1049d4b1ff4472749a510005311558993e46ea87e0409a3a3d",
+  "sourcePages": 14,
+  "method": "Original embedded illustrations extracted from the owner-provided PDF; no generated photos. WebP encodings and proportional thumbnails.",
+  "assets": [
+    {
+      "id": "overview",
+      "page": 1,
+      "xref": 5,
+      "sourceDimensions": [
+        1500,
+        1010
+      ],
+      "width": 1500,
+      "height": 1010,
+      "thumbWidth": 760,
+      "thumbHeight": 512,
+      "file": "lines/separatsiya-01-mini/overview.webp",
+      "thumbnail": "lines/separatsiya-01-mini/overview-thumb.webp",
+      "sha256": "f6856720aaca10b144ba5f3ca136d43e79134cb67246d29868c5f38d80d2a6bb"
+    },
+    {
+      "id": "raw",
+      "page": 3,
+      "xref": 17,
+      "sourceDimensions": [
+        2051,
+        872
+      ],
+      "width": 2051,
+      "height": 872,
+      "thumbWidth": 760,
+      "thumbHeight": 323,
+      "file": "lines/separatsiya-01-mini/raw.webp",
+      "thumbnail": "lines/separatsiya-01-mini/raw-thumb.webp",
+      "sha256": "e5b83bc056efd35552de6ce23d15deb7de16e0975be05360f38b5c773f753314"
+    },
+    {
+      "id": "flow",
+      "page": 4,
+      "xref": 23,
+      "sourceDimensions": [
+        1320,
+        547
+      ],
+      "width": 1320,
+      "height": 547,
+      "thumbWidth": 760,
+      "thumbHeight": 315,
+      "file": "lines/separatsiya-01-mini/flow.webp",
+      "thumbnail": "lines/separatsiya-01-mini/flow-thumb.webp",
+      "sha256": "1f177a6dc68832dcc21741aa276bc13041cf8d9ddc327d7638bd8dee031c5a51"
+    },
+    {
+      "id": "layout",
+      "page": 5,
+      "xref": 28,
+      "sourceDimensions": [
+        2042,
+        1350
+      ],
+      "width": 2042,
+      "height": 1350,
+      "thumbWidth": 760,
+      "thumbHeight": 502,
+      "file": "lines/separatsiya-01-mini/layout.webp",
+      "thumbnail": "lines/separatsiya-01-mini/layout-thumb.webp",
+      "sha256": "3b675a44e1105109bd5a48ac22ba736d682b060b4afe3e3bfc6e2c0335965729"
+    },
+    {
+      "id": "shredder",
+      "page": 6,
+      "xref": 34,
+      "sourceDimensions": [
+        344,
+        424
+      ],
+      "width": 344,
+      "height": 424,
+      "thumbWidth": 344,
+      "thumbHeight": 424,
+      "file": "lines/separatsiya-01-mini/shredder.webp",
+      "thumbnail": "lines/separatsiya-01-mini/shredder-thumb.webp",
+      "sha256": "8207158ddaebce8c2b5884e180062365e0ddc9d5778ad6d0b1588d31a71f3646"
+    },
+    {
+      "id": "ballistic",
+      "page": 6,
+      "xref": 35,
+      "sourceDimensions": [
+        604,
+        476
+      ],
+      "width": 604,
+      "height": 476,
+      "thumbWidth": 604,
+      "thumbHeight": 476,
+      "file": "lines/separatsiya-01-mini/ballistic.webp",
+      "thumbnail": "lines/separatsiya-01-mini/ballistic-thumb.webp",
+      "sha256": "2ac26433820c782827006861f6d5d6b0c3dbd321aa9543d6d49d3ff369596f77"
+    },
+    {
+      "id": "rotor",
+      "page": 7,
+      "xref": 39,
+      "sourceDimensions": [
+        1050,
+        600
+      ],
+      "width": 1050,
+      "height": 600,
+      "thumbWidth": 760,
+      "thumbHeight": 434,
+      "file": "lines/separatsiya-01-mini/rotor.webp",
+      "thumbnail": "lines/separatsiya-01-mini/rotor-thumb.webp",
+      "sha256": "df447842c874761efb4585a42da017f498000f2839eda027f8eb4bc45140254d"
+    },
+    {
+      "id": "rotor-scheme",
+      "page": 7,
+      "xref": 40,
+      "sourceDimensions": [
+        604,
+        430
+      ],
+      "width": 604,
+      "height": 430,
+      "thumbWidth": 604,
+      "thumbHeight": 430,
+      "file": "lines/separatsiya-01-mini/rotor-scheme.webp",
+      "thumbnail": "lines/separatsiya-01-mini/rotor-scheme-thumb.webp",
+      "sha256": "5da6f6c08637c5fb3f85a7b4b8792c0188e89e60a89f45637cc106c868bb9626"
+    },
+    {
+      "id": "before",
+      "page": 8,
+      "xref": 44,
+      "sourceDimensions": [
+        1008,
+        756
+      ],
+      "width": 1008,
+      "height": 756,
+      "thumbWidth": 760,
+      "thumbHeight": 570,
+      "file": "lines/separatsiya-01-mini/before.webp",
+      "thumbnail": "lines/separatsiya-01-mini/before-thumb.webp",
+      "sha256": "f711571c3a16cf3cca1a7247a38f83de553604d594eae6f063c8992a9d815b2a"
+    },
+    {
+      "id": "rejects",
+      "page": 8,
+      "xref": 45,
+      "sourceDimensions": [
+        1008,
+        756
+      ],
+      "width": 1008,
+      "height": 756,
+      "thumbWidth": 760,
+      "thumbHeight": 570,
+      "file": "lines/separatsiya-01-mini/rejects.webp",
+      "thumbnail": "lines/separatsiya-01-mini/rejects-thumb.webp",
+      "sha256": "93e8a1364d1fe3e2175ea0c0cf62e06d2099d5ff30d4c6a885b2b52e4a602431"
+    },
+    {
+      "id": "after-close",
+      "page": 8,
+      "xref": 46,
+      "sourceDimensions": [
+        1009,
+        1346
+      ],
+      "width": 1009,
+      "height": 1346,
+      "thumbWidth": 570,
+      "thumbHeight": 760,
+      "file": "lines/separatsiya-01-mini/after-close.webp",
+      "thumbnail": "lines/separatsiya-01-mini/after-close-thumb.webp",
+      "sha256": "c4d420ab76f51f9f640b796ac84fafe51620f346fb8fd8213bc009151ad4e602"
+    },
+    {
+      "id": "after",
+      "page": 8,
+      "xref": 47,
+      "sourceDimensions": [
+        1008,
+        756
+      ],
+      "width": 1008,
+      "height": 756,
+      "thumbWidth": 760,
+      "thumbHeight": 570,
+      "file": "lines/separatsiya-01-mini/after.webp",
+      "thumbnail": "lines/separatsiya-01-mini/after-thumb.webp",
+      "sha256": "112a58b097e702347e2b30b128fadb3f1adfbcf07b2e9390f273959386a93979"
+    },
+    {
+      "id": "placement",
+      "page": 11,
+      "xref": 65,
+      "sourceDimensions": [
+        1659,
+        1896
+      ],
+      "width": 1659,
+      "height": 1896,
+      "thumbWidth": 665,
+      "thumbHeight": 760,
+      "file": "lines/separatsiya-01-mini/placement.webp",
+      "thumbnail": "lines/separatsiya-01-mini/placement-thumb.webp",
+      "sha256": "e088fe269c1e883ff69e0798a91a8c28f539cc6a52a570a2c15c9284639bc4d9"
+    }
+  ],
+  "cover": {
+    "source": "Prepared from the user-supplied inline illustration with image_gen; preserve layout, complete equipment and 3:2 proportions. The cover is a visualization, not a production photo.",
+    "generatedFile": "exec-ef6d216f-f51a-42b8-b8b8-2ca343113c12.png",
+    "width": 1536,
+    "height": 1024,
+    "file": "lines/separatsiya-01-mini/catalog-cover.webp",
+    "thumbnail": "lines/separatsiya-01-mini/catalog-cover-768.webp",
+    "sha256": "14f1b6310ce7e9140c0b91f7ef7b5dca904c544a0bf9657029d827e36266a7c7"
+  }
+}

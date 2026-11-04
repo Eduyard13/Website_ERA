@@ -332,3 +332,40 @@
  .film-line .line-documents .document-copy h3{font-size:22px}
 }
 @media(prefers-reduced-motion:reduce){.film-line .line-image img,.line-grid>a.line-card::after{transition:none}.film-line .line-image .media-open:hover img{transform:none}}
+
+/* Mini configuration: use its own source artwork and drawing proportions. */
+.line-card.line-card--mini{background:linear-gradient(90deg,#010f3c 0%,#01115c 25%,#021461 50%,#011158 75%,#020f43 100%)}
+.mini-line .line-image--hero .media-open{aspect-ratio:3/2;background:#020d3d}
+.mini-line .line-image--hero img{padding:0;transform:none}
+.mini-line .mini-raw-source .media-open{aspect-ratio:2051/872}
+.mini-line .line-raw-grid{margin-top:24px}
+.mini-line .line-raw-grid h3{margin-top:0}
+.mini-line .mini-flow-diagram{margin-top:38px}
+.mini-line .mini-flow-diagram .media-open{aspect-ratio:1320/547}
+.mini-line .line-layout .media-open{height:auto;aspect-ratio:2042/1350}
+.mini-line .line-placement-grid .media-open{aspect-ratio:1659/1896}
+.mini-line .line-placement-specs{grid-template-columns:1fr}
+.mini-line .line-comparison .media-open{aspect-ratio:4/3}
+.mini-line .mini-quality-results{display:grid;grid-template-columns:1fr 1fr;gap:20px 40px;padding:30px 0;border-bottom:1px solid var(--line)}
+.mini-line .mini-quality-results>div{display:flex;flex-direction:column;gap:8px}
+.mini-line .mini-quality-results strong{font-size:clamp(30px,3.2vw,44px);font-weight:400;line-height:1.2;letter-spacing:-.035em;color:var(--ink)}
+.mini-line .mini-quality-results span{font-size:13px;color:var(--muted);max-width:270px}
+.mini-line .mini-quality-results>p{grid-column:1/-1;font-size:13px;margin:0;max-width:800px}
+.mini-line .mini-specification-table{min-width:820px;font-size:14px;margin-top:0}
+.mini-line .mini-specification-table th,.mini-line .mini-specification-table td{font-size:14px;width:auto;vertical-align:top}
+.mini-line .mini-specification-table th:nth-child(2){min-width:190px}
+.mini-line .mini-specification-table tfoot th,.mini-line .mini-specification-table tfoot td{border-top:2px solid var(--line);font-weight:600;color:var(--ink)}
+.mini-line .line-photo-grid .media-open{aspect-ratio:4/3}
+.mini-line .line-purpose-grid .text-link{font-size:14px;margin-top:18px}
+.mini-line .line-documents .document-card{display:grid;grid-template-columns:42px minmax(0,1fr);min-width:0}
+.mini-line .line-documents .document-copy{min-width:0}
+.mini-line .line-documents .document-symbol{width:42px;height:59px;font-size:12px}
+.mini-line .line-documents .document-copy>.eyebrow{display:none}
+.mini-line .line-documents .document-download{grid-column:1/-1;min-width:0}
+@media(max-width:600px){
+ .mini-line .mini-quality-results{gap:22px;grid-template-columns:1fr;padding-top:24px}
+ .mini-line .mini-quality-results strong{font-size:34px}
+ .mini-line .line-raw-grid{margin-top:28px}
+ .mini-line .mini-flow-diagram{margin-top:28px}
+ .mini-line .line-documents .document-card{grid-template-columns:minmax(0,1fr)}
+}

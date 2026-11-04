@@ -28,7 +28,7 @@ test('Данные карточки различают сырьё и расчё�
 test('Реестр содержит 12 уникальных узлов, линии расширяются через данные, медиа имеют реальные файлы',async()=>{
  const {nodes,lines,media}=await import('../content/catalog.mjs');
  assert.equal(nodes.length,12);assert.equal(new Set(nodes.map(n=>n.path)).size,12);
- assert.equal(lines.filter(l=>l.enabled).length,1);
+ assert.equal(lines.filter(l=>l.enabled).length,2);
  assert.equal(lines.filter(l=>l.group==='Сепарация').length,3);
  assert.equal(lines.filter(l=>l.group==='Мойка').length,1);
  assert.equal(nodes.filter(n=>n.status==='source-checked').length,12);
@@ -37,12 +37,12 @@ test('Реестр содержит 12 уникальных узлов, лини
  assert.ok(html.includes(`data-image="${basePath}/assets/photos/predvaritelnyy-izmelchitel/02.webp"`));
  assert.ok(html.includes(`data-product="${basePath}${product}"`));
 });
-test('В каталоге четыре линии по порядку; открывается только готовая Сепарация 02',async()=>{
+test('В каталоге четыре линии по порядку; открываются готовые Сепарация 01 и 02',async()=>{
  const {lines}=await import('../content/catalog.mjs');
  const {filmSeparationMedia}=await import('../content/film-separation.mjs');
  const html=await readFile('dist/catalog/lines/index.html','utf8');
  const cards=[...html.matchAll(/<(a|article)\b([^>]*\bdata-line\b[^>]*)>([\s\S]*?)<\/\1>/g)];
- assert.deepEqual(cards.map(([,tag])=>tag),['article','a','article','article']);
+ assert.deepEqual(cards.map(([,tag])=>tag),['a','a','article','article']);
  assert.deepEqual(cards.map(([,tag,attrs])=>/data-line-id="([^"]+)"/.exec(attrs)[1]),['separatsiya-01','separatsiya-02','separatsiya-03','moyka-plenki']);
  assert.ok(!html.includes('name="optional"'));
  assert.ok(!html.includes('data-optional='));
@@ -52,12 +52,12 @@ test('В каталоге четыре линии по порядку; откр�
  assert.ok(cards[2][3].includes('Линия сепарации и сушки плёнок и пакетов'));
  assert.ok(cards[2][3].includes('С сортировкой плёнок по видам'));
  assert.ok(cards[3][3].includes('Линия горячей мойки плёнок и пакетов'));
- for(const card of [cards[0],cards[2],cards[3]]){
+ for(const card of [cards[2],cards[3]]){
   assert.ok(!/\b(?:href|tabindex|role)=/.test(card[2]));
   assert.ok(!/<(?:a|button|input|select)\b/.test(card[3]));
   assert.ok(card[3].includes('В разработке'));
  }
- const ready=lines.find(l=>l.enabled);
+ const ready=lines.find(l=>l.slug==='separatsiya-02');
  assert.equal(ready.slug,'separatsiya-02');assert.equal(ready.status,'source-checked');
  const page=await readFile('dist'+ready.path+'/index.html','utf8');
  assert.match(page,/<title>Сепарация 02 — ЭРА<\/title>/);
@@ -72,6 +72,33 @@ test('В каталоге четыре линии по порядку; откр�
   assert.ok(!routes.includes(line.path));
   await assert.rejects(stat('dist'+line.path+'/index.html'),{code:'ENOENT'});
  }
+});
+test('Мини-линия 01 использует своё ТО, показатели базовой комплектации и раздельные выходные потоки',async()=>{
+ const {lines}=await import('../content/catalog.mjs');
+ const {miniFilmSeparationMedia,miniSpecification}=await import('../content/mini-film-separation.mjs');
+ const {createHash}=await import('node:crypto');
+ const line=lines.find(l=>l.slug==='separatsiya-01'),page=await readFile('dist'+line.path+'/index.html','utf8');
+ assert.equal(line.status,'source-checked');assert.ok(line.enabled);assert.ok(routes.includes(line.path));
+ assert.equal(miniSpecification.length,13);
+ const parse=value=>value==='—'?0:Number(value.replace(',','.'));
+ assert.ok(Math.abs(miniSpecification.reduce((sum,row)=>sum+parse(row[3]),0)-225)<1e-9);
+ assert.ok(Math.abs(miniSpecification.reduce((sum,row)=>sum+parse(row[4]),0)-157.5)<1e-9);
+ assert.ok(page.includes('СЕПАРАЦИЯ 01 / МИНИ-КОМПЛЕКТАЦИЯ ЛС-1500'));
+ for(const text of ['157,5 кВт','225 кВт','17,75 × 11,75 м','600–700 кг/ч','70% установленной мощности','3–5%','80% → ≤10%','Конвейеры 07–10','3 человека в смену','Отдельные протоколы испытаний'])assert.ok(page.includes(text),text);
+ assert.ok(page.includes('отдельная сортировка плёнок по видам в базовую поставку не входит'));
+ assert.ok(page.includes('Сортировочный бокс, мойка и пресс не входят'));
+ assert.ok(page.includes('Рама на позиции 11 предназначена для мешка с этими включениями'));
+ assert.ok(!page.includes('402,67'));assert.ok(!page.includes('281,87'));
+ const card=(await readFile('dist/catalog/lines/index.html','utf8')).match(/<a[^>]+data-line-id="separatsiya-01"[\s\S]*?<\/a>/)[0];
+ assert.ok(card.includes(`href="${basePath}${line.path}"`));assert.equal([...card.matchAll(/<dt>/g)].length,6);
+ assert.ok(card.includes('Мини-комплектация'));assert.ok(card.includes('Расчёт при засоре около 50%'));
+ for(const m of Object.values(miniFilmSeparationMedia)){
+  assert.equal(m.product,line.path);await stat('dist/assets/'+m.file);await stat('dist/assets/'+m.thumbnail);
+ }
+ const doc=line.documents[0],pdf=await readFile('dist/documents/'+doc.file);
+ assert.equal(pdf.length,doc.bytes);assert.equal(createHash('sha256').update(pdf).digest('hex'),doc.sha256);
+ assert.equal(doc.pages,14);assert.ok(page.includes(`href="${basePath}/documents/${doc.file}"`));
+ const full=lines.find(l=>l.slug==='separatsiya-02');assert.notEqual(line.cardFile,full.cardFile);assert.notEqual(doc.file,full.documents[0].file);
 });
 test('Фото распределены по 11 узлам, а каталог использует готовые иллюстрации владельца',async()=>{
  const {nodes,media}=await import('../content/catalog.mjs');
@@ -403,7 +430,7 @@ test('Общий каталог предлагает две ветки, а ст�
  const equipment=await readFile('dist/catalog/equipment/index.html','utf8');
  assert.ok(equipment.includes('id="catalog-filters"'));
  assert.equal([...equipment.matchAll(/data-node data-title=/g)].length,nodes.length);
- assert.equal(lines.filter(l=>l.enabled&&l.group==='Сепарация').length,1);
+ assert.equal(lines.filter(l=>l.enabled&&l.group==='Сепарация').length,2);
  assert.equal(lines.filter(l=>l.enabled&&l.group==='Мойка').length,0);
  const home=await readFile('dist/index.html','utf8');
  assert.ok(home.includes('id="about-era"'));assert.ok(home.includes('Начинаем с вашего сырья и нужного результата'));
