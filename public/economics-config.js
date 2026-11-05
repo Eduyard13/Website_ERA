@@ -1,27 +1,38 @@
-// Initial public examples supplied in ERA_Homepage_Codex_Brief.md, 04.11.2026.
-// These are assumptions for exploring a project, not measured operating costs.
+// Financial-model extracts supplied in ERA_Website_Economics_Codex_2026-11-05.md.
+// LSP v1 and KPP v20, working month; existing customer workshop, purchased transport.
+export const curveProfiles = {
+ separation:{referenceInput:1116,referenceOutput:558,totalYield:0.5,defaultGrossPrice:50000,fixedCashOpex:6859225.271887077,variableCashOpex:9429027.120415082,depreciation:645536.9479639059},
+ full:{referenceInput:970.4347826086957,referenceOutput:558,totalYield:0.575,defaultGrossPrice:110000,fixedCashOpex:11648915.449213509,variableCashOpex:13281090.775100213,depreciation:1961047.8954266747},
+};
 export const economicsConfig = {
- baseInput:720, inputRate:1.5, availableHours:720, baseHours:480,
- separationYield:0.5, granulationYield:0.9, taxRate:0.2,
+ asOf:'2026-11-05',availableHours:744,monthDays:31,outputRate:0.75,
+ vatRate:0.22,taxRate:0.25,feedstockPrice:6000,activeSorters:4,
  modes:{
-  separation:{label:'Сепарация',product:'Очищенная плёнка в тюках',shortProduct:'плёнки',salePrice:45000},
-  full:{label:'Полный цикл',product:'Вторичная ПЭ-гранула',shortProduct:'гранулы',salePrice:75000},
+  separation:{...curveProfiles.separation,label:'Сепарация',product:'Очищенная плёнка в тюках',unitProduct:'Очищенная плёнка',staff:39,
+   priceStages:[{price:40000,label:'40 ₽/кг',period:'Вариант чувствительности'},{price:45000,label:'45 ₽/кг',period:'Вариант чувствительности'},{price:50000,label:'50 ₽/кг',period:'Основная расчётная цена'}]},
+  full:{...curveProfiles.full,label:'Полный цикл',product:'Высококачественная вторичная ПЭ-гранула',unitProduct:'Полиэтиленовая гранула',staff:54,
+   priceStages:[{price:90000,label:'90 ₽/кг',period:'Первые 2 рабочих месяца'},{price:100000,label:'100 ₽/кг',period:'Базовый этап, 3–6-й месяц'},{price:110000,label:'110 ₽/кг',period:'Премиальный этап, с 7-го рабочего месяца'}]},
  },
  costs:[
-  {id:'feedstock',label:'Заготовка сырья',description:'Закупка и заготовка поступающего сырья.',kind:'variable',separation:4374000,full:4374000,color:'#242844'},
-  {id:'electricity',label:'Электроэнергия',description:'Условные расходы на электроэнергию всех стадий выбранного сценария.',kind:'variable',separation:1800000,full:2916000,color:'#414663'},
-  {id:'payroll',label:'ФОТ со взносами',description:'Оплата труда и взносы. В примере постоянные затраты на каждый комплект.',kind:'fixed',separation:1500000,full:2430000,color:'#5a607d'},
-  {id:'supplies',label:'Расходники',description:'Расходные материалы, связанные с объёмом переработки.',kind:'variable',separation:630000,full:1458000,color:'#747b94'},
-  {id:'washing',label:'Вода, нагрев, реагенты и стоки',description:'Условные затраты мойки и очистки рабочей жидкости; в сухой сепарации равны нулю.',kind:'variable',separation:0,full:1944000,color:'#8c93a6'},
-  {id:'logistics',label:'Логистика и обращение с отсевом',description:'Перемещение сырья и продукции, обращение с отделёнными включениями.',kind:'variable',separation:2196000,full:1701000,color:'#a2a7b6'},
-  {id:'maintenance',label:'Ремонт и обслуживание',description:'Ремонт, запасные части и техническое обслуживание каждого комплекта.',kind:'fixed',separation:600000,full:1458000,color:'#b4b9c5'},
-  {id:'depreciation',label:'Амортизация',description:'Расход в модели прибыли. Капитальные вложения и денежный поток рассчитываются отдельно.',kind:'fixed',separation:400000,full:1215000,color:'#bcb5a7'},
-  {id:'overheads',label:'Площадка и накладные',description:'Площадка и условные накладные затраты на каждый комплект.',kind:'fixed',separation:200000,full:729000,color:'#d2ccbf'},
+  {id:'feedstock',label:'Входящее сырьё',description:'6 000 ₽ за входящую тонну без доставки. Базовая закупка без входящего НДС.',separation:6696000,full:5822608.70,color:'#242844'},
+  {id:'payroll',label:'Производственный штат и взносы',description:'Производственный штат: 39 человек для сепарации, 54 для полного цикла. Четыре сортировщика в активной смене.',separation:4914922.76,full:7024238,color:'#414663'},
+  {id:'electricity',label:'Электроэнергия',description:'Для полного цикла сохранён расход рабочего столбца финансовой модели при прежнем количестве часов.',separation:1614771.13,full:7675847.26,color:'#5a607d'},
+  {id:'water',label:'Вода и водоотведение',description:'В самостоятельной сухой сепарации эта статья равна нулю.',separation:0,full:21854.26,color:'#737b8f'},
+  {id:'reagents',label:'Моющие реагенты',description:'Реагенты полного цикла. В самостоятельную ЛСП мойка не включена.',separation:0,full:507780,color:'#8a96a2'},
+  {id:'transport',label:'Транспорт',description:'Приобретённый транспорт, как в базовых версиях финансовых моделей.',separation:966737.17,full:950440.15,color:'#6c7879'},
+  {id:'ppe',label:'СИЗ и питание',description:'Средства индивидуальной защиты и питание производственного персонала.',separation:596504.99,full:829195.75,color:'#92968a'},
+  {id:'supplies',label:'Расходники и ЗИП',description:'Расходные материалы и запасные части оборудования.',separation:157496.34,full:686325.42,color:'#a9aa99'},
+  {id:'office',label:'Офис и внешняя лаборатория',description:'Офисные расходы и услуги внешней лаборатории.',separation:64000,full:114000,color:'#b8ae98'},
+  {id:'disposal',label:'Отсев, осадок и упаковка',description:'Обращение с отсевом и осадком, упаковка, доставка реагентов.',separation:1277820,full:1297716.70,color:'#aa9b83'},
+  {id:'building',label:'Новая аренда и содержание здания',description:'Существующий цех с готовой инфраструктурой. Новая аренда и строительство в базу не включены.',separation:0,full:0,color:'#d2ccbf'},
  ],
  sources:[
-  {title:'Техническое описание линии ЭРА, стр. 2 и 22',href:'/documents/technical/era-separatsiya-01-technical-description.pdf',note:'Для представленной комплектации: 1,5 т/ч входа и 0,75 т/ч очищенной плёнки при засоре около 50%.'},
+  {title:'ЛСП · финансовая модель v1',file:'ERA_LSP_Dry_Separation_Finmodel.xlsx',sheets:'00_Итоги, 01_Вводные, 02_Производство, 05_Затраты и НДС'},
+  {title:'КПП · финансовая модель v20',file:'ERA_KPP_Finmodel_PriceReview.xlsx',sheets:'23_Чистая прибыль, 26_Окупаемость, 28_Итоги'},
  ],
- disclosure:'Демонстрационный расчёт. Цена, загрузка, выход и затраты заданы условно.',
+ disclosure:'Расчётные сценарии финансовых моделей ЭРА на 05.11.2026. Существующий цех клиента с готовой инфраструктурой; без новой аренды и строительства.',
+ taxDisclosure:'Цена реализации — с НДС 22%. Экономика рассчитана по выручке без НДС, с амортизацией и налогом на прибыль 25%.',
+ priceDisclosure:'Расчётная цена — допущение финансовой модели. Фактическая реализация зависит от приёмки качества и договорённостей с покупателем.',
 };
 
 export const marketContext = {

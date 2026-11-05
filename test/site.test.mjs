@@ -492,7 +492,7 @@ test('Контакты сохранены, КАИР перенесён в тех
  const single=kairMonitor([kairSlides[0]],{...kairPresentation,autoplay:false});
  assert.ok(!single.includes('data-kair-next'));assert.ok(!single.includes('data-kair-pause'));
 });
-test('Новая главная отделяет рынок и демонстрационную экономику от подробной технологии',async()=>{
+test('Главная отделяет цены модели от предложений продавцов и содержит четыре локальных сценария',async()=>{
  const {economicsConfig,marketOffers}=await import('../public/economics-config.js');
  const {calculateEconomics}=await import('../public/economics-model.js');
  const {millions}=await import('../public/economics-view.js');
@@ -500,7 +500,14 @@ test('Новая главная отделяет рынок и демонстр�
  assert.ok(html.includes('Из загрязнённой плёнки —'));assert.ok(!html.includes('class="pitch-stage-nav'));
  assert.ok(!html.includes('class="raw-story"'));assert.ok(!html.includes('data-kair-inspect'));
  for(const id of ['raw-material','solution','market','economics','about-era','discuss'])assert.equal([...html.matchAll(new RegExp(`id="${id}"`,'g'))].length,1,id);
- assert.ok(html.includes(economicsConfig.disclosure));assert.ok(html.includes('Все суммы модели без НДС'));
+ assert.ok(html.includes(economicsConfig.disclosure));assert.ok(html.includes(economicsConfig.taxDisclosure));
+ assert.equal([...html.matchAll(/data-widget-switch="/g)].length,4);
+ assert.equal([...html.matchAll(/data-econ-widget="/g)].length,3);
+ assert.ok(html.includes('На 1 тонну готовой продукции'));
+ assert.ok(html.includes('Выручка без НДС'));
+ assert.ok(html.includes('Примеры сторонних предложений'));
+ assert.ok(!html.includes('Демонстрационный расчёт'));
+ assert.ok(!html.includes('Условный налог'));
  for(const value of [result.revenue,result.net])assert.ok(html.includes(millions(value)));
  for(const marker of ['data-econ-month','data-econ-bridge','data-econ-curve','data-econ-range','data-econ-number','data-econ-lines="3"'])assert.ok(html.includes(marker),marker);
  assert.ok(html.includes(`src="${basePath}/commercial.js?v=`));

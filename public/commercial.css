@@ -186,3 +186,109 @@
 @media(max-width:600px){.business-section{padding:48px 20px}.business-heading{margin-bottom:27px;gap:20px}.business-heading h2{font-size:31px}.business-heading>p{font-size:15px}.business-text-link{font-size:14px}.business-feedstock-grid,.market-offer-grid,.sales-routes{grid-template-columns:minmax(0,1fr);gap:16px}.business-feedstock-grid article{padding:23px}.business-card-number{margin-bottom:18px}.business-feedstock-grid h3{font-size:23px;margin-bottom:14px}.market-context{grid-template-columns:1fr;gap:24px;margin-top:28px;padding-top:25px}.market-context-number>span{max-width:none}.market-context-number>strong{font-size:60px}.market-context-copy h3{font-size:25px}.market-flow{font-size:11px;gap:12px 17px}.sales-route figure{aspect-ratio:1.9}.sales-route-copy{padding:25px 22px}.sales-route-copy>h3{font-size:29px}.sales-route figcaption{left:16px;right:16px;font-size:11px}.sales-route dl{grid-template-columns:1fr}.sales-route dd{font-size:15px}.business-expansion>p{font-size:14px}.market-tabs{gap:8px}.market-tabs button{font-size:13px;flex:1;padding:10px 9px;min-width:80px}.market-offer{padding:23px}.market-offer h4{min-height:0;font-size:18px}.market-offer-top>a{font-size:14px}.market-offer-terms{gap:18px 25px}.market-offer-terms dt{font-size:11px}.market-offer-terms dd{font-size:13px}.market-basis{grid-template-columns:1fr;gap:15px;margin-top:22px}.business-segmented{max-width:100%}.business-segmented button{font-size:13px;padding:10px 15px}.economics-disclosure{font-size:12px;line-height:1.7;margin:0 0 22px}.econ-kpis{gap:10px;margin-bottom:18px}.econ-kpis>div{padding:16px 14px}.econ-kpis span{font-size:11px;min-height:3em;margin-bottom:8px}.econ-kpis strong{font-size:24px}.econ-kpis small{font-size:10px}.econ-panel{padding:22px 18px}.econ-panel-heading>h3{font-size:23px}.econ-month-layout{grid-template-columns:minmax(0,1fr);gap:15px}.econ-ring{max-width:285px}.econ-ring-center>strong{font-size:25px}.econ-segment-detail{min-height:3.4em;max-width:none!important;text-align:center}.econ-legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}.econ-legend>button{grid-template-columns:8px minmax(0,1fr);font-size:11px;gap:5px 7px;padding-block:10px}.econ-legend>button>small{grid-column:2;margin-top:-2px;font-size:10px}.econ-legend strong{font-size:12px}.econ-unit-totals{gap:14px}.econ-unit-totals strong{font-size:22px}.econ-unit-totals span{font-size:10px}.econ-bridge-values{font-size:12px}.econ-loss-state{padding:18px}.econ-loss-state>strong{font-size:29px}.econ-calculator{padding:23px 18px;margin-top:18px}.econ-calculator-heading{gap:20px;margin-bottom:23px}.econ-calculator-heading h3{font-size:23px}.econ-volume-control{grid-template-columns:minmax(0,1fr);gap:18px}.econ-number-label{display:block;max-width:200px}.econ-capacity{font-size:11px}.econ-line-count{max-width:100%;width:100%;justify-content:space-between}.econ-line-count button{padding:8px 10px;min-width:0;flex:1;font-size:12px}.econ-assumption-inputs,.econ-assumption-copy{grid-template-columns:1fr;gap:20px}.econ-assumptions>summary{font-size:14px;line-height:1.5}.econ-assumption-inputs label{font-size:12px}.econ-break-even{font-size:12px}.quality-value-steps{grid-template-columns:1fr;gap:23px}.quality-value-steps h3{font-size:24px;margin:12px 0 10px}.business-quality-copy{font-size:14px;line-height:1.8}.business-project-grid{gap:28px}.business-project-grid figure>img{height:270px}.business-project-grid h2{font-size:31px}.business-project-grid .business-project-lead{font-size:19px}.business-project-grid p{font-size:15px}.business-project-contact{grid-template-columns:1fr;gap:26px;padding-top:30px;margin-top:30px}.business-project-contact h3{font-size:29px}.business-contact-actions{gap:17px}.business-contact-actions .button{font-size:13px;padding:14px 17px;gap:15px}.business-project-phone{font-size:26px}}
 @media(prefers-reduced-motion:reduce){.econ-ring path{transition:none}}
 @media(max-width:600px){.econ-curve-figure .econ-svg-note{font-size:28px}.econ-bridge-figure .econ-svg-label,.econ-bridge-figure .econ-svg-note{font-size:20px}}
+
+/* Financial models 05.11.2026: four local scenario selectors. */
+.business-segmented button{min-height:54px;padding:12px 23px;font-size:15px}
+.business-segmented [aria-pressed=true]{box-shadow:inset 0 -2px 0 var(--era-gold)}
+.business-segmented button:focus-visible,.econ-price-presets button:focus-visible,.econ-line-count button:focus-visible{outline:2px solid var(--era-gold-dark);outline-offset:3px}
+.market-model{display:grid;grid-template-columns:1fr 1fr;gap:40px;border:1px solid var(--business-line);border-radius:7px;padding:34px;background:var(--business-paper)}
+.market-model-copy .eyebrow{margin-bottom:18px}
+.market-model-copy h3{font-size:29px;line-height:1.2;margin-bottom:22px;max-width:550px}
+.market-model-price>strong{display:block;font-size:clamp(30px,3.3vw,45px);font-weight:400;line-height:1.15;letter-spacing:-.035em;color:var(--era-blue)}
+.market-model-price>span{display:block;margin:12px 0 20px;font-size:14px;line-height:1.6;color:var(--era-gold-dark)}
+.market-model-copy>p:last-child{font-size:13px;line-height:1.7;margin:0}
+.market-model-stages>span{display:block;font-size:13px;line-height:1.6;margin-bottom:16px;color:var(--era-muted)}
+.market-model-stages>p,.market-model-source{font-size:12px;line-height:1.7;color:var(--era-muted);margin:17px 0 0}
+.market-model-stages .econ-price-presets{grid-template-columns:1fr}
+.market-model-stages .econ-price-presets button{display:flex;align-items:center;gap:20px;justify-content:space-between;text-align:left}
+.market-model-stages .econ-price-presets strong{font-size:20px;white-space:nowrap}
+.market-model-stages .econ-price-presets span{max-width:270px;font-size:12px;margin:0}
+.market-offers-heading{display:grid;grid-template-columns:1fr 1fr;gap:35px;align-items:end;margin:42px 0 22px}
+.market-offers-heading h3{font-size:25px;line-height:1.25;margin:0}
+.market-offers-heading p{font-size:13px;line-height:1.7;margin:0}
+.economics-tax-note{font-size:13px;line-height:1.7;margin:-10px 0 30px;max-width:1100px!important}
+.econ-widget{margin-top:24px;padding:34px;border:1px solid var(--business-line);border-radius:7px;background:var(--business-paper);min-width:0}
+.econ-widget-heading{display:flex;justify-content:space-between;align-items:start;gap:30px;margin-bottom:26px}
+.econ-widget-heading .eyebrow{font-size:10px;margin-bottom:13px}
+.econ-widget-heading h3{font-size:30px;line-height:1.2;letter-spacing:-.035em;margin:0;max-width:700px}
+.econ-unit-product{font-size:14px;line-height:1.6;margin:12px 0 0;color:var(--era-gold-dark)}
+.econ-price-control-row{display:grid;grid-template-columns:minmax(0,1fr) 255px;gap:30px;align-items:end;margin-bottom:18px}
+.econ-selected-price>strong{display:block;font-size:23px;font-weight:400;line-height:1.3;color:var(--era-blue)}
+.econ-selected-price>span{display:block;font-size:12px;line-height:1.6;color:var(--era-muted);margin-top:6px}
+.econ-price-input{font-size:12px;line-height:1.6;display:block;min-width:0}
+.econ-price-input>input{margin-top:8px;min-width:0;width:100%;font-size:18px;min-height:48px}
+.econ-price-presets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.econ-price-presets button{border:1px solid var(--business-line);border-radius:4px;background:transparent;padding:12px 14px;min-height:64px;min-width:0;text-align:left;color:var(--era-blue)}
+.econ-price-presets button[aria-pressed=true]{background:#c6a43b12;border-color:var(--era-gold-dark)}
+.econ-price-presets strong{display:block;font-weight:400;font-size:16px;line-height:1.4}
+.econ-price-presets span{display:block;margin-top:5px;font-size:11px;line-height:1.5;color:var(--era-muted)}
+.econ-price-presets--compact{max-width:780px;margin-bottom:24px}
+.econ-operating-basis{font-size:12px;line-height:1.7;margin:24px 0 19px;max-width:1100px!important}
+.econ-month-widget .econ-month-layout{grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr);gap:36px;align-items:start}
+.econ-month-widget .econ-ring{max-width:350px}
+.econ-month-widget .econ-ring-center>strong{font-size:28px}
+.econ-month-widget .econ-legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px}
+.econ-month-widget .econ-legend>button{font-size:12px;padding-block:12px}
+.econ-month-widget .econ-legend strong{font-size:13px}
+.econ-widget-footnote{font-size:12px;line-height:1.75;margin:24px 0 0;max-width:1100px!important;color:var(--era-muted)}
+.econ-bridge-widget [data-econ-bridge]{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:20px 40px;align-items:center}
+.econ-bridge-widget .econ-unit-totals{grid-column:1/-1;align-items:end}
+.econ-unit-totals>div:first-child strong{font-size:31px}
+.econ-unit-totals>div:last-child strong{font-size:22px;color:var(--era-muted)}
+.econ-curve-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin:25px 0 0;border-top:1px solid var(--business-line);padding-top:20px}
+.econ-curve-summary span{display:block;font-size:12px;color:var(--era-muted);line-height:1.5;margin-bottom:8px}
+.econ-curve-summary strong{font-size:27px;line-height:1.2;font-weight:400;color:var(--era-blue);letter-spacing:-.025em}
+.econ-curve-figure{overflow:visible}
+.econ-curve-plot{position:relative;min-width:0;width:100%;--label-width:190px;--label-half:95px}
+.econ-curve-plot>svg{display:block;width:100%;height:auto}
+.econ-curve-plot--compact{display:none}
+.econ-curve-plot .econ-svg-note{font-size:14px}
+.econ-point-label{position:absolute;width:var(--label-width);left:clamp(var(--plot-left),calc(var(--point-x) - var(--label-half)),calc(100% - var(--label-width) - 6px));top:var(--point-y);transform:translateY(calc(-100% - 12px));border:1px solid var(--era-gold);border-radius:5px;padding:9px 11px;background:var(--era-blue);color:var(--era-cream);box-shadow:0 4px 16px #12152b12;pointer-events:none;text-align:center}
+.econ-point-label--below{transform:translateY(12px)}
+.econ-point-label--loss{border-color:#a54e44}
+.econ-point-label>strong{display:block;font-size:15px;line-height:1.4;font-weight:500;white-space:nowrap}
+.econ-point-label>span{display:block;font-size:11px;line-height:1.4;color:var(--era-on-dark-muted);margin-top:2px}
+.econ-curve-figure>figcaption{font-size:12px;line-height:1.75;margin-top:16px}
+.econ-curve-figure>figcaption>span{display:inline-block;margin-right:16px}
+.econ-curve-figure>figcaption>strong{display:block;font-weight:400;color:var(--era-blue);margin-top:9px}
+.econ-financial-notes{margin-top:30px}
+@media(max-width:1000px){.econ-widget-heading{flex-direction:column;gap:20px}.econ-month-widget .econ-month-layout{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:25px}.econ-month-widget .econ-legend{grid-template-columns:1fr}.market-model{gap:28px;padding:28px}.econ-bridge-widget [data-econ-bridge]{grid-template-columns:1fr}.market-model-stages .econ-price-presets button{display:block}.market-model-stages .econ-price-presets span{margin-top:5px}}
+@media(max-width:600px){
+ .business-segmented{width:100%;max-width:380px}
+ .business-segmented button{flex:1;min-height:48px;padding:10px 14px;font-size:14px}
+ .market-model,.market-offers-heading{grid-template-columns:1fr;gap:24px}
+ .market-model{padding:24px 20px}
+ .market-model-copy h3{font-size:26px}
+ .market-model-price>strong{font-size:32px}
+ .market-model-stages .econ-price-presets button{display:flex;gap:12px}
+ .market-model-stages .econ-price-presets span{font-size:11px;max-width:140px}
+ .market-offers-heading{margin-top:34px;gap:16px}
+ .econ-widget{padding:24px 18px}
+ .econ-widget-heading{gap:20px;margin-bottom:22px}
+ .econ-widget-heading h3{font-size:25px;line-height:1.25}
+ .econ-price-control-row{grid-template-columns:1fr;gap:17px}
+ .econ-price-input{max-width:250px}
+ .econ-price-presets--compact{grid-template-columns:1fr;gap:7px}
+ .econ-price-presets--compact button{display:flex;gap:14px;align-items:center;min-height:52px;padding:10px 12px}
+ .econ-price-presets--compact strong{font-size:14px;white-space:nowrap}
+ .econ-price-presets--compact span{font-size:11px;margin:0}
+ .econ-month-widget .econ-month-layout{grid-template-columns:1fr;gap:18px}
+ .econ-month-widget .econ-ring{max-width:280px}
+ .econ-month-widget .econ-ring-center>strong{font-size:25px}
+ .econ-month-widget .econ-legend{grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
+ .econ-month-widget .econ-legend>button{font-size:11px}
+ .econ-month-widget .econ-legend strong{font-size:12px}
+ .econ-unit-totals{grid-template-columns:1fr;gap:20px}
+ .econ-unit-totals>div:first-child strong{font-size:30px}
+ .econ-curve-summary{gap:18px;grid-template-columns:1fr 1fr}
+ .econ-curve-summary>div:last-child{grid-column:1/-1}
+ .econ-curve-summary strong{font-size:24px}
+ .econ-curve-plot--wide{display:none}
+ .econ-curve-plot--compact{display:block;--label-width:152px;--label-half:76px}
+ .econ-curve-plot--compact .econ-svg-note{font-size:16px}
+ .econ-point-label{padding:8px 7px}
+ .econ-point-label>strong{font-size:12px}
+ .econ-point-label>span{font-size:10px}
+ .econ-line-count button{min-height:48px}
+ .econ-financial-notes .econ-assumption-copy{grid-template-columns:1fr}
+}
