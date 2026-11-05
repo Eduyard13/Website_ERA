@@ -334,8 +334,8 @@
 @media(prefers-reduced-motion:reduce){.film-line .line-image img,.line-grid>a.line-card::after{transition:none}.film-line .line-image .media-open:hover img{transform:none}}
 
 /* Mini configuration: use its own source artwork and drawing proportions. */
-.line-card.line-card--mini{background:linear-gradient(90deg,#010f3c 0%,#01115c 25%,#021461 50%,#011158 75%,#020f43 100%)}
-.mini-line .line-image--hero .media-open{aspect-ratio:3/2;background:#020d3d}
+/* Both ready-line cards use the same midnight-navy surface. */
+.mini-line .line-image--hero .media-open{aspect-ratio:3/2;background:#010a37}
 .mini-line .line-image--hero img{padding:0;transform:none}
 .mini-line .mini-raw-source .media-open{aspect-ratio:2051/872}
 .mini-line .line-raw-grid{margin-top:24px}
@@ -369,3 +369,55 @@
  .mini-line .mini-flow-diagram{margin-top:28px}
  .mini-line .line-documents .document-card{grid-template-columns:minmax(0,1fr)}
 }
+
+/* Native numbered line layouts, using the source drawings without distortion. */
+.line-card--complete .line-card-metric--text dd{font-size:21px;white-space:normal;line-height:1.35;letter-spacing:-.015em}
+.film-line .line-diagram{margin:0;min-width:0}
+.line-diagram .diagram-heading{align-items:start;gap:22px}
+.line-diagram .diagram-heading h3{font-size:clamp(24px,2.5vw,32px);line-height:1.2;margin-bottom:14px}
+.line-diagram .diagram-heading .eyebrow{margin-bottom:12px;font-size:10px}
+.line-diagram .diagram-heading p:last-child{font-size:14px}
+.line-diagram .diagram-toolbar{margin-top:22px;gap:18px}
+.line-diagram-zoom{display:flex;align-items:center;gap:12px;min-width:0;font-size:12px;color:var(--muted)}
+.line-diagram-zoom select{font-size:13px;width:100px;min-height:44px;border-radius:3px;background:transparent}
+.film-line .line-diagram-pan-hint{font-size:12px;margin:14px 0 0;max-width:none}
+.line-diagram .diagram-canvas{background:#fff;margin-top:14px}
+.line-diagram .diagram-view-grid{display:block;max-width:100%;max-height:min(640px,70dvh);overflow:auto;overscroll-behavior:contain;border:1px solid var(--line);border-radius:5px;scrollbar-width:thin;cursor:grab;touch-action:pan-x pan-y}
+.line-diagram .diagram-view-grid:focus-visible{outline:2px solid var(--era-gold-dark);outline-offset:3px}
+.line-diagram[data-diagram-dragging] .diagram-view-grid{cursor:grabbing;user-select:none}
+.line-diagram .diagram-view{width:max-content;max-width:none;margin-inline:auto}
+.line-diagram .diagram-projection{width:calc(var(--diagram-base-width,1000px) * var(--diagram-zoom,1));max-width:none;min-width:0}
+.line-diagram .diagram-projection svg{mix-blend-mode:normal;overflow:visible}
+.line-diagram .diagram-pin{cursor:pointer}
+.line-diagram .diagram-pin span{width:34px;height:34px;font-size:13px}
+.line-diagram .diagram-part-region{fill:#c6a43b00;stroke:transparent;stroke-width:2;vector-effect:non-scaling-stroke;pointer-events:none;transition:fill .18s,stroke .18s}
+.line-diagram [data-active=true] .diagram-part-region{fill:#c6a43b26;stroke:var(--era-gold-dark)}
+.line-diagram .diagram-tooltip{display:grid;grid-template-columns:auto 1fr;gap:7px 10px;max-width:min(360px,calc(100% - 16px));padding:13px 15px}
+.line-diagram .diagram-tooltip>strong{font-size:15px;line-height:1.35}
+.film-line .line-diagram .diagram-tooltip>p{grid-column:1/-1;color:var(--era-cream);font-size:13px;line-height:1.6;margin:0;max-width:none}
+.line-diagram .diagram-details{min-height:135px}
+.line-diagram .diagram-detail-note{max-width:130px}
+.film-line .line-diagram-source{font-size:12px;line-height:1.6;margin:13px 0 0}
+.line-diagram-source a{color:var(--era-gold-dark);text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+.film-line .line-placement-grid>.line-diagram{align-self:start;min-width:0}
+.line-placement-grid .line-diagram .diagram-heading{flex-wrap:wrap}
+.line-placement-grid .line-diagram .diagram-heading h3{font-size:25px}
+.line-placement-grid .line-diagram .diagram-toolbar{flex-direction:column;align-items:stretch}
+.line-placement-grid .line-diagram .diagram-select-label{margin-left:0;width:100%;justify-content:space-between}
+.line-placement-grid .line-diagram .diagram-select-label select{width:calc(100% - 70px)}
+.line-diagram:fullscreen .diagram-canvas{max-width:none;min-width:0}
+.line-diagram:fullscreen .diagram-view-grid{max-height:60dvh}
+@media(max-width:767px){
+ .line-diagram .diagram-toolbar{flex-direction:row;flex-wrap:wrap}
+ .line-diagram .diagram-select-label{width:100%;margin-left:0}
+ .line-diagram .diagram-select-label select{width:calc(100% - 65px)}
+ .line-diagram .diagram-heading h3{font-size:26px}
+ .line-diagram .diagram-view-grid{max-height:58dvh}
+ .line-diagram .diagram-tooltip{padding:12px;font-size:12px}
+ .film-line .line-diagram .diagram-tooltip>p{font-size:12px}
+ .line-diagram .diagram-detail-description{font-size:13px}
+ .line-diagram:fullscreen .diagram-view-grid{max-height:54dvh}
+}
+@media(max-width:359px){.line-card--complete .line-card-metric--text dd{font-size:18px}}
+@media(prefers-reduced-motion:reduce){.line-diagram .diagram-part-region{transition:none}}
+.film-line section[id],.film-line .line-diagram{scroll-margin-top:100px}

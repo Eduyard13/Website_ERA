@@ -214,12 +214,23 @@
     }
   ],
   "cover": {
-    "source": "Prepared from the user-supplied inline illustration with image_gen; preserve layout, complete equipment and 3:2 proportions. The cover is a visualization, not a production photo.",
-    "generatedFile": "exec-ef6d216f-f51a-42b8-b8b8-2ca343113c12.png",
+    "source": "Background-only adaptation in image_gen from the previous mini cover, using line 02 as the midnight-navy palette reference. Complete equipment layout and proportions retained.",
+    "generatedFile": "exec-c3fc2ebd-ace3-4faf-a5d1-0337cd3345c0.png",
     "width": 1536,
     "height": 1024,
-    "file": "lines/separatsiya-01-mini/catalog-cover.webp",
-    "thumbnail": "lines/separatsiya-01-mini/catalog-cover-768.webp",
-    "sha256": "14f1b6310ce7e9140c0b91f7ef7b5dca904c544a0bf9657029d827e36266a7c7"
-  }
+    "file": "lines/separatsiya-01-mini/catalog-cover-navy.webp",
+    "thumbnail": "lines/separatsiya-01-mini/catalog-cover-navy-768.webp",
+    "sha256": "cfd24d8922bd4cd1c4b7fdc3ab9951942aa48a62ec4278881c476f2ace27d418"
+  },
+  "coverHistory": [
+    {
+      "source": "Prepared from the user-supplied inline illustration with image_gen; preserve layout, complete equipment and 3:2 proportions. The cover is a visualization, not a production photo.",
+      "generatedFile": "exec-ef6d216f-f51a-42b8-b8b8-2ca343113c12.png",
+      "width": 1536,
+      "height": 1024,
+      "file": "lines/separatsiya-01-mini/catalog-cover.webp",
+      "thumbnail": "lines/separatsiya-01-mini/catalog-cover-768.webp",
+      "sha256": "14f1b6310ce7e9140c0b91f7ef7b5dca904c544a0bf9657029d827e36266a7c7"
+    }
+  ]
 }

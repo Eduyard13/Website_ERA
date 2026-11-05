@@ -62,7 +62,7 @@ with sync_playwright() as p:
         page.wait_for_function('Array.from(document.querySelectorAll("main img")).every(e => e.complete && e.naturalWidth > 0)')
         assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
         assert page.locator('.site-header .primary-link[data-current-section=true]').get_attribute('href') == prefix + '/catalog'
-        assert page.locator('main section[id]').count() == 10
+        assert page.locator('.film-line>section[id]').count() == 10
         for label in ['225 кВт', '157,5 кВт', '600–700 кг/ч', '17,75 × 11,75 м', '3 человека в смену']:
             assert label in page.locator('main').inner_text()
         if width in [390, 1440]:
@@ -75,6 +75,7 @@ with sync_playwright() as p:
             page.screenshot(path=str(out / f'mini-line-{width}.png'), full_page=True)
         page.locator('a[href="#composition"]').first.click()
         assert page.url.endswith('#composition')
+        page.locator('[data-line-source-diagram] summary').click()
         layout = page.locator('#composition .line-layout .media-open')
         layout.click()
         viewer = page.locator('#media-viewer')

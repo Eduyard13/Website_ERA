@@ -2,6 +2,8 @@ import {nodes} from '../content/catalog.mjs';
 import {miniFilmSeparationMedia as pictures,miniLineMetrics,miniRawMaterials,miniInclusions,miniStages,miniSpecification,miniUnits,miniSpecs,miniQuality,miniService} from '../content/mini-film-separation.mjs';
 import {mediaAttributes} from './media.mjs';
 import {documentCard} from './documents.mjs';
+import {interactiveLineDiagram} from './line-diagram.mjs';
+import {miniLineDiagram} from '../content/line-diagrams.mjs';
 
 const escape=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const button=(text,href,secondary=false)=>`<a class="button ${secondary?'secondary':''}" href="${href}">${text}<span aria-hidden="true">↗</span></a>`;
@@ -16,8 +18,8 @@ export function renderMiniFilmSeparation(line){
  return `<div class="film-line mini-line">
  <div class="breadcrumbs"><a href="/">Главная</a> / <a href="/catalog">Оборудование</a> / <a href="/catalog/lines">Линии</a> / Сепарация 01</div>
  <section class="section line-hero">
-  <div class="line-hero-copy"><p class="eyebrow">СЕПАРАЦИЯ 01 / МИНИ-КОМПЛЕКТАЦИЯ ЛС-1500</p><h1>Линия сухой сепарации плёнок и пакетов</h1><p class="line-slogan">Основные ступени очистки.<br>В компактной комплектации.</p><p class="line-lead">Раскрытие тюков, баллистическая и роторная очистка без использования воды. Один поток подготовленной плёнки для продажи переработчикам или подачи на мойку.</p><div class="actions">${button('Обсудить мини-линию',email)}${button('Схема и состав','#composition',true)}</div><a class="text-link line-document-shortcut" href="#documents">Техническое описание · PDF, 14 страниц ↓</a></div>
-  <div class="line-hero-visual">${picture('cover',{hero:true,caption:'Базовая линия: подготовка, сухая очистка и выдача плёнки'})}<div class="line-hero-tags"><span>Очистка без воды</span><span>Один плёночный поток</span><span>13 позиций</span></div></div>
+  <div class="line-hero-copy"><p class="eyebrow">СЕПАРАЦИЯ 01 / МИНИ-КОМПЛЕКТАЦИЯ ЛС-1500</p><h1>Линия сухой сепарации плёнок и пакетов</h1><p class="line-slogan">Основные ступени очистки.<br>В компактной комплектации.</p><p class="line-lead">Раскрытие тюков, баллистическая и роторная очистка без использования воды. Цветной плёночный микс для продажи переработчикам или подачи на мойку. Сортировка по видам — дополнительная опция по согласованию.</p><div class="actions">${button('Обсудить мини-линию',email)}${button('Схема и состав','#composition',true)}</div><a class="text-link line-document-shortcut" href="#documents">Техническое описание · PDF, 14 страниц ↓</a></div>
+  <div class="line-hero-visual">${picture('cover',{hero:true,caption:'Базовая линия: подготовка, сухая очистка и выдача плёнки'})}<div class="line-hero-tags"><span>Очистка без воды</span><span>Цветной плёночный микс</span><span>13 позиций</span></div></div>
   <div class="line-metrics"><dl>${miniLineMetrics.map(([value,unit,label])=>`<div><dt>${label}</dt><dd>${value}<small>${unit}</small></dd></div>`).join('')}</dl><p>750 кг/ч — расчёт при засоре около 50%. Паспорт базового распушителя указывает 600–700 кг/ч; целевой выпуск линии подтверждается на выбранной комплектации и сырье заказчика. ТО, стр. 10.</p></div>
  </section>
  <nav class="anchor-nav line-anchor-nav" aria-label="Разделы мини-линии"><a href="#purpose">Назначение</a><a href="#raw-materials">Сырьё</a><a href="#process">Процесс</a><a href="#composition">Состав</a><a href="#specs">Показатели</a><a href="#quality">Продукт и качество</a><a href="#placement">Размещение</a><a href="#photos">Фото</a><a href="#documents">Документ</a></nav>
@@ -40,7 +42,9 @@ export function renderMiniFilmSeparation(line){
  </section>
 
  <section class="section line-soft" id="composition"><div class="line-section-heading"><div><p class="eyebrow">04 / СОСТАВ МИНИ-ЛИНИИ</p><h2>13 позиций.<br>Единая линия сухой очистки.</h2></div><p>Основные рабочие узлы связаны конвейерами, пневмотранспортом и аспирацией. На компоновке показаны позиции 01–11; пылеулавливание 12 и управление 13 размещаются при привязке к площадке.</p></div>
-  <div class="line-layout">${picture('layout',{full:true})}</div>
+  ${interactiveLineDiagram(miniLineDiagram)}
+  <p class="line-note">Позиции 12 — пылеулавливание и 13 — шкаф управления входят в базовую спецификацию. На общей компоновке они не показаны: размещение уточняют при привязке линии к площадке.</p>
+  <details class="line-more" data-keep-open data-line-source-diagram><summary>Оригинальная схема из техописания</summary><div class="line-layout">${picture('layout',{full:true})}</div></details>
   <details class="line-more" data-keep-open><summary>Все 13 позиций базовой комплектации</summary><div><ol class="line-position-list">${miniSpecification.map(([number,title])=>`<li><span>${number}</span>${title}</li>`).join('')}</ol></div></details>
   <div class="line-unit-grid">${miniUnits.map(([position,title,text,value,slug,key])=>`<article><div class="line-unit-visual"><img src="/assets/${pictures[key].thumbnail}" alt="${escape(title)}" loading="lazy" decoding="async"><span>Поз. ${position}</span></div><div class="line-unit-copy"><h3>${title}</h3><p>${text}</p><strong>${value}</strong><a class="text-link" href="${nodes.find(n=>n.slug===slug).path}">Подробнее об узле ↗</a></div></article>`).join('')}</div>
   <aside class="line-option"><div><p class="eyebrow">ВЫДАЧА ПРОДУКТА</p><h3>Приёмная секция под вашу площадку</h3><p>На площадках в Китае и Нидерландах очищенную плёнку принимали в ограждённую сетчатую секцию. Её размер, точку подачи и доступ для выгрузки подбирают под организацию смены.</p></div><div><strong>1 поток плёнки</strong><p>Далее — накопление, продажа переработчику или подача на собственную мойку. Форма выдачи согласуется при подборе линии.</p></div></aside>

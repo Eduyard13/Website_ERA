@@ -100,6 +100,32 @@ test('Мини-линия 01 использует своё ТО, показат�
  assert.equal(doc.pages,14);assert.ok(page.includes(`href="${basePath}/documents/${doc.file}"`));
  const full=lines.find(l=>l.slug==='separatsiya-02');assert.notEqual(line.cardFile,full.cardFile);assert.notEqual(doc.file,full.documents[0].file);
 });
+test('Схемы линий сохраняют номера ТО, описания объектов и отдельные подсветки, включая оба погрузчика',async()=>{
+ const {lineDiagrams,miniLineDiagram,fullLineDiagram,fullLinePlacementDiagram}=await import('../content/line-diagrams.mjs');
+ const {linePositions}=await import('../content/film-separation.mjs');
+ const {miniSpecification}=await import('../content/mini-film-separation.mjs');
+ assert.deepEqual(fullLineDiagram.parts.map(p=>[p.number,p.label]),linePositions);
+ assert.deepEqual(miniLineDiagram.parts.map(p=>[p.number,p.label]),miniSpecification.slice(0,11).map(([n,title])=>[Number(n),title]));
+ assert.deepEqual(fullLinePlacementDiagram.parts.map(p=>p.number),[28,29]);
+ const trucks=fullLineDiagram.parts.find(p=>p.number===27);assert.equal(trucks.pins.length,2);assert.equal(trucks.regions.length,2);
+ assert.equal(fullLineDiagram.parts.find(p=>p.number===20).regions.length,5);
+ for(const d of lineDiagrams){
+  const page=await readFile(`dist/catalog/lines/${d.slug}/index.html`,'utf8');await stat('dist/assets/'+d.file);
+  for(const id of [d.id,d.id+'-tooltip',d.id+'-details'])assert.equal([...page.matchAll(new RegExp(`id="${id}"`,'g'))].length,1,id);
+  assert.ok(page.includes(`data-line-diagram="${d.slug}"`));assert.ok(page.includes(`href="${basePath}/assets/${d.file}"`));
+  for(const part of d.parts){
+   assert.ok(part.description.length>50,`${d.slug} ${part.number}`);
+   assert.ok(part.regions.length>0);assert.ok(part.targets.length>0);
+   for(const [x,y] of [...part.pins,...part.targets,...part.regions.flat()])assert.ok(x>=0&&x<=1000&&y>=0&&y<=d.height/d.width*1000,`${d.slug} ${part.number}: ${x}, ${y}`);
+   assert.ok(page.includes(`data-part-guide="${part.number}"`));assert.ok(page.includes(`data-description="${part.description}"`));
+  }
+ }
+ const html=await readFile('dist/catalog/lines/index.html','utf8');
+ const card=html.match(/<a[^>]+data-line-id="separatsiya-01"[\s\S]*?<\/a>/)[0];
+ for(const text of ['Цветной плёночный микс','Сортировка по видам','Доп. опция','По согласованию'])assert.ok(card.includes(text));
+ assert.ok(!card.includes('13 позиций'));assert.ok(!card.includes('Базовая комплектация'));
+ assert.match(card,/catalog-cover-navy/);
+});
 test('Фото распределены по 11 узлам, а каталог использует готовые иллюстрации владельца',async()=>{
  const {nodes,media}=await import('../content/catalog.mjs');
  const {customerPhotos}=await import('../content/customer-photos.mjs');
