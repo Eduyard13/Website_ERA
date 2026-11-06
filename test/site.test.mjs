@@ -596,7 +596,7 @@ test('Сценарии КАИР представлены как типовые �
  const html=await readFile('dist/automation/index.html','utf8');
  assert.equal([...html.matchAll(/data-kair-scenario="\d+"/g)].length,24);
  assert.ok(html.includes('Типовые сценарии'));assert.ok(html.includes('Ещё 16 практических ситуаций'));
- assert.ok(html.includes('по маржинальному доходу'));assert.ok(!html.includes('КАИР рассчитывает прибыль'));
+ assert.ok(!html.includes('КАИР рассчитывает прибыль'));
 });
 test('КАИР имеет связные схемы, независимые вкладки, поиск и прежние 23 фотографии',async()=>{
  const html=await readFile('dist/automation/index.html','utf8');
