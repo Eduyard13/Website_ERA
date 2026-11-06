@@ -217,7 +217,7 @@ test('Адаптивные изображения и презентационн�
  assert.match(technology,/Полный цикл переработки плёнки:/);
  assert.match(technology,/очистить, переработать, использовать снова/);
  assert.ok(html.includes(`href="${basePath}/technology#solution"`));
- assert.match(html,/href="#discuss"/);
+ assert.ok(html.includes(`href="${basePath}/contacts#project-form"`));
  assert.ok(html.includes('mailto:edkom.office@mail.ru'));
  assert.ok(!html.includes('eduard@ros-um.ru'));
  assert.ok(!html.includes('data-node'));
@@ -264,7 +264,12 @@ test('Навигация различает точную страницу, ра�
   assert.ok(!navigation(path).includes('aria-current="location"'));
  }
  assert.equal(navigationState('/technology/#hot-washing').section,'technology');
- for(const path of ['/automation','/media','/documents','/news','/blog','/contacts','/company-details']){
+ for(const [path,section] of [['/automation','control'],['/media','gallery']]){
+  assert.equal(navigationState(path).section,section);
+  assert.match(navigation(path),new RegExp('href="'+path+'"[^>]*aria-current="page"[^>]*data-current-section="true"'));
+  assert.ok(!siteHeader(path).includes('aria-controls="site-menu" data-current-section="true"'));
+ }
+ for(const path of ['/documents','/news','/blog','/contacts','/company-details']){
   assert.equal(navigationState(path).section,'all');
   assert.match(siteHeader(path),/aria-controls="site-menu" data-current-section="true"/);
   assert.match(siteMenu(path),new RegExp('href="'+path+'" aria-current="page"'));
@@ -625,4 +630,44 @@ test('Отдельная страница ИИ удалена из меню и �
  assert.ok(legacy.includes(`rel="canonical" href="${basePath}/automation"`));
  assert.ok(legacy.includes(`${basePath}/automation-redirect.js?v=`));
  assert.ok(!legacy.includes('site-header'));
+});
+test('Пять основных направлений ведут к прежним страницам и сохраняют активный раздел',async()=>{
+ const {primaryLinks}=await import('../content/navigation.mjs');
+ assert.deepEqual(primaryLinks.map(link=>[link.label,link.href]),[['О проекте','/'],['Технология','/technology'],['Система управления','/automation'],['Каталог оборудования','/catalog'],['Галерея','/media']]);
+ const {navigationState}=await import('../scripts/navigation.mjs');
+ assert.equal(navigationState('/automation/?v=latest').section,'control');
+ assert.equal(navigationState('/media/?type=video').section,'gallery');
+ assert.equal(navigationState('/catalog/equipment/plenochnyy-flotator').section,'equipment');
+ assert.equal(navigationState('/contacts/sent').panelPath,'/contacts');
+});
+test('Заявка имеет настоящий multipart POST, адрес получателя, вложения и страницу возврата',async()=>{
+ const {projectRequest,siteContacts}=await import('../content/contact.mjs');
+ assert.equal(siteContacts.email,'edkom.office@mail.ru');
+ assert.equal(projectRequest.endpoint,'https://formsubmit.co/edkom.office@mail.ru');
+ const html=await readFile('dist/contacts/index.html','utf8');
+ assert.equal([...html.matchAll(/data-request-form(?=[\s>])/g)].length,1);
+ assert.ok(html.includes('method="post" enctype="multipart/form-data"'));
+ for(const field of ['Имя','email','Телефон','Компания','Интересует','Задача','Ссылки','Страница обращения','Вложения','attachment','_honey','_subject','_next','_template'])assert.ok(html.includes(`name="${field}"`),field);
+ assert.ok(html.includes('type="file"'));assert.ok(html.includes('data-request-files'));
+ assert.ok(html.includes(`value="https://eduyard13.github.io${basePath}/contacts/sent/"`));
+ assert.ok(!html.includes('name="_captcha"'));assert.ok(!html.includes('mailto:edkom.office@mail.ru?subject='));
+ const thankYou=await readFile('dist/contacts/sent/index.html','utf8');assert.ok(thankYou.includes('Спасибо за обращение.'));
+ for(const route of new Set(routes.filter(path=>!['/about','/ai'].includes(path)))){
+  const page=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
+  assert.equal([...page.matchAll(/data-request-form(?=[\s>])/g)].length,1,route);
+  assert.ok(page.includes(`href="${basePath}/contacts#project-form"`),route);
+  assert.ok(!page.includes('mailto:edkom.office@mail.ru?subject='),route);
+  assert.ok(!page.includes('откроет почтовую программу'),route);
+ }
+});
+test('Контекст запросов переносится в форму без потери текста и без внедрения разметки',async()=>{
+ const {enhanceProjectRequests}=await import('../scripts/contact.mjs');
+ const topic='Линия № 02: "плёнка" & <сырьё> + детали';
+ const source=`<a class="button" href="mailto:edkom.office@mail.ru?subject=${encodeURIComponent(topic)}">Обсудить</a><a href="mailto:edkom.office@mail.ru">Почта</a>`;
+ const html=enhanceProjectRequests(source);
+ const link=new URL(html.match(/href="([^"]+)"/)[1],'https://site.test');
+ assert.equal(link.searchParams.get('topic'),topic);assert.equal(link.hash,'#project-form');
+ assert.ok(html.includes('data-project-request'));assert.ok(!html.includes('<сырьё>'));
+ assert.ok(html.includes('href="mailto:edkom.office@mail.ru"'));
+ assert.ok(enhanceProjectRequests('<a href="#discuss">Обсудить</a>').includes('/contacts#project-form'));
 });

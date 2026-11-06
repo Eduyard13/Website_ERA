@@ -27,8 +27,8 @@ with sync_playwright() as p:
  page.get_by_role('link',name='Узнать подробнее',exact=True).nth(1).click();assert page.url.endswith('/technology#hot-washing');assert page.locator('#hot-washing').is_visible()
  page.reload();assert page.locator('#hot-washing').is_visible()
  page.goto(base+'/technology');page.get_by_role('link',name='Подробнее о КАИР',exact=True).click();assert page.url.endswith('/automation')
- page.goto(base+'/');page.get_by_role('link',name='Обсудить мой проект',exact=True).click();assert page.url.endswith('#discuss')
- assert page.get_by_role('link',name='Рассчитать проект под моё сырьё',exact=True).get_attribute('href').startswith('mailto:edkom.office@mail.ru?subject=')
+ page.goto(base+'/');page.get_by_role('link',name='Обсудить мой проект',exact=True).click();assert page.locator('#project-request').is_visible();page.keyboard.press('Escape')
+ assert page.get_by_role('link',name='Рассчитать проект под моё сырьё',exact=True).get_attribute('href').startswith('/Website_ERA/contacts?topic=')
  for title,ending in [('Технология','/technology'),('Линии и комплектации','/catalog/lines'),('Каталог оборудования','/catalog/equipment')]:
   page.goto(base+'/technology');page.locator('.detail-doors').get_by_role('link',name=title,exact=False).click();assert page.url.endswith(ending)
  page.goto(base+'/media')
@@ -45,5 +45,5 @@ with sync_playwright() as p:
  page.get_by_role('button',name='Видео',exact=True).click();assert page.locator('[data-media]:visible').count()==video_count;assert page.locator('#media-empty').is_visible()==(video_count==0)
  assert not errors,errors
  assert not failed,failed
- print('Story transitions, stages, nested refresh, mailto, detail routes, new gallery media, dialog: OK',flush=True)
+ print('Story transitions, stages, nested refresh, request form, detail routes, new gallery media, dialog: OK',flush=True)
  b.close()

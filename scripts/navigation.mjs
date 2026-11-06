@@ -10,11 +10,12 @@ export function normalizeNavigationPath(value,basePath=''){
 }
 export function navigationState(value,{basePath=''}={}){
  const path=normalizeNavigationPath(value,basePath);
- const section=path==='/'?'project':belongs(path,'/catalog')?'equipment':path==='/technology'?'technology':navigationGroups.flatMap(g=>g.links).some(l=>l.href===path)?'all':null;
- const panelPath=belongs(path,'/catalog/equipment')?'/catalog/equipment':belongs(path,'/catalog/lines')?'/catalog/lines':path;
+ const primary=primaryLinks.find(item=>item.href==='/'?path==='/':belongs(path,item.href));
+ const section=primary?.section||(navigationGroups.flatMap(g=>g.links).some(l=>l.href===path)||path==='/contacts/sent'?'all':null);
+ const panelPath=belongs(path,'/catalog/equipment')?'/catalog/equipment':belongs(path,'/catalog/lines')?'/catalog/lines':path==='/contacts/sent'?'/contacts':path;
  return {path,section,panelPath};
 }
-const contactHref=path=>path==='/'?'#discuss':'/contacts';
+const contactHref=()=>'/contacts#project-form';
 function primaryLink(item,state){
  const current=state.path===item.href,active=state.section===item.section;
  return `<a class="primary-link" href="${item.href}" data-label="${item.label}"${current?' aria-current="page"':''}${active?' data-current-section="true"':''}><span>${item.label}</span></a>`;
@@ -26,7 +27,7 @@ function panelLink(item,state){
 }
 export function siteHeader(path){
  const state=navigationState(path),cta=contactHref(state.path);
- return `<header class="site-header"><div class="header-primary"><a class="brand" href="/" aria-label="ЭРА — на главную"><img src="/assets/logo.png" alt="ЭРА" width="112" height="44"></a><nav class="primary-nav" aria-label="Основная навигация">${navigation(path)}</nav><div class="header-actions"><button type="button" class="all-sections-toggle" data-menu-toggle data-label="Все разделы" aria-expanded="false" aria-controls="site-menu"${state.section==='all'?' data-current-section="true"':''}><svg class="menu-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.3"/></svg><span class="menu-label-desktop">Все разделы</span><span class="menu-label-mobile">Меню</span></button><a class="header-cta" href="${cta}">Обсудить проект <span aria-hidden="true">↗</span></a></div></div></header>`;
+ return `<header class="site-header"><div class="header-primary"><a class="brand" href="/" aria-label="ЭРА — на главную"><img src="/assets/logo.png" alt="ЭРА" width="112" height="44"></a><nav class="primary-nav" aria-label="Основная навигация">${navigation(path)}</nav><div class="header-actions"><button type="button" class="all-sections-toggle" data-menu-toggle data-label="Все разделы" aria-label="Все разделы" aria-expanded="false" aria-controls="site-menu"${state.section==='all'?' data-current-section="true"':''}><svg class="menu-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="1.3"/></svg><span class="menu-label-desktop">Все разделы</span><span class="menu-label-mobile">Меню</span></button><a class="header-cta" href="${cta}" data-project-request>Обсудить проект <span aria-hidden="true">↗</span></a></div></div></header>`;
 }
 export function siteMenu(path){
  const state=navigationState(path),cta=contactHref(state.path);
