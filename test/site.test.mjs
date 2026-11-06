@@ -671,3 +671,39 @@ test('Контекст запросов переносится в форму б�
  assert.ok(html.includes('href="mailto:edkom.office@mail.ru"'));
  assert.ok(enhanceProjectRequests('<a href="#discuss">Обсудить</a>').includes('/contacts#project-form'));
 });
+test('Карточка сухой сепарации связана с полной линией 02 и сохраняет исходную визитку',async()=>{
+ const {drySeparationOverview:overview}=await import('../content/technology-lines.mjs');
+ const {lines}=await import('../content/catalog.mjs');
+ const {createHash}=await import('node:crypto');
+ const target=lines.find(line=>line.path===overview.linePath);
+ assert.equal(target.slug,'separatsiya-02');assert.ok(target.enabled);assert.equal(overview.document.pages,3);
+ const pdf=await readFile('dist/documents/'+overview.document.file);
+ assert.equal(pdf.subarray(0,4).toString(),'%PDF');assert.equal(pdf.length,4022808);
+ assert.equal(createHash('sha256').update(pdf).digest('hex'),'80876c22af16480aafa298b7a0630b26c2a88a9341d577867300a49e7b58a068');
+ const manifest=JSON.parse(await readFile('docs/technology-line-card-assets.json','utf8'));
+ assert.equal(manifest.sourceSha256,overview.document.sha256);assert.equal(manifest.linePath,overview.linePath);
+ for(const item of manifest.images){const bytes=await readFile('dist/assets/'+item.file);assert.equal(createHash('sha256').update(bytes).digest('hex'),item.sha256,item.file);}
+ const html=await readFile('dist/technology/index.html','utf8');
+ assert.ok(html.includes(`href="${basePath}/catalog/lines/separatsiya-02" data-technology-line="separatsiya-02"`));
+ assert.equal([...html.matchAll(/data-technology-line="/g)].length,1);
+ assert.ok(html.includes('При среднем засоре 50%'));assert.ok(html.includes('70% от установленной'));
+ assert.ok(html.includes('Четыре фракции и основной микс'));assert.ok(html.includes('810 м² · высота помещения 9 м'));
+ assert.ok(html.includes('До сепарации'));assert.ok(html.includes('После сухой очистки'));
+ assert.ok(html.includes(`href="${basePath}/documents/${overview.document.file}" download=`));
+});
+test('Гранулирование остаётся третьей стадией, а гранулятор входит в моечную комплектацию',async()=>{
+ const {washingConfigurations}=await import('../content/technology-lines.mjs');
+ const {lines}=await import('../content/catalog.mjs');
+ const html=await readFile('dist/technology/index.html','utf8');
+ const dry=html.indexOf('id="dry-separation"'),wash=html.indexOf('id="hot-washing"'),granulation=html.indexOf('id="granulation"');
+ assert.ok(dry>=0&&wash>dry&&granulation>wash);
+ assert.equal(washingConfigurations.length,2);
+ for(const option of washingConfigurations){assert.ok(html.includes(`data-washing-configuration="${option.id}"`));assert.ok(html.includes(option.text));}
+ assert.ok(html.includes('Гранулятор входит в комплектацию линии горячей мойки'));
+ assert.ok(html.includes('линию мойки изготовим без гранулятора'));
+ assert.ok(html.includes('Завершающий этап в составе линии мойки'));
+ assert.ok(!lines.some(line=>/гранул/iu.test(line.title)));
+ assert.ok(!/href="[^"]*\/catalog\/lines\/[^\"]*granul/.test(html));
+ assert.ok(!html.includes(`href="${basePath}/catalog/lines/moyka-plenki"`));
+ const home=await readFile('dist/index.html','utf8');assert.ok(!home.includes('technology-lines.css'));assert.ok(!home.includes('data-technology-line'));
+});

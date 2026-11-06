@@ -1,0 +1,58 @@
+/* Brochure-based line previews belong to the technology page only. */
+.technology-story .tech-line-section{padding-top:68px;padding-bottom:64px;border-top:1px solid var(--era-border);background:#eee8dc66;scroll-margin-top:20px}
+.technology-story .tech-line-section .story-heading{margin-bottom:30px}
+.technology-story .tech-line-section .story-heading h2{max-width:750px}
+.technology-story .tech-line-section .story-heading>p{max-width:360px;line-height:1.65}
+.tech-line-card{display:grid;grid-template-columns:.95fr 1.05fr;border:1px solid var(--era-border);border-radius:13px;overflow:hidden;background:#fff;color:var(--era-blue);box-shadow:0 8px 28px #10132e08;transition:border-color .18s,box-shadow .18s}
+.tech-line-card:hover{color:var(--era-blue);border-color:var(--era-gold);box-shadow:0 0 0 1px var(--era-gold),0 9px 30px #10132e0c}
+.tech-line-card:focus-visible{outline:2px solid var(--era-gold-dark);outline-offset:5px}
+.tech-line-visual{padding:26px;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:22px}
+.tech-line-equipment{display:block;width:100%;height:auto;aspect-ratio:1600/1077;object-fit:contain;background:white;padding:0;border:0}
+.tech-line-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.tech-line-comparison>figure{min-width:0;padding:0;background:white}
+.tech-line-comparison img{display:block;width:100%;height:auto;aspect-ratio:466/262;object-fit:contain;padding:0;border-radius:5px}
+.tech-line-comparison figcaption{font-size:10px;letter-spacing:.04em;line-height:1.5;text-transform:uppercase;color:var(--era-gold-dark);margin:10px 0 0}
+.tech-line-copy{padding:30px 30px 28px;min-width:0;border-left:1px solid var(--era-border)}
+.technology-story .tech-line-copy .eyebrow{font-size:10px;letter-spacing:.07em;margin-bottom:17px}
+.technology-story .tech-line-copy h3{font-size:clamp(26px,2.4vw,35px);line-height:1.18;margin:0 0 15px;max-width:570px;text-wrap:balance}
+.tech-line-copy .tech-line-subtitle{font-size:18px;line-height:1.5;color:var(--era-blue);margin:0 0 16px}
+.tech-line-copy .tech-line-description{font-size:14px;line-height:1.65;color:var(--era-muted);margin:0 0 22px}
+.tech-line-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 24px;margin:0 0 23px}
+.tech-line-metrics>div{min-width:0;border-top:1px solid var(--era-border);padding-top:14px}
+.tech-line-metrics dt{font-size:11px;line-height:1.5;color:var(--era-muted);margin-bottom:8px}
+.tech-line-metrics dd{font-size:29px;letter-spacing:-.04em;line-height:1.15;font-weight:500;margin:0;color:var(--era-blue);white-space:nowrap}
+.tech-line-metrics dd>small{font-size:12px;letter-spacing:0;font-weight:400;margin-left:7px}
+.tech-line-metrics p{font-size:10px;line-height:1.5;margin:7px 0 0;color:var(--era-muted)}
+.tech-line-features{display:flex;gap:7px;flex-wrap:wrap;list-style:none;margin:0 0 18px;padding:0}
+.tech-line-features li{font-size:10px;line-height:1.5;border:1px solid var(--era-border);border-radius:4px;padding:5px 9px;color:var(--era-gold-dark)}
+.tech-line-copy .tech-line-output{font-size:14px;line-height:1.6;color:var(--era-blue);margin:0 0 20px}
+.tech-line-action{display:flex;align-items:center;justify-content:space-between;gap:22px;min-height:46px;border-top:1px solid var(--era-border);padding-top:17px;font-size:13px;line-height:1.5}
+.tech-line-action .arrow{width:16px;height:16px;flex:none}
+.tech-line-resources{display:flex;justify-content:space-between;align-items:center;gap:14px 25px;flex-wrap:wrap;margin-top:18px}
+.tech-line-resources .text-link{font-size:13px;min-height:44px;gap:15px}
+.tech-line-resources .arrow{width:15px;height:15px}
+.tech-stage-notes{margin-top:24px;border-top:1px solid var(--era-border);border-bottom:1px solid var(--era-border)}
+.tech-stage-notes>summary{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:58px;padding:16px 0;font-size:14px;color:var(--era-blue)}
+.tech-stage-notes>summary:after{content:'+';font-size:23px;color:var(--era-gold-dark);line-height:1}
+.tech-stage-notes[open]>summary:after{content:'−'}
+.tech-stage-notes>div{position:static;inset:auto;min-width:0;display:block;box-shadow:none;border:0;background:transparent;padding:0 0 22px}
+.tech-stage-notes>div>p,.tech-stage-notes ul{font-size:15px;line-height:1.65;max-width:900px}
+.tech-stage-notes ul{padding-left:20px;color:var(--era-muted)}
+.tech-stage-notes .stage-result{margin-bottom:0}
+.technology-story .tech-process-configuration{font-size:14px;line-height:1.7;border-left:2px solid var(--era-gold);padding-left:20px;max-width:1100px!important}
+.technology-story .tech-stage--hot-washing{row-gap:30px}
+.tech-washing-configuration{grid-column:1/-1;background:#fffaf1;border:1px solid var(--era-border);border-radius:10px;padding:30px}
+.technology-story .tech-configuration-heading .eyebrow{font-size:10px;margin-bottom:13px}
+.technology-story .tech-configuration-heading h3{font-size:29px;line-height:1.25;margin:0 0 17px}
+.tech-configuration-heading>p:not(.eyebrow){font-size:15px;line-height:1.65;max-width:850px;margin-bottom:25px}
+.tech-configuration-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:30px}
+.tech-configuration-options>div{border-top:1px solid var(--era-border);padding-top:22px;min-width:0}
+.tech-configuration-options h4{font-size:21px;line-height:1.3;font-weight:500;letter-spacing:-.02em;margin:0 0 13px}
+.tech-configuration-options p{font-size:14px;line-height:1.7;margin:0;color:var(--era-muted)}
+.technology-story .tech-integrated-stage{display:inline-block;font-size:11px;line-height:1.5;color:var(--era-gold-dark);border:1px solid var(--era-border);border-radius:4px;padding:6px 10px;margin:0 0 20px}
+.technology-story .tech-stage .tech-granulation-note{font-size:15px;line-height:1.7;color:var(--era-blue);border-left:2px solid var(--era-gold);padding-left:18px;margin-top:24px}
+@media(max-width:1100px){.tech-line-card{grid-template-columns:.9fr 1.1fr}.tech-line-visual{padding:22px;gap:18px}.tech-line-copy{padding:26px}.tech-line-metrics{gap:18px}.tech-line-metrics dd{font-size:27px}.technology-story .tech-line-copy h3{font-size:29px}.tech-line-comparison{gap:10px}}
+@media(max-width:900px){.tech-line-card{grid-template-columns:1fr}.tech-line-visual{padding:24px;max-width:680px;width:100%;justify-self:center}.tech-line-equipment{max-height:420px}.tech-line-copy{border-left:0;border-top:1px solid var(--era-border);padding:30px}.tech-line-comparison img{max-height:180px}.technology-story .tech-line-copy h3{font-size:32px;max-width:650px}.tech-line-copy .tech-line-description{font-size:15px}.tech-line-metrics{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}.tech-line-metrics dd{font-size:29px}.tech-line-copy .tech-line-output{font-size:15px}.tech-line-features li{font-size:11px}}
+@media(max-width:767px){.technology-story .tech-line-section{padding-top:48px;padding-bottom:48px}.tech-line-visual{padding:20px;gap:18px}.tech-line-copy{padding:25px 22px}.tech-line-comparison figcaption{font-size:9px}.technology-story .tech-line-copy h3{font-size:29px}.tech-line-copy .tech-line-subtitle{font-size:17px}.tech-line-copy .tech-line-description{font-size:14px}.tech-line-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 18px}.tech-line-metrics dd{font-size:28px}.tech-line-metrics dd>small{font-size:11px;margin-left:5px}.tech-line-metrics dt{font-size:11px}.tech-line-metrics p{font-size:10px}.tech-line-action{font-size:13px}.tech-line-resources{align-items:flex-start;gap:10px}.tech-line-resources .text-link{font-size:12px}.tech-stage-notes>summary{font-size:13px}.tech-washing-configuration{padding:24px 21px}.technology-story .tech-configuration-heading h3{font-size:26px}.tech-configuration-heading>p:not(.eyebrow){font-size:14px}.tech-configuration-options{grid-template-columns:1fr;gap:25px}.tech-configuration-options h4{font-size:22px}.tech-configuration-options p{font-size:15px}.technology-story .tech-process-configuration{font-size:14px;margin-top:25px}.technology-story .tech-stage .tech-granulation-note{font-size:15px}}
+@media(max-width:359px){.tech-line-copy{padding:23px 17px}.tech-line-visual{padding:16px}.tech-line-metrics{gap:19px 12px}.tech-line-metrics dd{font-size:25px}.tech-line-metrics dd>small{font-size:10px}.tech-line-metrics dt{font-size:10px}.tech-line-copy .tech-line-subtitle{font-size:16px}.technology-story .tech-line-copy h3{font-size:27px}.tech-line-features li{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.tech-line-card{transition:none}}

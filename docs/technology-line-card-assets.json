@@ -1,0 +1,78 @@
+{
+  "source": "Визитка Линия Сепарации Пленок.pdf",
+  "sourceSha256": "80876c22af16480aafa298b7a0630b26c2a88a9341d577867300a49e7b58a068",
+  "sourceBytes": 4022808,
+  "pages": 3,
+  "document": "brochures/era-separatsiya-02-overview.pdf",
+  "linePath": "/catalog/lines/separatsiya-02",
+  "images": [
+    {
+      "id": "line",
+      "page": 1,
+      "xref": 7,
+      "originalDimensions": [
+        2056,
+        1384
+      ],
+      "originalSha256": "823c72b902b75f22ecca5f2f8808dc609637e5ed82e3e6fc86c8fc2614653251",
+      "file": "technology/separation/line.webp",
+      "dimensions": [
+        1600,
+        1077
+      ],
+      "bytes": 222470,
+      "sha256": "01f30577ec2eefba386b68dbe38b0a194790fe54aa36d23384933378deaeedd9"
+    },
+    {
+      "id": "line-768",
+      "page": 1,
+      "xref": 7,
+      "originalDimensions": [
+        2056,
+        1384
+      ],
+      "originalSha256": "823c72b902b75f22ecca5f2f8808dc609637e5ed82e3e6fc86c8fc2614653251",
+      "file": "technology/separation/line-768.webp",
+      "dimensions": [
+        768,
+        517
+      ],
+      "bytes": 70004,
+      "sha256": "9e72bb988ac490ffb14d3e553309671c399ec5377a5364d6c5d2f31b22559abe"
+    },
+    {
+      "id": "before",
+      "page": 1,
+      "xref": 8,
+      "originalDimensions": [
+        466,
+        262
+      ],
+      "originalSha256": "d295539533bbf9fcd9ae2de867722bc0b769cb3018c967f6141b59b8da31d6cb",
+      "file": "technology/separation/before.webp",
+      "dimensions": [
+        466,
+        262
+      ],
+      "bytes": 51968,
+      "sha256": "79fee2c989a0184e71e73aa4d2dd6cce59870f5821f208a0b1e70b9094bc9e24"
+    },
+    {
+      "id": "after",
+      "page": 1,
+      "xref": 9,
+      "originalDimensions": [
+        466,
+        262
+      ],
+      "originalSha256": "5d77b54cc9f09cf36d396959da106b024fba297b5349a1e438ff55adbbdf4999",
+      "file": "technology/separation/after.webp",
+      "dimensions": [
+        466,
+        262
+      ],
+      "bytes": 27116,
+      "sha256": "1940b258d038cbaa2f5b0ffdaeb947a44be5beedf8bdad05377e86aabd2975f3"
+    }
+  ]
+}

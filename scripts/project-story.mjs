@@ -55,7 +55,7 @@ export function stageOverview(){
       <div class="pitch-stage-grid">
         ${presentationStages.map(s=>`<article class="pitch-stage-card"><a class="stage-illustration" href="/technology#${s.id}" aria-label="${s.title}: подробнее">${image(s.image,s.caption)}<span>${s.type}</span></a><div class="stage-card-copy"><p class="stage-label"><span>${s.number}</span> / ТЕХНОЛОГИЧЕСКАЯ СТАДИЯ</p><h3>${s.title}</h3><p>${s.summary}</p><a class="stage-more" href="/technology#${s.id}">Узнать подробнее ${arrow}</a></div></article>`).join('')}
       </div>
-      <p class="story-note">Состав линии и режимы подбираются под сырьё и требования к результату. Грануляция включается при соответствующей комплектации.</p>
+      <p class="story-note tech-process-configuration">Это три стадии технологического процесса. Гранулятор входит в комплектацию линии горячей мойки. Если у предприятия уже есть грануляция, линию мойки изготовим без гранулятора — под работу с вашим оборудованием.</p>
     </section>`;
 }
 
