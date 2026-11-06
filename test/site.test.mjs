@@ -264,7 +264,7 @@ test('Навигация различает точную страницу, ра�
   assert.ok(!navigation(path).includes('aria-current="location"'));
  }
  assert.equal(navigationState('/technology/#hot-washing').section,'technology');
- for(const path of ['/automation','/ai','/media','/documents','/news','/blog','/contacts','/company-details']){
+ for(const path of ['/automation','/media','/documents','/news','/blog','/contacts','/company-details']){
   assert.equal(navigationState(path).section,'all');
   assert.match(siteHeader(path),/aria-controls="site-menu" data-current-section="true"/);
   assert.match(siteMenu(path),new RegExp('href="'+path+'" aria-current="page"'));
@@ -341,7 +341,7 @@ test('Полные ролики проверены по контрольным �
 test('Панель ЦБ РФ доступна на всех страницах и не содержит выдуманных курсов',async()=>{
  const {version}=JSON.parse(await readFile('package.json','utf8'));
  for(const route of new Set(routes)){
-  if(route==='/about')continue; // Immediate legacy redirect renders the destination header.
+  if(['/about','/ai'].includes(route))continue; // Legacy redirects render the destination header.
   const html=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
   assert.equal([...html.matchAll(/data-fx-bar /g)].length,1,route);
   assert.ok(html.includes('https://www.cbr.ru/currency_base/daily/'));
@@ -485,7 +485,7 @@ test('Счётчики различают типы и не дублируют ф
 });
 test('Клиентский режим: единый кириллический бренд, групповой подвал и один валютный блок',async()=>{
  const {navigationGroups}=await import('../content/navigation.mjs');
- for(const route of new Set(routes.filter(r=>r!=='/about'))){
+ for(const route of new Set(routes.filter(r=>!['/about','/ai'].includes(r)))){
   const html=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
   const header=html.match(/<header[\s\S]*?<\/header>/)[0];
   const footer=html.match(/<footer[\s\S]*?<\/footer>/)[0];
@@ -566,4 +566,63 @@ test('Все фотографии КАИР из архива имеют дейс
    assert.equal(createHash('sha256').update(bytes).digest('hex'),sha,file);
   }
  }
+});
+test('Страница КАИР охватывает реестр владельца, различая назначение и исполнение функций',async()=>{
+ const {kairGroups,kairFunctions,kairLogicModes,kairHardware}=await import('../content/kair-system.mjs');
+ const source=JSON.parse(await readFile('docs/kair-function-source-index.json','utf8'));
+ const reference=new Set(source.functions.map(f=>f.code));
+ assert.equal(reference.size,50);
+ assert.deepEqual(new Set(kairFunctions.flatMap(f=>f.codes)),reference);
+ assert.equal(kairGroups.length,6);assert.equal(new Set(kairFunctions.map(f=>f.id)).size,kairFunctions.length);
+ for(const f of kairFunctions){assert.ok(kairGroups.some(g=>g.id===f.group));assert.ok(f.text&&f.title&&f.detail);}
+ const fn=id=>kairFunctions.find(f=>f.id===id);
+ for(const id of ['recipes','events','bunkers','reverse'])assert.equal(fn(id).scope,'separation');
+ for(const id of ['powder','alkali','makeup','rinse','water-treatment'])assert.equal(fn(id).scope,'washing');
+ for(const id of ['temperature','service','contamination'])assert.equal(fn(id).level,'project');
+ for(const id of ['packaging','friction','granulator']){assert.equal(fn(id).level,'local');assert.equal(fn(id).scope,'equipment');}
+ assert.ok(fn('remote').detail.includes('права пользователей'));assert.ok(fn('recipes').detail.includes('персонал'));
+ assert.ok(fn('cabinet').detail.includes('относится к шкафу управления'));
+ assert.ok(fn('water-treatment').text.includes('основную мойку'));assert.ok(fn('rinse').text.includes('Чистая вода'));
+ assert.ok(fn('makeup').detail.includes('разные величины'));assert.ok(fn('rinse').detail.includes('потери'));
+ assert.equal(kairLogicModes.length,4);assert.equal(kairHardware.length,8);
+});
+test('Сценарии КАИР представлены как типовые задачи с раскрытием действий и условий',async()=>{
+ const {kairScenarios}=await import('../content/kair-scenarios.mjs');
+ assert.deepEqual(kairScenarios.map(s=>s.number),Array.from({length:24},(_,i)=>i+1));
+ assert.equal(kairScenarios.filter(s=>s.featured).length,8);
+ for(const s of kairScenarios)assert.ok(s.title&&s.situation&&s.action&&s.benefit);
+ assert.ok(kairScenarios.find(s=>s.number===1).note.includes('на площадке остаётся персонал'));
+ assert.ok(kairScenarios.find(s=>s.number===13).note.includes('порядок переключения'));
+ const html=await readFile('dist/automation/index.html','utf8');
+ assert.equal([...html.matchAll(/data-kair-scenario="\d+"/g)].length,24);
+ assert.ok(html.includes('Типовые сценарии'));assert.ok(html.includes('Ещё 16 практических ситуаций'));
+ assert.ok(html.includes('по маржинальному доходу'));assert.ok(!html.includes('КАИР рассчитывает прибыль'));
+});
+test('КАИР имеет связные схемы, независимые вкладки, поиск и прежние 23 фотографии',async()=>{
+ const html=await readFile('dist/automation/index.html','utf8');
+ assert.equal([...html.matchAll(/<h1[\s>]/g)].length,1);
+ assert.equal([...html.matchAll(/data-kair-slide(?=[\s>])/g)].length,23);
+ assert.equal([...html.matchAll(/data-kair-function(?=[\s>])/g)].length,29);
+ assert.equal([...html.matchAll(/data-kair-tabs(?=[\s>])/g)].length,2);
+ for(const id of ['value','screens','logic','functions','process','scenarios','hardware','project'])assert.equal([...html.matchAll(new RegExp(`id="kair-${id}"`,'g'))].length,1,id);
+ for(const [,id] of html.matchAll(/aria-controls="(ka-(?:logic|process)-[^"]+)"/g))assert.ok(html.includes(`id="${id}"`),id);
+ for(const slot of ['kair-overview','kair-logic-protection','kair-logic-memory','kair-process-separation','kair-process-washing','kair-water-circuits'])assert.ok(html.includes(`data-artwork-slot="${slot}"`));
+ assert.ok(html.includes('Стоки → очистка → бак возврата'));assert.ok(html.includes('Чистая вода из резервуара'));
+ assert.ok(html.includes('data-kair-function-search'));assert.ok(html.includes('data-kair-scope="washing"'));
+ assert.ok(html.includes(`${basePath}/kair-system.js?v=`));assert.ok(html.includes(`${basePath}/kair-system.css?v=`));
+ assert.ok(!(await readFile('dist/technology/index.html','utf8')).includes('/kair-system.css'));
+});
+test('Отдельная страница ИИ удалена из меню и разделов, старые ссылки направляют к КАИР',async()=>{
+ const {sections}=await import('../content/site.mjs');
+ assert.ok(!sections.some(([path])=>path==='/ai'));
+ for(const route of new Set(routes)){
+  const html=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
+  assert.ok(!html.includes(`href="${basePath}/ai"`),route);
+  assert.ok(!html.includes('Искусственный интеллект'),route);
+ }
+ const legacy=await readFile('dist/ai/index.html','utf8');
+ assert.ok(legacy.includes(`http-equiv="refresh" content="0; url=${basePath}/automation"`));
+ assert.ok(legacy.includes(`rel="canonical" href="${basePath}/automation"`));
+ assert.ok(legacy.includes(`${basePath}/automation-redirect.js?v=`));
+ assert.ok(!legacy.includes('site-header'));
 });

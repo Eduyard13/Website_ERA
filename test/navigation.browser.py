@@ -8,7 +8,7 @@ base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3010/Website_ERA').rstri
 root_path=urlparse(base).path
 out=Path(os.environ.get('ERA_SCREENSHOT_DIR','/workspace/era-review/navigation-v0.10'));out.mkdir(parents=True,exist_ok=True)
 product='/catalog/equipment/predvaritelnyy-izmelchitel/'
-cases=[('/', 'project','/'),('/catalog/','equipment','/catalog'),('/catalog/equipment/?q=флотатор','equipment','/catalog/equipment'),(product,'equipment','/catalog/equipment'),('/catalog/lines/','equipment','/catalog/lines'),('/catalog/lines/separatsiya-02/','equipment','/catalog/lines'),('/technology/#hot-washing','technology','/technology')]+[(p,'all',p) for p in ['/automation','/ai','/media','/documents','/news','/blog','/contacts','/company-details']]
+cases=[('/', 'project','/'),('/catalog/','equipment','/catalog'),('/catalog/equipment/?q=флотатор','equipment','/catalog/equipment'),(product,'equipment','/catalog/equipment'),('/catalog/lines/','equipment','/catalog/lines'),('/catalog/lines/separatsiya-02/','equipment','/catalog/lines'),('/technology/#hot-washing','technology','/technology')]+[(p,'all',p) for p in ['/automation','/media','/documents','/news','/blog','/contacts','/company-details']]
 with sync_playwright() as p:
  proxy=os.environ.get('HTTPS_PROXY') or os.environ.get('HTTP_PROXY')
  browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'],proxy={'server':proxy,'bypass':'127.0.0.1,localhost'} if proxy else None)
