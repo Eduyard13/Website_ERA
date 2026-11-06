@@ -1,11 +1,11 @@
 import {kairMonitor} from './kair.mjs';
-import {feedstockTypes,contaminantGroups} from '../content/feedstock.mjs';
-import {presentationStages, presentationOutputs, projectSteps} from '../content/presentation.mjs';
+import {feedstockTypes} from '../content/feedstock.mjs';
+import {presentationStages, presentationOutputs} from '../content/presentation.mjs';
+import {preparationExplainer,contaminantMatrix,processRoute,technicalPreparation} from './presentation-web.mjs';
 
 const arrow = '<span aria-hidden="true">↗</span>';
 const action = (text, href, secondary=false) => `<a class="button ${secondary?'secondary':''}" href="${href}">${text}${arrow}</a>`;
 const image = (file, alt, extra='') => `<img src="/assets/presentation/${file}.webp" alt="${alt}" loading="lazy" ${extra}>`;
-const mediaLink = (file, alt, caption) => `<figure><a href="/media">${image(file,alt)}<span class="photo-link">Смотреть медиатеку ${arrow}</span></a><figcaption>${caption}</figcaption></figure>`;
 
 export function projectHero(){
  return `<section class="pitch-hero era-indigo-surface" aria-labelledby="pitch-title">
@@ -35,29 +35,18 @@ export function rawMaterialsStory(){
         <p class="eyebrow">01 / СЫРЬЁ, С КОТОРОГО ВСЁ НАЧИНАЕТСЯ</p>
         <h2 id="raw-title">За невостребованными отходами стоит ценный материал.</h2>
         <p class="story-lead">Бытовой пакет после использования — это полиэтилен, смешанный с остатками того, что его окружало.</p>
-        <p>Плёнка слипается, удерживает органику, песок и другие включения. Для дальнейшей переработки её нужно раскрыть и последовательно очистить.</p>
+        <p>Пакеты и плёнки слипаются, удерживают органику, минеральные частицы и посторонние предметы. Подготовка должна раскрыть материал, высвободить включения и последовательно отделить их от полезной фракции.</p>
         <h3 class="raw-materials-title">С каким сырьём работаем</h3>
         <ul class="raw-materials-list">${feedstockTypes.map(t=>`<li>${t}</li>`).join('')}</ul>
         <p class="raw-feed-note">Полимерный состав и загрязнения определяют комплектацию и режимы переработки.</p>
       </div>
-      <div class="raw-cleaning" aria-labelledby="raw-cleaning-title">
-        <h3 id="raw-cleaning-title">Какие загрязнения удаляем</h3>
-        <dl class="raw-contaminant-groups">${contaminantGroups.map(g=>`<div><dt>${g.title}</dt><dd><p>${g.description}</p><span class="raw-cleaning-stage">${g.stage}</span></dd></div>`).join('')}</dl>
-        <p class="raw-moisture-note">Влажность учитываем отдельно от загрязнений. После мойки материал обезвоживается и сушится перед гранулированием.</p>
-      </div>
+      ${preparationExplainer()}
+      ${contaminantMatrix()}
       <div class="story-insight raw-result"><span aria-hidden="true">→</span><p>Полный цикл ЭРА объединяет сухую сепарацию, горячую мойку, сушку и гранулирование в последовательный процесс — от невостребованного сырья к <strong>высококачественному грануляту.</strong></p></div>
     </section>`;
 }
 
-export function stageOverview(){
- return `<section class="story-section solution-story" id="solution" aria-labelledby="solution-title">
-      <div class="story-heading"><div><p class="eyebrow">02 / ЭРА ЗА МИНУТУ</p><h2 id="solution-title">Три стадии.<br>Одна логика переработки.</h2></div><p>Каждая стадия решает свою задачу —<br>и подготавливает материал к следующей.</p></div>
-      <div class="pitch-stage-grid">
-        ${presentationStages.map(s=>`<article class="pitch-stage-card"><a class="stage-illustration" href="/technology#${s.id}" aria-label="${s.title}: подробнее">${image(s.image,s.caption)}<span>${s.type}</span></a><div class="stage-card-copy"><p class="stage-label"><span>${s.number}</span> / ТЕХНОЛОГИЧЕСКАЯ СТАДИЯ</p><h3>${s.title}</h3><p>${s.summary}</p><a class="stage-more" href="/technology#${s.id}">Узнать подробнее ${arrow}</a></div></article>`).join('')}
-      </div>
-      <p class="story-note tech-process-configuration">Это три стадии технологического процесса. Гранулятор входит в комплектацию линии горячей мойки. Если у предприятия уже есть грануляция, линию мойки изготовим без гранулятора — под работу с вашим оборудованием.</p>
-    </section>`;
-}
+export function stageOverview(){return processRoute(presentationStages);}
 
 export function processSlogan(){
  return `<section class="story-slogan era-indigo-surface" aria-label="Наш подход"><p>Полный цикл переработки плёнки:<br><strong>очистить, переработать, использовать снова.</strong></p><span aria-hidden="true">↻</span></section>`;
@@ -66,34 +55,27 @@ export function processSlogan(){
 export function outputsStory(){
  return `<section class="story-section output-story" aria-labelledby="output-title">
       <div class="story-heading"><div><p class="eyebrow">03 / РЕЗУЛЬТАТ ПЕРЕРАБОТКИ</p><h2 id="output-title">Материал возвращается<br>в производственный оборот.</h2></div><p>От очищенной плёнки до ПЭ-гранулы —<br>в зависимости от конечной задачи.</p></div>
-      <div class="output-grid">${presentationOutputs.map((o,i)=>`<figure><div class="output-image">${image(o.image,o.title)}<span>0${i+1}</span></div><figcaption><h3>${o.title}</h3><p>${o.description}</p></figcaption></figure>`).join('')}</div>
-      <div class="application-strip"><p>Новый производственный цикл</p><ul><li>Плёнки и пакеты</li><li>Технические профили</li><li>Тара</li><li>Литьевые изделия</li></ul></div>
-      <p class="story-note">Применение вторичного материала определяется его составом и показателями качества.</p>
+      <div class="output-grid">${presentationOutputs.map((source,i)=>{const o={...source,...[{title:'Очищенная плёночная фракция',description:'Материал после подготовки на соответствующей стадии.'},{title:'Материал после капсулятора',description:'Уплотнённый и обезвоженный промежуточный материал для дальнейшей переработки.'},{title:'Вторичная ПЭ-гранула',description:'Товарный продукт после стадии грануляции.'}][i]};return `<figure><div class="output-image">${image(o.image,o.title)}<span>0${i+1}</span></div><figcaption><h3>${o.title}</h3><p>${o.description}</p></figcaption></figure>`;}).join('')}</div>
+      <p class="story-note">Фотографии показывают формы материала на разных стадиях, а не сравнение одной партии до и после. Применение вторичного материала определяется его составом и показателями качества.</p><a class="text-link" href="/#solution">Продукция и направления применения ${arrow}</a>
     </section>`;
 }
 
 export function controlStory(){
  return `<section class="story-section control-story era-indigo-surface" aria-labelledby="control-title">
-      <div class="control-copy"><p class="eyebrow">04 / УПРАВЛЕНИЕ ПРОЦЕССОМ</p><h2 id="control-title">Оборудование связано.<br>Процесс под контролем.</h2><p class="story-lead">КАИР — система управления технологическим комплексом ЭРА. Состояние узлов, режимы работы и движение материала — в едином интерфейсе.</p><div class="control-topics"><span>Состояние оборудования</span><span>Режимы работы</span><span>Движение материала</span></div>${action('Подробнее о КАИР','/automation',true)}</div>
+      <div class="control-copy"><p class="eyebrow">04 / УПРАВЛЕНИЕ ПРОЦЕССОМ</p><h2 id="control-title">Оборудование связано.<br>Процесс под контролем.</h2><p class="story-lead">КАИР — система управления технологическим комплексом ЭРА. Состояние узлов, режимы работы и движение материала — в едином интерфейсе.</p><div class="web-kair-scenarios"><div><h3>Нагрузка и состояние узлов</h3><p>Оператор видит контролируемые параметры и сигналы. Защитные реакции задаются предусмотренными алгоритмами.</p></div><div><h3>Согласование подачи</h3><p>Пуск, остановка и движение материала увязываются в пределах подключённого оборудования.</p></div><div><h3>Режимы работы</h3><p>Настройки под материал и контроль процесса помогают воспроизводить согласованные условия обработки.</p></div></div>${action('Возможности КАИР','/automation',true)}</div>
       ${kairMonitor()}
     </section>`;
 }
 
-export function launchStory(){
- return `<section class="story-section launch-story" id="about-era" aria-labelledby="launch-title">
-      <div class="story-heading"><div><p class="eyebrow">05 / ОТ ЗАДАЧИ К ПРОИЗВОДСТВУ</p><h2 id="launch-title">Начинаем с вашего сырья.<br>Двигаемся к решению.</h2></div><p>Технология, комплектация и запуск —<br>последовательные этапы работы над проектом.</p></div>
-      <p class="story-lead">ЭРА — проект по возвращению вторичных полимерных материалов в производственный оборот.</p><p>ЭРА объединяет оборудование, технологические линии и управление процессом переработки. Начинаем с вашего сырья и нужного результата, подбираем последовательность операций и состав оборудования.</p><ol class="launch-steps">${projectSteps.map((s,i)=>`<li><span>0${i+1}</span><h3>${s.title}</h3><p>${s.text}</p></li>`).join('')}</ol>
-      <div class="manufacturing-story">${mediaLink('manufacture-wide','Оборудование на стадии изготовления','Изготовление оборудования')}<div><p class="eyebrow">ИНЖЕНЕРИЯ В ДЕТАЛЯХ</p><h3>От технологической схемы<br>к собранному оборудованию.</h3><p>Фотографии, компоновки и описания помогают перейти от общего замысла к предметному обсуждению поставки.</p><a class="text-link" href="/media">Фото и схемы проекта ${arrow}</a></div></div>
-    </section>`;
-}
+export function launchStory(){return technicalPreparation();}
 
 export function detailStory(){
  return `<section class="story-section detail-story" aria-labelledby="detail-title">
       <div class="story-heading"><div><p class="eyebrow">06 / СЛЕДУЮЩИЙ УРОВЕНЬ ПОДРОБНОСТИ</p><h2 id="detail-title">Посмотреть решение ближе.</h2></div><p>Выберите, с чего продолжить знакомство.</p></div>
-      <div class="detail-doors">${[['Технология','Как устроены подготовка, очистка и получение конечного материала.','/technology','01'],['Линии и комплектации','Структура решений по сепарации и мойке плёнки.','/catalog/lines','02'],['Каталог оборудования','Отдельные узлы, их назначение и доступные характеристики.','/catalog/equipment','03']].map(([t,d,h,n])=>`<a href="${h}"><span class="door-number">${n} /</span><h3>${t}</h3><p>${d}</p><span class="door-action">Перейти в раздел ${arrow}</span></a>`).join('')}</div>
+      <div class="detail-doors">${[['Сравнить варианты запуска','Очищенная плёнка в тюках или полный цикл с выпуском ПЭ-гранулы.','/#solution','01'],['Линии и комплектации','Структура решений по сепарации и мойке плёнки.','/catalog/lines','02'],['Каталог оборудования','Отдельные узлы, их назначение и доступные характеристики.','/catalog/equipment','03']].map(([t,d,h,n])=>`<a href="${h}"><span class="door-number">${n} /</span><h3>${t}</h3><p>${d}</p><span class="door-action">Перейти в раздел ${arrow}</span></a>`).join('')}</div>
     </section>`;
 }
 
 export function projectContactStory(){
- return `<section class="story-section discuss-story" id="discuss" aria-labelledby="discuss-title"><div><p class="eyebrow">ВАШ ПРОЕКТ НАЧИНАЕТСЯ С РАЗГОВОРА</p><h2 id="discuss-title">Какое сырьё<br>вы хотите перерабатывать?</h2><p>Расскажите о материале, загрязнениях и нужном результате. Можно приложить фотографии или видео — это поможет предметно обсудить технологию.</p></div><div class="discuss-actions">${action('Написать о проекте','mailto:edkom.office@mail.ru?subject='+encodeURIComponent('Обсудить проект переработки ЭРА'))}<a class="discuss-phone" href="tel:+79032813535">+7 903 281-35-35</a><a class="discuss-email" href="mailto:edkom.office@mail.ru">edkom.office@mail.ru</a><p>В форме можно оставить контакты и приложить материалы.</p><a class="text-link" href="/contacts">Все контакты ${arrow}</a></div></section>`;
+ return `<section class="story-section discuss-story" id="discuss" aria-labelledby="discuss-title"><div><p class="eyebrow">ВАШ ПРОЕКТ НАЧИНАЕТСЯ С РАЗГОВОРА</p><h2 id="discuss-title">Покажите ваше сырьё —<br>подберём последовательность подготовки.</h2><p>Расскажите о материале, загрязнениях и нужном результате. Можно приложить фотографии или видео — это поможет предметно обсудить технологию.</p></div><div class="discuss-actions">${action('Написать о проекте','mailto:edkom.office@mail.ru?subject='+encodeURIComponent('Технология ЭРА: сырьё, загрязнения и комплектация'))}<a class="discuss-phone" href="tel:+79032813535">+7 903 281-35-35</a><a class="discuss-email" href="mailto:edkom.office@mail.ru">edkom.office@mail.ru</a><p>В форме можно оставить контакты и приложить материалы.</p><a class="text-link" href="/contacts">Все контакты ${arrow}</a></div></section>`;
 }

@@ -26,8 +26,8 @@ with sync_playwright() as p:
   assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),(width,'card')
   card.hover();assert card.evaluate('(element)=>getComputedStyle(element).borderTopColor')=='rgb(198, 164, 59)'
   note=page.locator('.tech-stage-notes');note.locator('summary').click()
-  assert note.locator('div').is_visible()
-  assert note.locator('div').evaluate('(element)=>getComputedStyle(element).position')=='static'
+  assert note.locator(':scope>div').is_visible()
+  assert note.locator(':scope>div').evaluate('(element)=>getComputedStyle(element).position')=='static'
   assert page.locator('#raw-material').evaluate('(raw)=>raw.compareDocumentPosition(document.querySelector("#dry-separation")) & Node.DOCUMENT_POSITION_FOLLOWING')
   assert page.locator('#hot-washing').evaluate('(wash)=>wash.compareDocumentPosition(document.querySelector("#granulation")) & Node.DOCUMENT_POSITION_FOLLOWING')
   assert page.locator('[data-washing-configuration]').count()==2

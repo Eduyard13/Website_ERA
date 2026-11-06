@@ -24,12 +24,12 @@ with sync_playwright() as p:
   print('Pages, responsive images, overflow, menu:',width,'OK',flush=True)
  page.set_viewport_size({'width':1440,'height':1000});page.goto(base+'/')
  page.get_by_role('link',name='Как это работает',exact=True).click();assert page.url.endswith('/technology#solution')
- page.get_by_role('link',name='Узнать подробнее',exact=True).nth(1).click();assert page.url.endswith('/technology#hot-washing');assert page.locator('#hot-washing').is_visible()
+ page.locator('.web-process-stage>a[href="#hot-washing"]').click();assert page.url.endswith('/technology#hot-washing');assert page.locator('#hot-washing').is_visible()
  page.reload();assert page.locator('#hot-washing').is_visible()
- page.goto(base+'/technology');page.get_by_role('link',name='Подробнее о КАИР',exact=True).click();assert page.url.endswith('/automation')
- page.goto(base+'/');page.get_by_role('link',name='Обсудить мой проект',exact=True).click();assert page.locator('#project-request').is_visible();page.keyboard.press('Escape')
- assert page.get_by_role('link',name='Рассчитать проект под моё сырьё',exact=True).get_attribute('href').startswith('/Website_ERA/contacts?topic=')
- for title,ending in [('Технология','/technology'),('Линии и комплектации','/catalog/lines'),('Каталог оборудования','/catalog/equipment')]:
+ page.goto(base+'/technology');page.get_by_role('link',name='Возможности КАИР',exact=True).click();assert page.url.endswith('/automation')
+ page.goto(base+'/');page.locator('.pitch-hero').get_by_role('link',name='Обсудить мой проект',exact=True).click();assert page.locator('#project-request').is_visible();page.keyboard.press('Escape')
+ assert page.get_by_role('link',name='Получить расчёт под моё сырьё',exact=True).get_attribute('href').startswith('/Website_ERA/contacts?topic=')
+ for title,ending in [('Сравнить варианты запуска','/#solution'),('Линии и комплектации','/catalog/lines'),('Каталог оборудования','/catalog/equipment')]:
   page.goto(base+'/technology');page.locator('.detail-doors').get_by_role('link',name=title,exact=False).click();assert page.url.endswith(ending)
  page.goto(base+'/media')
  count=page.locator('[data-media]:visible').count();assert page.locator('[data-media][data-image*="/presentation/"]').count()>0
