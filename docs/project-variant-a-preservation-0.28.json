@@ -1,0 +1,21 @@
+{
+  "baseline": "76a8975",
+  "financialSources": {
+    "scripts/economics.mjs": "9deacde4aa3cbc7bccc6c1bbe09beb79045b80e1faebdbb3c70d7f8401ff66e5",
+    "public/economics-config.js": "4c82242970bd867847851607380d2653e46c285b7af330ae818966345229b066",
+    "public/economics-model.js": "7c22a9cdab16e35acff2077f72f21f9fe5034b1a744e4d50be262d91d9cd318f",
+    "public/economics-controller.js": "e18f5416f075d1f830e411a81875a84f55d4fea1aa8dd14d272cbef4b8f28c7a",
+    "public/economics-view.js": "cfceee18b9afa3e50af88e28ec069986d36aeffc961e9300a5c20caf27c31888",
+    "public/commercial.js": "004466135f360448c0520183799544885b184e5f64e9f5e866ac77bce9dc81ad",
+    "test/economics.test.mjs": "0a636240c8f6d2aec77b6ceef81ca0d3196c3dee620857839655f313e6d1df81"
+  },
+  "changedFinancialSources": [],
+  "widgets": {
+    "monthly": true,
+    "per-tonne": true,
+    "curve": true
+  },
+  "priceBlockUnchanged": true,
+  "otherPagesChecked": 29,
+  "unexpectedContentChanges": []
+}

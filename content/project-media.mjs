@@ -1,0 +1,29 @@
+// Put approved web exports under public/assets/project-home/<expected>.
+// Rebuilding automatically replaces the reviewed fallback; no HTML edits needed.
+const photo=(expected,alt,file,width,height,extra={})=>({type:'photo',expected,alt,fallback:file?{file,width,height}:null,...extra});
+export const projectMediaSlots={
+ heroFeedstock:photo('hero/feedstock_hero.jpg','Спрессованное загрязнённое плёночное сырьё','presentation/raw-film.webp',880,1157,{variants:['presentation/raw-film-480.webp','presentation/raw-film.webp']}),
+ heroEquipment:photo('hero/equipment_hero.png','Оборудование комплекса ЭРА на производственном участке','presentation/complex.webp',1280,720),
+ heroMobile:photo('hero/feedstock_mobile.jpg','Загрязнённые пакеты и плёнки — вертикальный кадр','presentation/raw-film.webp',880,1157,{variants:['presentation/raw-film-480.webp','presentation/raw-film.webp']}),
+ problemFilm:photo('problem/film_mixed.jpg','Слипшиеся пакеты и неоднородное плёночное сырьё','presentation/raw-film.webp',880,1157),
+ mineralDetail:photo('problem/inclusion_mineral.jpg','Минеральные включения в плёночном сырье',null,480,480),
+ organicDetail:photo('problem/inclusion_organic.jpg','Органические включения в плёночном сырье',null,480,480),
+ solidDetail:photo('problem/inclusion_solid.jpg','Твёрдые включения в плёночном сырье',null,480,480),
+ preshredder:photo('process/preshredder.jpg','Предварительный измельчитель на этапе сборки','photos/predvaritelnyy-izmelchitel/01.webp',1086,1448),
+ separator:photo('process/separator.jpg','Баллистический сепаратор на участке сборки','photos/ballisticheskiy-separator/05.webp',1448,1086),
+ fluffier:photo('process/fluffier.jpg','Роторный распушитель: рабочая дисковая секция','photos/rotornyy-raspushitel/01.webp',1086,1448),
+ cleanFilm:photo('process/clean_film.jpg','Очищенная плёночная фракция','presentation/clean-film.webp',388,302),
+ pellets:photo('process/pellets.jpg','Образец вторичной полиэтиленовой гранулы','presentation/granules.webp',390,304),
+ promo:{type:'video',expected:'video/era_promo_full.mp4',posterSlot:'promoPoster',captions:'video/captions.vtt',label:'Видео о технологии ЭРА',fallback:null},
+ promoPoster:photo('video/era_promo_poster.jpg','Производственный участок комплекса ЭРА','presentation/complex.webp',1280,720),
+ filmProduct:photo('products/clean_film_bale.jpg','Очищенная плёнка после сепарации, перед прессованием','presentation/clean-film.webp',388,302,{customAlt:'Очищенная плёночная фракция или тюк'}),
+ pelletProduct:photo('products/pe_pellets.jpg','Образец вторичной ПЭ-гранулы','presentation/granules.webp',390,304),
+ evidenceInput:photo('evidence/input_sample.jpg','Исходное загрязнённое плёночное сырьё','presentation/raw-film.webp',880,1157),
+ evidenceProcess:photo('evidence/process_running.jpg','Оборудование комплекса ЭРА','presentation/complex.webp',1280,720,{customAlt:'Оборудование в работе'}),
+ evidenceOutput:photo('evidence/output_sample.jpg','Очищенная плёночная фракция','presentation/clean-film.webp',388,302),
+ cleaningDemo:{type:'video',expected:'evidence/cleaning_demo.mp4',posterSlot:'cleaningPoster',captions:'evidence/captions.vtt',label:'Работа оборудования с плёночным сырьём',fallback:{file:'videos/ballisticheskiy-separator.mp4'},fallbackLabel:'Баллистическое разделение — видео узла в работе · 1:40'},
+ cleaningPoster:photo('evidence/cleaning_demo_poster.jpg','Баллистический сепаратор — кадр видеопрезентации','videos/ballisticheskiy-separator-poster.webp',1920,1080),
+ lineWide:photo('system/line_wide.jpg','Общий вид полной линии сухой сепарации — 3D-визуализация','technology/separation/line.webp',1600,1077,{fallbackCaption:'3D-визуализация полной линии сухой сепарации',customAlt:'Общий вид оборудования ЭРА'}),
+ kairScreen:photo('system/kair_screen.jpg','КАИР: фотография общего экрана линии','kair/01.webp',1919,1078),
+ contactDetail:photo('contact/machine_detail.jpg','Рабочие диски роторного распушителя','photos/rotornyy-raspushitel/01.webp',1086,1448),
+};

@@ -8,7 +8,7 @@ base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3010/Website_ERA').rstri
 root_path=urlparse(base).path
 out=Path(os.environ.get('ERA_SCREENSHOT_DIR','/workspace/era-review/navigation-v0.10'));out.mkdir(parents=True,exist_ok=True)
 product='/catalog/equipment/predvaritelnyy-izmelchitel/'
-cases=[('/', 'project','/'),('/catalog/','equipment','/catalog'),('/catalog/equipment/?q=флотатор','equipment','/catalog/equipment'),(product,'equipment','/catalog/equipment'),('/catalog/lines/','equipment','/catalog/lines'),('/catalog/lines/separatsiya-02/','equipment','/catalog/lines'),('/technology/#hot-washing','technology','/technology'),('/automation/','control','/automation'),('/media/','gallery','/media')]+[(p,'all',p) for p in ['/documents','/news','/blog','/contacts','/company-details']]
+cases=[('/', 'project','/'),('/catalog/','equipment','/catalog'),('/catalog/equipment/?q=флотатор','equipment','/catalog/equipment'),(product,'equipment','/catalog/equipment'),('/catalog/lines/','equipment','/catalog/lines'),('/catalog/lines/separatsiya-02/','equipment','/catalog/lines'),('/technology/#hot-washing','technology','/technology'),('/automation/','control','/automation'),('/media/','all','/media'),('/economics/','economics','/economics')]+[(p,'all',p) for p in ['/documents','/news','/blog','/contacts','/company-details']]
 with sync_playwright() as p:
  proxy=os.environ.get('HTTPS_PROXY') or os.environ.get('HTTP_PROXY')
  browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'],proxy={'server':proxy,'bypass':'127.0.0.1,localhost'} if proxy else None)
@@ -20,9 +20,9 @@ with sync_playwright() as p:
    assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),(width,route)
    header=page.locator('.site-header');toggle=page.locator('[data-menu-toggle]');menu=page.locator('#site-menu')
    assert (64 if width<1200 else 72)<=header.bounding_box()['height']<=80,(width,route,header.bounding_box())
-   assert page.locator('.primary-nav a').all_text_contents()==['О проекте','Технология','Система управления','Каталог оборудования','Галерея']
+   assert page.locator('.primary-nav a').all_text_contents()==['О проекте','Технология','Система управления','Экономика','Каталог']
    assert page.locator('.primary-nav').is_visible()==(width>=1200)
-   expected={'project':'/','equipment':'/catalog','technology':'/technology','control':'/automation','gallery':'/media'}.get(section)
+   expected={'project':'/','equipment':'/catalog','technology':'/technology','control':'/automation','economics':'/economics'}.get(section)
    if section=='all':
     assert toggle.get_attribute('data-current-section')=='true'
     assert header.locator('.primary-link[data-current-section=true]').count()==0
@@ -71,7 +71,7 @@ with sync_playwright() as p:
   page.locator('.catalog-door').nth(1).click();assert page.locator('[data-node]:visible').count()==12
   page.get_by_role('searchbox').fill('флотатор');assert page.locator('[data-node]:visible').count()==1
   page.locator('[data-node]:visible .card-action').click()
-  assert page.locator('.primary-nav [data-current-section=true]').inner_text()=='Каталог оборудования'
+  assert page.locator('.primary-nav [data-current-section=true]').inner_text()=='Каталог'
   page.go_back();assert page.locator('[data-node]:visible').count()==1
   page.reload();assert page.locator('[data-node]:visible').count()==1
   page.goto(base+'/documents');page.locator('[data-menu-toggle]').click()

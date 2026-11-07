@@ -1,7 +1,3 @@
-import {projectHero} from './project-story.mjs';
-import {commercialSections} from './commercial.mjs';
+import {resourceHome} from './project-home.mjs';
 export {presentationTechnology,presentationAutomation} from './technology.mjs';
-
-export function presentationHome(){
- return `<div class="story commercial-page" data-commercial-home>${projectHero()}${commercialSections()}</div>`;
-}
+export function presentationHome(){return resourceHome();}

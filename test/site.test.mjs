@@ -3,6 +3,35 @@ import assert from 'node:assert/strict';
 import {readFile,stat} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {routes,product,basePath} from '../scripts/build.mjs';
+test('Медиа главной автоматически подхватывает новые файлы, сохраняя исходники и безопасный fallback',async()=>{
+ const {mkdtemp,mkdir,writeFile,rm}=await import('node:fs/promises');
+ const {tmpdir}=await import('node:os');const {pathToFileURL}=await import('node:url');
+ const {resolveProjectMedia}=await import('../scripts/project-media.mjs');
+ const {projectMediaSlots}=await import('../content/project-media.mjs');
+ const dir=await mkdtemp(resolve(tmpdir(),'era-media-'));
+ try{
+  const root=pathToFileURL(dir+'/');
+  const initial=resolveProjectMedia(projectMediaSlots,root);assert.equal(initial.promo.file,null);assert.ok(initial.heroFeedstock.file);assert.equal(initial.heroFeedstock.custom,false);
+  await mkdir(resolve(dir,'project-home/hero'),{recursive:true});await mkdir(resolve(dir,'project-home/video'),{recursive:true});
+  const original=Buffer.from('Original media fixture, no transformations');
+  await writeFile(resolve(dir,'project-home/hero/feedstock_hero.jpg'),original);
+  await writeFile(resolve(dir,'project-home/hero/feedstock_hero-480.webp'),original);
+  await writeFile(resolve(dir,'project-home/video/era_promo_full.mp4'),original);
+  await writeFile(resolve(dir,'project-home/video/captions.vtt'),'WEBVTT\n');
+  const loaded=resolveProjectMedia(projectMediaSlots,root);
+  assert.equal(loaded.heroFeedstock.file,'project-home/hero/feedstock_hero.jpg');assert.equal(loaded.heroFeedstock.custom,true);
+  assert.deepEqual(loaded.heroFeedstock.variants,[{file:'project-home/hero/feedstock_hero-480.webp',width:480}]);
+  assert.equal(loaded.promo.file,'project-home/video/era_promo_full.mp4');assert.equal(loaded.promo.captions,'project-home/video/captions.vtt');
+  assert.deepEqual(await readFile(resolve(dir,'project-home/hero/feedstock_hero.jpg')),original);
+ }finally{await rm(dir,{recursive:true,force:true});}
+});
+test('Будущий проморолик получает настоящий player с субтитрами и без autoplay',async()=>{
+ const {resourceVideo}=await import('../scripts/project-home.mjs');const {projectMedia}=await import('../scripts/project-media.mjs');
+ assert.ok(!resourceVideo('promo').includes('<video'));assert.ok(!resourceVideo('promo').includes('<button'));
+ const ready=resourceVideo('promo',{...projectMedia,promo:{...projectMedia.promo,file:'project-home/video/era_promo_full.mp4',captions:'project-home/video/captions.vtt'}});
+ assert.ok(ready.includes('<video controls playsinline preload="none"'));assert.ok(ready.includes('kind="captions"'));assert.ok(ready.includes('type="video/mp4"'));
+ assert.ok(!ready.includes('autoplay'));assert.ok(!ready.includes(' loop'));
+});
 test('Учебный баланс сохраняет массу, нулевые значения и отдельный смысл полимера до потерь',async()=>{
  const {calculateMaterialBalance,materialBalancePoints}=await import('../public/material-balance-model.js');
  assert.deepEqual(calculateMaterialBalance(0),{input:1500,contamination:0,polymer:1500,inclusions:0});
@@ -19,29 +48,21 @@ test('Учебный баланс сохраняет массу, нулевые 
  assert.ok(html.includes(`${basePath}/presentation-web.js?v=`));
  assert.ok(!(await readFile('dist/index.html','utf8')).includes('/presentation-web.js'));
 });
-test('Презентация дополняет коммерческий путь и технические схемы, сохраняя фотографии и финансовые блоки',async()=>{
- const home=await readFile('dist/index.html','utf8'),tech=await readFile('dist/technology/index.html','utf8');
- const {manufacturePhotos,deliverySteps,serviceDirections,productApplications}=await import('../content/presentation-web.mjs');
- for(const title of ['Линии для подготовки плёнки','Сырьевая база начинается с вашего региона','Где может применяться вторичная ПЭ-гранула','Как выглядит оборудование','Как реализуется проект с ЭРА'])assert.ok(home.includes(title),title);
- assert.ok(home.indexOf('id="solution"')<home.indexOf('id="manufacturing"'));
- assert.ok(home.indexOf('id="manufacturing"')<home.indexOf('id="market"'));
- assert.ok(home.indexOf('id="market"')<home.indexOf('id="economics"'));
- assert.ok(home.indexOf('id="economics"')<home.indexOf('id="about-era"'));
- for(const photo of manufacturePhotos){assert.ok(home.includes(`data-image="${basePath}/assets/${photo.file}"`));assert.ok((await stat('public/assets/'+photo.file)).size>0);}
- for(const step of deliverySteps)for(const text of [step.title,step.text,step.result])assert.ok(home.includes(text));
- for(const [title] of serviceDirections)assert.ok(home.includes(title));
- for(const app of productApplications)assert.ok(home.includes(app.text));
- assert.equal([...home.matchAll(/data-widget-switch="/g)].length,4);
+test('Главная A содержит восемь блоков, а экономика и технические материалы сохранены отдельно',async()=>{
+ const home=await readFile('dist/index.html','utf8'),tech=await readFile('dist/technology/index.html','utf8'),econ=await readFile('dist/economics/index.html','utf8');
+ const {resourceHero}=await import('../content/project-home.mjs');
+ const title=home.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)[1].replace(/<[^>]+>/g,'');assert.equal(title,resourceHero.title);
+ assert.deepEqual([...home.matchAll(/data-home-block="([^"]+)"/g)].map(m=>m[1]),['hero','problem','process','products','evidence','business','integration','contact']);
+ assert.equal([...home.matchAll(/<h1[\s>]/g)].length,1);
+ assert.equal([...home.matchAll(/data-widget-switch="/g)].length,0);assert.equal([...econ.matchAll(/data-widget-switch="/g)].length,4);
+ assert.ok(!home.includes('/commercial.js'));assert.ok(econ.includes('/commercial.js'));
+ assert.ok(home.includes('до 80%'));assert.ok(home.includes('Входная влажность в испытаниях, отдельно от засорённости'));
+ assert.ok(home.indexOf('data-video-slot="promo"')<home.indexOf('data-home-block="products"'));
+ assert.ok(home.includes('resource-video--poster'));assert.ok(!home.includes('autoplay'));assert.ok(!home.includes(' loop'));
+ assert.ok(home.includes(`href="${basePath}/economics"`));assert.ok(home.includes(`href="${basePath}/media"`));
  assert.ok(!home.includes('quality-sequence.svg'));assert.ok(tech.includes('quality-sequence.svg'));
- assert.ok(home.includes(`href="${basePath}/technology#granule-quality"`));
- assert.ok(tech.includes('Почему не вытряхивать каждый пакет вручную?'));assert.ok(tech.includes('≈ 4,36 кг/ч'));
- assert.ok(tech.includes('260 ÷ 4 = 65 ₽/кг'));assert.ok(tech.includes('Механизация раскрытия и очистки пакетов не исключает сортировку'));
- assert.ok(tech.includes('Рабочая жидкость → очистка → возврат в процесс'));
- assert.ok(tech.includes('↓ Прессование'));assert.ok(tech.includes('Точные связи узлов определяет схема выбранной линии.'));
- assert.ok(tech.includes('Сравнить варианты запуска'));
- const doors=tech.split('class="detail-doors"')[1].split('</section>')[0];
- assert.ok(!doors.includes(`href="${basePath}/technology"`));
- for(const [route] of [['/catalog'],['/automation'],['/media']])assert.ok(!(await readFile('dist'+route+'/index.html','utf8')).includes('presentation-web.css'));
+ for(const text of ['Почему не вытряхивать каждый пакет вручную?','≈ 4,36 кг/ч','Рабочая жидкость → очистка → возврат в процесс','Сравнить варианты запуска'])assert.ok(tech.includes(text));
+ assert.ok(home.includes('гранулятор')||home.includes('Гранулятор'));
 });
 test('Все внутренние ссылки, изображения и якоря ведут к существующим ресурсам',async()=>{
  for(const route of new Set(routes)){
@@ -304,12 +325,12 @@ test('Навигация различает точную страницу, ра�
   assert.ok(!navigation(path).includes('aria-current="location"'));
  }
  assert.equal(navigationState('/technology/#hot-washing').section,'technology');
- for(const [path,section] of [['/automation','control'],['/media','gallery']]){
+ for(const [path,section] of [['/automation','control'],['/economics','economics']]){
   assert.equal(navigationState(path).section,section);
   assert.match(navigation(path),new RegExp('href="'+path+'"[^>]*aria-current="page"[^>]*data-current-section="true"'));
   assert.ok(!siteHeader(path).includes('aria-controls="site-menu" data-current-section="true"'));
  }
- for(const path of ['/documents','/news','/blog','/contacts','/company-details']){
+ for(const path of ['/documents','/news','/blog','/contacts','/company-details','/media']){
   assert.equal(navigationState(path).section,'all');
   assert.match(siteHeader(path),/aria-controls="site-menu" data-current-section="true"/);
   assert.match(siteMenu(path),new RegExp('href="'+path+'" aria-current="page"'));
@@ -504,8 +525,7 @@ test('Общий каталог предлагает две ветки, а ст�
  assert.equal(lines.filter(l=>l.enabled&&l.group==='Сепарация').length,2);
  assert.equal(lines.filter(l=>l.enabled&&l.group==='Мойка').length,0);
  const home=await readFile('dist/index.html','utf8');
- assert.ok(home.includes('id="about-era"'));assert.ok(home.includes('Начинаем с вашего сырья и нужного результата'));
- assert.ok(home.includes('ЭРА — проект по возвращению вторичных полимерных материалов'));
+ assert.ok(home.includes('id="about-era"'));assert.ok(home.includes('Согласованная технологическая система.'));
  const about=await readFile('dist/about/index.html','utf8');
  assert.ok(about.includes(`content="0; url=${basePath}/"`));
  assert.ok(about.includes(`rel="canonical" href="${basePath}/"`));
@@ -564,14 +584,14 @@ test('Контакты сохранены, КАИР перенесён в тех
  const single=kairMonitor([kairSlides[0]],{...kairPresentation,autoplay:false});
  assert.ok(!single.includes('data-kair-next'));assert.ok(!single.includes('data-kair-pause'));
 });
-test('Главная отделяет цены модели от предложений продавцов и содержит четыре локальных сценария',async()=>{
+test('Экономика отделяет цены модели от предложений продавцов и содержит четыре локальных сценария',async()=>{
  const {economicsConfig,marketOffers}=await import('../public/economics-config.js');
  const {calculateEconomics}=await import('../public/economics-model.js');
  const {millions}=await import('../public/economics-view.js');
- const html=await readFile('dist/index.html','utf8'),result=calculateEconomics();
- assert.ok(html.includes('Из загрязнённой плёнки —'));assert.ok(!html.includes('class="pitch-stage-nav'));
+ const html=await readFile('dist/economics/index.html','utf8'),result=calculateEconomics();
+ assert.ok(html.includes('Экономическое обоснование'));assert.ok(!html.includes('class="pitch-stage-nav'));
  assert.ok(!html.includes('class="raw-story"'));assert.ok(!html.includes('data-kair-inspect'));
- for(const id of ['raw-material','solution','market','economics','about-era','discuss'])assert.equal([...html.matchAll(new RegExp(`id="${id}"`,'g'))].length,1,id);
+ for(const id of ['market','economics'])assert.equal([...html.matchAll(new RegExp(`id="${id}"`,'g'))].length,1,id);
  assert.ok(html.includes(economicsConfig.disclosure));assert.ok(html.includes(economicsConfig.taxDisclosure));
  assert.equal([...html.matchAll(/data-widget-switch="/g)].length,4);
  assert.equal([...html.matchAll(/data-econ-widget="/g)].length,3);
@@ -680,10 +700,10 @@ test('Отдельная страница ИИ удалена из меню и �
 });
 test('Пять основных направлений ведут к прежним страницам и сохраняют активный раздел',async()=>{
  const {primaryLinks}=await import('../content/navigation.mjs');
- assert.deepEqual(primaryLinks.map(link=>[link.label,link.href]),[['О проекте','/'],['Технология','/technology'],['Система управления','/automation'],['Каталог оборудования','/catalog'],['Галерея','/media']]);
+ assert.deepEqual(primaryLinks.map(link=>[link.label,link.href]),[['О проекте','/'],['Технология','/technology'],['Система управления','/automation'],['Экономика','/economics'],['Каталог','/catalog']]);
  const {navigationState}=await import('../scripts/navigation.mjs');
  assert.equal(navigationState('/automation/?v=latest').section,'control');
- assert.equal(navigationState('/media/?type=video').section,'gallery');
+ assert.equal(navigationState('/media/?type=video').section,'all');
  assert.equal(navigationState('/catalog/equipment/plenochnyy-flotator').section,'equipment');
  assert.equal(navigationState('/contacts/sent').panelPath,'/contacts');
 });

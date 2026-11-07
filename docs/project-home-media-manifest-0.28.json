@@ -1,0 +1,263 @@
+{
+  "version": "0.28.0",
+  "entries": [
+    {
+      "id": "heroFeedstock",
+      "type": "photo",
+      "expected": "public/assets/project-home/hero/feedstock_hero.jpg",
+      "provided": false,
+      "resolved": "public/assets/presentation/raw-film.webp",
+      "posterSlot": null,
+      "caption": "Спрессованное загрязнённое плёночное сырьё",
+      "variants": [
+        {
+          "file": "presentation/raw-film-480.webp",
+          "width": 480
+        },
+        {
+          "file": "presentation/raw-film.webp",
+          "width": 880
+        }
+      ]
+    },
+    {
+      "id": "heroEquipment",
+      "type": "photo",
+      "expected": "public/assets/project-home/hero/equipment_hero.png",
+      "provided": false,
+      "resolved": "public/assets/presentation/complex.webp",
+      "posterSlot": null,
+      "caption": "Оборудование комплекса ЭРА на производственном участке",
+      "variants": []
+    },
+    {
+      "id": "heroMobile",
+      "type": "photo",
+      "expected": "public/assets/project-home/hero/feedstock_mobile.jpg",
+      "provided": false,
+      "resolved": "public/assets/presentation/raw-film.webp",
+      "posterSlot": null,
+      "caption": "Загрязнённые пакеты и плёнки — вертикальный кадр",
+      "variants": [
+        {
+          "file": "presentation/raw-film-480.webp",
+          "width": 480
+        },
+        {
+          "file": "presentation/raw-film.webp",
+          "width": 880
+        }
+      ]
+    },
+    {
+      "id": "problemFilm",
+      "type": "photo",
+      "expected": "public/assets/project-home/problem/film_mixed.jpg",
+      "provided": false,
+      "resolved": "public/assets/presentation/raw-film.webp",
+      "posterSlot": null,
+      "caption": "Слипшиеся пакеты и неоднородное плёночное сырьё",
+      "variants": []
+    },
+    {
+      "id": "mineralDetail",
+      "type": "photo",
+      "expected": "public/assets/project-home/problem/inclusion_mineral.jpg",
+      "provided": false,
+      "resolved": null,
+      "posterSlot": null,
+      "caption": "Минеральные включения в плёночном сырье",
+      "variants": []
+    },
+    {
+      "id": "organicDetail",
+      "type": "photo",
+      "expected": "public/assets/project-home/problem/inclusion_organic.jpg",
+      "provided": false,
+      "resolved": null,
+      "posterSlot": null,
+      "caption": "Органические включения в плёночном сырье",
+      "variants": []
+    },
+    {
+      "id": "solidDetail",
+      "type": "photo",
+      "expected": "public/assets/project-home/problem/inclusion_solid.jpg",
+      "provided": false,
+      "resolved": null,
+      "posterSlot": null,
+      "caption": "Твёрдые включения в плёночном сырье",
+      "variants": []
+    },
+    {
+      "id": "preshredder",
+      "type": "photo",
+      "expected": "public/assets/project-home/process/preshredder.jpg",
+      "provided": false,
+      "resolved": "public/assets/photos/predvaritelnyy-izmelchitel/01.webp",
+      "posterSlot": null,
+      "caption": "Предварительный измельчитель на этапе сборки",
+      "variants": []
+    },
+    {
+      "id": "separator",
+      "type": "photo",
+      "expected": "public/assets/project-home/process/separator.jpg",
+      "provided": false,
+      "resolved": "public/assets/photos/ballisticheskiy-separator/05.webp",
+      "posterSlot": null,
+      "caption": "Баллистический сепаратор на участке сборки",
+      "variants": []
+    },
+    {
+      "id": "fluffier",
+      "type": "photo",
+      "expected": "public/assets/project-home/process/fluffier.jpg",
+      "provided": false,
+      "resolved": "public/assets/photos/rotornyy-raspushitel/01.webp",
+      "posterSlot": null,
+      "caption": "Роторный распушитель: рабочая дисковая секция",
+      "variants": []
+    },
+    {
+      "id": "cleanFilm",
+      "type": "photo",
+      "expected": "public/assets/project-home/process/clean_film.jpg",
+      "provided": false,
+      "resolved": "public/assets/presentation/clean-film.webp",
+      "posterSlot": null,
+      "caption": "Очищенная плёночная фракция",
+      "variants": []
+    },
+    {
+      "id": "pellets",
+      "type": "photo",
+      "expected": "public/assets/project-home/process/pellets.jpg",
+      "provided": false,
+      "resolved": "public/assets/presentation/granules.webp",
+      "posterSlot": null,
+      "caption": "Образец вторичной полиэтиленовой гранулы",
+      "variants": []
+    },
+    {
+      "id": "promo",
+      "type": "video",
+      "expected": "public/assets/project-home/video/era_promo_full.mp4",
+      "provided": false,
+      "resolved": null,
+      "posterSlot": "promoPoster",
+      "caption": "Видео о технологии ЭРА",
+      "variants": []
+    },
+    {
+      "id": "promoPoster",
+      "type": "photo",
+      "expected": "public/assets/project-home/video/era_promo_poster.jpg",
+      "provided": false,
+      "resolved": "public/assets/presentation/complex.webp",
+      "posterSlot": null,
+      "caption": "Производственный участок комплекса ЭРА",
+      "variants": []
+    },
+    {
+      "id": "filmProduct",
+      "type": "photo",
+      "expected": "public/assets/project-home/products/clean_film_bale.jpg",
+      "provided": false,
+      "resolved": "public/assets/presentation/clean-film.webp",
+      "posterSlot": null,
+      "caption": "Очищенная плёнка после сепарации, перед прессованием",
+      "variants": []
+    },
+    {
+      "id": "pelletProduct",
+      "type": "photo",
+      "expected": "public/assets/project-home/products/pe_pellets.jpg",
+      "provided": false,
+      "resolved": "public/assets/presentation/granules.webp",
+      "posterSlot": null,
+      "caption": "Образец вторичной ПЭ-гранулы",
+      "variants": []
+    },
+    {
+      "id": "evidenceInput",
+      "type": "photo",
+      "expected": "public/assets/project-home/evidence/input_sample.jpg",
+      "provided": false,
+      "resolved": "public/assets/presentation/raw-film.webp",
+      "posterSlot": null,
+      "caption": "Исходное загрязнённое плёночное сырьё",
+      "variants": []
+    },
+    {
+      "id": "evidenceProcess",
+      "type": "photo",
+      "expected": "public/assets/project-home/evidence/process_running.jpg",
+      "provided": false,
+      "resolved": "public/assets/presentation/complex.webp",
+      "posterSlot": null,
+      "caption": "Оборудование комплекса ЭРА",
+      "variants": []
+    },
+    {
+      "id": "evidenceOutput",
+      "type": "photo",
+      "expected": "public/assets/project-home/evidence/output_sample.jpg",
+      "provided": false,
+      "resolved": "public/assets/presentation/clean-film.webp",
+      "posterSlot": null,
+      "caption": "Очищенная плёночная фракция",
+      "variants": []
+    },
+    {
+      "id": "cleaningDemo",
+      "type": "video",
+      "expected": "public/assets/project-home/evidence/cleaning_demo.mp4",
+      "provided": false,
+      "resolved": "public/assets/videos/ballisticheskiy-separator.mp4",
+      "posterSlot": "cleaningPoster",
+      "caption": "Баллистическое разделение — видео узла в работе · 1:40",
+      "variants": []
+    },
+    {
+      "id": "cleaningPoster",
+      "type": "photo",
+      "expected": "public/assets/project-home/evidence/cleaning_demo_poster.jpg",
+      "provided": false,
+      "resolved": "public/assets/videos/ballisticheskiy-separator-poster.webp",
+      "posterSlot": null,
+      "caption": "Баллистический сепаратор — кадр видеопрезентации",
+      "variants": []
+    },
+    {
+      "id": "lineWide",
+      "type": "photo",
+      "expected": "public/assets/project-home/system/line_wide.jpg",
+      "provided": false,
+      "resolved": "public/assets/technology/separation/line.webp",
+      "posterSlot": null,
+      "caption": "3D-визуализация полной линии сухой сепарации",
+      "variants": []
+    },
+    {
+      "id": "kairScreen",
+      "type": "photo",
+      "expected": "public/assets/project-home/system/kair_screen.jpg",
+      "provided": false,
+      "resolved": "public/assets/kair/01.webp",
+      "posterSlot": null,
+      "caption": "КАИР: фотография общего экрана линии",
+      "variants": []
+    },
+    {
+      "id": "contactDetail",
+      "type": "photo",
+      "expected": "public/assets/project-home/contact/machine_detail.jpg",
+      "provided": false,
+      "resolved": "public/assets/photos/rotornyy-raspushitel/01.webp",
+      "posterSlot": null,
+      "caption": "Рабочие диски роторного распушителя",
+      "variants": []
+    }
+  ]
+}

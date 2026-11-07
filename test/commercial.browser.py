@@ -57,7 +57,7 @@ with sync_playwright() as p:
   assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
 
  for width in widths:
-  page.set_viewport_size({'width':width,'height':1000});assert page.goto(base+'/').status==200
+  page.set_viewport_size({'width':width,'height':1000});assert page.goto(base+'/economics/').status==200
   page.wait_for_function('document.querySelector("[data-econ-widget=monthly]").dataset.econMode==="separation"')
   assert page.locator('[data-widget-switch]').count()==4
   for kind in ['monthly','per-tonne','curve']:verify(kind,{})
@@ -88,7 +88,7 @@ with sync_playwright() as p:
   results.append({'width':width,'fourIndependentModes':True,'baselineMatchesModels':True,'wholePointLabel':True,'overflow':False})
   print('Four independent scenarios, default model values, point label and layout:',width,'OK',flush=True)
 
- page.set_viewport_size({'width':1440,'height':1000});page.goto(base+'/');page.wait_for_selector('[data-econ-state]')
+ page.set_viewport_size({'width':1440,'height':1000});page.goto(base+'/economics/');page.wait_for_selector('[data-econ-state]')
  monthly=widget('monthly');unit=widget('per-tonne');curve=widget('curve')
  profit=monthly.locator('.econ-legend [data-segment=profit]');profit.focus();assert monthly.locator('[data-ring-label]').inner_text()=='Чистая прибыль'
  profit.click();assert profit.get_attribute('aria-pressed')=='true';page.keyboard.press('Escape');assert monthly.locator('[data-ring-label]').inner_text()=='Выручка без НДС'
@@ -132,14 +132,14 @@ with sync_playwright() as p:
  page.keyboard.press('Home');assert page.locator('[role=tabpanel]:visible .market-offer').count()==10
  # A touch user sees the moving monetary label without hovering.
  touch=browser.new_context(viewport={'width':390,'height':844},is_mobile=True,has_touch=True,reduced_motion='reduce');mobile=touch.new_page();mobile.on('pageerror',lambda e:errors.append(str(e)))
- mobile.goto(base+'/');mobile.wait_for_selector('[data-econ-state]');mcurve=mobile.locator('[data-econ-widget=curve]');mcurve.locator('button[data-econ-mode=full]').tap()
+ mobile.goto(base+'/economics/');mobile.wait_for_selector('[data-econ-state]');mcurve=mobile.locator('[data-econ-widget=curve]');mcurve.locator('button[data-econ-mode=full]').tap()
  for load in [0,.5,1]:
   slider=mcurve.locator('[data-econ-range]');slider.scroll_into_view_if_needed();box=slider.bounding_box();mobile.touchscreen.tap(box['x']+8+(box['width']-16)*load,box['y']+box['height']/2)
   assert mcurve.locator('[data-point-label]:visible').is_visible();assert 'млн ₽/мес.' in mcurve.locator('[data-point-label]:visible strong').inner_text()
   tip=mcurve.locator('[data-point-label]:visible').bounding_box();assert tip['x']>=0 and tip['x']+tip['width']<=390
  assert mobile.evaluate('document.documentElement.scrollWidth<=innerWidth');touch.close()
  # Static HTML has the same correct full-load separation values and four defaults.
- static=browser.new_context(java_script_enabled=False,viewport={'width':390,'height':1000});plain=static.new_page();plain.goto(base+'/')
+ static=browser.new_context(java_script_enabled=False,viewport={'width':390,'height':1000});plain=static.new_page();plain.goto(base+'/economics/')
  assert plain.locator('[data-econ-widget=monthly] [data-econ-profit]').inner_text().startswith('4,45')
  assert plain.locator('[data-econ-widget=monthly] .econ-ring').count()==1
  assert plain.locator('[data-econ-widget=per-tonne] h3').inner_text()=='На 1 тонну готовой продукции'

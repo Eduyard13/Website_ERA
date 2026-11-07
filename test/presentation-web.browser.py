@@ -1,4 +1,4 @@
-"""Presentation additions, preserved finance, native diagrams and request context."""
+"""Technical presentation, native diagrams, material balance and request context."""
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 import os,json
@@ -24,34 +24,7 @@ with sync_playwright() as p:
   page.locator(selector).screenshot(path=str(out/f'{name}-{width}.png'))
   page.locator('.site-header').evaluate('(header)=>header.style.visibility=""')
  for width in widths:
-  page.set_viewport_size({'width':width,'height':1000});page.goto(base+'/');images();overflow()
-  assert page.locator('h1').count()==1
-  assert page.locator('.web-proposal-steps>li').count()==4
-  assert page.locator('.web-application').count()==5
-  for application in page.locator('.web-application').all():
-   application.locator('summary').click();assert application.locator('div').is_visible();overflow()
-  assert page.locator('.web-delivery-steps>li').count()==5
-  assert page.locator('.web-service>ul>li').count()==4
-  assert page.locator('.quality-visual').count()==0
-  assert page.locator('[data-widget-switch]').count()==4
-  assert page.locator('[data-econ-widget=monthly] [data-econ-profit]').inner_text().startswith('4,45')
-  assert page.locator('.web-manufacture-photo').count()==5
-  region=page.locator('.web-regional details');region.locator('summary').click()
-  assert region.locator(':scope>div').evaluate('(e)=>getComputedStyle(e).position')=='static'
-  assert region.locator('.web-region-examples>li').count()==11
-  assert 'действующие объекты не обозначены' in region.inner_text();overflow()
-  region.get_by_role('link',name='Обсудить сырьевую базу').click()
-  assert page.locator('#project-request').is_visible()
-  assert page.locator('#project-request [data-request-topic]').input_value()=='Сырьевая база: регион, поток и логистика'
-  page.locator('#project-request [data-request-files]').set_input_files(repo/'public/assets/presentation/granules.webp')
-  assert page.locator('#project-request [data-request-file-list]>li').count()==1
-  page.keyboard.press('Escape');assert not page.locator('#project-request').is_visible()
-  opener=page.locator('.web-manufacture-photo .media-open').first;opener.click()
-  assert page.locator('#media-viewer').is_visible()
-  assert '/photos/ballisticheskiy-separator/05.webp' in page.locator('#viewer-image').get_attribute('src')
-  page.locator('#media-viewer [data-next]').click();assert 'Общий вид оборудования' in page.locator('#viewer-title').inner_text()
-  page.keyboard.press('Escape');assert opener.evaluate('(e)=>e===document.activeElement')
-  for selector,name in [('.web-proposal','proposal'),('#solution','applications'),('#manufacturing','manufacture'),('#about-era','delivery')]:snapshot(selector,name,width)
+  page.set_viewport_size({'width':width,'height':1000})
   page.goto(base+'/technology/');images();overflow()
   assert page.locator('h1').count()==1 and page.locator('[data-kair-slide]').count()==23
   assert page.locator('.quality-visual').count()==1
@@ -91,7 +64,7 @@ with sync_playwright() as p:
   assert page.locator('#project-request [data-request-topic]').input_value()=='Параметры линии под площадку и сырьё'
   page.keyboard.press('Escape')
   page.locator('.detail-doors').get_by_role('link',name='Сравнить варианты запуска').click();page.wait_for_url(base+'/#solution')
-  assert page.locator('.sales-routes').count()==1
+  assert page.locator('.resource-product-panels').count()==1
   results.append({'width':width,'nativeDiagrams':True,'materialBalanceEndpoints':True,'requestContext':True,'overflow':False})
   print('Presentation, diagrams, balance, photo viewer, forms and cross-links:',width,'OK',flush=True)
  # No JavaScript: complete contamination table, source calculations and useful links.
@@ -103,8 +76,8 @@ with sync_playwright() as p:
  plain.locator('.web-balance details>summary').click();assert plain.locator('.web-balance-table tbody>tr').count()==11
  assert plain.locator('.web-balance-table').is_visible()
  assert plain.evaluate('document.documentElement.scrollWidth<=innerWidth')
- plain.goto(base+'/');plain.locator('.web-application summary').first.click();assert plain.locator('.web-application[open]>div').is_visible()
- assert plain.locator('.web-regional a[data-project-request]').get_attribute('href').startswith('/Website_ERA/contacts?topic=')
+ plain.goto(base+'/');assert plain.locator('.resource-product-panels').count()==1
+ assert plain.locator('.resource-hero a[data-project-request]').get_attribute('href').startswith('/Website_ERA/contacts?topic=')
  static.close();assert not errors,errors;assert not failed,failed;assert not submissions,submissions
  (out/'results.json').write_text(json.dumps({'layouts':results,'staticFallback':True,'errors':errors,'failedLocalResponses':failed,'submittedRequests':submissions},ensure_ascii=False,indent=2))
  print('Static fallback and zero sent requests: OK',flush=True);browser.close()
