@@ -3,6 +3,15 @@ import assert from 'node:assert/strict';
 import {readFile,stat} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {routes,product,basePath} from '../scripts/build.mjs';
+test('Режим слайдов включается только на главной и сохраняет восемь исходных секций',async()=>{
+ const home=await readFile('dist/index.html','utf8');
+ assert.ok(home.includes(`${basePath}/home-slides.css?v=`));assert.ok(home.includes(`${basePath}/home-slides.js?v=`));
+ assert.ok(home.includes('document.documentElement.dataset.homeView='));
+ assert.equal([...home.matchAll(/data-home-block="/g)].length,8);
+ for(const route of ['/technology','/economics','/automation','/catalog','/media']){
+  const html=await readFile('dist'+route+'/index.html','utf8');assert.ok(!html.includes('home-slides.js'));assert.ok(!html.includes('home-slides.css'));assert.ok(!html.includes('dataset.homeView='));
+ }
+});
 test('Медиа главной автоматически подхватывает новые файлы, сохраняя исходники и безопасный fallback',async()=>{
  const {mkdtemp,mkdir,writeFile,rm}=await import('node:fs/promises');
  const {tmpdir}=await import('node:os');const {pathToFileURL}=await import('node:url');
