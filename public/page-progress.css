@@ -1,0 +1,15 @@
+/* Reading position only: no changes to document scrolling or page layouts. */
+.page-progress-rail{position:fixed;right:3px;top:calc(var(--site-header-space,76px) + (100dvh - var(--site-header-space,76px))/2);transform:translateY(-50%);z-index:32;display:flex;flex-direction:column;max-height:calc(100dvh - var(--site-header-space,76px) - 24px)}
+.page-progress-rail[hidden]{display:none}
+.page-progress-rail>a{position:relative;display:grid;place-items:center;width:30px;height:var(--progress-step,36px);min-height:0;flex-shrink:1;color:var(--era-blue);-webkit-tap-highlight-color:transparent}
+.page-progress-mark{display:block;width:5px;height:5px;border-radius:5px;background:#64657488;box-shadow:0 0 0 1px #fbf9f433;transition:height .18s,background .18s}
+.page-progress-rail[data-tone=dark] .page-progress-mark{background:#f5f0df99;box-shadow:0 0 0 1px #10132e33}
+.page-progress-rail [aria-current=location] .page-progress-mark{height:min(22px,calc(var(--progress-step,36px)*.65));background:var(--era-gold)}
+.page-progress-rail a:hover .page-progress-mark,.page-progress-rail a:focus-visible .page-progress-mark{background:var(--era-gold-dark)}
+.page-progress-tooltip{position:absolute;right:35px;top:50%;transform:translateY(-50%);width:max-content;max-width:min(290px,calc(100vw - 55px));padding:9px 12px;border:1px solid #c6a43b88;border-radius:4px;background:var(--era-blue);color:var(--era-cream);font-size:11px;line-height:1.6;letter-spacing:0;white-space:normal;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .15s}
+.page-progress-rail a:hover .page-progress-tooltip,.page-progress-rail a:focus-visible .page-progress-tooltip{opacity:1;visibility:visible}
+.page-progress-rail a:focus-visible{outline:2px solid var(--era-gold-dark);outline-offset:-2px;border-radius:4px}
+body:is(.menu-open,.request-open,.viewer-open) .page-progress-rail,body:has(dialog[open]) .page-progress-rail{visibility:hidden;pointer-events:none}
+@media(max-width:767px){.page-progress-rail{right:0}.page-progress-rail>a{width:18px}.page-progress-mark{width:3px;height:3px}.page-progress-tooltip{right:23px;max-width:calc(100vw - 42px);font-size:10px;padding:8px 10px}}
+@media(hover:none){.page-progress-rail a:hover:not(:focus-visible) .page-progress-tooltip{opacity:0;visibility:hidden}.page-progress-rail a:active .page-progress-tooltip{opacity:1;visibility:visible}}
+@media(prefers-reduced-motion:reduce){.page-progress-mark,.page-progress-tooltip{transition:none}}

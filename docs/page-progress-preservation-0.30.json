@@ -1,0 +1,273 @@
+{
+  "version": "0.30.0",
+  "baseline": {
+    "version": "0.28.0",
+    "commit": "b7f9ea2"
+  },
+  "protectedSources": [
+    {
+      "file": "scripts/economics.mjs",
+      "sha256": "9deacde4aa3cbc7bccc6c1bbe09beb79045b80e1faebdbb3c70d7f8401ff66e5",
+      "unchanged": true
+    },
+    {
+      "file": "public/economics-config.js",
+      "sha256": "4c82242970bd867847851607380d2653e46c285b7af330ae818966345229b066",
+      "unchanged": true
+    },
+    {
+      "file": "public/economics-model.js",
+      "sha256": "7c22a9cdab16e35acff2077f72f21f9fe5034b1a744e4d50be262d91d9cd318f",
+      "unchanged": true
+    },
+    {
+      "file": "public/economics-controller.js",
+      "sha256": "e18f5416f075d1f830e411a81875a84f55d4fea1aa8dd14d272cbef4b8f28c7a",
+      "unchanged": true
+    },
+    {
+      "file": "public/economics-view.js",
+      "sha256": "cfceee18b9afa3e50af88e28ec069986d36aeffc961e9300a5c20caf27c31888",
+      "unchanged": true
+    },
+    {
+      "file": "public/commercial.js",
+      "sha256": "004466135f360448c0520183799544885b184e5f64e9f5e866ac77bce9dc81ad",
+      "unchanged": true
+    },
+    {
+      "file": "content/project-home.mjs",
+      "sha256": "9060fa93b24142781d49ab5cc23ea1e934fae68bcadd815d9af673b4f89d5d3d",
+      "unchanged": true
+    },
+    {
+      "file": "content/project-media.mjs",
+      "sha256": "fa83a133fa274801d395e6b26f2b555c12b766593b12dc4d75169107fa9ccff9",
+      "unchanged": true
+    },
+    {
+      "file": "scripts/project-home.mjs",
+      "sha256": "b483567993cdb78f247462e64c4b45a238b19384e222e9c339081eb1e1e93653",
+      "unchanged": true
+    },
+    {
+      "file": "public/style.css",
+      "sha256": "3651011c1d13e97e484bee83ecd6bb01e91401a9e8fe246c56fd64fd5470fba0",
+      "unchanged": true
+    },
+    {
+      "file": "public/equipment.css",
+      "sha256": "41bce71f14d28d8cfe622da36fe4618b6f0065349b3344c1fef55342d1496380",
+      "unchanged": true
+    },
+    {
+      "file": "public/documents.css",
+      "sha256": "68bc2c99e639de8130bda96136d3f7c6726c70a6bedca8db7c4e3c93d2476aad",
+      "unchanged": true
+    },
+    {
+      "file": "public/fx.css",
+      "sha256": "5a0021bcca99fb2ac8db53004942a27a9cfb9b23235694980ab5f3cb7073ec00",
+      "unchanged": true
+    },
+    {
+      "file": "public/presentation.css",
+      "sha256": "30d363f04dced70d9442fcc2cf5b6c97c316d74eda0131ea5281d56f1114f5b4",
+      "unchanged": true
+    },
+    {
+      "file": "public/navigation.css",
+      "sha256": "615af65f5fe906f09468b6b9425885f8375893dcc1fe7ba1a44b367fac4a0181",
+      "unchanged": true
+    },
+    {
+      "file": "public/diagram.css",
+      "sha256": "febacd801318792c2af455da7fbc1934616faa1df6ec059e8cfe2fedd571912e",
+      "unchanged": true
+    },
+    {
+      "file": "public/footer.css",
+      "sha256": "077c97a5fc90b615c0fdca51a3d458cf748c19a80b9bf2981550995b4a8601dd",
+      "unchanged": true
+    },
+    {
+      "file": "public/kair.css",
+      "sha256": "e1ac168a6f75005a1fe2b767b315a82e83e159dcafbd8ad49d9dd0a918b23a3a",
+      "unchanged": true
+    },
+    {
+      "file": "public/surfaces.css",
+      "sha256": "5ca9d27aea80f624787ed07d2147d3c43fac65ebbac80c982b6e93991407d4f3",
+      "unchanged": true
+    },
+    {
+      "file": "public/project-home.css",
+      "sha256": "6a5b3767bbb08195752fa1481d5e352141ba49f0c2ca66d4af514379069c0d38",
+      "unchanged": true
+    },
+    {
+      "file": "public/request.css",
+      "sha256": "467d78ddc11cd551598a25f8ec417d5f7ee946597f5377834c374f11dd609dfe",
+      "unchanged": true
+    }
+  ],
+  "pages": [
+    {
+      "file": "404.html",
+      "mainSha256": "5cb61e2cbd3255dec54250e5f346b05607a635b6eab09e3eb0dcf25fe0427ecc",
+      "unchanged": true
+    },
+    {
+      "file": "about/index.html",
+      "mainSha256": "132e01c4f8d22522c99d1e9dc90592f2b88d2fb16d5422028fe0a8057b409c7b",
+      "unchanged": true
+    },
+    {
+      "file": "ai/index.html",
+      "mainSha256": "aff2d03b6ac8615fd48bacd4c513fb965b85dd7fa67e8e9efb432793d3af7250",
+      "unchanged": true
+    },
+    {
+      "file": "automation/index.html",
+      "mainSha256": "7e73863348c954cdff03ce2e0a47deba112d4a0400123363a54f2ccfc8a2be40",
+      "unchanged": true
+    },
+    {
+      "file": "blog/index.html",
+      "mainSha256": "00e6f8d96f8fe43bf36ce173c2574532f13dfedd26814f236560221c09b33119",
+      "unchanged": true
+    },
+    {
+      "file": "catalog/equipment/ballisticheskiy-separator/index.html",
+      "mainSha256": "ce524cb7b1832a840967e8570cd85a3bbb0bf0f3d7b6bbdbd77d8653c7b17881",
+      "unchanged": true
+    },
+    {
+      "file": "catalog/equipment/bunker-nakopitel/index.html",
+      "mainSha256": "413bd2893c0c87008c037d440a9291e2ce806cf9abb9703be1691d7f1686ae85",
+      "unchanged": true
+    },
+    {
+      "file": "catalog/equipment/index.html",
+      "mainSha256": "06a190baf337c4c873b942a1b03284812200893a579b12e3b348cee15c32f9c8",
+      "unchanged": true
+    },
+    {
+      "file": "catalog/equipment/kapsulyator/index.html",
+      "mainSha256": "01ba2eba78b88ace95c61fc17a73c58ff4b4ed5e7e82854c46d5fbc17d7e144e",
+      "unchanged": true
+    },
+    {
+      "file": "catalog/equipment/ochistka-stokov/index.html",
+      "mainSha256": "08ec65bd5049dd93fe9759fa7e02ab421166914130440a9466d0f021eb35fbd5",
+      "unchanged": true
+    },
+    {
+      "file": "catalog/equipment/plenochnyy-flotator/index.html",
+      "mainSha256": "726a6c26c7840ca5c443df67a0720660289af6b68e7d41cdecd8aee5b279a294",
+      "unchanged": true
+    },
+    {
+      "file": "catalog/equipment/predvaritelnyy-izmelchitel/index.html",
+      "mainSha256": "417245b042ae4bb8175f967642187924626893bd4e51ac10cf1cdf9401b442d2",
+      "unchanged": true
+    },
+    {
+      "file": "catalog/equipment/predvaritelnyy-raspushitel/index.html",
+      "mainSha256": "2930a10a4808f0308394b73767d64f2ea1feb54a4178a6cc57a5530d881b6e99",
+      "unchanged": true
+    },
+    {
+      "file": "catalog/equipment/rama-napolnitel/index.html",
+      "mainSha256": "e459904a396327c1570038ec2e7dee222441fbaeca86ba2f903f1dee237d88ad",
+      "unchanged": true
+    },
+    {
+      "file": "catalog/equipment/rotornaya-tsentrifuga/index.html",
+      "mainSha256": "77926a86f26b1337e018e1caacab82477e9ed377240152740f1c68adf6499a16",
+      "unchanged": true
+    },
+    {
+      "file": "catalog/equipment/rotornyy-raspushitel/index.html",
+      "mainSha256": "c1bd46c78cae69f1a42746c4790768885e82f5a9d3c2a95f9c7b19f7aebcb85c",
+      "unchanged": true
+    },
+    {
+      "file": "catalog/equipment/vertikalno-rotornyy-izmelchitel/index.html",
+      "mainSha256": "704c39693ceaa80e47494a367cf018eb385c3d8091608a26d92340ece3349bc9",
+      "unchanged": true
+    },
+    {
+      "file": "catalog/equipment/vintovoy-press/index.html",
+      "mainSha256": "30cc49967607053856c7d09563598d72116e4c1bc8c52f1334a2b98f9e08e856",
+      "unchanged": true
+    },
+    {
+      "file": "catalog/index.html",
+      "mainSha256": "2b147d9c62d500d437141994bd60be67f8319f93f3984d32f778a40b684e5360",
+      "unchanged": true
+    },
+    {
+      "file": "catalog/lines/index.html",
+      "mainSha256": "e218cede60cdedd6f819d9c5f9a130a9d1e93593d4c79692b5f6286c8c1ce3c6",
+      "unchanged": true
+    },
+    {
+      "file": "catalog/lines/separatsiya-01/index.html",
+      "mainSha256": "4c0259ad72e9fb395a08799cc4ece6bf9753f8afe8211baae59b1516cc22ab48",
+      "unchanged": true
+    },
+    {
+      "file": "catalog/lines/separatsiya-02/index.html",
+      "mainSha256": "3b1bab27f7197685b0d6c724bbbdadcf102fd5cbe89b1702258047d1cb1d7a35",
+      "unchanged": true
+    },
+    {
+      "file": "company-details/index.html",
+      "mainSha256": "4eb40bf214382c2051f2dbdb119466edcc7f9da8e64e2ab8a4785c9ef6c33b68",
+      "unchanged": true
+    },
+    {
+      "file": "contacts/index.html",
+      "mainSha256": "bd292904ac16dd25361c057f7d1728995203da52690d1fa2d77bdaf9bdd5868a",
+      "unchanged": true
+    },
+    {
+      "file": "contacts/sent/index.html",
+      "mainSha256": "71d39c25b3c2c4886f6314e495551a4bdc37689b631efcce07d3d86678400149",
+      "unchanged": true
+    },
+    {
+      "file": "documents/index.html",
+      "mainSha256": "5a53c8991ecdae91f5ae811f61cdad3e1dd34d5b25dc3285b0ee22aaaee3dd83",
+      "unchanged": true
+    },
+    {
+      "file": "economics/index.html",
+      "mainSha256": "fec6e53bfe7f1778029978e31e33927983d2610ef8e4d08712d7df75c74950d2",
+      "unchanged": true
+    },
+    {
+      "file": "index.html",
+      "mainSha256": "4635fe1efd4e52237de8a0ea5e0b1438879366fe017ca477956effe003fda5d7",
+      "unchanged": true
+    },
+    {
+      "file": "media/index.html",
+      "mainSha256": "00de44a7a0d44520908dd5c08defd7258174db779e8ad4288e1473fca585b39f",
+      "unchanged": true
+    },
+    {
+      "file": "news/index.html",
+      "mainSha256": "6a24ebe6d5b18d3699bdc33bcc99e9d2f36bf8de58422d1f1fcf6d85c0d78368",
+      "unchanged": true
+    },
+    {
+      "file": "technology/index.html",
+      "mainSha256": "c23d26f58cd83449a9aa64929eb8042817d1b9addd187ce244a2953128f875a1",
+      "unchanged": true
+    }
+  ],
+  "protectedSourceCount": 21,
+  "unchangedMainCount": 31
+}

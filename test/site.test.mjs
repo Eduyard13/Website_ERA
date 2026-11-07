@@ -3,13 +3,14 @@ import assert from 'node:assert/strict';
 import {readFile,stat} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {routes,product,basePath} from '../scripts/build.mjs';
-test('Режим слайдов включается только на главной и сохраняет восемь исходных секций',async()=>{
+test('Индикатор разделов подключён на содержательных страницах, главная возвращена к обычной прокрутке',async()=>{
  const home=await readFile('dist/index.html','utf8');
- assert.ok(home.includes(`${basePath}/home-slides.css?v=`));assert.ok(home.includes(`${basePath}/home-slides.js?v=`));
- assert.ok(home.includes('document.documentElement.dataset.homeView='));
+ assert.ok(!home.includes('home-slides'));assert.ok(!home.includes('dataset.homeView='));
  assert.equal([...home.matchAll(/data-home-block="/g)].length,8);
- for(const route of ['/technology','/economics','/automation','/catalog','/media']){
-  const html=await readFile('dist'+route+'/index.html','utf8');assert.ok(!html.includes('home-slides.js'));assert.ok(!html.includes('home-slides.css'));assert.ok(!html.includes('dataset.homeView='));
+ for(const route of new Set(routes.filter(route=>!['/about','/ai'].includes(route)))){
+  const html=await readFile('dist'+(route==='/'?'':route)+'/index.html','utf8');
+  assert.ok(html.includes(`${basePath}/page-progress.css?v=`),route);assert.ok(html.includes(`${basePath}/page-progress.js?v=`),route);
+  assert.ok(!html.includes('home-slides')&&!html.includes('dataset.homeView='),route);
  }
 });
 test('Медиа главной автоматически подхватывает новые файлы, сохраняя исходники и безопасный fallback',async()=>{
