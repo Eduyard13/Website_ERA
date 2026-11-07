@@ -14,7 +14,7 @@ export function projectHero(){
           <p class="pitch-kicker"><span></span>ЭКОЛОГИЯ · РЕЦИКЛИНГ · АВТОМАТИЗАЦИЯ</p>
           <h1 id="pitch-title">Из загрязнённой плёнки —<br><em>в новое сырьё.</em></h1>
           <p class="pitch-hero-lead">Технология ЭРА для переработки бытовых полиэтиленовых пакетов и плёнок с высоким уровнем загрязнения.</p>
-          <div class="actions">${action('Обсудить мой проект','#discuss')}${action('Как это работает','/technology#solution',true)}</div>
+          <div class="actions">${action('Связаться с нами','#discuss')}${action('Как это работает','/technology#solution',true)}</div>
           <a class="pitch-scroll" href="/technology#raw-material"><span aria-hidden="true">↓</span>Знакомство с технологией</a>
         </div>
         <figure class="pitch-hero-photo">

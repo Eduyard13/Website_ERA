@@ -3,6 +3,27 @@ import assert from 'node:assert/strict';
 import {readFile,stat} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {routes,product,basePath} from '../scripts/build.mjs';
+test('Все 12 материалов владельца подключены, размеры и контрольные суммы веб-файлов совпадают',async()=>{
+ const {createHash}=await import('node:crypto');
+ const {imageSize}=await import('../scripts/image-size.mjs');
+ const {projectMedia}=await import('../scripts/project-media.mjs');
+ const manifest=JSON.parse(await readFile('docs/homepage-media-assets-0.31.json','utf8'));
+ assert.equal(manifest.inputs.length,12);assert.equal(new Set(manifest.inputs.map(item=>item.slot)).size,12);
+ for(const input of manifest.inputs){assert.equal(projectMedia[input.slot].file,input.file);assert.equal(projectMedia[input.slot].custom,true);}
+ for(const asset of manifest.assets){
+  const file='public/assets/'+asset.file,data=await readFile(file);
+  assert.equal(data.length,asset.bytes);assert.equal(createHash('sha256').update(data).digest('hex'),asset.sha256,asset.file);
+  if(asset.file.endsWith('.webp'))assert.deepEqual(imageSize(file),{width:asset.width,height:asset.height});
+  else{
+   assert.ok(data.length<90_000_000);assert.equal(asset.codec,'h264');assert.equal(asset.pixelFormat,'yuv420p');assert.equal(asset.audio,'aac');assert.equal(asset.audioUnchanged,true);
+   const atoms=[];for(let at=0;at+8<=data.length;){const length=data.readUInt32BE(at);atoms.push(data.toString('ascii',at+4,at+8));if(length<8)break;at+=length;}
+   assert.ok(atoms.indexOf('moov')>=0&&atoms.indexOf('moov')<atoms.indexOf('mdat'),'Faststart: '+asset.file);
+  }
+ }
+ for(const poster of manifest.posters)assert.deepEqual(imageSize('public/assets/'+poster.file),{width:1280,height:720});
+ assert.equal(projectMedia.pellets.custom,false);assert.equal(projectMedia.pelletProduct.custom,false);assert.equal(projectMedia.kairScreen.custom,false);
+ assert.equal(projectMedia.lineWide.mediaType,'photo');assert.ok(!projectMedia.lineWide.caption.includes('3D'));
+});
 test('Индикатор разделов подключён на содержательных страницах, главная возвращена к обычной прокрутке',async()=>{
  const home=await readFile('dist/index.html','utf8');
  assert.ok(!home.includes('home-slides'));assert.ok(!home.includes('dataset.homeView='));
@@ -35,9 +56,9 @@ test('Медиа главной автоматически подхватыва�
   assert.deepEqual(await readFile(resolve(dir,'project-home/hero/feedstock_hero.jpg')),original);
  }finally{await rm(dir,{recursive:true,force:true});}
 });
-test('Будущий проморолик получает настоящий player с субтитрами и без autoplay',async()=>{
+test('Проморолик использует настоящий player и поддерживает субтитры без autoplay',async()=>{
  const {resourceVideo}=await import('../scripts/project-home.mjs');const {projectMedia}=await import('../scripts/project-media.mjs');
- assert.ok(!resourceVideo('promo').includes('<video'));assert.ok(!resourceVideo('promo').includes('<button'));
+ assert.ok(resourceVideo('promo').includes('<video controls'));assert.ok(!resourceVideo('promo').includes('autoplay'));
  const ready=resourceVideo('promo',{...projectMedia,promo:{...projectMedia.promo,file:'project-home/video/era_promo_full.mp4',captions:'project-home/video/captions.vtt'}});
  assert.ok(ready.includes('<video controls playsinline preload="none"'));assert.ok(ready.includes('kind="captions"'));assert.ok(ready.includes('type="video/mp4"'));
  assert.ok(!ready.includes('autoplay'));assert.ok(!ready.includes(' loop'));
@@ -68,7 +89,7 @@ test('Главная A содержит восемь блоков, а эконо
  assert.ok(!home.includes('/commercial.js'));assert.ok(econ.includes('/commercial.js'));
  assert.ok(home.includes('до 80%'));assert.ok(home.includes('Входная влажность в испытаниях, отдельно от засорённости'));
  assert.ok(home.indexOf('data-video-slot="promo"')<home.indexOf('data-home-block="products"'));
- assert.ok(home.includes('resource-video--poster'));assert.ok(!home.includes('autoplay'));assert.ok(!home.includes(' loop'));
+ assert.equal([...home.matchAll(/<video controls playsinline preload="none"/g)].length,2);assert.ok(!home.includes('autoplay'));assert.ok(!home.includes(' loop'));
  assert.ok(home.includes(`href="${basePath}/economics"`));assert.ok(home.includes(`href="${basePath}/media"`));
  assert.ok(!home.includes('quality-sequence.svg'));assert.ok(tech.includes('quality-sequence.svg'));
  for(const text of ['Почему не вытряхивать каждый пакет вручную?','≈ 4,36 кг/ч','Рабочая жидкость → очистка → возврат в процесс','Сравнить варианты запуска'])assert.ok(tech.includes(text));

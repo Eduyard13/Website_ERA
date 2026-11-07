@@ -1,0 +1,810 @@
+{
+  "version": "0.31.0",
+  "archive": {
+    "url": "https://github.com/Eduyard13/Website_ERA/releases/download/v0.14.1/default.zip",
+    "bytes": 332783939,
+    "sha256": "ff7c40862bba90340f5aee3d588656191ddcfdd24a3561cd9d4adc0922c331d8"
+  },
+  "inputs": [
+    {
+      "archiveName": "О проекте/process:separator.jpg",
+      "logicalName": "process/separator.jpg",
+      "bytes": 1408584,
+      "sha256": "5add17dbba32939e4c12d303cafc7ab8f4cea673a911ec9a580825f08134c3fe",
+      "format": "PNG",
+      "width": 1280,
+      "height": 720,
+      "mode": "RGB",
+      "orientation": 1,
+      "normalizedSource": "process/separator.png",
+      "exports": [
+        {
+          "file": "project-home/process/separator.webp",
+          "width": 1280,
+          "height": 720,
+          "bytes": 112292,
+          "sha256": "a2afd9b794de4cb4d2cfdbb411fe667431674265176c4272f46b5c6fc3be6596"
+        },
+        {
+          "file": "project-home/process/separator-480.webp",
+          "width": 480,
+          "height": 270,
+          "bytes": 34802,
+          "sha256": "93ec0a37fd101faed7c92092d74d9d8727a714bebd8913e5bcaad8f0a429da79"
+        },
+        {
+          "file": "project-home/process/separator-880.webp",
+          "width": 880,
+          "height": 495,
+          "bytes": 74338,
+          "sha256": "36d6e8f4e76cb65fa2c5332ad6cc8e0b4809701a0847559aed8a340520febbbc"
+        }
+      ],
+      "slot": "separator",
+      "file": "project-home/process/separator.webp"
+    },
+    {
+      "archiveName": "О проекте/process:preshredder.jpg",
+      "logicalName": "process/preshredder.jpg",
+      "bytes": 993299,
+      "sha256": "02d4bbf8bdb782a9d1faa09e089bce0a6ce87ad443a7ce205c9bd4c53ec6860e",
+      "format": "PNG",
+      "width": 1280,
+      "height": 720,
+      "mode": "RGB",
+      "orientation": 1,
+      "normalizedSource": "process/preshredder.png",
+      "exports": [
+        {
+          "file": "project-home/process/preshredder.webp",
+          "width": 1280,
+          "height": 720,
+          "bytes": 72476,
+          "sha256": "514d6e4194d7783093e32ea749099198803fa997c489908c9a0dc497b2f1f217"
+        },
+        {
+          "file": "project-home/process/preshredder-480.webp",
+          "width": 480,
+          "height": 270,
+          "bytes": 23518,
+          "sha256": "f9dfe3bad4bf07ad0e3ae59db4333295b533f1d971ef47d4065f79bdfab7e669"
+        },
+        {
+          "file": "project-home/process/preshredder-880.webp",
+          "width": 880,
+          "height": 495,
+          "bytes": 48708,
+          "sha256": "ba32b7914733ec5f6d1a376e50d1a0667cfd1268a850767e3bee81745ae9bdf6"
+        }
+      ],
+      "slot": "preshredder",
+      "file": "project-home/process/preshredder.webp"
+    },
+    {
+      "archiveName": "О проекте/video:era_promo_full.mp4",
+      "logicalName": "video/era_promo_full.mp4",
+      "bytes": 220228195,
+      "sha256": "3e59bfa1dcff7dc31508457e89b8af3b8c6449d18f5959188b528e351e47e4d4",
+      "format": "MP4",
+      "duration": 296.0,
+      "streams": [
+        {
+          "codec_type": "video",
+          "codec_name": "h264",
+          "width": 1920,
+          "height": 1080,
+          "r_frame_rate": "25/1",
+          "pix_fmt": "yuv420p",
+          "nb_frames": "7400",
+          "duration": "296.000000",
+          "sample_rate": null,
+          "channels": null
+        },
+        {
+          "codec_type": "audio",
+          "codec_name": "aac",
+          "width": null,
+          "height": null,
+          "r_frame_rate": "0/0",
+          "pix_fmt": null,
+          "nb_frames": "12749",
+          "duration": "296.000000",
+          "sample_rate": "44100",
+          "channels": 2
+        }
+      ],
+      "slot": "promo",
+      "file": "project-home/video/era_promo_full.mp4",
+      "exports": [
+        {
+          "file": "project-home/video/era_promo_full.mp4",
+          "bytes": 72614623,
+          "sha256": "0463355d2142f02dce6e008f51256ab03bee0d0b712a7e9faa19a1b37551e851",
+          "width": 1920,
+          "height": 1080,
+          "duration": 296.0,
+          "formatDuration": 296.0,
+          "frames": 7400,
+          "fps": "25/1",
+          "codec": "h264",
+          "pixelFormat": "yuv420p",
+          "audio": "aac",
+          "audioPacketHash": "SHA256=07ceb8693503d11abfb6de6b811af4d793b82c7898416a1d67e4d8e407d81320",
+          "audioUnchanged": true,
+          "colorSpace": "bt709",
+          "colorTransfer": "bt709",
+          "colorPrimaries": "bt709"
+        }
+      ]
+    },
+    {
+      "archiveName": "О проекте/process:clean_film.jpg",
+      "logicalName": "process/clean_film.jpg",
+      "bytes": 358246,
+      "sha256": "605cde9f943c8df4ec70624c4d07d9bc4ce3b8a7a439cc6ff15e5d03d547dc78",
+      "format": "PNG",
+      "width": 320,
+      "height": 568,
+      "mode": "RGB",
+      "orientation": 1,
+      "normalizedSource": "process/clean_film.png",
+      "exports": [
+        {
+          "file": "project-home/process/clean_film.webp",
+          "width": 320,
+          "height": 568,
+          "bytes": 27434,
+          "sha256": "8f9514a7204fb3c5ea083819cf0c1165603998cccc8b0f2da4196bca9310acf3"
+        }
+      ],
+      "slot": "cleanFilm",
+      "file": "project-home/process/clean_film.webp"
+    },
+    {
+      "archiveName": "О проекте/system:line_wide.jpg",
+      "logicalName": "system/line_wide.jpg",
+      "bytes": 2431780,
+      "sha256": "597f1740e8dc91955fa5807f37a9416e92e9934d885703a4f5d454233e451325",
+      "format": "PNG",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "orientation": 1,
+      "normalizedSource": "system/line_wide.png",
+      "exports": [
+        {
+          "file": "project-home/system/line_wide.webp",
+          "width": 1672,
+          "height": 941,
+          "bytes": 265782,
+          "sha256": "d3e0a69edec39df12a4e342d2d38d63510613b8f392da86b88453ad75f1b82d1"
+        },
+        {
+          "file": "project-home/system/line_wide-480.webp",
+          "width": 480,
+          "height": 270,
+          "bytes": 49452,
+          "sha256": "32626cb0d5b6d9e22dc55ee180c4f90f4fcacdcb1d10c1f9a22dab3a497147a0"
+        },
+        {
+          "file": "project-home/system/line_wide-880.webp",
+          "width": 880,
+          "height": 495,
+          "bytes": 126120,
+          "sha256": "968bfde29bffa6eafcdb2e7b2a6f217ae4d0171549f5b7876bacc57379678805"
+        },
+        {
+          "file": "project-home/system/line_wide-1280.webp",
+          "width": 1280,
+          "height": 720,
+          "bytes": 198400,
+          "sha256": "7d17e15ca0bda8cc575b49e2560dfe5f210ee22a2039337fc1b99205ca9632fb"
+        }
+      ],
+      "slot": "lineWide",
+      "file": "project-home/system/line_wide.webp"
+    },
+    {
+      "archiveName": "О проекте/contact:machine_detail.jpg",
+      "logicalName": "contact/machine_detail.jpg",
+      "bytes": 220280,
+      "sha256": "5e9652cfd0a8476bf7544b5797fbc6ed8e6528ed3c0bd9d9292c4bf1b2ecb3c3",
+      "format": "JPEG",
+      "width": 1440,
+      "height": 1080,
+      "mode": "RGB",
+      "orientation": 1,
+      "normalizedSource": "contact/machine_detail.jpg",
+      "exports": [
+        {
+          "file": "project-home/contact/machine_detail.webp",
+          "width": 1440,
+          "height": 1080,
+          "bytes": 350048,
+          "sha256": "ac7e1fd288eed045b65c0de42562a5bdf8a7d9b0153b1ebe6ce90b4e737bc41e"
+        },
+        {
+          "file": "project-home/contact/machine_detail-480.webp",
+          "width": 480,
+          "height": 360,
+          "bytes": 57620,
+          "sha256": "f2ab18c1eaed5f57a7180dc7ec7dec98ce0f77fc255112b0f482acebe31b6f1e"
+        },
+        {
+          "file": "project-home/contact/machine_detail-880.webp",
+          "width": 880,
+          "height": 660,
+          "bytes": 162764,
+          "sha256": "8a9a24f10e89aea4c4afbd6fcc94f0b6067db717ca98b392e9d987a83c7975d4"
+        },
+        {
+          "file": "project-home/contact/machine_detail-1280.webp",
+          "width": 1280,
+          "height": 960,
+          "bytes": 304684,
+          "sha256": "d5286878701fb0ba4860729c615f1147381d117c05d7a1e047e510fa22667983"
+        }
+      ],
+      "slot": "contactDetail",
+      "file": "project-home/contact/machine_detail.webp"
+    },
+    {
+      "archiveName": "О проекте/evidence:process_running.jpg",
+      "logicalName": "evidence/process_running.jpg",
+      "bytes": 432879,
+      "sha256": "a55df0dcd24d62fab5356c455ea7e897e378e786724dbd52e82aed5a8c977cf4",
+      "format": "JPEG",
+      "width": 3840,
+      "height": 2160,
+      "mode": "RGB",
+      "orientation": 1,
+      "normalizedSource": "evidence/process_running.jpg",
+      "exports": [
+        {
+          "file": "project-home/evidence/process_running.webp",
+          "width": 1920,
+          "height": 1080,
+          "bytes": 96244,
+          "sha256": "30c0f8cd8e10ec8122fff0ca0a2c4acf6d2d9c6c637567cdbe565085c0a5cb5e"
+        },
+        {
+          "file": "project-home/evidence/process_running-480.webp",
+          "width": 480,
+          "height": 270,
+          "bytes": 18240,
+          "sha256": "48b6a71a2188fd33548efa850c96d951ed97c2e69eb664aba5a0e2b0e2dbe1e3"
+        },
+        {
+          "file": "project-home/evidence/process_running-880.webp",
+          "width": 880,
+          "height": 495,
+          "bytes": 37592,
+          "sha256": "da00fb36162260dc18b742072eb077a6bf0216273a0750f31a4dda5907c95032"
+        },
+        {
+          "file": "project-home/evidence/process_running-1280.webp",
+          "width": 1280,
+          "height": 720,
+          "bytes": 56366,
+          "sha256": "fe3e1d1971c3bca14417a79010f9e2a224ec52c60811ab70fa87343a8d8fb6aa"
+        }
+      ],
+      "slot": "evidenceProcess",
+      "file": "project-home/evidence/process_running.webp"
+    },
+    {
+      "archiveName": "О проекте/evidence:cleaning_demo.mp4",
+      "logicalName": "evidence/cleaning_demo.mp4",
+      "bytes": 105802252,
+      "sha256": "2022b91d8a68b863054128fde5cfa75c487996420836f350a46312eee1c9f6b5",
+      "format": "MP4",
+      "duration": 100.101016,
+      "streams": [
+        {
+          "codec_type": "video",
+          "codec_name": "h264",
+          "width": 1920,
+          "height": 1080,
+          "r_frame_rate": "25/1",
+          "pix_fmt": "yuv420p",
+          "nb_frames": "2502",
+          "duration": "100.080000",
+          "sample_rate": null,
+          "channels": null
+        },
+        {
+          "codec_type": "audio",
+          "codec_name": "aac",
+          "width": null,
+          "height": null,
+          "r_frame_rate": "0/0",
+          "pix_fmt": null,
+          "nb_frames": "4711",
+          "duration": "100.000000",
+          "sample_rate": "48000",
+          "channels": 2
+        }
+      ],
+      "slot": "cleaningDemo",
+      "file": "project-home/evidence/cleaning_demo.mp4",
+      "exports": [
+        {
+          "file": "project-home/evidence/cleaning_demo.mp4",
+          "bytes": 67881545,
+          "sha256": "55b823e9c4a044ea3eded025778eb6c4be01d49feb763523823cd24cd46ef8d9",
+          "width": 1920,
+          "height": 1080,
+          "duration": 100.08,
+          "formatDuration": 100.12,
+          "frames": 2502,
+          "fps": "25/1",
+          "codec": "h264",
+          "pixelFormat": "yuv420p",
+          "audio": "aac",
+          "audioPacketHash": "SHA256=a8161ed9c13ba04d5c7754d98619c270d767f37da2b63f4f662b3b51e0a7d238",
+          "audioUnchanged": true,
+          "colorSpace": "bt709",
+          "colorTransfer": "bt709",
+          "colorPrimaries": "bt709"
+        }
+      ]
+    },
+    {
+      "archiveName": "О проекте/evidence:output_sample.jpg",
+      "logicalName": "evidence/output_sample.jpg",
+      "bytes": 75536,
+      "sha256": "ad5cbb99540b078ad4113db061e4055ccaa0c42d13da6c9ba81136946ac45c95",
+      "format": "JPEG",
+      "width": 960,
+      "height": 540,
+      "mode": "RGB",
+      "orientation": 1,
+      "normalizedSource": "evidence/output_sample.jpg",
+      "exports": [
+        {
+          "file": "project-home/evidence/output_sample.webp",
+          "width": 960,
+          "height": 540,
+          "bytes": 57786,
+          "sha256": "bbb7480e021e26cd05edec1f21c32d6acbd71c595165989cf524ddb2cf97a9c9"
+        },
+        {
+          "file": "project-home/evidence/output_sample-480.webp",
+          "width": 480,
+          "height": 270,
+          "bytes": 26550,
+          "sha256": "809aba527d5973a27198363cda7ec4272c64ecbffc3c9b1f9ab9386c9f6b0b95"
+        },
+        {
+          "file": "project-home/evidence/output_sample-880.webp",
+          "width": 880,
+          "height": 495,
+          "bytes": 54882,
+          "sha256": "11d996060c6e53218b5c967becd7f68fb647675d20aae5178c650aba183e5c03"
+        }
+      ],
+      "slot": "evidenceOutput",
+      "file": "project-home/evidence/output_sample.webp"
+    },
+    {
+      "archiveName": "О проекте/products:clean_film_bale.jpg",
+      "logicalName": "products/clean_film_bale.jpg",
+      "bytes": 147445,
+      "sha256": "05bf5707e37305d1f8dc3392cb7ea46d5169455095c26bf1c35f4bada9469fda",
+      "format": "JPEG",
+      "width": 960,
+      "height": 1704,
+      "mode": "RGB",
+      "orientation": 1,
+      "normalizedSource": "products/clean_film_bale.jpg",
+      "exports": [
+        {
+          "file": "project-home/products/clean_film_bale.webp",
+          "width": 960,
+          "height": 1704,
+          "bytes": 104256,
+          "sha256": "7e462438097295feaecc857d10a62ac513c1995303a0ba3abae3e1e7656d85c3"
+        },
+        {
+          "file": "project-home/products/clean_film_bale-480.webp",
+          "width": 480,
+          "height": 852,
+          "bytes": 43912,
+          "sha256": "26116b1bdacefd9a556828ccae5018d3f25d8f0c589df6c24007bbe3625ecf49"
+        },
+        {
+          "file": "project-home/products/clean_film_bale-880.webp",
+          "width": 880,
+          "height": 1562,
+          "bytes": 93188,
+          "sha256": "25320d04cd80ea453c143ae35676730a98a6bf59a45d614ce2631163d853d011"
+        }
+      ],
+      "slot": "filmProduct",
+      "file": "project-home/products/clean_film_bale.webp"
+    },
+    {
+      "archiveName": "О проекте/evidence:input_sample.jpg",
+      "logicalName": "evidence/input_sample.jpg",
+      "bytes": 146653,
+      "sha256": "426c68c331356716a52bf06744430d3042d72ad83c674a9b414191d6f9f2626a",
+      "format": "JPEG",
+      "width": 960,
+      "height": 540,
+      "mode": "RGB",
+      "orientation": 1,
+      "normalizedSource": "evidence/input_sample.jpg",
+      "exports": [
+        {
+          "file": "project-home/evidence/input_sample.webp",
+          "width": 960,
+          "height": 540,
+          "bytes": 131838,
+          "sha256": "d939db02697410ca4629ffa621daa733d6646ffeef0bc84d5ecebfa1935888e8"
+        },
+        {
+          "file": "project-home/evidence/input_sample-480.webp",
+          "width": 480,
+          "height": 270,
+          "bytes": 54430,
+          "sha256": "81859c19f2dca2698afabaf46110dcf3522b03fb1e5e128932e7322c37e4e6f7"
+        },
+        {
+          "file": "project-home/evidence/input_sample-880.webp",
+          "width": 880,
+          "height": 495,
+          "bytes": 121504,
+          "sha256": "b8c69c7d645ef2dfc014a7ca45d703881a0d94c33f86051744b516ee5f059561"
+        }
+      ],
+      "slot": "evidenceInput",
+      "file": "project-home/evidence/input_sample.webp"
+    },
+    {
+      "archiveName": "О проекте/hero:feedstock_hero.jpg",
+      "logicalName": "hero/feedstock_hero.jpg",
+      "bytes": 1058806,
+      "sha256": "969d55274115f4a200ac8cb779bca8d3ee42dc06f4531048ec84b9c4e5d3eb4f",
+      "format": "JPEG",
+      "width": 1688,
+      "height": 3000,
+      "mode": "RGB",
+      "orientation": 1,
+      "normalizedSource": "hero/feedstock_hero.jpg",
+      "exports": [
+        {
+          "file": "project-home/hero/feedstock_hero.webp",
+          "width": 1688,
+          "height": 3000,
+          "bytes": 697422,
+          "sha256": "ea12b1ba736e7e80c867fa0082b89fb59c7207445e3675f5403b00216ade6b3c"
+        },
+        {
+          "file": "project-home/hero/feedstock_hero-480.webp",
+          "width": 480,
+          "height": 853,
+          "bytes": 133182,
+          "sha256": "f2fdcc674c3f305cf2ffe2788dcf498d9c20ef1df9655bad510b3fd956de83a1"
+        },
+        {
+          "file": "project-home/hero/feedstock_hero-880.webp",
+          "width": 880,
+          "height": 1564,
+          "bytes": 336836,
+          "sha256": "40065430b445da403855ed088b87976158600736efeaa467c894cbbbb206084e"
+        },
+        {
+          "file": "project-home/hero/feedstock_hero-1280.webp",
+          "width": 1280,
+          "height": 2275,
+          "bytes": 531016,
+          "sha256": "7aeec2fe70d5ccee4564ce96ca7f92445f3f3631cb02177354972ae865847c2a"
+        }
+      ],
+      "slot": "heroFeedstock",
+      "file": "project-home/hero/feedstock_hero.webp"
+    }
+  ],
+  "posters": [
+    {
+      "slot": "promoPoster",
+      "file": "project-home/video/era_promo_poster.webp",
+      "width": 1280,
+      "height": 720,
+      "sourceTimeSeconds": 75,
+      "bytes": 57370,
+      "sha256": "5ba8a2713ae97d13080bc1b392348052f2a4cebbf7ab541b9de4535234d7dbcd"
+    },
+    {
+      "slot": "cleaningPoster",
+      "file": "project-home/evidence/cleaning_demo_poster.webp",
+      "width": 1280,
+      "height": 720,
+      "sourceTimeSeconds": 27,
+      "bytes": 101124,
+      "sha256": "773ed21d4427341a3256d41d3a2a5c4b094f5a0f1234fae8699fb3c936a1d315"
+    }
+  ],
+  "assets": [
+    {
+      "file": "project-home/process/separator.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 112292,
+      "sha256": "a2afd9b794de4cb4d2cfdbb411fe667431674265176c4272f46b5c6fc3be6596"
+    },
+    {
+      "file": "project-home/process/separator-480.webp",
+      "width": 480,
+      "height": 270,
+      "bytes": 34802,
+      "sha256": "93ec0a37fd101faed7c92092d74d9d8727a714bebd8913e5bcaad8f0a429da79"
+    },
+    {
+      "file": "project-home/process/separator-880.webp",
+      "width": 880,
+      "height": 495,
+      "bytes": 74338,
+      "sha256": "36d6e8f4e76cb65fa2c5332ad6cc8e0b4809701a0847559aed8a340520febbbc"
+    },
+    {
+      "file": "project-home/process/preshredder.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 72476,
+      "sha256": "514d6e4194d7783093e32ea749099198803fa997c489908c9a0dc497b2f1f217"
+    },
+    {
+      "file": "project-home/process/preshredder-480.webp",
+      "width": 480,
+      "height": 270,
+      "bytes": 23518,
+      "sha256": "f9dfe3bad4bf07ad0e3ae59db4333295b533f1d971ef47d4065f79bdfab7e669"
+    },
+    {
+      "file": "project-home/process/preshredder-880.webp",
+      "width": 880,
+      "height": 495,
+      "bytes": 48708,
+      "sha256": "ba32b7914733ec5f6d1a376e50d1a0667cfd1268a850767e3bee81745ae9bdf6"
+    },
+    {
+      "file": "project-home/video/era_promo_full.mp4",
+      "bytes": 72614623,
+      "sha256": "0463355d2142f02dce6e008f51256ab03bee0d0b712a7e9faa19a1b37551e851",
+      "width": 1920,
+      "height": 1080,
+      "duration": 296.0,
+      "formatDuration": 296.0,
+      "frames": 7400,
+      "fps": "25/1",
+      "codec": "h264",
+      "pixelFormat": "yuv420p",
+      "audio": "aac",
+      "audioPacketHash": "SHA256=07ceb8693503d11abfb6de6b811af4d793b82c7898416a1d67e4d8e407d81320",
+      "audioUnchanged": true,
+      "colorSpace": "bt709",
+      "colorTransfer": "bt709",
+      "colorPrimaries": "bt709"
+    },
+    {
+      "file": "project-home/process/clean_film.webp",
+      "width": 320,
+      "height": 568,
+      "bytes": 27434,
+      "sha256": "8f9514a7204fb3c5ea083819cf0c1165603998cccc8b0f2da4196bca9310acf3"
+    },
+    {
+      "file": "project-home/system/line_wide.webp",
+      "width": 1672,
+      "height": 941,
+      "bytes": 265782,
+      "sha256": "d3e0a69edec39df12a4e342d2d38d63510613b8f392da86b88453ad75f1b82d1"
+    },
+    {
+      "file": "project-home/system/line_wide-480.webp",
+      "width": 480,
+      "height": 270,
+      "bytes": 49452,
+      "sha256": "32626cb0d5b6d9e22dc55ee180c4f90f4fcacdcb1d10c1f9a22dab3a497147a0"
+    },
+    {
+      "file": "project-home/system/line_wide-880.webp",
+      "width": 880,
+      "height": 495,
+      "bytes": 126120,
+      "sha256": "968bfde29bffa6eafcdb2e7b2a6f217ae4d0171549f5b7876bacc57379678805"
+    },
+    {
+      "file": "project-home/system/line_wide-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 198400,
+      "sha256": "7d17e15ca0bda8cc575b49e2560dfe5f210ee22a2039337fc1b99205ca9632fb"
+    },
+    {
+      "file": "project-home/contact/machine_detail.webp",
+      "width": 1440,
+      "height": 1080,
+      "bytes": 350048,
+      "sha256": "ac7e1fd288eed045b65c0de42562a5bdf8a7d9b0153b1ebe6ce90b4e737bc41e"
+    },
+    {
+      "file": "project-home/contact/machine_detail-480.webp",
+      "width": 480,
+      "height": 360,
+      "bytes": 57620,
+      "sha256": "f2ab18c1eaed5f57a7180dc7ec7dec98ce0f77fc255112b0f482acebe31b6f1e"
+    },
+    {
+      "file": "project-home/contact/machine_detail-880.webp",
+      "width": 880,
+      "height": 660,
+      "bytes": 162764,
+      "sha256": "8a9a24f10e89aea4c4afbd6fcc94f0b6067db717ca98b392e9d987a83c7975d4"
+    },
+    {
+      "file": "project-home/contact/machine_detail-1280.webp",
+      "width": 1280,
+      "height": 960,
+      "bytes": 304684,
+      "sha256": "d5286878701fb0ba4860729c615f1147381d117c05d7a1e047e510fa22667983"
+    },
+    {
+      "file": "project-home/evidence/process_running.webp",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 96244,
+      "sha256": "30c0f8cd8e10ec8122fff0ca0a2c4acf6d2d9c6c637567cdbe565085c0a5cb5e"
+    },
+    {
+      "file": "project-home/evidence/process_running-480.webp",
+      "width": 480,
+      "height": 270,
+      "bytes": 18240,
+      "sha256": "48b6a71a2188fd33548efa850c96d951ed97c2e69eb664aba5a0e2b0e2dbe1e3"
+    },
+    {
+      "file": "project-home/evidence/process_running-880.webp",
+      "width": 880,
+      "height": 495,
+      "bytes": 37592,
+      "sha256": "da00fb36162260dc18b742072eb077a6bf0216273a0750f31a4dda5907c95032"
+    },
+    {
+      "file": "project-home/evidence/process_running-1280.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 56366,
+      "sha256": "fe3e1d1971c3bca14417a79010f9e2a224ec52c60811ab70fa87343a8d8fb6aa"
+    },
+    {
+      "file": "project-home/evidence/cleaning_demo.mp4",
+      "bytes": 67881545,
+      "sha256": "55b823e9c4a044ea3eded025778eb6c4be01d49feb763523823cd24cd46ef8d9",
+      "width": 1920,
+      "height": 1080,
+      "duration": 100.08,
+      "formatDuration": 100.12,
+      "frames": 2502,
+      "fps": "25/1",
+      "codec": "h264",
+      "pixelFormat": "yuv420p",
+      "audio": "aac",
+      "audioPacketHash": "SHA256=a8161ed9c13ba04d5c7754d98619c270d767f37da2b63f4f662b3b51e0a7d238",
+      "audioUnchanged": true,
+      "colorSpace": "bt709",
+      "colorTransfer": "bt709",
+      "colorPrimaries": "bt709"
+    },
+    {
+      "file": "project-home/evidence/output_sample.webp",
+      "width": 960,
+      "height": 540,
+      "bytes": 57786,
+      "sha256": "bbb7480e021e26cd05edec1f21c32d6acbd71c595165989cf524ddb2cf97a9c9"
+    },
+    {
+      "file": "project-home/evidence/output_sample-480.webp",
+      "width": 480,
+      "height": 270,
+      "bytes": 26550,
+      "sha256": "809aba527d5973a27198363cda7ec4272c64ecbffc3c9b1f9ab9386c9f6b0b95"
+    },
+    {
+      "file": "project-home/evidence/output_sample-880.webp",
+      "width": 880,
+      "height": 495,
+      "bytes": 54882,
+      "sha256": "11d996060c6e53218b5c967becd7f68fb647675d20aae5178c650aba183e5c03"
+    },
+    {
+      "file": "project-home/products/clean_film_bale.webp",
+      "width": 960,
+      "height": 1704,
+      "bytes": 104256,
+      "sha256": "7e462438097295feaecc857d10a62ac513c1995303a0ba3abae3e1e7656d85c3"
+    },
+    {
+      "file": "project-home/products/clean_film_bale-480.webp",
+      "width": 480,
+      "height": 852,
+      "bytes": 43912,
+      "sha256": "26116b1bdacefd9a556828ccae5018d3f25d8f0c589df6c24007bbe3625ecf49"
+    },
+    {
+      "file": "project-home/products/clean_film_bale-880.webp",
+      "width": 880,
+      "height": 1562,
+      "bytes": 93188,
+      "sha256": "25320d04cd80ea453c143ae35676730a98a6bf59a45d614ce2631163d853d011"
+    },
+    {
+      "file": "project-home/evidence/input_sample.webp",
+      "width": 960,
+      "height": 540,
+      "bytes": 131838,
+      "sha256": "d939db02697410ca4629ffa621daa733d6646ffeef0bc84d5ecebfa1935888e8"
+    },
+    {
+      "file": "project-home/evidence/input_sample-480.webp",
+      "width": 480,
+      "height": 270,
+      "bytes": 54430,
+      "sha256": "81859c19f2dca2698afabaf46110dcf3522b03fb1e5e128932e7322c37e4e6f7"
+    },
+    {
+      "file": "project-home/evidence/input_sample-880.webp",
+      "width": 880,
+      "height": 495,
+      "bytes": 121504,
+      "sha256": "b8c69c7d645ef2dfc014a7ca45d703881a0d94c33f86051744b516ee5f059561"
+    },
+    {
+      "file": "project-home/hero/feedstock_hero.webp",
+      "width": 1688,
+      "height": 3000,
+      "bytes": 697422,
+      "sha256": "ea12b1ba736e7e80c867fa0082b89fb59c7207445e3675f5403b00216ade6b3c"
+    },
+    {
+      "file": "project-home/hero/feedstock_hero-480.webp",
+      "width": 480,
+      "height": 853,
+      "bytes": 133182,
+      "sha256": "f2fdcc674c3f305cf2ffe2788dcf498d9c20ef1df9655bad510b3fd956de83a1"
+    },
+    {
+      "file": "project-home/hero/feedstock_hero-880.webp",
+      "width": 880,
+      "height": 1564,
+      "bytes": 336836,
+      "sha256": "40065430b445da403855ed088b87976158600736efeaa467c894cbbbb206084e"
+    },
+    {
+      "file": "project-home/hero/feedstock_hero-1280.webp",
+      "width": 1280,
+      "height": 2275,
+      "bytes": 531016,
+      "sha256": "7aeec2fe70d5ccee4564ce96ca7f92445f3f3631cb02177354972ae865847c2a"
+    },
+    {
+      "slot": "promoPoster",
+      "file": "project-home/video/era_promo_poster.webp",
+      "width": 1280,
+      "height": 720,
+      "sourceTimeSeconds": 75,
+      "bytes": 57370,
+      "sha256": "5ba8a2713ae97d13080bc1b392348052f2a4cebbf7ab541b9de4535234d7dbcd"
+    },
+    {
+      "slot": "cleaningPoster",
+      "file": "project-home/evidence/cleaning_demo_poster.webp",
+      "width": 1280,
+      "height": 720,
+      "sourceTimeSeconds": 27,
+      "bytes": 101124,
+      "sha256": "773ed21d4427341a3256d41d3a2a5c4b094f5a0f1234fae8699fb3c936a1d315"
+    }
+  ]
+}
