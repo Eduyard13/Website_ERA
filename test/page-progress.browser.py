@@ -25,7 +25,7 @@ with sync_playwright() as p:
   assert page.locator('html').evaluate('e=>getComputedStyle(e).scrollSnapType')=='none'
   assert page.locator('.home-slide-tools,.home-slide-rail').count()==0
   assert page.locator('.resource-process').evaluate('e=>getComputedStyle(e).display')=='block'
-  assert page.locator('.resource-step-media').first.evaluate('e=>Math.round(e.getBoundingClientRect().height)')==225
+  assert page.locator('.resource-process-steps>li').count()==4
   assert page.locator('.resource-product').first.evaluate('e=>getComputedStyle(e).display+"/"+getComputedStyle(e).flexDirection')=='flex/column'
   page.mouse.move(500,300);page.mouse.wheel(0,120);page.wait_for_timeout(180)
   assert 100<=page.evaluate('scrollY')<=140,('wheel was changed',page.evaluate('scrollY'))

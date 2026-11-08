@@ -11,7 +11,7 @@ export const projectMediaSlots={
  solidDetail:photo('problem/inclusion_solid.jpg','Твёрдые включения в плёночном сырье',null,480,480),
  preshredder:photo('process/preshredder.jpg','Предварительный измельчитель на этапе сборки','photos/predvaritelnyy-izmelchitel/01.webp',1086,1448,{customAlt:'Предварительный измельчитель в составе линии переработки плёнок'}),
  separator:photo('process/separator.jpg','Баллистический сепаратор на участке сборки','photos/ballisticheskiy-separator/05.webp',1448,1086,{customAlt:'Баллистический сепаратор и транспортёры в производственном цехе'}),
- fluffier:photo('process/fluffier.jpg','Роторный распушитель: рабочая дисковая секция','photos/rotornyy-raspushitel/01.webp',1086,1448),
+ fluffier:photo('process/fluffier.jpg','Роторный распушитель: рабочая дисковая секция','photos/rotornyy-raspushitel/01.webp',1086,1448,{customAlt:'Роторный распушитель и отводящий транспортёр в работе'}),
  cleanFilm:photo('process/clean_film.jpg','Очищенная плёночная фракция','presentation/clean-film.webp',388,302),
  pellets:photo('process/pellets.jpg','Образец вторичной полиэтиленовой гранулы','presentation/granules.webp',390,304),
  promo:{type:'video',expected:'video/era_promo_full.mp4',posterSlot:'promoPoster',captions:'video/captions.vtt',label:'Видео о технологии ЭРА',fallback:null},
@@ -26,4 +26,6 @@ export const projectMediaSlots={
  lineWide:photo('system/line_wide.jpg','Общий вид полной линии сухой сепарации — 3D-визуализация','technology/separation/line.webp',1600,1077,{fallbackCaption:'3D-визуализация полной линии сухой сепарации',fallbackMediaType:'visualization',customCaption:'Оборудование линии ЭРА в производственном цехе',customAlt:'Баллистический сепаратор и транспортёры в составе технологической линии',customMediaType:'photo'}),
  kairScreen:photo('system/kair_screen.jpg','КАИР: фотография общего экрана линии','kair/01.webp',1919,1078),
  contactDetail:photo('contact/machine_detail.jpg','Рабочие диски роторного распушителя','photos/rotornyy-raspushitel/01.webp',1086,1448,{customAlt:'Оборудование технологической линии в производственном цехе'}),
+ businessRaw:photo('business/raw_material.webp','Загрязнённая плёнка как сырьё для переработки',null,960,540),
+ businessMarkets:photo('business/markets.webp','Плёнка и пакеты, технические трубы и профили, тара и полиэтиленовые изделия','project-home/business/markets.svg',1280,720,{fallbackMediaType:'visualization'}),
 };

@@ -11,5 +11,12 @@
  }
  restoreAnchor();addEventListener('hashchange',restoreAnchor);addEventListener('pageshow',restoreAnchor);
  const videos=[...root.querySelectorAll('video')];
- for(const video of videos)video.addEventListener('play',()=>videos.forEach(other=>{if(other!==video)other.pause();}));
+ for(const video of videos){
+  video.addEventListener('play',()=>videos.forEach(other=>{if(other!==video)other.pause();}));
+  const button=video.parentElement.querySelector('[data-resource-play]');if(!button)continue;
+  const update=()=>{const focused=document.activeElement===button;button.hidden=!video.paused||video.currentTime>0&&!video.ended;if(button.hidden&&focused)video.focus({preventScroll:true});};
+  button.addEventListener('click',async()=>{try{await video.play();}catch{button.hidden=false;video.focus({preventScroll:true});}});
+  for(const event of ['play','pause','ended','seeked','loadedmetadata'])video.addEventListener(event,update);
+  update();
+ }
 })();

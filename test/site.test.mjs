@@ -3,17 +3,29 @@ import assert from 'node:assert/strict';
 import {readFile,stat} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {routes,product,basePath} from '../scripts/build.mjs';
+test('Главная раскрывает четыре стадии, два этапа, три бизнес-карточки и пять шагов проекта',async()=>{
+ const html=await readFile('dist/index.html','utf8');const text=html.replaceAll('\u00a0',' ');
+ assert.deepEqual([...html.matchAll(/data-process-step="([^"]+)"/g)].map(match=>match[1]),['01','02','03','04']);
+ assert.deepEqual([...html.matchAll(/data-business-card="([^"]+)"/g)].map(match=>match[1]),['01','02','03']);
+ for(const value of ['труднодоступной для переработки','на трёх производственных площадках','30–70 ppm (30–70 г/т)','Горячая мойка и гранулирование','Изготовление и поставка'])assert.ok(text.includes(value),value);
+ assert.ok(!html.includes('class="resource-route-logic"')&&!html.includes('class="resource-fallback-link"'));
+ assert.match(html,new RegExp(`href="${basePath}/economics" data-economics-page`));
+ assert.match(html,/data-resource-play aria-label="Воспроизвести видео о технологии ЭРА" hidden/);
+});
 test('Все 12 материалов владельца подключены, размеры и контрольные суммы веб-файлов совпадают',async()=>{
  const {createHash}=await import('node:crypto');
  const {imageSize}=await import('../scripts/image-size.mjs');
  const {projectMedia}=await import('../scripts/project-media.mjs');
  const manifest=JSON.parse(await readFile('docs/homepage-media-assets-0.31.json','utf8'));
+ const revision=JSON.parse(await readFile('docs/homepage-media-assets-0.32.json','utf8'));
+ const assets=[...new Map([...manifest.assets,...revision.assets].map(asset=>[asset.file,asset])).values()];
  assert.equal(manifest.inputs.length,12);assert.equal(new Set(manifest.inputs.map(item=>item.slot)).size,12);
  for(const input of manifest.inputs){assert.equal(projectMedia[input.slot].file,input.file);assert.equal(projectMedia[input.slot].custom,true);}
- for(const asset of manifest.assets){
+ for(const asset of assets){
   const file='public/assets/'+asset.file,data=await readFile(file);
   assert.equal(data.length,asset.bytes);assert.equal(createHash('sha256').update(data).digest('hex'),asset.sha256,asset.file);
   if(asset.file.endsWith('.webp'))assert.deepEqual(imageSize(file),{width:asset.width,height:asset.height});
+  else if(asset.file.endsWith('.svg')){assert.ok(data.toString().includes('<svg'));assert.ok(!data.toString().includes('<script'));}
   else{
    assert.ok(data.length<90_000_000);assert.equal(asset.codec,'h264');assert.equal(asset.pixelFormat,'yuv420p');assert.equal(asset.audio,'aac');assert.equal(asset.audioUnchanged,true);
    const atoms=[];for(let at=0;at+8<=data.length;){const length=data.readUInt32BE(at);atoms.push(data.toString('ascii',at+4,at+8));if(length<8)break;at+=length;}
@@ -87,7 +99,7 @@ test('Главная A содержит восемь блоков, а эконо
  assert.equal([...home.matchAll(/<h1[\s>]/g)].length,1);
  assert.equal([...home.matchAll(/data-widget-switch="/g)].length,0);assert.equal([...econ.matchAll(/data-widget-switch="/g)].length,4);
  assert.ok(!home.includes('/commercial.js'));assert.ok(econ.includes('/commercial.js'));
- assert.ok(home.includes('до 80%'));assert.ok(home.includes('Входная влажность в испытаниях, отдельно от засорённости'));
+ assert.ok(home.includes('до 80%'));assert.ok(home.includes('Входная влажность сырья в испытаниях'));
  assert.ok(home.indexOf('data-video-slot="promo"')<home.indexOf('data-home-block="products"'));
  assert.equal([...home.matchAll(/<video controls playsinline preload="none"/g)].length,2);assert.ok(!home.includes('autoplay'));assert.ok(!home.includes(' loop'));
  assert.ok(home.includes(`href="${basePath}/economics"`));assert.ok(home.includes(`href="${basePath}/media"`));
@@ -556,7 +568,7 @@ test('Общий каталог предлагает две ветки, а ст�
  assert.equal(lines.filter(l=>l.enabled&&l.group==='Сепарация').length,2);
  assert.equal(lines.filter(l=>l.enabled&&l.group==='Мойка').length,0);
  const home=await readFile('dist/index.html','utf8');
- assert.ok(home.includes('id="about-era"'));assert.ok(home.includes('Согласованная технологическая система.'));
+ assert.ok(home.includes('id="about-era"'));assert.ok(home.includes('Начните с нужных узлов.'));
  const about=await readFile('dist/about/index.html','utf8');
  assert.ok(about.includes(`content="0; url=${basePath}/"`));
  assert.ok(about.includes(`rel="canonical" href="${basePath}/"`));

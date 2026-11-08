@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" fill="none">
+ <title>Изделия из полиэтилена</title><desc>Три направления: плёнка и пакеты, трубы и профили, тара и полиэтиленовые изделия.</desc>
+ <rect width="1280" height="720" fill="#EEE8DC"/>
+ <path d="M60 547H1220M427 105V608M853 105V608" stroke="#B69B5A" stroke-opacity=".3"/>
+ <g stroke="#30364E" stroke-width="3" stroke-linejoin="round">
+  <path d="M103 294 272 227 345 266 175 335Z" fill="#E0D7C2"/>
+  <path d="M103 294V428L175 470V335Z" fill="#CBC4B5"/>
+  <path d="M175 335 345 266V397L175 470Z" fill="#FAF7F0"/>
+  <ellipse cx="294" cy="284" rx="45" ry="78" transform="rotate(25 294 284)" fill="#E5DAC0"/>
+  <ellipse cx="294" cy="284" rx="16" ry="29" transform="rotate(25 294 284)" fill="#8B784D"/>
+  <path d="m276 352 58 29v111l-101-43v-84" fill="#FBF9F4"/>
+  <path d="m245 402 67 29m-62-10 59 26" stroke="#B69B5A" stroke-width="2"/>
+  <path d="M514 290 655 226 748 275 605 341Z" fill="#D2C8B1"/>
+  <path d="M522 321 660 258 751 308 614 373Z" fill="#C8C2B5"/>
+  <path d="M513 363 654 300 745 350 604 414Z" fill="#B9B6AB"/>
+  <ellipse cx="568" cy="351" rx="39" ry="63" transform="rotate(-29 568 351)" fill="#F5F1E8"/>
+  <ellipse cx="568" cy="351" rx="23" ry="38" transform="rotate(-29 568 351)" fill="#343A50"/>
+  <ellipse cx="631" cy="384" rx="39" ry="63" transform="rotate(-29 631 384)" fill="#F5F1E8"/>
+  <ellipse cx="631" cy="384" rx="23" ry="38" transform="rotate(-29 631 384)" fill="#343A50"/>
+  <path d="m659 435 96-43 32 18-96 43Z" fill="#DFD8C8"/>
+  <path d="m659 435v33l32 19v-34m0 34 96-44v-33" fill="#F9F6EE"/>
+  <path d="m945 289 142-53 106 62-143 55Z" fill="#DED5C0"/>
+  <path d="m945 289 17 155 97 55-9-146Z" fill="#CAC2B1"/>
+  <path d="m1050 353 143-55-14 157-120 44Z" fill="#F8F5ED"/>
+  <path d="m971 331 60 34 7 90-55-31Zm99 36 95-36-7 97-80 29Z" stroke="#A18A54" stroke-width="2"/>
+  <path d="M990 276v-34l62-23 38 21v25" stroke="#A18A54" stroke-width="9"/>
+ </g>
+ <g fill="#30364E" font-family="Arial,Helvetica,sans-serif" font-size="38" text-anchor="middle">
+  <text x="213" y="592">Плёнка и пакеты</text><text x="640" y="592">Трубы и профили</text><text x="1066" y="592">Тара и ПЭ-изделия</text>
+ </g>
+</svg>

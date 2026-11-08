@@ -1,4 +1,5 @@
-import {existsSync} from 'node:fs';
+import {existsSync,readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {projectMediaSlots} from '../content/project-media.mjs';
 import {imageSize} from './image-size.mjs';
 const root=new URL('../public/assets/',import.meta.url);
@@ -17,6 +18,7 @@ export function resolveProjectMedia(slots=projectMediaSlots,assetRoot=root){
   const variants=custom?[480,880,1280,1920].map(w=>({file:`${stem}-${w}.webp`,width:w})).filter(v=>available(v.file,assetRoot)):slot.variants?.map((file,i)=>({file,width:i?width:480}));
   if(size&&!variants.some(variant=>variant.width===width))variants.push({file:custom,width});
   return [id,{...slot,id,file,width,height,custom:!!custom,alt:custom?(slot.customAlt||slot.alt):slot.alt,
+   assetVersion:file&&id.endsWith('Poster')&&available(file,assetRoot)?createHash('sha256').update(readFileSync(new URL(file,assetRoot))).digest('hex').slice(0,12):null,
    label:custom?slot.label:slot.fallbackLabel||slot.label,variants,
    caption:custom?slot.customCaption||'Материалы ЭРА':slot.fallbackCaption||null,
    mediaType:custom?slot.customMediaType||'photo':slot.fallbackMediaType||'photo',

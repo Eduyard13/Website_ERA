@@ -1,0 +1,104 @@
+{
+  "version": "0.32.0",
+  "baseline": "d85f6cf",
+  "protectedSources": [
+    {
+      "file": "scripts/economics.mjs",
+      "sha256": "9deacde4aa3cbc7bccc6c1bbe09beb79045b80e1faebdbb3c70d7f8401ff66e5",
+      "unchanged": true
+    },
+    {
+      "file": "public/economics-config.js",
+      "sha256": "4c82242970bd867847851607380d2653e46c285b7af330ae818966345229b066",
+      "unchanged": true
+    },
+    {
+      "file": "public/economics-model.js",
+      "sha256": "7c22a9cdab16e35acff2077f72f21f9fe5034b1a744e4d50be262d91d9cd318f",
+      "unchanged": true
+    },
+    {
+      "file": "public/economics-controller.js",
+      "sha256": "e18f5416f075d1f830e411a81875a84f55d4fea1aa8dd14d272cbef4b8f28c7a",
+      "unchanged": true
+    },
+    {
+      "file": "public/economics-view.js",
+      "sha256": "cfceee18b9afa3e50af88e28ec069986d36aeffc961e9300a5c20caf27c31888",
+      "unchanged": true
+    },
+    {
+      "file": "public/commercial.js",
+      "sha256": "004466135f360448c0520183799544885b184e5f64e9f5e866ac77bce9dc81ad",
+      "unchanged": true
+    },
+    {
+      "file": "public/page-progress.js",
+      "sha256": "960252dce6b93dec1df6c434bfa5b2dfd458c0da2631211bdac4f3c34ba03f7a",
+      "unchanged": true
+    },
+    {
+      "file": "public/page-progress.css",
+      "sha256": "e7e8e0039d6c7d433f39d7ab72d24092ace004c32ef2fce7155c68e6d33fe075",
+      "unchanged": true
+    },
+    {
+      "file": "public/assets/project-home/video/era_promo_full.mp4",
+      "sha256": "0463355d2142f02dce6e008f51256ab03bee0d0b712a7e9faa19a1b37551e851",
+      "unchanged": true
+    },
+    {
+      "file": "public/assets/project-home/evidence/cleaning_demo.mp4",
+      "sha256": "55b823e9c4a044ea3eded025778eb6c4be01d49feb763523823cd24cd46ef8d9",
+      "unchanged": true
+    },
+    {
+      "file": "public/assets/presentation/granules.webp",
+      "sha256": "11909e3cb08649c5d96f62704731dd2b561ff2c2b15d5507caa3ee999c32f30a",
+      "unchanged": true
+    },
+    {
+      "file": "public/footer.css",
+      "sha256": "077c97a5fc90b615c0fdca51a3d458cf748c19a80b9bf2981550995b4a8601dd",
+      "unchanged": true
+    },
+    {
+      "file": "public/surfaces.css",
+      "sha256": "5ca9d27aea80f624787ed07d2147d3c43fac65ebbac80c982b6e93991407d4f3",
+      "unchanged": true
+    }
+  ],
+  "heroContentUnchanged": true,
+  "otherHTMLUnchangedExceptAssetVersion": [
+    "404.html",
+    "automation/index.html",
+    "news/index.html",
+    "contacts/index.html",
+    "economics/index.html",
+    "documents/index.html",
+    "media/index.html",
+    "company-details/index.html",
+    "technology/index.html",
+    "ai/index.html",
+    "about/index.html",
+    "catalog/index.html",
+    "blog/index.html",
+    "contacts/sent/index.html",
+    "catalog/lines/index.html",
+    "catalog/equipment/index.html",
+    "catalog/lines/separatsiya-02/index.html",
+    "catalog/lines/separatsiya-01/index.html",
+    "catalog/equipment/ochistka-stokov/index.html",
+    "catalog/equipment/kapsulyator/index.html",
+    "catalog/equipment/plenochnyy-flotator/index.html",
+    "catalog/equipment/predvaritelnyy-raspushitel/index.html",
+    "catalog/equipment/vintovoy-press/index.html",
+    "catalog/equipment/rotornyy-raspushitel/index.html",
+    "catalog/equipment/rotornaya-tsentrifuga/index.html",
+    "catalog/equipment/bunker-nakopitel/index.html",
+    "catalog/equipment/predvaritelnyy-izmelchitel/index.html",
+    "catalog/equipment/vertikalno-rotornyy-izmelchitel/index.html",
+    "catalog/equipment/ballisticheskiy-separator/index.html",
+    "catalog/equipment/rama-napolnitel/index.html"
+  ]
+}

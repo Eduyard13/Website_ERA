@@ -1,0 +1,61 @@
+{
+  "version": "0.32.0",
+  "sourcePhoto1": {
+    "url": "https://github.com/Eduyard13/Website_ERA/releases/download/v0.14.1/ERA_LSS_A08_01m41s768.png",
+    "sha256": "fbefa0596b12b26bcb4d5b870fadae65a8a8f965141420090b52e079572211f4",
+    "width": 1280,
+    "height": 720
+  },
+  "assets": [
+    {
+      "file": "project-home/process/fluffier.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 116128,
+      "sha256": "c2facf5732b4b88a8e04f73745a7370cafd85be0c57ba4f5b131ee0342c20e13"
+    },
+    {
+      "file": "project-home/process/fluffier-880.webp",
+      "width": 880,
+      "height": 495,
+      "bytes": 71374,
+      "sha256": "7d5a4852081521de938789c5069c0a333508b74564b34eed09bbe3836973c3c2"
+    },
+    {
+      "file": "project-home/process/fluffier-480.webp",
+      "width": 480,
+      "height": 270,
+      "bytes": 32320,
+      "sha256": "6e17bcc645741dde452b483bdfb500713ef18ed7cc35aa6bf437da2b84a8335e"
+    },
+    {
+      "file": "project-home/video/era_promo_poster.webp",
+      "width": 1280,
+      "height": 720,
+      "bytes": 212096,
+      "sha256": "087cce6666f4dd4a48ab22ea3f9c3a53cfae8a04bf3d2337d193f770d308469f",
+      "foregroundWidth": 960,
+      "foregroundHeight": 720,
+      "sourceFile": "О проекте/contact:machine_detail.jpg",
+      "sourceSha256": "5e9652cfd0a8476bf7544b5797fbc6ed8e6528ed3c0bd9d9292c4bf1b2ecb3c3"
+    },
+    {
+      "file": "project-home/evidence/cleaning_demo_poster.webp",
+      "bytes": 124838,
+      "sha256": "0f8ed28372765b095defcf936917be8f7037c0461359291926bd36806e48b582",
+      "width": 1280,
+      "height": 720,
+      "sourceVideo": "project-home/evidence/cleaning_demo.mp4",
+      "sourceTimeSeconds": 46
+    },
+    {
+      "file": "project-home/business/markets.svg",
+      "bytes": 2356,
+      "sha256": "e0b499ac285490fdc636e60fef62ca7f5f67b0e32e6e07208dc6fea8e0b2f369",
+      "width": 1280,
+      "height": 720,
+      "kind": "Original SVG: film, pipe/profile, container"
+    }
+  ],
+  "baseline": "d85f6cf"
+}
