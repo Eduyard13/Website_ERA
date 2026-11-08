@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import {economicsConfig as config} from '../public/economics-config.js';
 import {calculateEconomics,initialEconomicsState,normalizeEconomicsState,changeEconomicsSelection,profitCurve} from '../public/economics-model.js';
 import {renderCurve,renderBridge,renderMonth,renderMarketPrice,priceStageText} from '../public/economics-view.js';
+import {createEconomicsStore} from '../public/economics-page-state.js';
+import {groupedMonth,productCopy,unitMoney} from '../public/economics-page-view.js';
 const close=(actual,expected,tolerance=.00001)=>assert.ok(Math.abs(actual-expected)<tolerance,`${actual} != ${expected}`);
 
 test('Рабочие месяцы ЛСП и КПП точно воспроизводят финансовые модели 05.11.2026',()=>{
@@ -89,4 +91,42 @@ test('Премиальная цена 110 ₽/кг относится к раб�
  assert.match(priceStageText(calculateEconomics({mode:'full',salePrices:{full:100000}})),/Базовый этап/);
  assert.match(renderMarketPrice(r),/110 ₽\/кг с НДС/);assert.match(renderMarketPrice(r),/100 ₽\/кг/);
  assert.ok(!('granulationYield' in config));assert.ok(!('granulationYield' in r.state));
+});
+test('Единая страница использует UI-базу 100 ₽/кг, сохраняя исторический default модели 110',()=>{
+ const store=createEconomicsStore();assert.equal(store.get().state.salePrices.full,100000);
+ assert.equal(config.modes.full.defaultGrossPrice,110000);assert.equal(calculateEconomics({mode:'full'}).grossPrice,110000);
+ store.dispatch({type:'selection',value:{mode:'full'}});const r=store.get().result;
+ close(r.net,14134988.10,.01);close(r.margin,.30904454288,.00001);
+ assert.equal(unitMoney(r.perProduct.totalCosts),'48,19 ₽/кг');assert.equal(unitMoney(r.perProduct.tax),'8,44 ₽/кг');assert.equal(unitMoney(r.perProduct.net),'25,33 ₽/кг');
+});
+test('Подписчики единого состояния получают один согласованный результат; память цен и загрузка сохраняются',()=>{
+ const store=createEconomicsStore(),seen=[];const unsubscribe=store.subscribe(snapshot=>seen.push(snapshot));
+ store.dispatch({type:'price',value:45000});store.dispatch({type:'input',value:558});
+ store.dispatch({type:'selection',value:{mode:'full',lines:3}});close(store.get().result.load,.5);
+ store.dispatch({type:'price',value:100000});store.dispatch({type:'selection',value:{mode:'separation'}});
+ assert.equal(store.get().result.grossPrice,45000);close(store.get().result.load,.5);
+ store.dispatch({type:'selection',value:{mode:'full'}});assert.equal(store.get().result.grossPrice,100000);
+ const previous=store.get().result;store.dispatch({type:'unit',value:'tonne'});assert.equal(store.get().result,previous);assert.equal(store.get().unit,'tonne');
+ for(const snapshot of seen){const expected=calculateEconomics(snapshot.state);close(snapshot.result.net,expected.net);close(snapshot.result.output,expected.output);}
+ const copy=store.get();copy.state.salePrices.full=1;assert.equal(store.get().state.salePrices.full,100000);
+ unsubscribe();const count=seen.length;store.dispatch({type:'input',value:0});assert.equal(seen.length,count);assert.ok(store.get().result.net<0);
+});
+test('Укрупнение месячного кольца сохраняет все суммы, а при частичной загрузке остаются агрегаты модели',()=>{
+ for(const mode of ['separation','full'])for(const lines of [1,2,3]){
+  const r=calculateEconomics({mode,lines}),grouped=groupedMonth(r);
+  assert.equal(grouped.segments.length,7);close(grouped.segments.reduce((a,s)=>a+s.value,0),r.revenue);
+  assert.equal(grouped.segments.find(s=>s.id==='utilities').members.length,2);
+  const originalIds=grouped.segments.flatMap(s=>s.members.map(m=>m.id));assert.deepEqual(originalIds.sort(),r.segments.map(s=>s.id).sort());
+  const half=calculateEconomics({mode,lines,input:r.capacity/2});assert.equal(groupedMonth(half),half);assert.equal(half.costs.length,3);
+ }
+});
+test('Паспорт гранулы отделён от плёнки; ПТР указан как предварительный ориентир с условиями измерения',()=>{
+ const film=productCopy('separation'),granule=productCopy('full');
+ assert.doesNotMatch(film.passport,/ppm|ПТР|г\/10/);assert.match(granule.passport,/30–70 ppm/);
+ assert.match(granule.passport,/0,8–1,2 г\/10 мин/);assert.match(granule.passport,/190 °C \/ 2,16 кг/);assert.match(granule.passport,/предварительный ориентир/);
+ assert.notEqual(film.src,granule.src);
+});
+test('Непредставимо малый положительный выпуск не выводит Infinity или NaN в денежных показателях',()=>{
+ const r=calculateEconomics({input:1e-308});assert.equal(unitMoney(r.perProduct.totalCosts),'—');
+ assert.doesNotMatch(renderBridge(r),/NaN|Infinity|∞/);assert.match(renderBridge(r),/Объём слишком мал/);
 });

@@ -82,9 +82,9 @@ with sync_playwright() as p:
   page.keyboard.press('Escape');assert opener.evaluate('e=>e===document.activeElement')
   page.locator('[data-menu-toggle]').click();assert page.locator('#site-menu').is_visible();page.keyboard.press('Escape')
   page.get_by_role('link',name='Изучить экономику проекта',exact=True).click()
-  assert page.locator('h1').inner_text()=='Экономическое обоснование'
-  assert page.locator('[data-widget-switch]').count()==4
-  assert page.locator('[data-econ-widget=monthly] [data-econ-profit]').inner_text().startswith('4,45')
+  assert 'От сложного сырья' in page.locator('h1').inner_text()
+  assert page.locator('[data-economics-page]').count()==1
+  assert page.locator('#monthly-result [data-value=profit]').inner_text().startswith('4,45')
   assert page.locator('.primary-nav [aria-current=page]').inner_text()=='Экономика'
   assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),(width,'economics')
   results.append({'width':width,'eightBlocks':True,'mediaFrames':True,'economicsRoute':True,'overflow':False})

@@ -97,7 +97,7 @@ test('Главная A содержит восемь блоков, а эконо
  const title=home.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)[1].replace(/<[^>]+>/g,'');assert.equal(title,resourceHero.title);
  assert.deepEqual([...home.matchAll(/data-home-block="([^"]+)"/g)].map(m=>m[1]),['hero','problem','process','products','evidence','business','integration','contact']);
  assert.equal([...home.matchAll(/<h1[\s>]/g)].length,1);
- assert.equal([...home.matchAll(/data-widget-switch="/g)].length,0);assert.equal([...econ.matchAll(/data-widget-switch="/g)].length,4);
+ assert.equal([...home.matchAll(/data-widget-switch="/g)].length,0);assert.equal([...econ.matchAll(/data-economics-page/g)].length,1);
  assert.ok(!home.includes('/commercial.js'));assert.ok(econ.includes('/commercial.js'));
  assert.ok(home.includes('до 80%'));assert.ok(home.includes('Входная влажность сырья в испытаниях'));
  assert.ok(home.indexOf('data-video-slot="promo"')<home.indexOf('data-home-block="products"'));
@@ -627,20 +627,20 @@ test('Контакты сохранены, КАИР перенесён в тех
  const single=kairMonitor([kairSlides[0]],{...kairPresentation,autoplay:false});
  assert.ok(!single.includes('data-kair-next'));assert.ok(!single.includes('data-kair-pause'));
 });
-test('Экономика отделяет цены модели от предложений продавцов и содержит четыре локальных сценария',async()=>{
+test('Экономика содержит девять связанных этапов и сохраняет цены модели отдельно от продавцов',async()=>{
  const {economicsConfig,marketOffers}=await import('../public/economics-config.js');
  const {calculateEconomics}=await import('../public/economics-model.js');
  const {millions}=await import('../public/economics-view.js');
  const html=await readFile('dist/economics/index.html','utf8'),result=calculateEconomics();
- assert.ok(html.includes('Экономическое обоснование'));assert.ok(!html.includes('class="pitch-stage-nav'));
+ assert.ok(html.includes('От сложного сырья —'));assert.ok(!html.includes('class="pitch-stage-nav'));
  assert.ok(!html.includes('class="raw-story"'));assert.ok(!html.includes('data-kair-inspect'));
  for(const id of ['market','economics'])assert.equal([...html.matchAll(new RegExp(`id="${id}"`,'g'))].length,1,id);
  assert.ok(html.includes(economicsConfig.disclosure));assert.ok(html.includes(economicsConfig.taxDisclosure));
- assert.equal([...html.matchAll(/data-widget-switch="/g)].length,4);
- assert.equal([...html.matchAll(/data-econ-widget="/g)].length,3);
- assert.ok(html.includes('На 1 тонну готовой продукции'));
+ assert.equal([...html.matchAll(/data-economics-page/g)].length,1);
+ assert.equal([...html.matchAll(/class="ec-section(?: |")/g)].length,9);
+ assert.ok(html.includes('Сколько стоит произвести тонну'));
  assert.ok(html.includes('Выручка без НДС'));
- assert.ok(html.includes('Примеры сторонних предложений'));
+ assert.ok(html.includes('Предложения сторонних продавцов'));
  assert.ok(!html.includes('Демонстрационный расчёт'));
  assert.ok(!html.includes('Условный налог'));
  for(const value of [result.revenue,result.net])assert.ok(html.includes(millions(value)));
@@ -649,7 +649,7 @@ test('Экономика отделяет цены модели от предл�
  assert.ok(html.includes('Все ТКО, образованные в России за 2025 год'));
  assert.ok(html.includes('Показатель 46,4 млн т охватывает все ТКО'));
  for(const offer of marketOffers){assert.ok(html.includes(`href="${offer.href}"`));assert.ok(offer.minimum);assert.ok(offer.vat);assert.ok(offer.delivery);}
- const deployed=await readFile('dist/economics-controller.js','utf8');assert.match(deployed,/from '\.\/economics-model\.js\?v=/);
+ const deployed=await readFile('dist/economics-page-state.js','utf8');assert.match(deployed,/from '\.\/economics-model\.js\?v=/);
 });
 test('Технология сохраняет прежние материалы, стадии, результаты, КАИР и путь запуска',async()=>{
  const {feedstockTypes}=await import('../content/feedstock.mjs');
