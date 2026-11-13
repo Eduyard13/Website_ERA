@@ -1,26 +1,26 @@
 {
   "schemaVersion": 1,
   "source": "CBR",
-  "sourceUrl": "https://www.cbr.ru/scripts/XML_daily.asp?date_req=12%2F11%2F2026",
-  "requestedDate": "2026-11-12",
-  "effectiveDate": "2026-11-12",
-  "fetchedAt": "2026-11-12T20:39:40.871Z",
+  "sourceUrl": "https://www.cbr.ru/scripts/XML_daily.asp?date_req=13%2F11%2F2026",
+  "requestedDate": "2026-11-13",
+  "effectiveDate": "2026-11-13",
+  "fetchedAt": "2026-11-13T01:42:17.494Z",
   "rates": {
     "USD": {
       "nominal": 1,
-      "value": 82.6617,
-      "rate": 82.6617
+      "value": 82.9803,
+      "rate": 82.9803
     },
     "EUR": {
       "nominal": 1,
-      "value": 92.6968,
-      "rate": 92.6968
+      "value": 92.3322,
+      "rate": 92.3322
     },
     "CNY": {
       "nominal": 1,
-      "value": 12.3907,
-      "rate": 12.3907
+      "value": 12.4009,
+      "rate": 12.4009
     }
   },
-  "sourceSha256": "67326c3686f29e5e49d838c6c0270f0a4d9bc8ebd33e384575039e963ed8796a"
+  "sourceSha256": "23057e1f5b71491cf742fe36400de1d5a1b489e4a4ae21a742face6e4d23be33"
 }
