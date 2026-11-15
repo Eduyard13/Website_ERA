@@ -50,6 +50,8 @@ npm test
 
 Публикация настроена через `.github/workflows/pages.yml` после обновления ветки `main`. В GitHub **Settings → Pages → Source** должен быть выбран **GitHub Actions**. Ручной запуск доступен через **Actions → Test and deploy ERA preview → Run workflow**.
 
+После развёртывания GitHub Actions проверяет публичные адреса главной, галереи и четырёх файлов её интерфейса: HTTP 200, HTML проекта и наличие обновлённой галереи. При недоступности выполняет повторные запросы и завершает проверку ошибкой; результат виден в отчёте публикации.
+
 Адрес проекта: https://eduyard13.github.io/Website_ERA/.
 
 ```sh
