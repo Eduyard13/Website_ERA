@@ -216,7 +216,7 @@ test('Схемы линий сохраняют номера ТО, описани
  for(const d of lineDiagrams){
   const page=await readFile(`dist/catalog/lines/${d.slug}/index.html`,'utf8');await stat('dist/assets/'+d.file);
   for(const id of [d.id,...(d.slug==='separatsiya-01'?[d.id+'-tooltip']:[]),d.id+'-details'])assert.equal([...page.matchAll(new RegExp(`id="${id}"`,'g'))].length,1,id);
-  assert.ok(page.includes(`data-line-diagram="${d.slug}"`));assert.ok(page.includes(`href="${basePath}/assets/${d.file}"`));
+  assert.ok(page.includes(`data-line-diagram="${d.slug}"`));assert.ok(page.includes(`href="${basePath}/assets/${d.displayFile||d.file}"`));
   for(const part of d.parts){
    assert.ok(part.description.length>50,`${d.slug} ${part.number}`);
    assert.ok(part.regions.length>0);assert.ok(part.targets.length>0);

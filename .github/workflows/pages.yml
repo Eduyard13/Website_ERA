@@ -125,6 +125,31 @@ jobs:
                       raise RuntimeError('Separation 02 section order or single fit monitor is missing')
                   if f'/line-monitor.js?v={version}' not in full_line or f'/line-documents.js?v={version}' not in full_line:
                       raise RuntimeError('Separation 02 viewer assets are stale')
+                  if 'data-hero-finish="titanium-gallery"' not in full_line or 'data-construction-finish="light-engineering"' not in full_line or 'Линия изнутри. В деталях.' not in full_line:
+                      raise RuntimeError('Titanium Gallery or light construction display is missing')
+                  if full_line.count('data-leader-join="') != 28 or 'assets/lines/separatsiya-01/layout-interactive.webp' not in full_line:
+                      raise RuntimeError('Live construction markers or clean source layer is missing')
+                  unit_cards = re.findall(r'<article class="line-unit-card[^>]*>.*?</article>', full_line, re.S)
+                  catalogue_slugs = re.findall(r'data-catalogue-image="([^"]+)"', full_line)
+                  if len(unit_cards) != 6 or len(catalogue_slugs) != 5 or 'node-card-specs' in ''.join(unit_cards):
+                      raise RuntimeError('Compact equipment cards were expanded or lost')
+                  _, equipment_catalogue = fetch('catalog/equipment/')
+                  for slug in catalogue_slugs:
+                      image_path = 'assets/catalogue/equipment/' + slug + '.webp'
+                      if image_path not in full_line or image_path not in equipment_catalogue:
+                          raise RuntimeError('Equipment image differs from its catalogue: ' + slug)
+                      content_type, image = fetch(image_path, binary=True)
+                      if content_type != 'image/webp' or image[:4] != b'RIFF' or image[8:12] != b'WEBP':
+                          raise RuntimeError('Catalogue equipment image is unavailable: ' + slug)
+                  _, lines_catalogue = fetch('catalog/lines/')
+                  blue_cover = 'assets/lines/separatsiya-01/catalog-cover.webp'
+                  if blue_cover not in lines_catalogue:
+                      raise RuntimeError('The approved blue line catalogue cover is missing')
+                  for image_path in ('assets/lines/separatsiya-01/hero-titanium.webp', 'assets/lines/separatsiya-01/hero-titanium-768.webp', 'assets/lines/separatsiya-01/layout-interactive.webp', blue_cover):
+                      content_type, image = fetch(image_path, binary=True)
+                      if content_type != 'image/webp' or image[:4] != b'RIFF' or image[8:12] != b'WEBP':
+                          raise RuntimeError('Titanium, construction or approved catalogue WebP is missing: ' + image_path)
+                  print('::notice title=Titanium Gallery verified::Titanium hero and responsive WebP, light 01-27 construction display, six compact equipment cards and five unchanged catalogue images are published. Line and both catalogue routes return HTTP 200.')
                   line_documents = json.loads(re.search(r'<script type="application/json" id="line-document-data">(.*?)</script>', full_line, re.S).group(1))
                   if {d['id'] for d in line_documents} != {'separatsiya-02-technical', 'separatsiya-02-dimensions-a0'}:
                       raise RuntimeError('Separation 02 must show its two actual documents')

@@ -6,14 +6,21 @@ import {publicLibraryDocuments} from '../content/document-library.mjs';
 import {lineDimensions} from './line-dimensions.mjs';
 import {interactiveLineDiagram} from './line-diagram.mjs';
 import {fullLineDiagram} from '../content/line-diagrams.mjs';
+import {lineHeroPresentation} from '../content/separatsiya-02-presentation.mjs';
+import {equipmentCardImages} from '../content/equipment-card-images.mjs';
 
 const escape=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const button=(text,href,secondary=false)=>`<a class="button ${secondary?'secondary':''}" href="${href}">${text}<span aria-hidden="true">↗</span></a>`;
 function picture(key,{label,caption,hero=false,full=false}={}){
- const m=pictures[key];
- return `<figure class="line-image line-image--${m.type}${hero?' line-image--hero':''}" ${mediaAttributes(m)}><a class="media-open" href="/assets/${m.file}" aria-label="Увеличить: ${escape(m.title)}"><img src="/assets/${hero||full?m.file:m.thumbnail}" alt="${escape(m.title)}"${hero?' width="2056" height="1384" fetchpriority="high"':' loading="lazy" decoding="async"'}>${label?`<span class="line-image-label">${label}</span>`:''}<span class="line-image-zoom" aria-hidden="true">⤢</span></a><figcaption>${caption||m.title}<span>Техническое описание · стр. ${m.page}</span></figcaption></figure>`;
+ const m=hero?{...pictures[key],...lineHeroPresentation}:pictures[key];
+ return `<figure class="line-image line-image--${m.type}${hero?' line-image--hero':''}"${hero?' data-hero-finish="titanium-gallery"':''} ${mediaAttributes(m)}><a class="media-open" href="/assets/${m.file}" aria-label="Увеличить: ${escape(m.title)}"><img src="/assets/${hero||full?m.file:m.thumbnail}" alt="${escape(m.title)}"${hero?` srcset="/assets/${m.smallFile} 768w, /assets/${m.file} ${m.width}w" sizes="(min-width:801px) 52vw, calc(100vw - 40px)" width="${m.width}" height="${m.height}" fetchpriority="high"`:' loading="lazy" decoding="async"'}>${label?`<span class="line-image-label">${label}</span>`:''}<span class="line-image-zoom" aria-hidden="true">⤢</span></a><figcaption>${caption||m.title}<span>Техническое описание · стр. ${m.page}</span></figcaption></figure>`;
 }
 const rows=items=>items.map(([label,value])=>`<tr><th scope="row">${escape(label)}</th><td>${escape(value)}</td></tr>`).join('');
+function unitCard([position,title,text,value,slug,key]){
+ const n=nodes.find(n=>n.slug===slug),image=n?equipmentCardImages[n.slug]:null;
+ const graphic=image?`<img src="/assets/${image.file}" srcset="/assets/${image.smallFile} 768w, /assets/${image.file} ${image.width}w" sizes="(min-width:1101px) 31vw, (min-width:801px) 47vw, calc(100vw - 40px)" width="${image.width}" height="${image.height}" alt="${escape(title)}" loading="lazy" decoding="async">`:`<img src="/assets/${pictures[key].file}" alt="${escape(title)}" loading="lazy" decoding="async">`;
+ return `<article class="line-unit-card${image?' line-unit-card--catalogue':' line-unit-card--technical'}"${image?` data-catalogue-image="${n.slug}" style="--unit-stone-top:${image.stoneColors[0]};--unit-stone-left:${image.stoneColors[1]};--unit-stone-right:${image.stoneColors[4]}"`:''}><div class="line-unit-visual">${graphic}<span>Поз. ${position}</span></div><div class="line-unit-copy"><h3>${title}</h3><p>${text}</p><strong>${value}</strong>${n?`<a class="text-link" href="${n.path}">Подробнее об узле ↗</a>`:'<span class="line-note">В составе представленной линии</span>'}</div></article>`;
+}
 
 export function renderFilmSeparation(line){
  const email='mailto:edkom.office@mail.ru?subject='+encodeURIComponent(`Запрос ЭРА: ${line.title} — линия сухой сепарации плёнок`);
@@ -74,7 +81,7 @@ export function renderFilmSeparation(line){
 
  <section class="section line-documents" id="documents"><div class="line-section-heading"><div><p class="eyebrow">09 / ТЕХНИЧЕСКАЯ ДОКУМЕНТАЦИЯ</p><h2>От состава линии<br>до габаритов в цехе.</h2></div><p>Техническое описание: схемы, позиции, параметры, расчёты и управление — оригинал от 2 ноября 2026 года. Отдельный исходный лист A0: три проекции и размеры показанной компоновки.</p></div><div class="line-document-grid">${documents.map(d=>libraryDocumentCard(d,{related:false})).join('')}</div><a class="text-link" href="/documents/?objectType=line&amp;product=separatsiya-02">Все документы линии в библиотеке ↗</a></section>
  <section class="section line-soft" id="equipment"><div class="line-section-heading"><div><p class="eyebrow">10 / ОБОРУДОВАНИЕ В СОСТАВЕ ЛИНИИ</p><h2>Изучите каждый узел.</h2></div><p>Назначение, рабочие показатели и прямые переходы на страницы машин представленной комплектации.</p></div>
-  <div class="line-unit-grid">${lineUnits.map(([position,title,text,value,slug,key])=>{const n=nodes.find(n=>n.slug===slug);return `<article><div class="line-unit-visual">${key?`<img src="/assets/${pictures[key].thumbnail}" alt="${escape(title)}" loading="lazy">`:`<img src="/assets/${n.cardFile}" alt="${escape(title)}" loading="lazy">`}<span>Поз. ${position}</span></div><div class="line-unit-copy"><h3>${title}</h3><p>${text}</p><strong>${value}</strong>${n?`<a class="text-link" href="${n.path}">Подробнее об узле ↗</a>`:'<span class="line-note">В составе представленной линии</span>'}</div></article>`;}).join('')}</div>
+  <div class="line-unit-grid">${lineUnits.map(unitCard).join('')}</div>
   <aside class="line-option"><div><p class="eyebrow">ДОПОЛНИТЕЛЬНЫЙ МОДУЛЬ</p><h3>Предварительный распушитель</h3><p>Устанавливается между измельчителем и баллистикой. Разрыхляет комки и разделяет слои, улучшая освобождение включений и сохранение полезной плёнки.</p></div><div><strong>37 кВт</strong><p>Учитываются дополнительно к 402,67 кВт представленной комплектации.</p><a class="text-link" href="/catalog/equipment/predvaritelnyy-raspushitel">Подробнее об узле ↗</a></div></aside>
  </section>
  <section class="section contact line-request"><div><p class="eyebrow">11 / ПОД ВАШЕ СЫРЬЁ И ПЛОЩАДКУ</p><h2>Обсудим вашу<br>линию сепарации.</h2><p>Для подбора нужны фото или видео сырья, состав и загрязнённость, влажность, требуемая подача и продукт, план цеха и доступная мощность.</p></div><div>${button('Отправить запрос по линии',email)}<a class="phone" href="tel:+79032813535">+7 903 281-35-35</a><a href="mailto:edkom.office@mail.ru">edkom.office@mail.ru</a><small>Заполните форму и приложите фотографии, видео или документы к заявке.</small></div></section>

@@ -17,9 +17,26 @@ with sync_playwright() as p:
   page.goto(base+'/catalog/lines/separatsiya-02/');page.wait_for_selector('[data-monitor-ready=true]')
   assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),width
   root=page.locator('.line-monitor');viewport=root.locator('[data-diagram-viewport]');select=root.locator('[data-diagram-select]')
+  assert root.get_attribute('data-construction-finish')=='light-engineering'
+  assert root.locator('.diagram-heading h3').inner_text()=='Линия изнутри. В деталях.'
+  assert root.evaluate('(e)=>getComputedStyle(e).backgroundColor')=='rgb(244, 242, 237)'
+  hero=page.locator('[data-hero-finish=titanium-gallery]');hero.locator('img').evaluate('(e)=>e.decode()')
+  assert hero.locator('img').get_attribute('src').endswith('/lines/separatsiya-01/hero-titanium.webp')
+  assert hero.locator('img').evaluate('(e)=>getComputedStyle(e).objectFit==="contain"&&getComputedStyle(e).filter==="none"')
+  assert page.locator('#equipment [data-catalogue-image]').count()==5
+  for card in page.locator('#equipment [data-catalogue-image]').all():
+   slug=card.get_attribute('data-catalogue-image');image=card.locator('img')
+   assert image.get_attribute('src').endswith('/catalogue/equipment/'+slug+'.webp')
+   assert image.evaluate('(e)=>getComputedStyle(e).objectFit==="contain"&&getComputedStyle(e).filter==="none"')
+  if width in [390,1440]:
+   hero.locator('.media-open').click();page.wait_for_selector('#media-viewer[open]')
+   assert page.locator('#viewer-image').get_attribute('src').endswith('/lines/separatsiya-01/hero-titanium.webp')
+   page.keyboard.press('Escape');assert not page.locator('#media-viewer').is_visible()
   assert page.locator('[data-diagram]').count()==1 and select.locator('option').count()==27
   assert root.locator('[data-fullscreen-zoom]').is_hidden()
-  assert root.locator('.guide-line,.guide-end,.line-diagram-pin-masks').count()==0
+  assert root.locator('[data-leader-join]').count()==28
+  assert root.locator('.guide-end,.line-diagram-pin-masks').count()==0
+  assert root.locator('[data-part] span').count()==28
   assert root.locator('[data-part]').count()==28
   assert viewport.evaluate('(e)=>e.scrollWidth<=e.clientWidth+1&&e.scrollHeight<=e.clientHeight+1&&getComputedStyle(e).overflow==="visible"')
   select.scroll_into_view_if_needed();page.wait_for_timeout(60)

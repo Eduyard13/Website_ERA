@@ -1,5 +1,6 @@
 import {linePositions} from './film-separation.mjs';
 import {miniSpecification} from './mini-film-separation.mjs';
+import {lineConstructionPresentation} from './separatsiya-02-presentation.mjs';
 
 // Pin centres, leader targets and visible object outlines use source-image pixels.
 // Source: mini TO p.5 (2042×1350), full TO p.6 (1853×1299), p.25 (1706×1275).
@@ -101,6 +102,8 @@ const fullGeometry={
  27:[[[51,905],[1804,193]],[[150,1101],[1727,412]],[[[64,1092],[132,1025],[216,977],[283,1000],[287,1108],[208,1200],[119,1204],[59,1158]],[[1623,376],[1682,328],[1749,319],[1802,361],[1840,425],[1800,486],[1717,503],[1647,461]]]],
 };
 export const fullLineDiagram=diagram({id:'line02-construction',slug:'separatsiya-02',title:'Узлы расширенной линии и движение материала',file:'lines/separatsiya-01/layout.webp',width:1853,height:1299,page:6,defaultPart:4,labels:linePositions,descriptions:fullDescriptions,geometry:fullGeometry});
+fullLineDiagram.displayFile=lineConstructionPresentation.file;
+fullLineDiagram.annotationJoins=lineConstructionPresentation.joins;
 export const fullLinePlacementDiagram=diagram({id:'line02-workshop',slug:'separatsiya-02',title:'Сортировочный бокс и размещение в цехе',file:'lines/separatsiya-01/placement.webp',width:1706,height:1275,page:25,defaultPart:28,
  labels:[[28,'Закрытый сортировочный бокс'],[29,'Помещение цеха']],
  descriptions:{28:'Ограждает рабочую площадку ручной сортировки. Объединяет рабочие места, доступ к потоку, вентиляцию и освещение; исполнение согласуют при размещении линии.',29:'Помещение для расстановки линии, подключения коммуникаций, проездов погрузчиков и обслуживания. В ТО показан цех 45 × 18 м; рабочие зоны и подключения уточняются по площадке.'},

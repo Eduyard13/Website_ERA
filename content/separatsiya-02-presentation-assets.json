@@ -1,0 +1,413 @@
+{
+  "hero": {
+    "file": "lines/separatsiya-01/hero-titanium.webp",
+    "width": 2056,
+    "height": 1384,
+    "bytes": 420066,
+    "sha256": "6ed45ff41cd02b4cef2470150b2286cb59ed2600152818e6270c35e16b0b90ce",
+    "smallFile": "lines/separatsiya-01/hero-titanium-768.webp",
+    "small": {
+      "file": "lines/separatsiya-01/hero-titanium-768.webp",
+      "width": 768,
+      "height": 517,
+      "bytes": 77054,
+      "sha256": "5f30300f953bb4bccd0e753323bc41adb465710cec00c5c9f6a7e95c78409c8e"
+    },
+    "source": {
+      "file": "lines/separatsiya-01/hero.webp",
+      "width": 2056,
+      "height": 1384,
+      "bytes": 318380,
+      "sha256": "314b9a2161c6d9d00101c1097bd193a857283ad0d81f375a72d88622bb6e5399"
+    },
+    "background": {
+      "file": "lines/separatsiya-01/titanium-gallery-plate.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 29828,
+      "sha256": "e1e8169e9a37ceb3fdcc694e0f0f44f753aa75099c75a674ab93e072bb2708de"
+    },
+    "method": "White-matte removal, original equipment pixels, unchanged size and geometry, diffuse floor contact shadows."
+  },
+  "diagram": {
+    "file": "lines/separatsiya-01/layout-interactive.webp",
+    "width": 1853,
+    "height": 1299,
+    "bytes": 984834,
+    "sha256": "3b95e1217d79007413fddecbea6c0e3827ebbf40d285c0370e8c0d29ffaaeebf",
+    "source": {
+      "file": "lines/separatsiya-01/layout.webp",
+      "width": 1853,
+      "height": 1299,
+      "bytes": 340932,
+      "sha256": "36a3922e977980d0d426ce44473128574390cfae68250f1abd4d86a8aed920d1"
+    },
+    "joins": [
+      {
+        "number": 1,
+        "pinIndex": 0,
+        "centerPx": [
+          131.0,
+          799.999
+        ],
+        "endPx": [
+          174.013,
+          821.303
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 2,
+        "pinIndex": 0,
+        "centerPx": [
+          222.999,
+          715.0
+        ],
+        "endPx": [
+          268.572,
+          730.07
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 3,
+        "pinIndex": 0,
+        "centerPx": [
+          449.999,
+          514.0
+        ],
+        "endPx": [
+          494.017,
+          533.143
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 4,
+        "pinIndex": 0,
+        "centerPx": [
+          769.001,
+          255.001
+        ],
+        "endPx": [
+          792.564,
+          296.82
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 5,
+        "pinIndex": 0,
+        "centerPx": [
+          853.001,
+          192.0
+        ],
+        "endPx": [
+          893.39,
+          217.938
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 6,
+        "pinIndex": 0,
+        "centerPx": [
+          682.999,
+          322.0
+        ],
+        "endPx": [
+          720.675,
+          351.74
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 7,
+        "pinIndex": 0,
+        "centerPx": [
+          521.001,
+          446.999
+        ],
+        "endPx": [
+          562.045,
+          471.886
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 8,
+        "pinIndex": 0,
+        "centerPx": [
+          1142.0,
+          945.0
+        ],
+        "endPx": [
+          1140.028,
+          897.041
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 9,
+        "pinIndex": 0,
+        "centerPx": [
+          1199.999,
+          880.001
+        ],
+        "endPx": [
+          1197.014,
+          832.094
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 10,
+        "pinIndex": 0,
+        "centerPx": [
+          1268.0,
+          823.001
+        ],
+        "endPx": [
+          1260.534,
+          775.585
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 11,
+        "pinIndex": 0,
+        "centerPx": [
+          605.001,
+          385.0
+        ],
+        "endPx": [
+          645.236,
+          411.176
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 12,
+        "pinIndex": 0,
+        "centerPx": [
+          1008.999,
+          1059.999
+        ],
+        "endPx": [
+          986.881,
+          1017.399
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 13,
+        "pinIndex": 0,
+        "centerPx": [
+          832.001,
+          1196.0
+        ],
+        "endPx": [
+          806.887,
+          1155.094
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 14,
+        "pinIndex": 0,
+        "centerPx": [
+          939.999,
+          1112.0
+        ],
+        "endPx": [
+          922.081,
+          1067.47
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 15,
+        "pinIndex": 0,
+        "centerPx": [
+          1079.0,
+          1007.0
+        ],
+        "endPx": [
+          1053.891,
+          966.091
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 16,
+        "pinIndex": 0,
+        "centerPx": [
+          288.001,
+          1249.0
+        ],
+        "endPx": [
+          328.767,
+          1223.66
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 17,
+        "pinIndex": 0,
+        "centerPx": [
+          334.0,
+          620.001
+        ],
+        "endPx": [
+          366.378,
+          655.437
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 18,
+        "pinIndex": 0,
+        "centerPx": [
+          451.0,
+          1249.0
+        ],
+        "endPx": [
+          465.873,
+          1203.362
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 19,
+        "pinIndex": 0,
+        "centerPx": [
+          760.001,
+          1250.0
+        ],
+        "endPx": [
+          722.74,
+          1219.741
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 20,
+        "pinIndex": 0,
+        "centerPx": [
+          1425.0,
+          661.0
+        ],
+        "endPx": [
+          1408.021,
+          616.103
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 21,
+        "pinIndex": 0,
+        "centerPx": [
+          1519.0,
+          566.001
+        ],
+        "endPx": [
+          1505.251,
+          520.012
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 22,
+        "pinIndex": 0,
+        "centerPx": [
+          1599.0,
+          487.0
+        ],
+        "endPx": [
+          1559.988,
+          459.035
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 23,
+        "pinIndex": 0,
+        "centerPx": [
+          1043.0,
+          71.0
+        ],
+        "endPx": [
+          1087.942,
+          87.859
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 24,
+        "pinIndex": 0,
+        "centerPx": [
+          1557.0,
+          48.0
+        ],
+        "endPx": [
+          1512.633,
+          66.319
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 25,
+        "pinIndex": 0,
+        "centerPx": [
+          1670.0,
+          108.0
+        ],
+        "endPx": [
+          1629.146,
+          133.198
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 26,
+        "pinIndex": 0,
+        "centerPx": [
+          1331.001,
+          759.0
+        ],
+        "endPx": [
+          1299.711,
+          722.6
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 27,
+        "pinIndex": 0,
+        "centerPx": [
+          51.0,
+          905.0
+        ],
+        "endPx": [
+          77.763,
+          944.846
+        ],
+        "radiusPx": 46
+      },
+      {
+        "number": 27,
+        "pinIndex": 1,
+        "centerPx": [
+          1803.999,
+          192.999
+        ],
+        "endPx": [
+          1784.299,
+          236.77
+        ],
+        "radiusPx": 46
+      }
+    ],
+    "method": "Only annotation discs removed; original leader pixels and all equipment pixels preserved. Live marker joins stop at the original leader."
+  }
+}
