@@ -56,11 +56,12 @@ with sync_playwright() as p:
    assert opener.evaluate('(e)=>e===document.activeElement')
    print('Full customer clip, decoded frames, duration, 1080p, sound controls, seek and close:',width,'OK',flush=True)
   page.goto(base+'/media?type=video')
-  card=page.locator(f'[data-media][data-video$="/{film["file"]}"]')
-  assert card.is_visible();card.locator('.media-open').click()
-  page.wait_for_function("document.querySelector('#viewer-video').currentTime>0.1")
-  page.locator('[data-close]').click()
-  assert page.locator('#viewer-video').evaluate('(v)=>v.paused&&!v.hasAttribute("src")')
+  page.wait_for_selector('[data-gallery-ready=true]')
+  card=page.locator(f'[data-gallery-archive-grid] [data-gallery-item="{film["id"]}"]')
+  assert card.is_visible();card.click();page.locator('[data-gallery-play]').click()
+  page.wait_for_function('document.querySelector("[data-gallery-viewer-video]").currentTime>0.1')
+  page.locator('[data-gallery-close]').click()
+  assert page.locator('[data-gallery-viewer-video]').evaluate('v=>v.paused&&!v.hasAttribute("src")')
  page.goto(base+'/catalog/equipment/vintovoy-press')
  assert page.locator('#video').count()==0
  assert not errors,errors;assert not failures,failures

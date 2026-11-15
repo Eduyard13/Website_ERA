@@ -138,8 +138,8 @@ test('Реестр содержит 12 уникальных узлов, лини
  assert.equal(nodes.filter(n=>n.status==='source-checked').length,12);
  for(const m of media){assert.ok(routes.includes(m.product.split('#')[0]));await stat('dist/assets/'+m.file);if(m.type==='video')await stat('dist/assets/'+m.poster);}
  const html=await readFile('dist/media/index.html','utf8');
- assert.ok(html.includes(`data-image="${basePath}/assets/photos/predvaritelnyy-izmelchitel/02.webp"`));
- assert.ok(html.includes(`data-product="${basePath}${product}"`));
+ assert.ok(html.includes('data-gallery-item="predvaritelnyy-izmelchitel-photo-02"'));
+ assert.ok(html.includes(`value="${basePath}${product}"`));
 });
 test('В каталоге четыре линии по порядку; открываются готовые Сепарация 01 и 02',async()=>{
  const {lines}=await import('../content/catalog.mjs');
@@ -259,8 +259,8 @@ test('Фото распределены по 11 узлам, а каталог и
   assert.ok((await stat('dist/assets/'+m.thumbnail)).size>0);
  }
  const gallery=await readFile('dist/media/index.html','utf8');
- assert.ok(gallery.includes('data-default-type="photo"'));
- assert.equal([...gallery.matchAll(/data-album data-product=/g)].length,11);
+ assert.ok(gallery.includes('data-default-type="all"'));
+ assert.equal([...gallery.matchAll(/data-gallery-album-card="/g)].length,14);
  assert.ok(gallery.includes(`src="${basePath}/assets/photos/predvaritelnyy-izmelchitel/02-thumb.webp"`));
 });
 test('Краткие параметры содержат мощность, а схемы имеют свои легенды',async()=>{
@@ -409,7 +409,7 @@ test('Видеоблок появляется у своего узла, а ро�
   const other=render(nodes.find(n=>n.slug==='vintovoy-press').path);
   assert.ok(!other.includes('href="#video"'));assert.ok(!other.includes('id="video"'));
   const gallery=render('/media');
-  assert.ok(gallery.includes(`data-video="${basePath}/assets/videos/__player-test.mp4"`));
+  assert.ok(!gallery.includes('__player-test.mp4')); // The showroom excludes missing files.
   assert.ok(!gallery.includes(`src="${basePath}/assets/videos/__player-test.mp4"`));
  }finally{media.pop();}
 });

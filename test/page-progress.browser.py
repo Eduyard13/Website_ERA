@@ -6,7 +6,7 @@ import os,json
 base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3029/Website_ERA').rstrip('/')
 out=Path(os.environ.get('ERA_SCREENSHOT_DIR','/tmp/era-scroll-030/browser'));out.mkdir(parents=True,exist_ok=True)
 errors=[];failed=[];inventory=[]
-expected={'/':8,'/technology/':15,'/automation/':9,'/economics/':9,'/catalog/':2,'/catalog/equipment/':2,'/catalog/lines/':2,'/media/':2,'/documents/':2,'/contacts/':2}
+expected={'/':8,'/technology/':15,'/automation/':9,'/economics/':9,'/catalog/':2,'/catalog/equipment/':2,'/catalog/lines/':2,'/media/':8,'/documents/':2,'/contacts/':2}
 with sync_playwright() as p:
  browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'])
  page=browser.new_page(viewport={'width':1440,'height':900},reduced_motion='reduce')
@@ -70,7 +70,7 @@ with sync_playwright() as p:
  assert page.locator('.page-progress-rail a').count()==2
  assert 'Каталог узлов' in page.locator('.page-progress-rail a').nth(1).get_attribute('aria-label')
  load('/documents/');assert 'Документы оборудования' in page.locator('.page-progress-rail a').nth(1).get_attribute('aria-label')
- load('/media/');assert 'Фото и видео' in page.locator('.page-progress-rail a').nth(1).get_attribute('aria-label')
+ load('/media/');assert 'Сырьё' in page.locator('.page-progress-rail a').nth(1).get_attribute('aria-label')
  # Modals, real media and the footer retain their original controls.
  load();page.locator('.resource-hero a[data-project-request]').click();assert not page.locator('.page-progress-rail').is_visible();page.keyboard.press('Escape')
  page.locator('[data-menu-toggle]').click();assert not page.locator('.page-progress-rail').is_visible();page.keyboard.press('Escape')

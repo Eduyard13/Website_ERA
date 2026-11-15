@@ -71,10 +71,10 @@ with TemporaryDirectory(prefix='era-player-test-') as temp:
     page.keyboard.press('Escape')
     print('Cinema block, deferred loading, play with audio, seek, close and photo switch:',width,'OK',flush=True)
    page.goto(base+'/media?type=video')
-   assert page.locator('[data-media]:visible').count()==1
-   page.locator('[data-media]:visible .media-open').click()
-   page.wait_for_function("document.querySelector('#viewer-video').currentTime>0.1")
-   page.keyboard.press('Escape')
+   page.wait_for_selector('[data-gallery-ready=true]')
+   # A private synthetic clip is not a repository asset and stays outside the public showroom.
+   assert page.locator('[data-gallery-item=predvaritelnyy-izmelchitel-film]').count()==0
+   assert page.locator('[data-gallery-archive-grid] .gs-archive-card').count()==2
    page.goto(base+'/catalog/equipment/vintovoy-press')
    assert page.locator('#video').count()==0
    assert page.locator('.equipment-anchor-nav a[href="#video"]').count()==0

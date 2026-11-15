@@ -1,0 +1,3795 @@
+{
+  "baseCommit": "c0157c6",
+  "version": "0.34.0",
+  "counts": {
+    "photo": 98,
+    "video": 4,
+    "scheme": 23,
+    "visualization": 25,
+    "frame": 2
+  },
+  "totalUniqueFiles": 152,
+  "albums": [
+    {
+      "id": "predvaritelnyy-izmelchitel",
+      "title": "Предварительный измельчитель",
+      "path": "/catalog/equipment/predvaritelnyy-izmelchitel",
+      "description": "Растюковка, разрыв и крупное измельчение материала перед сортировкой и дальнейшей переработкой.",
+      "collection": "nodes",
+      "ids": [
+        "predvaritelnyy-izmelchitel-photo-02",
+        "predvaritelnyy-izmelchitel-film",
+        "predvaritelnyy-izmelchitel-photo-01",
+        "predvaritelnyy-izmelchitel-photo-03",
+        "predvaritelnyy-izmelchitel-photo-04",
+        "predvaritelnyy-izmelchitel-photo-05",
+        "predvaritelnyy-izmelchitel-photo-06",
+        "predvaritelnyy-izmelchitel-photo-07",
+        "predvaritelnyy-izmelchitel-photo-08",
+        "home-preshredder",
+        "scheme",
+        "shredder"
+      ],
+      "coverId": "predvaritelnyy-izmelchitel-photo-02",
+      "counts": {
+        "photo": 9,
+        "video": 1,
+        "scheme": 1,
+        "visualization": 1,
+        "frame": 0
+      }
+    },
+    {
+      "id": "predvaritelnyy-raspushitel",
+      "title": "Предварительный распушитель",
+      "path": "/catalog/equipment/predvaritelnyy-raspushitel",
+      "description": "Раскрытие и разрыхление комков плёнки, гибкой упаковки и других подготовленных материалов перед сортировкой.",
+      "collection": "nodes",
+      "ids": [
+        "predvaritelnyy-raspushitel-photo-03",
+        "predvaritelnyy-raspushitel-photo-01",
+        "predvaritelnyy-raspushitel-photo-02",
+        "predvaritelnyy-raspushitel-photo-04",
+        "predvaritelnyy-raspushitel-photo-05",
+        "predvaritelnyy-raspushitel-hero",
+        "predvaritelnyy-raspushitel-scheme"
+      ],
+      "coverId": "predvaritelnyy-raspushitel-photo-03",
+      "counts": {
+        "photo": 5,
+        "video": 0,
+        "scheme": 1,
+        "visualization": 1,
+        "frame": 0
+      }
+    },
+    {
+      "id": "ballisticheskiy-separator",
+      "title": "Баллистический сепаратор",
+      "path": "/catalog/equipment/ballisticheskiy-separator",
+      "description": "Механическая сепарация подготовленного сырья на плоскую, объёмную и просеиваемую фракции.",
+      "collection": "nodes",
+      "ids": [
+        "ballisticheskiy-separator-photo-05",
+        "ballisticheskiy-separator-film",
+        "ballisticheskiy-separator-photo-01",
+        "ballisticheskiy-separator-photo-02",
+        "ballisticheskiy-separator-photo-03",
+        "ballisticheskiy-separator-photo-04",
+        "ballisticheskiy-separator-photo-06",
+        "home-separator",
+        "ballisticheskiy-separator-hero",
+        "ballisticheskiy-separator-scheme"
+      ],
+      "coverId": "ballisticheskiy-separator-photo-05",
+      "counts": {
+        "photo": 7,
+        "video": 1,
+        "scheme": 1,
+        "visualization": 1,
+        "frame": 0
+      }
+    },
+    {
+      "id": "rotornyy-raspushitel",
+      "title": "Роторный распушитель",
+      "path": "/catalog/equipment/rotornyy-raspushitel",
+      "description": "Раскрытие загрязнённой плёнки, дисковая сепарация и воздушный отбор в одном узле сухой очистки.",
+      "collection": "nodes",
+      "ids": [
+        "rotornyy-raspushitel-photo-04",
+        "rotornyy-raspushitel-photo-01",
+        "rotornyy-raspushitel-photo-02",
+        "rotornyy-raspushitel-photo-03",
+        "rotornyy-raspushitel-photo-05",
+        "rotornyy-raspushitel-photo-06",
+        "rotornyy-raspushitel-photo-07",
+        "rotornyy-raspushitel-photo-08",
+        "rotornyy-raspushitel-photo-09",
+        "rotornyy-raspushitel-photo-10",
+        "rotornyy-raspushitel-photo-11",
+        "rotornyy-raspushitel-hero",
+        "rotornyy-raspushitel-scheme",
+        "rotornyy-raspushitel-functional",
+        "home-fluffier"
+      ],
+      "coverId": "rotornyy-raspushitel-photo-04",
+      "counts": {
+        "photo": 11,
+        "video": 0,
+        "scheme": 2,
+        "visualization": 1,
+        "frame": 1
+      }
+    },
+    {
+      "id": "bunker-nakopitel",
+      "title": "Бункер-накопитель",
+      "path": "/catalog/equipment/bunker-nakopitel",
+      "description": "Накопление, уплотнение и управляемая порционная подача подготовленной плёнки и тканой ПП-упаковки.",
+      "collection": "nodes",
+      "ids": [
+        "bunker-nakopitel-photo-01",
+        "bunker-nakopitel-photo-02",
+        "bunker-nakopitel-photo-03",
+        "bunker-nakopitel-photo-04",
+        "bunker-nakopitel-hero",
+        "bunker-nakopitel-scheme"
+      ],
+      "coverId": "bunker-nakopitel-photo-01",
+      "counts": {
+        "photo": 4,
+        "video": 0,
+        "scheme": 1,
+        "visualization": 1,
+        "frame": 0
+      }
+    },
+    {
+      "id": "vertikalno-rotornyy-izmelchitel",
+      "title": "Вертикально-роторный измельчитель",
+      "path": "/catalog/equipment/vertikalno-rotornyy-izmelchitel",
+      "description": "Ножевое измельчение подготовленной плёнки и жёстких полимеров с промывкой в горячей воде.",
+      "collection": "nodes",
+      "ids": [
+        "vertikalno-rotornyy-izmelchitel-photo-08",
+        "vertikalno-rotornyy-izmelchitel-photo-01",
+        "vertikalno-rotornyy-izmelchitel-photo-02",
+        "vertikalno-rotornyy-izmelchitel-photo-03",
+        "vertikalno-rotornyy-izmelchitel-photo-04",
+        "vertikalno-rotornyy-izmelchitel-photo-05",
+        "vertikalno-rotornyy-izmelchitel-photo-06",
+        "vertikalno-rotornyy-izmelchitel-photo-07",
+        "vertikalno-rotornyy-izmelchitel-hero",
+        "vertikalno-rotornyy-izmelchitel-scheme",
+        "vertikalno-rotornyy-izmelchitel-section"
+      ],
+      "coverId": "vertikalno-rotornyy-izmelchitel-photo-08",
+      "counts": {
+        "photo": 8,
+        "video": 0,
+        "scheme": 2,
+        "visualization": 1,
+        "frame": 0
+      }
+    },
+    {
+      "id": "plenochnyy-flotator",
+      "title": "Плёночный флотатор",
+      "path": "/catalog/equipment/plenochnyy-flotator",
+      "description": "Мойка, флотация и предварительный отжим загрязнённых плёночных материалов с оборотной моющей средой.",
+      "collection": "nodes",
+      "ids": [
+        "plenochnyy-flotator-photo-01",
+        "plenochnyy-flotator-photo-02",
+        "plenochnyy-flotator-photo-03",
+        "plenochnyy-flotator-photo-04",
+        "plenochnyy-flotator-photo-05",
+        "plenochnyy-flotator-hero",
+        "plenochnyy-flotator-scheme",
+        "plenochnyy-flotator-circulation",
+        "plenochnyy-flotator-body"
+      ],
+      "coverId": "plenochnyy-flotator-photo-01",
+      "counts": {
+        "photo": 5,
+        "video": 0,
+        "scheme": 2,
+        "visualization": 2,
+        "frame": 0
+      }
+    },
+    {
+      "id": "rotornaya-tsentrifuga",
+      "title": "Роторная центрифуга",
+      "path": "/catalog/equipment/rotornaya-tsentrifuga",
+      "description": "Отмывка и механическое обезвоживание измельчённой плёнки и жёсткого пластика с отдельными исполнениями ротора.",
+      "collection": "nodes",
+      "ids": [
+        "rotornaya-tsentrifuga-photo-01",
+        "rotornaya-tsentrifuga-photo-02",
+        "rotornaya-tsentrifuga-photo-03",
+        "rotornaya-tsentrifuga-photo-04",
+        "rotornaya-tsentrifuga-hero",
+        "rotornaya-tsentrifuga-scheme",
+        "rotornaya-tsentrifuga-body",
+        "rotornaya-tsentrifuga-drum"
+      ],
+      "coverId": "rotornaya-tsentrifuga-photo-01",
+      "counts": {
+        "photo": 4,
+        "video": 0,
+        "scheme": 2,
+        "visualization": 2,
+        "frame": 0
+      }
+    },
+    {
+      "id": "vintovoy-press",
+      "title": "Винтовой отжимной пресс",
+      "path": "/catalog/equipment/vintovoy-press",
+      "description": "Механическое обезвоживание подготовленной полиэтиленовой плёнки после мойки перед досушкой и дальнейшей переработкой.",
+      "collection": "nodes",
+      "ids": [
+        "vintovoy-press-photo-04",
+        "vintovoy-press-photo-01",
+        "vintovoy-press-photo-02",
+        "vintovoy-press-photo-03",
+        "vintovoy-press-photo-05",
+        "vintovoy-press-photo-06",
+        "vintovoy-press-hero",
+        "vintovoy-press-scheme"
+      ],
+      "coverId": "vintovoy-press-photo-04",
+      "counts": {
+        "photo": 6,
+        "video": 0,
+        "scheme": 1,
+        "visualization": 1,
+        "frame": 0
+      }
+    },
+    {
+      "id": "kapsulyator",
+      "title": "Капсулятор",
+      "path": "/catalog/equipment/kapsulyator",
+      "description": "Капсулятор — отжимной пресс для механического обезвоживания вымытой полиэтиленовой плёнки перед следующей стадией.",
+      "collection": "nodes",
+      "ids": [
+        "kapsulyator-photo-05",
+        "kapsulyator-photo-01",
+        "kapsulyator-photo-02",
+        "kapsulyator-photo-03",
+        "kapsulyator-photo-04",
+        "kapsulyator-photo-06",
+        "kapsulyator-scheme"
+      ],
+      "coverId": "kapsulyator-photo-05",
+      "counts": {
+        "photo": 6,
+        "video": 0,
+        "scheme": 1,
+        "visualization": 0,
+        "frame": 0
+      }
+    },
+    {
+      "id": "ochistka-stokov",
+      "title": "Комплекс очистки стоков",
+      "path": "/catalog/equipment/ochistka-stokov",
+      "description": "Очистка рабочей моющей жидкости с раздельным удалением плавающих и тонущих примесей и возвратом среды в линию.",
+      "collection": "nodes",
+      "ids": [
+        "ochistka-stokov-hero",
+        "ochistka-stokov-scheme",
+        "ochistka-stokov-layout",
+        "ochistka-stokov-operation"
+      ],
+      "coverId": "ochistka-stokov-hero",
+      "counts": {
+        "photo": 0,
+        "video": 0,
+        "scheme": 2,
+        "visualization": 1,
+        "frame": 1
+      }
+    },
+    {
+      "id": "rama-napolnitel",
+      "title": "Рама-наполнитель для биг-бэгов",
+      "path": "/catalog/equipment/rama-napolnitel",
+      "description": "Механизированный пост подвеса, наполнения и отвода биг-бэгов в конце технологической линии.",
+      "collection": "nodes",
+      "ids": [
+        "rama-napolnitel-photo-02",
+        "rama-napolnitel-photo-01",
+        "rama-napolnitel-scheme"
+      ],
+      "coverId": "rama-napolnitel-photo-02",
+      "counts": {
+        "photo": 2,
+        "video": 0,
+        "scheme": 1,
+        "visualization": 0,
+        "frame": 0
+      }
+    },
+    {
+      "id": "separatsiya-01",
+      "title": "Сепарация 01",
+      "path": "/catalog/lines/separatsiya-01",
+      "description": "Мини-комплектация · сухая очистка",
+      "collection": "lines",
+      "ids": [
+        "separatsiya-01-mini-raw",
+        "separatsiya-01-mini-rotor",
+        "separatsiya-01-mini-before",
+        "separatsiya-01-mini-rejects",
+        "separatsiya-01-mini-after-close",
+        "separatsiya-01-mini-after",
+        "separatsiya-01-mini-overview",
+        "separatsiya-01-mini-flow",
+        "separatsiya-01-mini-layout",
+        "separatsiya-01-mini-shredder",
+        "separatsiya-01-mini-ballistic",
+        "separatsiya-01-mini-rotor-scheme",
+        "separatsiya-01-mini-placement",
+        "separatsiya-01-mini-cover"
+      ],
+      "coverId": "separatsiya-01-mini-cover",
+      "counts": {
+        "photo": 6,
+        "video": 0,
+        "scheme": 3,
+        "visualization": 5,
+        "frame": 0
+      }
+    },
+    {
+      "id": "separatsiya-02",
+      "title": "Сепарация 02",
+      "path": "/catalog/lines/separatsiya-02",
+      "description": "С сортировкой плёнок по видам",
+      "collection": "lines",
+      "ids": [
+        "separatsiya-02-rotor",
+        "separatsiya-02-raw-agricultural",
+        "separatsiya-02-raw-packaging",
+        "separatsiya-02-raw-bales",
+        "separatsiya-02-before",
+        "separatsiya-02-after",
+        "separatsiya-02-china-assembly",
+        "separatsiya-02-china-ballistic",
+        "separatsiya-02-china-air-separation",
+        "separatsiya-02-netherlands-line",
+        "separatsiya-02-netherlands-rotor",
+        "separatsiya-02-netherlands-feed",
+        "separatsiya-02-hero",
+        "separatsiya-02-flow",
+        "separatsiya-02-layout",
+        "separatsiya-02-feeding",
+        "separatsiya-02-sorting",
+        "separatsiya-02-bunkers",
+        "separatsiya-02-press",
+        "separatsiya-02-placement",
+        "separatsiya-02-catalog-cover"
+      ],
+      "coverId": "separatsiya-02-catalog-cover",
+      "counts": {
+        "photo": 12,
+        "video": 0,
+        "scheme": 3,
+        "visualization": 6,
+        "frame": 0
+      }
+    }
+  ],
+  "collections": [
+    {
+      "id": "raw",
+      "number": "01",
+      "label": "Сырьё",
+      "title": "Сырьё, которое требует особой технологии.",
+      "lead": "Полиэтиленовые плёнки и пакеты с минеральными, органическими и другими включениями.",
+      "action": "Смотреть сырьё",
+      "href": "/technology#raw-material",
+      "link": "Сырьё и технология",
+      "count": 6
+    },
+    {
+      "id": "nodes",
+      "number": "02",
+      "label": "Узлы",
+      "title": "Инженерные решения. Отдельно и в составе линии.",
+      "lead": "Раскрытие, разделение, очистка, мойка, обезвоживание — каждый агрегат решает конкретную технологическую задачу.",
+      "count": 100
+    },
+    {
+      "id": "lines",
+      "number": "03",
+      "label": "Линии",
+      "title": "От отдельных агрегатов — к согласованной линии.",
+      "lead": "Компоновки, производственные участки и взаимосвязь технологических узлов.",
+      "count": 41
+    },
+    {
+      "id": "work",
+      "number": "04",
+      "label": "В работе",
+      "title": "Реальные механизмы. Реальная работа.",
+      "lead": "Процесс подачи, разделения, очистки и транспортировки материала на производственных участках.",
+      "action": "Смотреть оборудование в работе",
+      "href": "/technology",
+      "link": "Как работает технология",
+      "count": 23
+    },
+    {
+      "id": "products",
+      "number": "05",
+      "label": "Продукция",
+      "title": "От очищенной плёнки — к вторичной ПЭ-грануле.",
+      "lead": "Результаты разных стадий переработки: подготовленная плёночная фракция и гранула после полного технологического цикла.",
+      "action": "Смотреть результаты",
+      "href": "/economics",
+      "link": "Экономика готового продукта",
+      "count": 13
+    },
+    {
+      "id": "videos",
+      "number": "06",
+      "label": "Видео",
+      "title": "Технология в движении.",
+      "lead": "Видеопрезентации оборудования, технологических этапов и результатов очистки.",
+      "count": 4
+    }
+  ],
+  "assets": [
+    {
+      "id": "ballisticheskiy-separator-photo-05",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/ballisticheskiy-separator/05.webp",
+      "thumbnail": "photos/ballisticheskiy-separator/05-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "ballisticheskiy-separator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/ballisticheskiy-separator"
+      ],
+      "durationSeconds": null,
+      "width": 1448,
+      "height": 1086,
+      "sha256": "6fb2d49fa1695eb9f49d8770c641484a2299750db6f52cddb851fa7aaff4f57f",
+      "bytes": 273596
+    },
+    {
+      "id": "bunker-nakopitel-photo-01",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/bunker-nakopitel/01.webp",
+      "thumbnail": "photos/bunker-nakopitel/01-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "bunker-nakopitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/bunker-nakopitel"
+      ],
+      "durationSeconds": null,
+      "width": 1295,
+      "height": 1214,
+      "sha256": "c55bb7c494fed41496aca167a75b9fa32c551801b69715ad08c65cfc4d71e50b",
+      "bytes": 156480
+    },
+    {
+      "id": "kapsulyator-photo-05",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/kapsulyator/05.webp",
+      "thumbnail": "photos/kapsulyator/05-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes",
+        "work"
+      ],
+      "albumIds": [
+        "kapsulyator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/kapsulyator"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "c3ee683dcf8f4f47f426f7e0d1d2e18ee081f3ea1204e0c7e76a5e153d494b69",
+      "bytes": 195816
+    },
+    {
+      "id": "plenochnyy-flotator-photo-01",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/plenochnyy-flotator/01.webp",
+      "thumbnail": "photos/plenochnyy-flotator/01-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "plenochnyy-flotator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/plenochnyy-flotator"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "777fbb5bc190f205bbd071661675719c92d145ec11f25b9d0e62c9cbc37f9b82",
+      "bytes": 218800
+    },
+    {
+      "id": "predvaritelnyy-izmelchitel-photo-02",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/predvaritelnyy-izmelchitel/02.webp",
+      "thumbnail": "photos/predvaritelnyy-izmelchitel/02-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "predvaritelnyy-izmelchitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/predvaritelnyy-izmelchitel"
+      ],
+      "durationSeconds": null,
+      "width": 1448,
+      "height": 1086,
+      "sha256": "90c07495f8bc15ba7eff842a7a3ac8a6867c24f762022191f75ab1cac4e4d8e2",
+      "bytes": 276786
+    },
+    {
+      "id": "predvaritelnyy-raspushitel-photo-03",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/predvaritelnyy-raspushitel/03.webp",
+      "thumbnail": "photos/predvaritelnyy-raspushitel/03-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "predvaritelnyy-raspushitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/predvaritelnyy-raspushitel"
+      ],
+      "durationSeconds": null,
+      "width": 1086,
+      "height": 1448,
+      "sha256": "2f04c21efba31ef2a501ceca21a8bc2d9e9676dde7975b465d763eef6f899e23",
+      "bytes": 220522
+    },
+    {
+      "id": "rama-napolnitel-photo-02",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/rama-napolnitel/02.webp",
+      "thumbnail": "photos/rama-napolnitel/02-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rama-napolnitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rama-napolnitel"
+      ],
+      "durationSeconds": null,
+      "width": 1086,
+      "height": 1448,
+      "sha256": "985147f840783bd648ed2d0fca7be066c4c4d1662069507ba0f0e36fac25d3ba",
+      "bytes": 224286
+    },
+    {
+      "id": "rotornaya-tsentrifuga-photo-01",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/rotornaya-tsentrifuga/01.webp",
+      "thumbnail": "photos/rotornaya-tsentrifuga/01-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rotornaya-tsentrifuga"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rotornaya-tsentrifuga"
+      ],
+      "durationSeconds": null,
+      "width": 1448,
+      "height": 1086,
+      "sha256": "333d234bb1cff677f0e8784e6598432e74b9e900dc4a2079423c3bdc502602f0",
+      "bytes": 233746
+    },
+    {
+      "id": "rotornyy-raspushitel-photo-04",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/rotornyy-raspushitel/04.webp",
+      "thumbnail": "photos/rotornyy-raspushitel/04-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rotornyy-raspushitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rotornyy-raspushitel"
+      ],
+      "durationSeconds": null,
+      "width": 1448,
+      "height": 1086,
+      "sha256": "3280b6fde84e00185d6c25311dccc9de3e190989d51c597be980639f9ffe5562",
+      "bytes": 216952
+    },
+    {
+      "id": "vertikalno-rotornyy-izmelchitel-photo-08",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/vertikalno-rotornyy-izmelchitel/08.webp",
+      "thumbnail": "photos/vertikalno-rotornyy-izmelchitel/08-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes",
+        "work"
+      ],
+      "albumIds": [
+        "vertikalno-rotornyy-izmelchitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/vertikalno-rotornyy-izmelchitel"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "d6e72ba86338f07294d28ba297fb3399f197be5b630d6fd2eebc18ac6c268638",
+      "bytes": 212252
+    },
+    {
+      "id": "vintovoy-press-photo-04",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/vintovoy-press/04.webp",
+      "thumbnail": "photos/vintovoy-press/04-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes",
+        "work"
+      ],
+      "albumIds": [
+        "vintovoy-press"
+      ],
+      "productPaths": [
+        "/catalog/equipment/vintovoy-press"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "3574136585f0b370920d4082ca68b20629f9cc3d17f297ff6ed2934432c6eeba",
+      "bytes": 163970
+    },
+    {
+      "id": "ballisticheskiy-separator-film",
+      "aliases": [],
+      "kind": "video",
+      "file": "videos/ballisticheskiy-separator.mp4",
+      "thumbnail": "videos/ballisticheskiy-separator-thumb.webp",
+      "poster": "videos/ballisticheskiy-separator-poster.webp",
+      "collections": [
+        "nodes",
+        "work",
+        "videos"
+      ],
+      "albumIds": [
+        "ballisticheskiy-separator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/ballisticheskiy-separator"
+      ],
+      "durationSeconds": 100.12,
+      "width": 1920,
+      "height": 1080,
+      "sha256": "7b82876d7904ae2ddbe514e6d66259098648f4f6f84cf204a6e7986731a92698",
+      "bytes": 48009962
+    },
+    {
+      "id": "home-cleaningDemo",
+      "aliases": [],
+      "kind": "video",
+      "file": "project-home/evidence/cleaning_demo.mp4",
+      "thumbnail": "project-home/evidence/cleaning_demo_poster.webp",
+      "poster": "project-home/evidence/cleaning_demo_poster.webp",
+      "collections": [
+        "videos",
+        "work"
+      ],
+      "albumIds": [],
+      "productPaths": [
+        "/"
+      ],
+      "durationSeconds": 100.12,
+      "width": 1920,
+      "height": 1080,
+      "sha256": "55b823e9c4a044ea3eded025778eb6c4be01d49feb763523823cd24cd46ef8d9",
+      "bytes": 67881545
+    },
+    {
+      "id": "home-promo",
+      "aliases": [],
+      "kind": "video",
+      "file": "project-home/video/era_promo_full.mp4",
+      "thumbnail": "project-home/video/era_promo_poster.webp",
+      "poster": "project-home/video/era_promo_poster.webp",
+      "collections": [
+        "videos"
+      ],
+      "albumIds": [],
+      "productPaths": [
+        "/"
+      ],
+      "durationSeconds": 296,
+      "width": 1920,
+      "height": 1080,
+      "sha256": "0463355d2142f02dce6e008f51256ab03bee0d0b712a7e9faa19a1b37551e851",
+      "bytes": 72614623
+    },
+    {
+      "id": "predvaritelnyy-izmelchitel-film",
+      "aliases": [],
+      "kind": "video",
+      "file": "videos/predvaritelnyy-izmelchitel.mp4",
+      "thumbnail": "videos/predvaritelnyy-izmelchitel-thumb.webp",
+      "poster": "videos/predvaritelnyy-izmelchitel-poster.webp",
+      "collections": [
+        "nodes",
+        "work",
+        "videos"
+      ],
+      "albumIds": [
+        "predvaritelnyy-izmelchitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/predvaritelnyy-izmelchitel"
+      ],
+      "durationSeconds": 104.52,
+      "width": 1920,
+      "height": 1080,
+      "sha256": "1537bb5763b2ed8910b3306cf29311f55a9fb92404a758afa2645112638a3833",
+      "bytes": 47412133
+    },
+    {
+      "id": "ballisticheskiy-separator-photo-01",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/ballisticheskiy-separator/01.webp",
+      "thumbnail": "photos/ballisticheskiy-separator/01-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "ballisticheskiy-separator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/ballisticheskiy-separator"
+      ],
+      "durationSeconds": null,
+      "width": 1448,
+      "height": 1086,
+      "sha256": "2f8dd0cd685be5a730090ede17d1391a02ac04af5cea1334e7913f2210d42c43",
+      "bytes": 316152
+    },
+    {
+      "id": "ballisticheskiy-separator-photo-02",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/ballisticheskiy-separator/02.webp",
+      "thumbnail": "photos/ballisticheskiy-separator/02-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "ballisticheskiy-separator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/ballisticheskiy-separator"
+      ],
+      "durationSeconds": null,
+      "width": 1448,
+      "height": 1086,
+      "sha256": "d24c61fe72eacc70ffafee4c4301d72227b1889c871f2c11b898b899986fe966",
+      "bytes": 245954
+    },
+    {
+      "id": "ballisticheskiy-separator-photo-03",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/ballisticheskiy-separator/03.webp",
+      "thumbnail": "photos/ballisticheskiy-separator/03-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "ballisticheskiy-separator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/ballisticheskiy-separator"
+      ],
+      "durationSeconds": null,
+      "width": 1086,
+      "height": 1448,
+      "sha256": "d0c94160ea57bf055c3214f085dde255b2da5f727ccc4f0a7b3f7080cb1444a7",
+      "bytes": 276958
+    },
+    {
+      "id": "ballisticheskiy-separator-photo-04",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/ballisticheskiy-separator/04.webp",
+      "thumbnail": "photos/ballisticheskiy-separator/04-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "ballisticheskiy-separator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/ballisticheskiy-separator"
+      ],
+      "durationSeconds": null,
+      "width": 1448,
+      "height": 1086,
+      "sha256": "8b4a780f0d2fd8b315d1d4244375ffacbb500ebceb4de6f12329f1b770436387",
+      "bytes": 329542
+    },
+    {
+      "id": "ballisticheskiy-separator-photo-06",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/ballisticheskiy-separator/06.webp",
+      "thumbnail": "photos/ballisticheskiy-separator/06-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "ballisticheskiy-separator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/ballisticheskiy-separator"
+      ],
+      "durationSeconds": null,
+      "width": 1086,
+      "height": 1448,
+      "sha256": "b43a5f8006b0d571ec48de1528a1d8b49c3056f89f70881c92668e0abef92a77",
+      "bytes": 329694
+    },
+    {
+      "id": "predvaritelnyy-izmelchitel-photo-01",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/predvaritelnyy-izmelchitel/01.webp",
+      "thumbnail": "photos/predvaritelnyy-izmelchitel/01-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "predvaritelnyy-izmelchitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/predvaritelnyy-izmelchitel"
+      ],
+      "durationSeconds": null,
+      "width": 1086,
+      "height": 1448,
+      "sha256": "71154eef01cfa6fe98d3c2047671695cdc3ddb43dd12fff4bbc4dad9d0ecd5da",
+      "bytes": 262432
+    },
+    {
+      "id": "predvaritelnyy-izmelchitel-photo-03",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/predvaritelnyy-izmelchitel/03.webp",
+      "thumbnail": "photos/predvaritelnyy-izmelchitel/03-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "predvaritelnyy-izmelchitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/predvaritelnyy-izmelchitel"
+      ],
+      "durationSeconds": null,
+      "width": 1448,
+      "height": 1086,
+      "sha256": "25e1c4514c827844f82dac35a4ca92105ee750de00e81d0711348369495f9fbb",
+      "bytes": 195292
+    },
+    {
+      "id": "predvaritelnyy-izmelchitel-photo-04",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/predvaritelnyy-izmelchitel/04.webp",
+      "thumbnail": "photos/predvaritelnyy-izmelchitel/04-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "predvaritelnyy-izmelchitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/predvaritelnyy-izmelchitel"
+      ],
+      "durationSeconds": null,
+      "width": 1448,
+      "height": 1086,
+      "sha256": "a89d9efceb32c3578c94031bd54e94ea4cdbd5591ee87639bbf56692b4348afd",
+      "bytes": 243812
+    },
+    {
+      "id": "predvaritelnyy-izmelchitel-photo-05",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/predvaritelnyy-izmelchitel/05.webp",
+      "thumbnail": "photos/predvaritelnyy-izmelchitel/05-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "predvaritelnyy-izmelchitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/predvaritelnyy-izmelchitel"
+      ],
+      "durationSeconds": null,
+      "width": 1448,
+      "height": 1086,
+      "sha256": "d61c31569dd655392632c18ce20f17b5b455b9d6b7299d31eead98546b50c24c",
+      "bytes": 228462
+    },
+    {
+      "id": "predvaritelnyy-izmelchitel-photo-06",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/predvaritelnyy-izmelchitel/06.webp",
+      "thumbnail": "photos/predvaritelnyy-izmelchitel/06-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "predvaritelnyy-izmelchitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/predvaritelnyy-izmelchitel"
+      ],
+      "durationSeconds": null,
+      "width": 1117,
+      "height": 1408,
+      "sha256": "2001a9877685c6c0c697f208af1deab17b77f67809a2a4c7cc197ccab8189f9c",
+      "bytes": 151128
+    },
+    {
+      "id": "predvaritelnyy-izmelchitel-photo-07",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/predvaritelnyy-izmelchitel/07.webp",
+      "thumbnail": "photos/predvaritelnyy-izmelchitel/07-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "predvaritelnyy-izmelchitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/predvaritelnyy-izmelchitel"
+      ],
+      "durationSeconds": null,
+      "width": 1086,
+      "height": 1448,
+      "sha256": "dda2454e7617b5b52c724ba3d44c6fd317d3d600946ff35d5e581a4f78426d10",
+      "bytes": 251576
+    },
+    {
+      "id": "predvaritelnyy-izmelchitel-photo-08",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/predvaritelnyy-izmelchitel/08.webp",
+      "thumbnail": "photos/predvaritelnyy-izmelchitel/08-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "predvaritelnyy-izmelchitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/predvaritelnyy-izmelchitel"
+      ],
+      "durationSeconds": null,
+      "width": 1086,
+      "height": 1448,
+      "sha256": "cb3e141cab82e56e081f8d7eae3f5968123606f5a34cdd9f02d300d8bc3bb27e",
+      "bytes": 237922
+    },
+    {
+      "id": "predvaritelnyy-raspushitel-photo-01",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/predvaritelnyy-raspushitel/01.webp",
+      "thumbnail": "photos/predvaritelnyy-raspushitel/01-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "predvaritelnyy-raspushitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/predvaritelnyy-raspushitel"
+      ],
+      "durationSeconds": null,
+      "width": 1086,
+      "height": 1448,
+      "sha256": "2b10e7424def96e1697750eb6d6436fd59fe469292248e73275fe1a20ba638b3",
+      "bytes": 216122
+    },
+    {
+      "id": "predvaritelnyy-raspushitel-photo-02",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/predvaritelnyy-raspushitel/02.webp",
+      "thumbnail": "photos/predvaritelnyy-raspushitel/02-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "predvaritelnyy-raspushitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/predvaritelnyy-raspushitel"
+      ],
+      "durationSeconds": null,
+      "width": 1086,
+      "height": 1448,
+      "sha256": "eaedc441035d388a330917ddc7056eed80da2c1b7a8f0f7cc167657b40a42f16",
+      "bytes": 216048
+    },
+    {
+      "id": "predvaritelnyy-raspushitel-photo-04",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/predvaritelnyy-raspushitel/04.webp",
+      "thumbnail": "photos/predvaritelnyy-raspushitel/04-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "predvaritelnyy-raspushitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/predvaritelnyy-raspushitel"
+      ],
+      "durationSeconds": null,
+      "width": 1086,
+      "height": 1448,
+      "sha256": "02630894bcd2f4cb4ca30dd3a72460edd39caad551bacd74d81bfee18861c7bb",
+      "bytes": 180636
+    },
+    {
+      "id": "predvaritelnyy-raspushitel-photo-05",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/predvaritelnyy-raspushitel/05.webp",
+      "thumbnail": "photos/predvaritelnyy-raspushitel/05-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "predvaritelnyy-raspushitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/predvaritelnyy-raspushitel"
+      ],
+      "durationSeconds": null,
+      "width": 1086,
+      "height": 1448,
+      "sha256": "913dec08bda13b038705a4f05b7c58df6287cdc1b70a89bbb957afddcead0a12",
+      "bytes": 215636
+    },
+    {
+      "id": "rotornyy-raspushitel-photo-01",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/rotornyy-raspushitel/01.webp",
+      "thumbnail": "photos/rotornyy-raspushitel/01-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rotornyy-raspushitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rotornyy-raspushitel"
+      ],
+      "durationSeconds": null,
+      "width": 1086,
+      "height": 1448,
+      "sha256": "7dd3c29e247e16e42f5f3fb9fe5c1114cbaae721d4f0a9fb950eb9ef5eadc9f0",
+      "bytes": 277104
+    },
+    {
+      "id": "rotornyy-raspushitel-photo-02",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/rotornyy-raspushitel/02.webp",
+      "thumbnail": "photos/rotornyy-raspushitel/02-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rotornyy-raspushitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rotornyy-raspushitel"
+      ],
+      "durationSeconds": null,
+      "width": 1086,
+      "height": 1448,
+      "sha256": "f0e24b003462305bdae5029a0637a8d46d8a0aefeb4c79790f8bafefee6be7d5",
+      "bytes": 312530
+    },
+    {
+      "id": "rotornyy-raspushitel-photo-03",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/rotornyy-raspushitel/03.webp",
+      "thumbnail": "photos/rotornyy-raspushitel/03-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rotornyy-raspushitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rotornyy-raspushitel"
+      ],
+      "durationSeconds": null,
+      "width": 1448,
+      "height": 1086,
+      "sha256": "2f8dd0cd685be5a730090ede17d1391a02ac04af5cea1334e7913f2210d42c43",
+      "bytes": 316152
+    },
+    {
+      "id": "rotornyy-raspushitel-photo-05",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/rotornyy-raspushitel/05.webp",
+      "thumbnail": "photos/rotornyy-raspushitel/05-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rotornyy-raspushitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rotornyy-raspushitel"
+      ],
+      "durationSeconds": null,
+      "width": 1086,
+      "height": 1448,
+      "sha256": "e5baca00f6d8c7f97e9e526c02221130062ad93f70eb85e2117283f099d815fd",
+      "bytes": 206002
+    },
+    {
+      "id": "rotornyy-raspushitel-photo-06",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/rotornyy-raspushitel/06.webp",
+      "thumbnail": "photos/rotornyy-raspushitel/06-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rotornyy-raspushitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rotornyy-raspushitel"
+      ],
+      "durationSeconds": null,
+      "width": 1086,
+      "height": 1448,
+      "sha256": "8f13486989485d7c289d8de331dfbde3c55253e2a173710ee18dfac8e5e25098",
+      "bytes": 292928
+    },
+    {
+      "id": "rotornyy-raspushitel-photo-07",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/rotornyy-raspushitel/07.webp",
+      "thumbnail": "photos/rotornyy-raspushitel/07-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rotornyy-raspushitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rotornyy-raspushitel"
+      ],
+      "durationSeconds": null,
+      "width": 1448,
+      "height": 1086,
+      "sha256": "ddda643ff3a4f648d56503219cd630df8fc2921ffa9924a9ca8479206d208d31",
+      "bytes": 197404
+    },
+    {
+      "id": "rotornyy-raspushitel-photo-08",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/rotornyy-raspushitel/08.webp",
+      "thumbnail": "photos/rotornyy-raspushitel/08-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rotornyy-raspushitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rotornyy-raspushitel"
+      ],
+      "durationSeconds": null,
+      "width": 1086,
+      "height": 1448,
+      "sha256": "13fe817ae01f3fbb5116e061efdaab0b9488e51cf0faeee94eca1f54955347f2",
+      "bytes": 284426
+    },
+    {
+      "id": "rotornyy-raspushitel-photo-09",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/rotornyy-raspushitel/09.webp",
+      "thumbnail": "photos/rotornyy-raspushitel/09-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rotornyy-raspushitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rotornyy-raspushitel"
+      ],
+      "durationSeconds": null,
+      "width": 1086,
+      "height": 1448,
+      "sha256": "b2a302c9996e1fd80d98da394614acff328149e8b2981bd83452d9866e83f579",
+      "bytes": 268408
+    },
+    {
+      "id": "rotornyy-raspushitel-photo-10",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/rotornyy-raspushitel/10.webp",
+      "thumbnail": "photos/rotornyy-raspushitel/10-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rotornyy-raspushitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rotornyy-raspushitel"
+      ],
+      "durationSeconds": null,
+      "width": 1086,
+      "height": 1448,
+      "sha256": "5d1b34fdee0f417a80e1ce08791352420b0e557fcec171e338995959e3b094ce",
+      "bytes": 260470
+    },
+    {
+      "id": "rotornyy-raspushitel-photo-11",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/rotornyy-raspushitel/11.webp",
+      "thumbnail": "photos/rotornyy-raspushitel/11-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rotornyy-raspushitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rotornyy-raspushitel"
+      ],
+      "durationSeconds": null,
+      "width": 1086,
+      "height": 1448,
+      "sha256": "1cbea14b80751ce322ab10a74d249a9ca96935c76abded11b3147399448e4a00",
+      "bytes": 236032
+    },
+    {
+      "id": "bunker-nakopitel-photo-02",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/bunker-nakopitel/02.webp",
+      "thumbnail": "photos/bunker-nakopitel/02-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "bunker-nakopitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/bunker-nakopitel"
+      ],
+      "durationSeconds": null,
+      "width": 1086,
+      "height": 1448,
+      "sha256": "5681205cb8b4f5a7359e6685f200c44d4945f8ac33af2fae8f49bd12ad57d067",
+      "bytes": 221892
+    },
+    {
+      "id": "bunker-nakopitel-photo-03",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/bunker-nakopitel/03.webp",
+      "thumbnail": "photos/bunker-nakopitel/03-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "bunker-nakopitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/bunker-nakopitel"
+      ],
+      "durationSeconds": null,
+      "width": 1086,
+      "height": 1448,
+      "sha256": "33518338c88f3e4500a88c75c6d6bb90c563cd2aaa2dae0edea630d1fa858841",
+      "bytes": 219914
+    },
+    {
+      "id": "bunker-nakopitel-photo-04",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/bunker-nakopitel/04.webp",
+      "thumbnail": "photos/bunker-nakopitel/04-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "bunker-nakopitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/bunker-nakopitel"
+      ],
+      "durationSeconds": null,
+      "width": 1086,
+      "height": 1448,
+      "sha256": "d741e52d0c2ada6c8a117681b6ac18f0611af75252e826b739ce7bf077dbf134",
+      "bytes": 218484
+    },
+    {
+      "id": "vertikalno-rotornyy-izmelchitel-photo-01",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/vertikalno-rotornyy-izmelchitel/01.webp",
+      "thumbnail": "photos/vertikalno-rotornyy-izmelchitel/01-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes",
+        "work"
+      ],
+      "albumIds": [
+        "vertikalno-rotornyy-izmelchitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/vertikalno-rotornyy-izmelchitel"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "5344603ebf3ab37fb8543382d93ff288e73dee59dccb0c5b6915d3ccb418e172",
+      "bytes": 231990
+    },
+    {
+      "id": "vertikalno-rotornyy-izmelchitel-photo-02",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/vertikalno-rotornyy-izmelchitel/02.webp",
+      "thumbnail": "photos/vertikalno-rotornyy-izmelchitel/02-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes",
+        "work"
+      ],
+      "albumIds": [
+        "vertikalno-rotornyy-izmelchitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/vertikalno-rotornyy-izmelchitel"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "7163bebe0296b2e9aa0e94aec1b3d6227f86800397feb4c236d92bb4adc7a520",
+      "bytes": 282218
+    },
+    {
+      "id": "vertikalno-rotornyy-izmelchitel-photo-03",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/vertikalno-rotornyy-izmelchitel/03.webp",
+      "thumbnail": "photos/vertikalno-rotornyy-izmelchitel/03-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes",
+        "work"
+      ],
+      "albumIds": [
+        "vertikalno-rotornyy-izmelchitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/vertikalno-rotornyy-izmelchitel"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "d18870d91f946cdd287ba72dadafbd39311a08d6af19799f827d61df3d745481",
+      "bytes": 204448
+    },
+    {
+      "id": "vertikalno-rotornyy-izmelchitel-photo-04",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/vertikalno-rotornyy-izmelchitel/04.webp",
+      "thumbnail": "photos/vertikalno-rotornyy-izmelchitel/04-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes",
+        "work"
+      ],
+      "albumIds": [
+        "vertikalno-rotornyy-izmelchitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/vertikalno-rotornyy-izmelchitel"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "108600915cecd6661a8cdcf0a70bd5d6ee78d6b9cbc48b8d7748727142c99fd0",
+      "bytes": 246618
+    },
+    {
+      "id": "vertikalno-rotornyy-izmelchitel-photo-05",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/vertikalno-rotornyy-izmelchitel/05.webp",
+      "thumbnail": "photos/vertikalno-rotornyy-izmelchitel/05-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes",
+        "products"
+      ],
+      "albumIds": [
+        "vertikalno-rotornyy-izmelchitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/vertikalno-rotornyy-izmelchitel"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "31e2c7139489b169b9c1e3010d783f63c5f857c4bd47eb5d1455e0abfd367ba6",
+      "bytes": 286920
+    },
+    {
+      "id": "vertikalno-rotornyy-izmelchitel-photo-06",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/vertikalno-rotornyy-izmelchitel/06.webp",
+      "thumbnail": "photos/vertikalno-rotornyy-izmelchitel/06-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes",
+        "products"
+      ],
+      "albumIds": [
+        "vertikalno-rotornyy-izmelchitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/vertikalno-rotornyy-izmelchitel"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "83b16e7189c36ee7a3c2505694c5e14c0fd1c04810f2035609fa45347ea96d6d",
+      "bytes": 355944
+    },
+    {
+      "id": "vertikalno-rotornyy-izmelchitel-photo-07",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/vertikalno-rotornyy-izmelchitel/07.webp",
+      "thumbnail": "photos/vertikalno-rotornyy-izmelchitel/07-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes",
+        "work"
+      ],
+      "albumIds": [
+        "vertikalno-rotornyy-izmelchitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/vertikalno-rotornyy-izmelchitel"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "e191859fb28fb1c0c099b93defe7d067cc673e9a34a9ce535f760c6fa9a4562e",
+      "bytes": 265218
+    },
+    {
+      "id": "plenochnyy-flotator-photo-02",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/plenochnyy-flotator/02.webp",
+      "thumbnail": "photos/plenochnyy-flotator/02-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "plenochnyy-flotator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/plenochnyy-flotator"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "85d2d1d66140ef44e15e8adde0f44a1105d8829a4004055827919f495d0d98c3",
+      "bytes": 272928
+    },
+    {
+      "id": "plenochnyy-flotator-photo-03",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/plenochnyy-flotator/03.webp",
+      "thumbnail": "photos/plenochnyy-flotator/03-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "plenochnyy-flotator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/plenochnyy-flotator"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "b104406a5b58e5a3a2a69aaddbd3b812039cf3d4b7f7a16b6c0e45589c5f13ac",
+      "bytes": 297584
+    },
+    {
+      "id": "plenochnyy-flotator-photo-04",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/plenochnyy-flotator/04.webp",
+      "thumbnail": "photos/plenochnyy-flotator/04-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "plenochnyy-flotator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/plenochnyy-flotator"
+      ],
+      "durationSeconds": null,
+      "width": 1670,
+      "height": 941,
+      "sha256": "10ced5aa21d87e0ae4f5e5656ef031741a19c1ac8e2b8a1191d80d5f4c18785d",
+      "bytes": 245828
+    },
+    {
+      "id": "plenochnyy-flotator-photo-05",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/plenochnyy-flotator/05.webp",
+      "thumbnail": "photos/plenochnyy-flotator/05-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "plenochnyy-flotator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/plenochnyy-flotator"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "82e0266b542a9bb7f780b572260d96d46bba4ec0a58880b96b4da7e1d5c25fe2",
+      "bytes": 330948
+    },
+    {
+      "id": "rotornaya-tsentrifuga-photo-02",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/rotornaya-tsentrifuga/02.webp",
+      "thumbnail": "photos/rotornaya-tsentrifuga/02-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rotornaya-tsentrifuga"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rotornaya-tsentrifuga"
+      ],
+      "durationSeconds": null,
+      "width": 1448,
+      "height": 1086,
+      "sha256": "7d1c915e61d77368c39ce86beb3f60ff89b96391bce578d7f77cc1f00bd3fe61",
+      "bytes": 234876
+    },
+    {
+      "id": "rotornaya-tsentrifuga-photo-03",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/rotornaya-tsentrifuga/03.webp",
+      "thumbnail": "photos/rotornaya-tsentrifuga/03-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rotornaya-tsentrifuga"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rotornaya-tsentrifuga"
+      ],
+      "durationSeconds": null,
+      "width": 1448,
+      "height": 1086,
+      "sha256": "d0ed41f4bf455b58b4d5773a912c5dd476fc5f5639a8972671810f1acc95a2c3",
+      "bytes": 236918
+    },
+    {
+      "id": "rotornaya-tsentrifuga-photo-04",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/rotornaya-tsentrifuga/04.webp",
+      "thumbnail": "photos/rotornaya-tsentrifuga/04-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rotornaya-tsentrifuga"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rotornaya-tsentrifuga"
+      ],
+      "durationSeconds": null,
+      "width": 1448,
+      "height": 1086,
+      "sha256": "3ed2b1f7ff18975843bb6b471cec8ee4a5de5e9bd71ce58e42d79f387fa807ec",
+      "bytes": 266338
+    },
+    {
+      "id": "vintovoy-press-photo-01",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/vintovoy-press/01.webp",
+      "thumbnail": "photos/vintovoy-press/01-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes",
+        "work"
+      ],
+      "albumIds": [
+        "vintovoy-press"
+      ],
+      "productPaths": [
+        "/catalog/equipment/vintovoy-press"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "129b36fb4185839af33f474a6aba6f8f39dc76e0440bdd61941895797fd6c632",
+      "bytes": 186334
+    },
+    {
+      "id": "vintovoy-press-photo-02",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/vintovoy-press/02.webp",
+      "thumbnail": "photos/vintovoy-press/02-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes",
+        "work"
+      ],
+      "albumIds": [
+        "vintovoy-press"
+      ],
+      "productPaths": [
+        "/catalog/equipment/vintovoy-press"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 940,
+      "sha256": "ba85615dc757537bad74fb46f7b8f30f3124691e1aaacf3502dfef019bdffcba",
+      "bytes": 166220
+    },
+    {
+      "id": "vintovoy-press-photo-03",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/vintovoy-press/03.webp",
+      "thumbnail": "photos/vintovoy-press/03-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes",
+        "work"
+      ],
+      "albumIds": [
+        "vintovoy-press"
+      ],
+      "productPaths": [
+        "/catalog/equipment/vintovoy-press"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "046aef9bdac504dab4f427a5768dd302c8f5403849e4cb8451db14f3de9bae9b",
+      "bytes": 125916
+    },
+    {
+      "id": "vintovoy-press-photo-05",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/vintovoy-press/05.webp",
+      "thumbnail": "photos/vintovoy-press/05-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes",
+        "work"
+      ],
+      "albumIds": [
+        "vintovoy-press"
+      ],
+      "productPaths": [
+        "/catalog/equipment/vintovoy-press"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "3157bf1b1faf545e01b079eeecde5f33a28f97c9e00c8bec0a7c882b0f477ecf",
+      "bytes": 145052
+    },
+    {
+      "id": "vintovoy-press-photo-06",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/vintovoy-press/06.webp",
+      "thumbnail": "photos/vintovoy-press/06-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes",
+        "work"
+      ],
+      "albumIds": [
+        "vintovoy-press"
+      ],
+      "productPaths": [
+        "/catalog/equipment/vintovoy-press"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "413ee730c253fc516ca705afdd2ff5896c7ec4dcaad727778f83444693355abc",
+      "bytes": 153358
+    },
+    {
+      "id": "kapsulyator-photo-01",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/kapsulyator/01.webp",
+      "thumbnail": "photos/kapsulyator/01-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes",
+        "work"
+      ],
+      "albumIds": [
+        "kapsulyator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/kapsulyator"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "8d257f7bcc08f0824bf69cda52f1a5b7f539e1a041bb94b2c9c6b3cde1a7cca8",
+      "bytes": 168824
+    },
+    {
+      "id": "kapsulyator-photo-02",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/kapsulyator/02.webp",
+      "thumbnail": "photos/kapsulyator/02-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes",
+        "work"
+      ],
+      "albumIds": [
+        "kapsulyator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/kapsulyator"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "11833ec0fbec5c7df92f34190e10b2a34bb326a6f70e5b5546d0b060477dc525",
+      "bytes": 214940
+    },
+    {
+      "id": "kapsulyator-photo-03",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/kapsulyator/03.webp",
+      "thumbnail": "photos/kapsulyator/03-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes",
+        "work"
+      ],
+      "albumIds": [
+        "kapsulyator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/kapsulyator"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "627f9c886a14c0b60b0249fdda8fdf6fe3e3175fe5342c2b905d25b386fcd96e",
+      "bytes": 149826
+    },
+    {
+      "id": "kapsulyator-photo-04",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/kapsulyator/04.webp",
+      "thumbnail": "photos/kapsulyator/04-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes",
+        "products"
+      ],
+      "albumIds": [
+        "kapsulyator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/kapsulyator"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "811450ac179b5d927dc9049007d4274278c045b5f956971a56e528dd1a65413c",
+      "bytes": 287412
+    },
+    {
+      "id": "kapsulyator-photo-06",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/kapsulyator/06.webp",
+      "thumbnail": "photos/kapsulyator/06-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes",
+        "products"
+      ],
+      "albumIds": [
+        "kapsulyator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/kapsulyator"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "8ef9816b8d8df0e9c8b92b746b6b033c51112a6c4596344e92e309cfd737f21f",
+      "bytes": 279218
+    },
+    {
+      "id": "rama-napolnitel-photo-01",
+      "aliases": [],
+      "kind": "photo",
+      "file": "photos/rama-napolnitel/01.webp",
+      "thumbnail": "photos/rama-napolnitel/01-thumb.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rama-napolnitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rama-napolnitel"
+      ],
+      "durationSeconds": null,
+      "width": 1087,
+      "height": 1447,
+      "sha256": "081e79714029ec2de12aa09a4304c6d5500aabf2d59bad7598381458acf22302",
+      "bytes": 306434
+    },
+    {
+      "id": "project-complex",
+      "aliases": [],
+      "kind": "photo",
+      "file": "presentation/complex.webp",
+      "thumbnail": "presentation/complex.webp",
+      "poster": null,
+      "collections": [
+        "lines",
+        "work"
+      ],
+      "albumIds": [],
+      "productPaths": [
+        "/"
+      ],
+      "durationSeconds": null,
+      "width": 1280,
+      "height": 720,
+      "sha256": "b3dc11c3ca156d3f817afe40970ee6aeb0ef08758094368e49c128dea43bc898",
+      "bytes": 103158
+    },
+    {
+      "id": "project-raw-film",
+      "aliases": [],
+      "kind": "photo",
+      "file": "presentation/raw-film.webp",
+      "thumbnail": "presentation/raw-film.webp",
+      "poster": null,
+      "collections": [
+        "raw"
+      ],
+      "albumIds": [],
+      "productPaths": [
+        "/technology"
+      ],
+      "durationSeconds": null,
+      "width": 880,
+      "height": 1157,
+      "sha256": "9304eb4ef5f647123a8cb74268b9ef68f67726f615c5bdd2366b0a3c4b6a0545",
+      "bytes": 164756
+    },
+    {
+      "id": "project-clean-film",
+      "aliases": [],
+      "kind": "photo",
+      "file": "presentation/clean-film.webp",
+      "thumbnail": "presentation/clean-film.webp",
+      "poster": null,
+      "collections": [
+        "products"
+      ],
+      "albumIds": [],
+      "productPaths": [
+        "/technology#granulation"
+      ],
+      "durationSeconds": null,
+      "width": 388,
+      "height": 302,
+      "sha256": "991a438fa3baed709140ded359b28406067b10156c7add0f3154153657e6e964",
+      "bytes": 44912
+    },
+    {
+      "id": "project-compacted-material",
+      "aliases": [],
+      "kind": "photo",
+      "file": "presentation/compacted-material.webp",
+      "thumbnail": "presentation/compacted-material.webp",
+      "poster": null,
+      "collections": [
+        "products"
+      ],
+      "albumIds": [],
+      "productPaths": [
+        "/technology#granulation"
+      ],
+      "durationSeconds": null,
+      "width": 388,
+      "height": 304,
+      "sha256": "d9007064dae2f6a1abb96c0ad0ae5ae7d2659c6e13c73a4f492777df7862106c",
+      "bytes": 36916
+    },
+    {
+      "id": "project-granules",
+      "aliases": [],
+      "kind": "photo",
+      "file": "presentation/granules.webp",
+      "thumbnail": "presentation/granules.webp",
+      "poster": null,
+      "collections": [
+        "products"
+      ],
+      "albumIds": [],
+      "productPaths": [
+        "/technology#granulation"
+      ],
+      "durationSeconds": null,
+      "width": 390,
+      "height": 304,
+      "sha256": "11909e3cb08649c5d96f62704731dd2b561ff2c2b15d5507caa3ee999c32f30a",
+      "bytes": 31368
+    },
+    {
+      "id": "project-production",
+      "aliases": [],
+      "kind": "photo",
+      "file": "presentation/manufacture-wide.webp",
+      "thumbnail": "presentation/manufacture-wide.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [],
+      "productPaths": [
+        "/"
+      ],
+      "durationSeconds": null,
+      "width": 1440,
+      "height": 482,
+      "sha256": "27e1b102ce232d987e6d6d6ee705f37f17aa9367e484a2c29c77bb69708ef481",
+      "bytes": 164340
+    },
+    {
+      "id": "home-evidenceInput",
+      "aliases": [],
+      "kind": "photo",
+      "file": "project-home/evidence/input_sample.webp",
+      "thumbnail": "project-home/evidence/input_sample-480.webp",
+      "poster": null,
+      "collections": [
+        "raw"
+      ],
+      "albumIds": [],
+      "productPaths": [
+        "/"
+      ],
+      "durationSeconds": null,
+      "width": 960,
+      "height": 540,
+      "sha256": "d939db02697410ca4629ffa621daa733d6646ffeef0bc84d5ecebfa1935888e8",
+      "bytes": 131838
+    },
+    {
+      "id": "home-evidenceProcess",
+      "aliases": [],
+      "kind": "photo",
+      "file": "project-home/evidence/process_running.webp",
+      "thumbnail": "project-home/evidence/process_running-480.webp",
+      "poster": null,
+      "collections": [
+        "work"
+      ],
+      "albumIds": [],
+      "productPaths": [
+        "/"
+      ],
+      "durationSeconds": null,
+      "width": 1920,
+      "height": 1080,
+      "sha256": "30c0f8cd8e10ec8122fff0ca0a2c4acf6d2d9c6c637567cdbe565085c0a5cb5e",
+      "bytes": 96244
+    },
+    {
+      "id": "home-evidenceOutput",
+      "aliases": [],
+      "kind": "photo",
+      "file": "project-home/evidence/output_sample.webp",
+      "thumbnail": "project-home/evidence/output_sample-480.webp",
+      "poster": null,
+      "collections": [
+        "products"
+      ],
+      "albumIds": [],
+      "productPaths": [
+        "/"
+      ],
+      "durationSeconds": null,
+      "width": 960,
+      "height": 540,
+      "sha256": "bbb7480e021e26cd05edec1f21c32d6acbd71c595165989cf524ddb2cf97a9c9",
+      "bytes": 57786
+    },
+    {
+      "id": "home-filmProduct",
+      "aliases": [],
+      "kind": "photo",
+      "file": "project-home/products/clean_film_bale.webp",
+      "thumbnail": "project-home/products/clean_film_bale-480.webp",
+      "poster": null,
+      "collections": [
+        "products"
+      ],
+      "albumIds": [],
+      "productPaths": [
+        "/"
+      ],
+      "durationSeconds": null,
+      "width": 960,
+      "height": 1704,
+      "sha256": "7e462438097295feaecc857d10a62ac513c1995303a0ba3abae3e1e7656d85c3",
+      "bytes": 104256
+    },
+    {
+      "id": "home-cleanFilm",
+      "aliases": [],
+      "kind": "photo",
+      "file": "project-home/process/clean_film.webp",
+      "thumbnail": "project-home/process/clean_film.webp",
+      "poster": null,
+      "collections": [
+        "products"
+      ],
+      "albumIds": [],
+      "productPaths": [
+        "/"
+      ],
+      "durationSeconds": null,
+      "width": 320,
+      "height": 568,
+      "sha256": "8f9514a7204fb3c5ea083819cf0c1165603998cccc8b0f2da4196bca9310acf3",
+      "bytes": 27434
+    },
+    {
+      "id": "home-lineWide",
+      "aliases": [],
+      "kind": "photo",
+      "file": "project-home/system/line_wide.webp",
+      "thumbnail": "project-home/system/line_wide-480.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [],
+      "productPaths": [
+        "/"
+      ],
+      "durationSeconds": null,
+      "width": 1672,
+      "height": 941,
+      "sha256": "d3e0a69edec39df12a4e342d2d38d63510613b8f392da86b88453ad75f1b82d1",
+      "bytes": 265782
+    },
+    {
+      "id": "home-contactDetail",
+      "aliases": [],
+      "kind": "photo",
+      "file": "project-home/contact/machine_detail.webp",
+      "thumbnail": "project-home/contact/machine_detail-480.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [],
+      "productPaths": [
+        "/"
+      ],
+      "durationSeconds": null,
+      "width": 1440,
+      "height": 1080,
+      "sha256": "ac7e1fd288eed045b65c0de42562a5bdf8a7d9b0153b1ebe6ce90b4e737bc41e",
+      "bytes": 350048
+    },
+    {
+      "id": "home-preshredder",
+      "aliases": [],
+      "kind": "photo",
+      "file": "project-home/process/preshredder.webp",
+      "thumbnail": "project-home/process/preshredder-480.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "predvaritelnyy-izmelchitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/predvaritelnyy-izmelchitel"
+      ],
+      "durationSeconds": null,
+      "width": 1280,
+      "height": 720,
+      "sha256": "514d6e4194d7783093e32ea749099198803fa997c489908c9a0dc497b2f1f217",
+      "bytes": 72476
+    },
+    {
+      "id": "home-separator",
+      "aliases": [],
+      "kind": "photo",
+      "file": "project-home/process/separator.webp",
+      "thumbnail": "project-home/process/separator-480.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "ballisticheskiy-separator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/ballisticheskiy-separator"
+      ],
+      "durationSeconds": null,
+      "width": 1280,
+      "height": 720,
+      "sha256": "a2afd9b794de4cb4d2cfdbb411fe667431674265176c4272f46b5c6fc3be6596",
+      "bytes": 112292
+    },
+    {
+      "id": "separatsiya-01-mini-raw",
+      "aliases": [],
+      "kind": "photo",
+      "file": "lines/separatsiya-01-mini/raw.webp",
+      "thumbnail": "lines/separatsiya-01-mini/raw-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines",
+        "raw"
+      ],
+      "albumIds": [
+        "separatsiya-01"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-01"
+      ],
+      "durationSeconds": null,
+      "width": 2051,
+      "height": 872,
+      "sha256": "e5b83bc056efd35552de6ce23d15deb7de16e0975be05360f38b5c773f753314",
+      "bytes": 454090
+    },
+    {
+      "id": "separatsiya-01-mini-rotor",
+      "aliases": [],
+      "kind": "photo",
+      "file": "lines/separatsiya-01-mini/rotor.webp",
+      "thumbnail": "lines/separatsiya-01-mini/rotor-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-01"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-01"
+      ],
+      "durationSeconds": null,
+      "width": 1050,
+      "height": 600,
+      "sha256": "df447842c874761efb4585a42da017f498000f2839eda027f8eb4bc45140254d",
+      "bytes": 117338
+    },
+    {
+      "id": "separatsiya-01-mini-before",
+      "aliases": [],
+      "kind": "photo",
+      "file": "lines/separatsiya-01-mini/before.webp",
+      "thumbnail": "lines/separatsiya-01-mini/before-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-01"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-01"
+      ],
+      "durationSeconds": null,
+      "width": 1008,
+      "height": 756,
+      "sha256": "f711571c3a16cf3cca1a7247a38f83de553604d594eae6f063c8992a9d815b2a",
+      "bytes": 244806
+    },
+    {
+      "id": "separatsiya-01-mini-rejects",
+      "aliases": [],
+      "kind": "photo",
+      "file": "lines/separatsiya-01-mini/rejects.webp",
+      "thumbnail": "lines/separatsiya-01-mini/rejects-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-01"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-01"
+      ],
+      "durationSeconds": null,
+      "width": 1008,
+      "height": 756,
+      "sha256": "93e8a1364d1fe3e2175ea0c0cf62e06d2099d5ff30d4c6a885b2b52e4a602431",
+      "bytes": 291730
+    },
+    {
+      "id": "separatsiya-01-mini-after-close",
+      "aliases": [],
+      "kind": "photo",
+      "file": "lines/separatsiya-01-mini/after-close.webp",
+      "thumbnail": "lines/separatsiya-01-mini/after-close-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines",
+        "products"
+      ],
+      "albumIds": [
+        "separatsiya-01"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-01"
+      ],
+      "durationSeconds": null,
+      "width": 1009,
+      "height": 1346,
+      "sha256": "c4d420ab76f51f9f640b796ac84fafe51620f346fb8fd8213bc009151ad4e602",
+      "bytes": 170026
+    },
+    {
+      "id": "separatsiya-01-mini-after",
+      "aliases": [],
+      "kind": "photo",
+      "file": "lines/separatsiya-01-mini/after.webp",
+      "thumbnail": "lines/separatsiya-01-mini/after-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines",
+        "products"
+      ],
+      "albumIds": [
+        "separatsiya-01"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-01"
+      ],
+      "durationSeconds": null,
+      "width": 1008,
+      "height": 756,
+      "sha256": "112a58b097e702347e2b30b128fadb3f1adfbcf07b2e9390f273959386a93979",
+      "bytes": 225344
+    },
+    {
+      "id": "separatsiya-02-rotor",
+      "aliases": [],
+      "kind": "photo",
+      "file": "lines/separatsiya-01/rotor.webp",
+      "thumbnail": "lines/separatsiya-01/rotor-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-02"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-02"
+      ],
+      "durationSeconds": null,
+      "width": 1534,
+      "height": 876,
+      "sha256": "f2d085f98ed0d693212a88ff6758f52626e07fc360216f6f1638554bdfe61e78",
+      "bytes": 250716
+    },
+    {
+      "id": "separatsiya-02-raw-agricultural",
+      "aliases": [],
+      "kind": "photo",
+      "file": "lines/separatsiya-01/raw-agricultural.webp",
+      "thumbnail": "lines/separatsiya-01/raw-agricultural-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines",
+        "raw"
+      ],
+      "albumIds": [
+        "separatsiya-02"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-02"
+      ],
+      "durationSeconds": null,
+      "width": 1774,
+      "height": 887,
+      "sha256": "bd72c4730063cd7c0f027b245a23ca646257b4b1a05b4adeef6741085797d12e",
+      "bytes": 669250
+    },
+    {
+      "id": "separatsiya-02-raw-packaging",
+      "aliases": [],
+      "kind": "photo",
+      "file": "lines/separatsiya-01/raw-packaging.webp",
+      "thumbnail": "lines/separatsiya-01/raw-packaging-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines",
+        "raw"
+      ],
+      "albumIds": [
+        "separatsiya-02"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-02"
+      ],
+      "durationSeconds": null,
+      "width": 1009,
+      "height": 1794,
+      "sha256": "7ba41fc079327567859ba387dffbb9ad64291d9dc5b2d360c2a5ecc099e20dc3",
+      "bytes": 552582
+    },
+    {
+      "id": "separatsiya-02-raw-bales",
+      "aliases": [],
+      "kind": "photo",
+      "file": "lines/separatsiya-01/raw-bales.webp",
+      "thumbnail": "lines/separatsiya-01/raw-bales-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines",
+        "raw"
+      ],
+      "albumIds": [
+        "separatsiya-02"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-02"
+      ],
+      "durationSeconds": null,
+      "width": 1009,
+      "height": 1794,
+      "sha256": "ff4fb6873d54036916a63785d55126beb250b0946191d394e31fefe37a420721",
+      "bytes": 386238
+    },
+    {
+      "id": "separatsiya-02-before",
+      "aliases": [],
+      "kind": "photo",
+      "file": "lines/separatsiya-01/before.webp",
+      "thumbnail": "lines/separatsiya-01/before-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-02"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-02"
+      ],
+      "durationSeconds": null,
+      "width": 466,
+      "height": 262,
+      "sha256": "52e3ef765ca2a728a267cbeabf6e74e8e24f8a1ea8448a6e46a12772c1fbd69f",
+      "bytes": 49978
+    },
+    {
+      "id": "separatsiya-02-after",
+      "aliases": [],
+      "kind": "photo",
+      "file": "lines/separatsiya-01/after.webp",
+      "thumbnail": "lines/separatsiya-01/after-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines",
+        "products"
+      ],
+      "albumIds": [
+        "separatsiya-02"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-02"
+      ],
+      "durationSeconds": null,
+      "width": 466,
+      "height": 262,
+      "sha256": "d5454de2810e68acbd23ef228f8e14fbeeda1b1b4bf6c0c428df6ad576f418d5",
+      "bytes": 25042
+    },
+    {
+      "id": "separatsiya-02-china-assembly",
+      "aliases": [],
+      "kind": "photo",
+      "file": "lines/separatsiya-01/china-assembly.webp",
+      "thumbnail": "lines/separatsiya-01/china-assembly-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-02"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-02"
+      ],
+      "durationSeconds": null,
+      "width": 1021,
+      "height": 578,
+      "sha256": "ca0062ebac6e533d42b5e10c7e2368d517611c61492a440443096798a2e27029",
+      "bytes": 93434
+    },
+    {
+      "id": "separatsiya-02-china-ballistic",
+      "aliases": [],
+      "kind": "photo",
+      "file": "lines/separatsiya-01/china-ballistic.webp",
+      "thumbnail": "lines/separatsiya-01/china-ballistic-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-02"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-02"
+      ],
+      "durationSeconds": null,
+      "width": 2000,
+      "height": 1127,
+      "sha256": "565e6ccfcac446bec7c83c54405528e02f9538be6cce9ebbdeaa66d20028b87e",
+      "bytes": 235730
+    },
+    {
+      "id": "separatsiya-02-china-air-separation",
+      "aliases": [],
+      "kind": "photo",
+      "file": "lines/separatsiya-01/china-air-separation.webp",
+      "thumbnail": "lines/separatsiya-01/china-air-separation-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-02"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-02"
+      ],
+      "durationSeconds": null,
+      "width": 1072,
+      "height": 602,
+      "sha256": "703b6e368df5a9fd3bc4e2541b544bb0d52d67039fde44dc144e5f13af517ab6",
+      "bytes": 57496
+    },
+    {
+      "id": "separatsiya-02-netherlands-line",
+      "aliases": [],
+      "kind": "photo",
+      "file": "lines/separatsiya-01/netherlands-line.webp",
+      "thumbnail": "lines/separatsiya-01/netherlands-line-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-02"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-02"
+      ],
+      "durationSeconds": null,
+      "width": 2000,
+      "height": 771,
+      "sha256": "76b92aff22db41a7243826a55f0d76494e2abf63cb01178963d00e70634e74e8",
+      "bytes": 209040
+    },
+    {
+      "id": "separatsiya-02-netherlands-rotor",
+      "aliases": [],
+      "kind": "photo",
+      "file": "lines/separatsiya-01/netherlands-rotor.webp",
+      "thumbnail": "lines/separatsiya-01/netherlands-rotor-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-02"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-02"
+      ],
+      "durationSeconds": null,
+      "width": 1147,
+      "height": 684,
+      "sha256": "97568f179110ceb6c5eaa4a8eb2c896a44326de0adb487e8b0419aaacaa98727",
+      "bytes": 98476
+    },
+    {
+      "id": "separatsiya-02-netherlands-feed",
+      "aliases": [],
+      "kind": "photo",
+      "file": "lines/separatsiya-01/netherlands-feed.webp",
+      "thumbnail": "lines/separatsiya-01/netherlands-feed-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-02"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-02"
+      ],
+      "durationSeconds": null,
+      "width": 1256,
+      "height": 684,
+      "sha256": "7e4ba518986c4f8eedac693b9258206dca46fa9f517ddc79091b1fac7d92a99f",
+      "bytes": 92128
+    },
+    {
+      "id": "scheme",
+      "aliases": [],
+      "kind": "scheme",
+      "file": "scheme.webp",
+      "thumbnail": "scheme.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "predvaritelnyy-izmelchitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/predvaritelnyy-izmelchitel"
+      ],
+      "durationSeconds": null,
+      "width": 1379,
+      "height": 839,
+      "sha256": "4470b3a2e7e4beb078ccfb14939e0ec6c145bdfbd9eb7bdcbb7f2d9e4bec4aee",
+      "bytes": 90336
+    },
+    {
+      "id": "shredder",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "shredder.webp",
+      "thumbnail": "shredder.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "predvaritelnyy-izmelchitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/predvaritelnyy-izmelchitel"
+      ],
+      "durationSeconds": null,
+      "width": 1046,
+      "height": 1286,
+      "sha256": "b482a20db81c2575aaf33ebc3d9562c110c25bbce247f354e2c86b59f96fabc4",
+      "bytes": 130336
+    },
+    {
+      "id": "project-dry-separation",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "presentation/dry-separation.webp",
+      "thumbnail": "presentation/dry-separation.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [],
+      "productPaths": [
+        "/technology#dry-separation"
+      ],
+      "durationSeconds": null,
+      "width": 1400,
+      "height": 991,
+      "sha256": "ba9e35b1ca484bfd26028a8612f7091b86b83424e6d82ed150748e63fea70a38",
+      "bytes": 206438
+    },
+    {
+      "id": "project-hot-washing",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "presentation/hot-washing.webp",
+      "thumbnail": "presentation/hot-washing.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [],
+      "productPaths": [
+        "/technology#hot-washing"
+      ],
+      "durationSeconds": null,
+      "width": 1400,
+      "height": 991,
+      "sha256": "21c27aa34ad5f5961aeeb26afed25cec2134de86b6f509c1182cf3a25b680e2a",
+      "bytes": 113402
+    },
+    {
+      "id": "ballisticheskiy-separator-hero",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "equipment/ballisticheskiy-separator/hero.webp",
+      "thumbnail": "equipment/ballisticheskiy-separator/hero.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "ballisticheskiy-separator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/ballisticheskiy-separator"
+      ],
+      "durationSeconds": null,
+      "width": 1309,
+      "height": 1034,
+      "sha256": "8b69c93e7265ca0bb80ac86800e76784028eaa15822b1eca78e61ba410d8700c",
+      "bytes": 114328
+    },
+    {
+      "id": "ballisticheskiy-separator-scheme",
+      "aliases": [],
+      "kind": "scheme",
+      "file": "equipment/ballisticheskiy-separator/scheme.webp",
+      "thumbnail": "equipment/ballisticheskiy-separator/scheme.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "ballisticheskiy-separator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/ballisticheskiy-separator"
+      ],
+      "durationSeconds": null,
+      "width": 1600,
+      "height": 1243,
+      "sha256": "daaa24a5259912cc4c06378580479eb442292c76fd530959e0253d8829a7469b",
+      "bytes": 139292
+    },
+    {
+      "id": "vintovoy-press-hero",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "equipment/vintovoy-press/hero.webp",
+      "thumbnail": "equipment/vintovoy-press/hero.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "vintovoy-press"
+      ],
+      "productPaths": [
+        "/catalog/equipment/vintovoy-press"
+      ],
+      "durationSeconds": null,
+      "width": 938,
+      "height": 572,
+      "sha256": "821a9ebd1ff200ea66395ae6e0e410e2a7a3b95ca59c4590a59e967200e6164a",
+      "bytes": 109844
+    },
+    {
+      "id": "vintovoy-press-scheme",
+      "aliases": [],
+      "kind": "scheme",
+      "file": "equipment/vintovoy-press/scheme.webp",
+      "thumbnail": "equipment/vintovoy-press/scheme.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "vintovoy-press"
+      ],
+      "productPaths": [
+        "/catalog/equipment/vintovoy-press"
+      ],
+      "durationSeconds": null,
+      "width": 1582,
+      "height": 1600,
+      "sha256": "648f2b8f553235ff5d12090897907d511f9450527b816c94a1e56e30210d2aa6",
+      "bytes": 160890
+    },
+    {
+      "id": "kapsulyator-scheme",
+      "aliases": [],
+      "kind": "scheme",
+      "file": "equipment/kapsulyator/scheme.webp",
+      "thumbnail": "equipment/kapsulyator/scheme.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "kapsulyator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/kapsulyator"
+      ],
+      "durationSeconds": null,
+      "width": 1433,
+      "height": 1600,
+      "sha256": "a3272483b809510c59de1aa604a978e868420cc66ee4558c8945bad890c2e712",
+      "bytes": 135952
+    },
+    {
+      "id": "plenochnyy-flotator-hero",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "equipment/plenochnyy-flotator/hero.webp",
+      "thumbnail": "equipment/plenochnyy-flotator/hero.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "plenochnyy-flotator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/plenochnyy-flotator"
+      ],
+      "durationSeconds": null,
+      "width": 1600,
+      "height": 900,
+      "sha256": "15314e3d697feaa58f8e785cd47802802e85cd1a654020343435654fb5e6b65e",
+      "bytes": 267362
+    },
+    {
+      "id": "plenochnyy-flotator-scheme",
+      "aliases": [],
+      "kind": "scheme",
+      "file": "equipment/plenochnyy-flotator/scheme.webp",
+      "thumbnail": "equipment/plenochnyy-flotator/scheme.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "plenochnyy-flotator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/plenochnyy-flotator"
+      ],
+      "durationSeconds": null,
+      "width": 1600,
+      "height": 939,
+      "sha256": "7ce947967b50f95e40ce7840872240491f6634418f9a40e0a24824216becc533",
+      "bytes": 88324
+    },
+    {
+      "id": "plenochnyy-flotator-circulation",
+      "aliases": [],
+      "kind": "scheme",
+      "file": "equipment/plenochnyy-flotator/circulation.webp",
+      "thumbnail": "equipment/plenochnyy-flotator/circulation.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "plenochnyy-flotator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/plenochnyy-flotator"
+      ],
+      "durationSeconds": null,
+      "width": 1563,
+      "height": 1004,
+      "sha256": "6150470769187fc7c1dc05604534420174711fb1beeea31af57c6fd2cef6c3b1",
+      "bytes": 82622
+    },
+    {
+      "id": "plenochnyy-flotator-body",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "equipment/plenochnyy-flotator/body.webp",
+      "thumbnail": "equipment/plenochnyy-flotator/body.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "plenochnyy-flotator"
+      ],
+      "productPaths": [
+        "/catalog/equipment/plenochnyy-flotator"
+      ],
+      "durationSeconds": null,
+      "width": 1600,
+      "height": 900,
+      "sha256": "126a126d2d17c670126e51acde1a73959bfd98749282d90ab5104573fe621207",
+      "bytes": 226668
+    },
+    {
+      "id": "ochistka-stokov-hero",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "equipment/ochistka-stokov/hero.webp",
+      "thumbnail": "equipment/ochistka-stokov/hero.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "ochistka-stokov"
+      ],
+      "productPaths": [
+        "/catalog/equipment/ochistka-stokov"
+      ],
+      "durationSeconds": null,
+      "width": 891,
+      "height": 910,
+      "sha256": "2a2adf64f46e6caea1ae192336b02ff5af186714f2371b163b61e3d22f59af98",
+      "bytes": 45240
+    },
+    {
+      "id": "ochistka-stokov-scheme",
+      "aliases": [],
+      "kind": "scheme",
+      "file": "equipment/ochistka-stokov/scheme.webp",
+      "thumbnail": "equipment/ochistka-stokov/scheme.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "ochistka-stokov"
+      ],
+      "productPaths": [
+        "/catalog/equipment/ochistka-stokov"
+      ],
+      "durationSeconds": null,
+      "width": 760,
+      "height": 660,
+      "sha256": "c20d512bc457a07fff43d257edbb67e27b85bc90f48ca3f4b02619a9dedd8595",
+      "bytes": 38638
+    },
+    {
+      "id": "ochistka-stokov-layout",
+      "aliases": [],
+      "kind": "scheme",
+      "file": "equipment/ochistka-stokov/layout.webp",
+      "thumbnail": "equipment/ochistka-stokov/layout.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "ochistka-stokov"
+      ],
+      "productPaths": [
+        "/catalog/equipment/ochistka-stokov"
+      ],
+      "durationSeconds": null,
+      "width": 704,
+      "height": 645,
+      "sha256": "becf9d1bf56d9d96351df51be2ccdd2fbc5207f9b59e52d7b16b07c46ec4f106",
+      "bytes": 26294
+    },
+    {
+      "id": "ochistka-stokov-operation",
+      "aliases": [],
+      "kind": "frame",
+      "file": "equipment/ochistka-stokov/operation.webp",
+      "thumbnail": "equipment/ochistka-stokov/operation.webp",
+      "poster": null,
+      "collections": [
+        "nodes",
+        "work"
+      ],
+      "albumIds": [
+        "ochistka-stokov"
+      ],
+      "productPaths": [
+        "/catalog/equipment/ochistka-stokov"
+      ],
+      "durationSeconds": null,
+      "width": 1384,
+      "height": 693,
+      "sha256": "02cd1135b9c679ee4368b993f65bf47dca362bae9a14d1712f39a607cb2febd8",
+      "bytes": 71372
+    },
+    {
+      "id": "rama-napolnitel-scheme",
+      "aliases": [],
+      "kind": "scheme",
+      "file": "equipment/rama-napolnitel/scheme.webp",
+      "thumbnail": "equipment/rama-napolnitel/scheme.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rama-napolnitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rama-napolnitel"
+      ],
+      "durationSeconds": null,
+      "width": 1575,
+      "height": 1338,
+      "sha256": "9f554426df2b1f04972502172b8b75e56aed892b0695ff86d0391b4d46ad3429",
+      "bytes": 144064
+    },
+    {
+      "id": "rotornaya-tsentrifuga-hero",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "equipment/rotornaya-tsentrifuga/hero.webp",
+      "thumbnail": "equipment/rotornaya-tsentrifuga/hero.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rotornaya-tsentrifuga"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rotornaya-tsentrifuga"
+      ],
+      "durationSeconds": null,
+      "width": 677,
+      "height": 677,
+      "sha256": "609e24621b9aa5e35f5c2a054788e09a658246627c4ff0b2a6087e7a63df0117",
+      "bytes": 47124
+    },
+    {
+      "id": "rotornaya-tsentrifuga-scheme",
+      "aliases": [],
+      "kind": "scheme",
+      "file": "equipment/rotornaya-tsentrifuga/scheme.webp",
+      "thumbnail": "equipment/rotornaya-tsentrifuga/scheme.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rotornaya-tsentrifuga"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rotornaya-tsentrifuga"
+      ],
+      "durationSeconds": null,
+      "width": 782,
+      "height": 794,
+      "sha256": "a3162a7bf11a3c0877b48cdb62d3679a65e686d4a950a4ad552ef0de93eca5d2",
+      "bytes": 89108
+    },
+    {
+      "id": "rotornaya-tsentrifuga-body",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "equipment/rotornaya-tsentrifuga/body.webp",
+      "thumbnail": "equipment/rotornaya-tsentrifuga/body.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rotornaya-tsentrifuga"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rotornaya-tsentrifuga"
+      ],
+      "durationSeconds": null,
+      "width": 1448,
+      "height": 1086,
+      "sha256": "07386d52d6989935fdf3e93bb1534ea10f5a4e58123bb678c4ef041baf4bdab6",
+      "bytes": 259744
+    },
+    {
+      "id": "rotornaya-tsentrifuga-drum",
+      "aliases": [],
+      "kind": "scheme",
+      "file": "equipment/rotornaya-tsentrifuga/drum.webp",
+      "thumbnail": "equipment/rotornaya-tsentrifuga/drum.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rotornaya-tsentrifuga"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rotornaya-tsentrifuga"
+      ],
+      "durationSeconds": null,
+      "width": 1358,
+      "height": 904,
+      "sha256": "30222ccd4911fb2bc7a94943b8166732467b7b630707b740e1d134225d202c64",
+      "bytes": 134242
+    },
+    {
+      "id": "predvaritelnyy-raspushitel-hero",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "equipment/predvaritelnyy-raspushitel/hero.webp",
+      "thumbnail": "equipment/predvaritelnyy-raspushitel/hero.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "predvaritelnyy-raspushitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/predvaritelnyy-raspushitel"
+      ],
+      "durationSeconds": null,
+      "width": 826,
+      "height": 1133,
+      "sha256": "81f9c95bcaf9b12d389ca0733f4e1119065e84cdcc1270c8a5db0086be7af048",
+      "bytes": 62012
+    },
+    {
+      "id": "predvaritelnyy-raspushitel-scheme",
+      "aliases": [],
+      "kind": "scheme",
+      "file": "equipment/predvaritelnyy-raspushitel/scheme.webp",
+      "thumbnail": "equipment/predvaritelnyy-raspushitel/scheme.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "predvaritelnyy-raspushitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/predvaritelnyy-raspushitel"
+      ],
+      "durationSeconds": null,
+      "width": 1600,
+      "height": 906,
+      "sha256": "96874bcc88e7b91b320ee08a4988c6ebf45ced6bef523dd27c3e5221c26e19c4",
+      "bytes": 72404
+    },
+    {
+      "id": "bunker-nakopitel-hero",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "equipment/bunker-nakopitel/hero.webp",
+      "thumbnail": "equipment/bunker-nakopitel/hero.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "bunker-nakopitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/bunker-nakopitel"
+      ],
+      "durationSeconds": null,
+      "width": 1045,
+      "height": 1050,
+      "sha256": "2111d08c008046b62436b0487c6a65888028b06b53f3e05a04cd5423ead422f5",
+      "bytes": 109392
+    },
+    {
+      "id": "bunker-nakopitel-scheme",
+      "aliases": [],
+      "kind": "scheme",
+      "file": "equipment/bunker-nakopitel/scheme.webp",
+      "thumbnail": "equipment/bunker-nakopitel/scheme.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "bunker-nakopitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/bunker-nakopitel"
+      ],
+      "durationSeconds": null,
+      "width": 1600,
+      "height": 872,
+      "sha256": "9a63ea9b27372b2826b2479f3fa3a7db6f667830a66dc92b7e803b6663c82cf8",
+      "bytes": 98706
+    },
+    {
+      "id": "vertikalno-rotornyy-izmelchitel-hero",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "equipment/vertikalno-rotornyy-izmelchitel/hero.webp",
+      "thumbnail": "equipment/vertikalno-rotornyy-izmelchitel/hero.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "vertikalno-rotornyy-izmelchitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/vertikalno-rotornyy-izmelchitel"
+      ],
+      "durationSeconds": null,
+      "width": 511,
+      "height": 692,
+      "sha256": "67e745f1abea0c749594d9d9a1ce004ac8e5354c822c1d1e38a9f469b8ecf2b0",
+      "bytes": 50482
+    },
+    {
+      "id": "vertikalno-rotornyy-izmelchitel-scheme",
+      "aliases": [],
+      "kind": "scheme",
+      "file": "equipment/vertikalno-rotornyy-izmelchitel/scheme.webp",
+      "thumbnail": "equipment/vertikalno-rotornyy-izmelchitel/scheme.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "vertikalno-rotornyy-izmelchitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/vertikalno-rotornyy-izmelchitel"
+      ],
+      "durationSeconds": null,
+      "width": 678,
+      "height": 730,
+      "sha256": "7c2cd0b26fae366d53b279f717410c1f6568d3bebc0b43bace93dce5825181a1",
+      "bytes": 67942
+    },
+    {
+      "id": "vertikalno-rotornyy-izmelchitel-section",
+      "aliases": [],
+      "kind": "scheme",
+      "file": "equipment/vertikalno-rotornyy-izmelchitel/section.webp",
+      "thumbnail": "equipment/vertikalno-rotornyy-izmelchitel/section.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "vertikalno-rotornyy-izmelchitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/vertikalno-rotornyy-izmelchitel"
+      ],
+      "durationSeconds": null,
+      "width": 620,
+      "height": 688,
+      "sha256": "02b0fa37e9d0208982d116a5ab01011b5d0999f661c29cffd7b49382e007b1be",
+      "bytes": 49024
+    },
+    {
+      "id": "rotornyy-raspushitel-hero",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "equipment/rotornyy-raspushitel/hero.webp",
+      "thumbnail": "equipment/rotornyy-raspushitel/hero.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rotornyy-raspushitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rotornyy-raspushitel"
+      ],
+      "durationSeconds": null,
+      "width": 1558,
+      "height": 1111,
+      "sha256": "8f425d842fa9a9b2f82194bd2f54910d0b9a0fc18f939418cb21ee5012f0eb3e",
+      "bytes": 193116
+    },
+    {
+      "id": "rotornyy-raspushitel-scheme",
+      "aliases": [],
+      "kind": "scheme",
+      "file": "equipment/rotornyy-raspushitel/scheme.webp",
+      "thumbnail": "equipment/rotornyy-raspushitel/scheme.webp",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rotornyy-raspushitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rotornyy-raspushitel"
+      ],
+      "durationSeconds": null,
+      "width": 1545,
+      "height": 987,
+      "sha256": "8f5ad59ec6ff7115b8004d14aa06cd449208412451c9cfed3c30e4ea299cc692",
+      "bytes": 50266
+    },
+    {
+      "id": "rotornyy-raspushitel-functional",
+      "aliases": [],
+      "kind": "scheme",
+      "file": "equipment/rotornyy-raspushitel/working-principle.svg",
+      "thumbnail": "equipment/rotornyy-raspushitel/working-principle.svg",
+      "poster": null,
+      "collections": [
+        "nodes"
+      ],
+      "albumIds": [
+        "rotornyy-raspushitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rotornyy-raspushitel"
+      ],
+      "durationSeconds": null,
+      "width": 1600,
+      "height": 900,
+      "sha256": "dc63aaf3a7b789d38861a8107a168a3a0c8c61aa9f275232e459a966150532a5",
+      "bytes": 3361
+    },
+    {
+      "id": "home-fluffier",
+      "aliases": [],
+      "kind": "frame",
+      "file": "project-home/process/fluffier.webp",
+      "thumbnail": "project-home/process/fluffier-480.webp",
+      "poster": null,
+      "collections": [
+        "nodes",
+        "work"
+      ],
+      "albumIds": [
+        "rotornyy-raspushitel"
+      ],
+      "productPaths": [
+        "/catalog/equipment/rotornyy-raspushitel"
+      ],
+      "durationSeconds": null,
+      "width": 1280,
+      "height": 720,
+      "sha256": "c2facf5732b4b88a8e04f73745a7370cafd85be0c57ba4f5b131ee0342c20e13",
+      "bytes": 116128
+    },
+    {
+      "id": "separatsiya-01-mini-overview",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "lines/separatsiya-01-mini/overview.webp",
+      "thumbnail": "lines/separatsiya-01-mini/overview-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-01"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-01"
+      ],
+      "durationSeconds": null,
+      "width": 1500,
+      "height": 1010,
+      "sha256": "f6856720aaca10b144ba5f3ca136d43e79134cb67246d29868c5f38d80d2a6bb",
+      "bytes": 153020
+    },
+    {
+      "id": "separatsiya-01-mini-flow",
+      "aliases": [],
+      "kind": "scheme",
+      "file": "lines/separatsiya-01-mini/flow.webp",
+      "thumbnail": "lines/separatsiya-01-mini/flow-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-01"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-01"
+      ],
+      "durationSeconds": null,
+      "width": 1320,
+      "height": 547,
+      "sha256": "1f177a6dc68832dcc21741aa276bc13041cf8d9ddc327d7638bd8dee031c5a51",
+      "bytes": 12346
+    },
+    {
+      "id": "separatsiya-01-mini-layout",
+      "aliases": [],
+      "kind": "scheme",
+      "file": "lines/separatsiya-01-mini/layout.webp",
+      "thumbnail": "lines/separatsiya-01-mini/layout-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-01"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-01"
+      ],
+      "durationSeconds": null,
+      "width": 2042,
+      "height": 1350,
+      "sha256": "3b675a44e1105109bd5a48ac22ba736d682b060b4afe3e3bfc6e2c0335965729",
+      "bytes": 1185742
+    },
+    {
+      "id": "separatsiya-01-mini-shredder",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "lines/separatsiya-01-mini/shredder.webp",
+      "thumbnail": "lines/separatsiya-01-mini/shredder-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-01"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-01"
+      ],
+      "durationSeconds": null,
+      "width": 344,
+      "height": 424,
+      "sha256": "8207158ddaebce8c2b5884e180062365e0ddc9d5778ad6d0b1588d31a71f3646",
+      "bytes": 23320
+    },
+    {
+      "id": "separatsiya-01-mini-ballistic",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "lines/separatsiya-01-mini/ballistic.webp",
+      "thumbnail": "lines/separatsiya-01-mini/ballistic-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-01"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-01"
+      ],
+      "durationSeconds": null,
+      "width": 604,
+      "height": 476,
+      "sha256": "2ac26433820c782827006861f6d5d6b0c3dbd321aa9543d6d49d3ff369596f77",
+      "bytes": 29116
+    },
+    {
+      "id": "separatsiya-01-mini-rotor-scheme",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "lines/separatsiya-01-mini/rotor-scheme.webp",
+      "thumbnail": "lines/separatsiya-01-mini/rotor-scheme-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-01"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-01"
+      ],
+      "durationSeconds": null,
+      "width": 604,
+      "height": 430,
+      "sha256": "5da6f6c08637c5fb3f85a7b4b8792c0188e89e60a89f45637cc106c868bb9626",
+      "bytes": 36558
+    },
+    {
+      "id": "separatsiya-01-mini-placement",
+      "aliases": [],
+      "kind": "scheme",
+      "file": "lines/separatsiya-01-mini/placement.webp",
+      "thumbnail": "lines/separatsiya-01-mini/placement-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-01"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-01"
+      ],
+      "durationSeconds": null,
+      "width": 1659,
+      "height": 1896,
+      "sha256": "e088fe269c1e883ff69e0798a91a8c28f539cc6a52a570a2c15c9284639bc4d9",
+      "bytes": 431576
+    },
+    {
+      "id": "separatsiya-01-mini-cover",
+      "aliases": [
+        "separatsiya-01-catalog-cover"
+      ],
+      "kind": "visualization",
+      "file": "lines/separatsiya-01-mini/catalog-cover-navy.webp",
+      "thumbnail": "lines/separatsiya-01-mini/catalog-cover-navy-768.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-01"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-01"
+      ],
+      "durationSeconds": null,
+      "width": 1536,
+      "height": 1024,
+      "sha256": "cfd24d8922bd4cd1c4b7fdc3ab9951942aa48a62ec4278881c476f2ace27d418",
+      "bytes": 287586
+    },
+    {
+      "id": "separatsiya-02-hero",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "lines/separatsiya-01/hero.webp",
+      "thumbnail": "lines/separatsiya-01/hero-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-02"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-02"
+      ],
+      "durationSeconds": null,
+      "width": 2056,
+      "height": 1384,
+      "sha256": "314b9a2161c6d9d00101c1097bd193a857283ad0d81f375a72d88622bb6e5399",
+      "bytes": 318380
+    },
+    {
+      "id": "separatsiya-02-flow",
+      "aliases": [],
+      "kind": "scheme",
+      "file": "lines/separatsiya-01/flow.webp",
+      "thumbnail": "lines/separatsiya-01/flow-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-02"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-02"
+      ],
+      "durationSeconds": null,
+      "width": 2053,
+      "height": 2200,
+      "sha256": "e14985dfb94c63dcf6782e2c3f0959381f4ab9a77cea3bd600f9619752ce9bbc",
+      "bytes": 112274
+    },
+    {
+      "id": "separatsiya-02-layout",
+      "aliases": [],
+      "kind": "scheme",
+      "file": "lines/separatsiya-01/layout.webp",
+      "thumbnail": "lines/separatsiya-01/layout-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-02"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-02"
+      ],
+      "durationSeconds": null,
+      "width": 1853,
+      "height": 1299,
+      "sha256": "36a3922e977980d0d426ce44473128574390cfae68250f1abd4d86a8aed920d1",
+      "bytes": 340932
+    },
+    {
+      "id": "separatsiya-02-feeding",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "lines/separatsiya-01/feeding.webp",
+      "thumbnail": "lines/separatsiya-01/feeding-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-02"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-02"
+      ],
+      "durationSeconds": null,
+      "width": 1263,
+      "height": 989,
+      "sha256": "16833b3b573674c3a2223b7a502a2218ef1e48aab68970f60e7d9bdadfa3ea5e",
+      "bytes": 186964
+    },
+    {
+      "id": "separatsiya-02-sorting",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "lines/separatsiya-01/sorting.webp",
+      "thumbnail": "lines/separatsiya-01/sorting-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-02"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-02"
+      ],
+      "durationSeconds": null,
+      "width": 1286,
+      "height": 897,
+      "sha256": "1ee5977fd3058536d6964c61ce3dc7721ad024a0e87cacf1c07051a41ee0923b",
+      "bytes": 256608
+    },
+    {
+      "id": "separatsiya-02-bunkers",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "lines/separatsiya-01/bunkers.webp",
+      "thumbnail": "lines/separatsiya-01/bunkers-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-02"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-02"
+      ],
+      "durationSeconds": null,
+      "width": 1286,
+      "height": 938,
+      "sha256": "3dc8fcc713920976d8293ad7cd33a7c048feaab3084d5eef772f3361ad6a959c",
+      "bytes": 249848
+    },
+    {
+      "id": "separatsiya-02-press",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "lines/separatsiya-01/press.webp",
+      "thumbnail": "lines/separatsiya-01/press-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-02"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-02"
+      ],
+      "durationSeconds": null,
+      "width": 888,
+      "height": 738,
+      "sha256": "9aacff88b2c650db22386e21e4fd3c41ca5b1376e2e13d7c9914b38c9dc4f81f",
+      "bytes": 134338
+    },
+    {
+      "id": "separatsiya-02-placement",
+      "aliases": [],
+      "kind": "scheme",
+      "file": "lines/separatsiya-01/placement.webp",
+      "thumbnail": "lines/separatsiya-01/placement-thumb.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-02"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-02"
+      ],
+      "durationSeconds": null,
+      "width": 1706,
+      "height": 1275,
+      "sha256": "8a884b022935a7968b0ad6a0c2c6cbf6abb2166aa134113a2f32ddca6daff1cd",
+      "bytes": 205938
+    },
+    {
+      "id": "separatsiya-02-catalog-cover",
+      "aliases": [],
+      "kind": "visualization",
+      "file": "lines/separatsiya-01/catalog-cover.webp",
+      "thumbnail": "lines/separatsiya-01/catalog-cover-768.webp",
+      "poster": null,
+      "collections": [
+        "lines"
+      ],
+      "albumIds": [
+        "separatsiya-02"
+      ],
+      "productPaths": [
+        "/catalog/lines/separatsiya-02"
+      ],
+      "durationSeconds": null,
+      "width": 1536,
+      "height": 1024,
+      "sha256": "6c287c05cb55dcf7f05153e94ad18ff02c791d19c9e48de5a878d00bc3ae427b",
+      "bytes": 271522
+    }
+  ]
+}
