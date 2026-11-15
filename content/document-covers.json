@@ -214,5 +214,13 @@
     "sha256": "35ea90362ebd193eb8e1bb452fe1ffdd648444ba84a4244d106977131d2e921b",
     "sourceSha256": "80876c22af16480aafa298b7a0630b26c2a88a9341d577867300a49e7b58a068",
     "page": 1
+  },
+  "separatsiya-02-dimensions-a0": {
+    "width": 840,
+    "height": 595,
+    "bytes": 75000,
+    "sha256": "43c916862d35113477f826c98d0374e195cda103863c5c647f58c6ba5a529f87",
+    "sourceSha256": "8557bce36e8963146ec9fd33d11295c4483e2e4d4106f19ae41e7c50c39f98d0",
+    "page": 1
   }
 }

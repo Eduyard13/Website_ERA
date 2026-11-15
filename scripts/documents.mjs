@@ -2,6 +2,7 @@ import {nodes} from '../content/catalog.mjs';
 import {documentCategories,documentLibrary,publicLibraryDocuments,libraryObjects} from '../content/document-library.mjs';
 const escape=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 export const fileSize=bytes=>(bytes/1_000_000).toLocaleString('ru-RU',{maximumFractionDigits:1})+' МБ';
+export const documentFileMeta=d=>['PDF',d.format||null,d.pages?(d.format?d.pages+' лист'+(d.pages===1?'':'а'):d.pages+' стр.'):null,d.bytes?fileSize(d.bytes):null].filter(Boolean).join(' · ');
 const folderIcon='<svg viewBox="0 0 40 32" fill="none" aria-hidden="true"><path d="M3 8V5a2 2 0 0 1 2-2h10l4 5h16a2 2 0 0 1 2 2v17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8Z" stroke="currentColor" stroke-width="1.2"/><path d="M3 10h34" stroke="currentColor" stroke-width="1.2"/></svg>';
 export function documentCard(n,d,{inline=false}={}){
  const href='/documents/'+d.file;
@@ -16,15 +17,15 @@ const categoryIcons=[
  '<path d="M5 4v24h24M10 22l6-8 5 3 7-10M22 7h6v6"/>',
 ];
 const requestHref=topic=>'/contacts?topic='+encodeURIComponent(topic)+'#project-form';
-export function libraryDocumentCard(d,{hidden=false}={}){
+export function libraryDocumentCard(d,{hidden=false,related=true}={}){
  const category=documentCategories.find(c=>c.id===d.category),publicFile=d.access==='public'&&d.file;
  return `<article class="dl-document" data-document-card-style="technical-archive" data-library-document="${escape(d.id)}"${hidden?' hidden':''}>
  ${publicFile?`<label class="dl-select" hidden><input type="checkbox" data-select-document="${escape(d.id)}"><span>Выбрать документ</span></label>`:''}
  <div class="dl-cover${d.coverWidth>d.coverHeight?' dl-cover--landscape':''}" data-cover-orientation="${d.coverWidth>d.coverHeight?'landscape':'portrait'}">${publicFile?`<img src="/assets/${escape(d.cover)}" width="${d.coverWidth}" height="${d.coverHeight}" alt="" loading="lazy" decoding="async"><span class="dl-cover-fallback" hidden>PDF</span>`:'<span class="dl-cover-request">Документ по запросу</span>'}</div>
  <div class="dl-document-copy"><p class="dl-kind">${escape(d.type||category.type)}</p><h3>${escape(d.title)}</h3><p class="dl-object">${escape(d.objectTitle)}</p><p class="dl-description" title="${escape(d.description)}">${escape(d.description)}</p>
- <p class="dl-file-meta">${publicFile?['PDF',d.pages?d.pages+' стр.':null,d.bytes?fileSize(d.bytes):null].filter(Boolean).join(' · '):'Предоставляется по запросу'}${d.revision?' · '+escape(d.revision):''}${d.publishedAt?' · '+escape(d.publishedAt):''}</p>
+ <p class="dl-file-meta">${publicFile?documentFileMeta(d):'Предоставляется по запросу'}${d.revision?' · '+escape(d.revision):''}${d.publishedAt?' · '+escape(d.publishedAt):''}</p>
  <div class="dl-document-actions">${publicFile?`<a class="dl-open" href="/documents/${escape(d.file)}" target="_blank" rel="noopener noreferrer" data-pdf-open="${escape(d.id)}" aria-label="Открыть: ${escape(d.title)}">Открыть ↗</a><a href="/documents/${escape(d.file)}" download="${escape(d.downloadName)}" aria-label="Скачать: ${escape(d.title)}">Скачать PDF ↓</a>`:`<a href="${requestHref(d.title)}" data-project-request>Запросить документ ↗</a>`}</div>
- <a class="dl-related" href="${escape(d.relatedPage)}">${d.objectType==='line'?'К линии':d.objectType==='node'?'К оборудованию':'О проекте'} <span aria-hidden="true">↗</span></a></div></article>`;
+ ${related?`<a class="dl-related" href="${escape(d.relatedPage)}">${d.objectType==='line'?'К линии':d.objectType==='node'?'К оборудованию':'О проекте'} <span aria-hidden="true">↗</span></a>`:''}</div></article>`;
 }
 export function pdfViewerDialog(){return `<dialog id="pdf-viewer" class="pdf-viewer" aria-labelledby="pdf-title"><header class="pdf-head"><div><p>ЭРА / ПРОСМОТР ДОКУМЕНТА</p><h2 id="pdf-title">Документ</h2></div><button type="button" data-pdf-close aria-label="Закрыть документ">Закрыть <span aria-hidden="true">×</span></button></header><div class="pdf-toolbar"><div class="pdf-pages"><button type="button" data-pdf-prev aria-label="Предыдущая страница">←</button><label>Страница <input type="number" min="1" value="1" inputmode="numeric" data-pdf-page aria-label="Номер страницы"></label><span data-pdf-pages>/ —</span><button type="button" data-pdf-next aria-label="Следующая страница">→</button></div><div class="pdf-zoom"><button type="button" data-pdf-zoom-out aria-label="Уменьшить масштаб">−</button><output data-pdf-scale>—</output><button type="button" data-pdf-zoom-in aria-label="Увеличить масштаб">+</button><button type="button" data-pdf-fit>По ширине</button><button type="button" data-pdf-reset>Сброс</button></div></div><p class="pdf-status" data-pdf-status role="status" aria-live="polite">Загрузка документа…</p><div class="pdf-stage" data-pdf-stage><div class="pdf-canvas-wrap"><canvas data-pdf-canvas role="img" aria-label="Страница PDF"></canvas></div></div><div class="pdf-actions"><a data-pdf-download>Скачать PDF ↓</a><a data-pdf-original target="_blank" rel="noopener noreferrer">Открыть исходный файл отдельно ↗</a></div></dialog>`;}
 const shortCategoryTitle=c=>c.id==='layouts'?'Схемы и компоновки':c.title;

@@ -1,0 +1,66 @@
+{
+  "sourceSha256": "8557bce36e8963146ec9fd33d11295c4483e2e4d4106f19ae41e7c50c39f98d0",
+  "page": 1,
+  "views": [
+    {
+      "id": "top",
+      "label": "Вид сверху",
+      "clipPt": [
+        350,
+        680,
+        3040,
+        1862
+      ],
+      "file": "lines/separatsiya-02/dimensions/top.webp",
+      "width": 3201,
+      "height": 1408,
+      "bytes": 290212,
+      "sha256": "2ec1d2cf5fa183dfdd8527698ce4ecbc2f8cafbfaa5477fc1de58c1f861f58ba"
+    },
+    {
+      "id": "side-1",
+      "label": "Боковая проекция 1",
+      "clipPt": [
+        310,
+        140,
+        3040,
+        680
+      ],
+      "file": "lines/separatsiya-02/dimensions/side-1.webp",
+      "width": 3201,
+      "height": 634,
+      "bytes": 182474,
+      "sha256": "e0fc2d0f9f00e16adfda0ef7c6bf42b0ffd59c87154af206793396e351593ada"
+    },
+    {
+      "id": "side-2",
+      "label": "Боковая проекция 2",
+      "clipPt": [
+        390,
+        1864,
+        3010,
+        2383.93994140625
+      ],
+      "file": "lines/separatsiya-02/dimensions/side-2.webp",
+      "width": 3201,
+      "height": 636,
+      "bytes": 180748,
+      "sha256": "02dd8a3adf8c1b61bb95f6efbe55975001c8f3cce9960c2d76c7aafe71ee8e9b"
+    },
+    {
+      "id": "sheet",
+      "label": "Весь лист A0",
+      "clipPt": [
+        0,
+        0,
+        3370.389892578125,
+        2383.93994140625
+      ],
+      "file": "lines/separatsiya-02/dimensions/sheet.webp",
+      "width": 3200,
+      "height": 2264,
+      "bytes": 506836,
+      "sha256": "0e1763b7905a58021ed3bd9487dcb9084a2169caf2fec75dd29b1ca9af971d8f"
+    }
+  ]
+}

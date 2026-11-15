@@ -1,10 +1,12 @@
 """Compact categories, Technical Archive and proven in-site back navigation. No screenshots."""
 from pathlib import Path
 from urllib.parse import urlparse, quote
-import json,os
+import json,os,subprocess
 from playwright.sync_api import sync_playwright
 base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3049/Website_ERA').rstrip('/')
 out=Path(os.environ.get('ERA_ARCHIVE_REPORT_DIR','/tmp/era-technical-archive-0361/browser'));out.mkdir(parents=True,exist_ok=True)
+documents=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {publicLibraryDocuments} from './content/document-library.mjs';console.log(JSON.stringify(publicLibraryDocuments))"],text=True))
+category_counts={c:sum(d['category']==c for d in documents) for c in ['technical','layouts','drawings']}
 errors=[];report={'widths':[],'history':[],'screenshots':False}
 
 def ready(page):
@@ -43,7 +45,7 @@ with sync_playwright() as p:
   assert active['x']>=tabs['x']-1 and active['x']+active['width']<=tabs['x']+tabs['width']+1,(width,active,tabs)
   assert page.locator('[data-library-empty-title]').inner_text()=='Материалы готовятся'
   page.locator('[data-library-empty-request]').click();assert page.locator('#project-request').is_visible();page.keyboard.press('Escape');same_path(page,'/documents/investments/')
-  for category,count in [('technical',14),('layouts',0),('drawings',0)]:
+  for category,count in category_counts.items():
    page.goto(base+'/documents/'+category+'/');ready(page);assert page.locator('[data-library-document]:visible').count()==count
    assert page.locator('.dl-category-grid').count()==0
   report['widths'].append({'width':width,'firstCoverY':first['y'],'barHeight':bar['height']});context.close()

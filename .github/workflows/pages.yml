@@ -118,17 +118,42 @@ jobs:
                       if nested_page.count('data-context-navigation ') != 1 or 'class="breadcrumbs"' in nested_page:
                           raise RuntimeError('Context navigation is missing or duplicated: ' + nested)
                   print('::notice title=Technical Archive verified::Five compact categories, preserved landing library, steel PDF cards and shared safe back navigation are published.')
+                  _, full_line = fetch('catalog/lines/separatsiya-02/')
+                  section_ids = ('purpose', 'raw-materials', 'specs', 'process', 'composition', 'quality', 'placement', 'kair', 'photos', 'documents', 'equipment')
+                  indices = [full_line.index('id="' + section_id + '"') for section_id in section_ids]
+                  if indices != sorted(indices) or full_line.count('data-diagram-mode="fit"') != 1 or 'data-line-source-diagram' in full_line or 'id="line02-workshop"' in full_line:
+                      raise RuntimeError('Separation 02 section order or single fit monitor is missing')
+                  if f'/line-monitor.js?v={version}' not in full_line or f'/line-documents.js?v={version}' not in full_line:
+                      raise RuntimeError('Separation 02 viewer assets are stale')
+                  line_documents = json.loads(re.search(r'<script type="application/json" id="line-document-data">(.*?)</script>', full_line, re.S).group(1))
+                  if {d['id'] for d in line_documents} != {'separatsiya-02-technical', 'separatsiya-02-dimensions-a0'}:
+                      raise RuntimeError('Separation 02 must show its two actual documents')
+                  drawing = by_id['separatsiya-02-dimensions-a0']
+                  if drawing['objectSlug'] != 'separatsiya-02' or drawing['category'] != 'drawings' or drawing.get('format') != 'A0' or drawing['pages'] != 1 or drawing['sha256'] != '8557bce36e8963146ec9fd33d11295c4483e2e4d4106f19ae41e7c50c39f98d0':
+                      raise RuntimeError('Original A0 record is incorrect')
+                  _, drawing_category = fetch('documents/drawings/')
+                  if 'data-library-document="separatsiya-02-dimensions-a0"' not in drawing_category or 'PDF · A0 · 1 лист · 2,2 МБ' not in drawing_category:
+                      raise RuntimeError('The A0 drawing is not published in its category')
+                  for view in ('top', 'side-1', 'side-2', 'sheet'):
+                      if 'data-dimension-tab="' + view + '"' not in full_line:
+                          raise RuntimeError('A0 projection tab is missing: ' + view)
+                      content_type, preview = fetch('assets/lines/separatsiya-02/dimensions/' + view + '.webp', binary=True)
+                      if content_type != 'image/webp' or preview[:4] != b'RIFF' or preview[8:12] != b'WEBP':
+                          raise RuntimeError('A0 projection image is missing: ' + view)
                   for document in documents:
                       content_type, cover = fetch('assets/' + document['cover'], binary=True)
                       if content_type != 'image/webp' or cover[:4] != b'RIFF' or cover[8:12] != b'WEBP':
                           raise RuntimeError('PDF cover is missing: ' + document['id'])
-                  for document_id in ('ballisticheskiy-separator-brochure', 'separatsiya-01-mini-technical', 'separatsiya-02-overview', 'separatsiya-02-technical'):
+                  checked_pdfs = ('ballisticheskiy-separator-brochure', 'separatsiya-01-mini-technical', 'separatsiya-02-overview', 'separatsiya-02-technical', 'separatsiya-02-dimensions-a0')
+                  for document_id in checked_pdfs:
                       document = by_id[document_id]
                       content_type, pdf = fetch('documents/' + document['file'], binary=True)
                       if content_type != 'application/pdf' or not pdf.startswith(b'%PDF-') or len(pdf) != document['bytes'] or hashlib.sha256(pdf).hexdigest() != document['sha256']:
                           raise RuntimeError('Original PDF HTTP/SHA verification failed: ' + document_id)
-                  print(f'::notice title=Engineering library verified::{len(documents)} original PDFs indexed, five category routes, all first-page covers and four PDF downloads verified over HTTP.')
-                  for file in ('gallery-showroom.js', 'gallery-viewer.js', 'gallery-model.js', 'gallery-showroom.css', 'quick-contact.js', 'quick-contact.css', 'about-us.css', 'contact-premium.css', 'assets/brands/telegram.svg', 'assets/brands/max.svg', 'assets/brands/whatsapp.svg', 'video-channels.css', 'navigation.css', 'navigation.js', 'footer.css', 'document-library.js', 'document-library-model.js', 'document-library.css', 'pdf-viewer.js', 'pdf-viewer.css', 'vendor/pdfjs/pdf.mjs', 'vendor/pdfjs/pdf.worker.mjs', 'vendor/fflate.js', 'context-navigation.css', 'context-navigation.js', 'context-history.js', 'interactions.js'):
+                  print(f'::notice title=Engineering library verified::{len(documents)} original PDFs indexed, five category routes, all first-page covers and {len(checked_pdfs)} PDF downloads verified over HTTP.')
+                  print('::notice title=Separation 02 A0 verified::Updated line, drawings category, engineering library and original A0 return HTTP 200. A0 Content-Type, PDF header, 2239107 bytes and SHA-256 8557bce36e8963146ec9fd33d11295c4483e2e4d4106f19ae41e7c50c39f98d0 verified. Four projection images are published.')
+                  assets = ('gallery-showroom.js', 'gallery-viewer.js', 'gallery-model.js', 'gallery-showroom.css', 'quick-contact.js', 'quick-contact.css', 'about-us.css', 'contact-premium.css', 'assets/brands/telegram.svg', 'assets/brands/max.svg', 'assets/brands/whatsapp.svg', 'video-channels.css', 'navigation.css', 'navigation.js', 'footer.css', 'document-library.js', 'document-library-model.js', 'document-library.css', 'pdf-viewer.js', 'pdf-viewer.css', 'vendor/pdfjs/pdf.mjs', 'vendor/pdfjs/pdf.worker.mjs', 'vendor/fflate.js', 'context-navigation.css', 'context-navigation.js', 'context-history.js', 'interactions.js', 'line-monitor.js', 'line-documents.js', 'line-monitor.css', 'diagram.js')
+                  for file in assets:
                       content_type, source = fetch(f'{file}?v={version}')
                       if not source.strip() or 'text/html' in content_type:
                           raise RuntimeError(f'{file}: expected a published asset')
@@ -136,7 +161,7 @@ jobs:
                           raise RuntimeError(f'{file}: expected JavaScript MIME type')
                       if file.endswith('.svg') and (content_type != 'image/svg+xml' or '<svg' not in source):
                           raise RuntimeError(f'{file}: expected the brand SVG')
-                  print(f'::notice title=Public site verified::Home, about us, contacts, gallery and twenty-seven assets return HTTP 200. Preview mode is off. {base}')
+                  print(f'::notice title=Public site verified::Home, about us, contacts, gallery and {len(assets)} assets return HTTP 200. Preview mode is off. {base}')
                   summary = os.environ.get('GITHUB_STEP_SUMMARY')
                   if summary:
                       with open(summary, 'a') as report:

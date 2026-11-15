@@ -10,7 +10,56 @@ import {readLibraryState,filterLibraryDocuments,libraryStateUrl,selectionSummary
 import {render,basePath,routes} from '../scripts/build.mjs';
 import covers from '../content/document-covers.json' with {type:'json'};
 const options={objects:libraryObjects,categories:documentCategories.map(c=>c.id)};
-test('Единая библиотека регистрирует все 27 оригинальных PDF без дубликатов и с проверенными обложками',async()=>{
+test('Исходный A0 зарегистрирован у Сепарации 02, находится поиском и выводит реальные метаданные',async()=>{
+ const d=publicLibraryDocuments.find(d=>d.id==='separatsiya-02-dimensions-a0');
+ assert.ok(d);assert.equal(d.objectType,'line');assert.equal(d.objectSlug,'separatsiya-02');assert.equal(d.category,'drawings');
+ assert.equal(d.format,'A0');assert.equal(d.pages,1);assert.equal(d.bytes,2239107);
+ assert.equal(d.sha256,'8557bce36e8963146ec9fd33d11295c4483e2e4d4106f19ae41e7c50c39f98d0');
+ assert.equal(d.revision,null);assert.equal(d.publishedAt,null);
+ for(const q of ['Сепарация 02','габариты','чертёж','сухая сепарация'])assert.ok(filterLibraryDocuments(documentLibrary,{q}).some(e=>e.id===d.id),q);
+ const page=render('/documents/drawings');assert.ok(page.includes('PDF · A0 · 1 лист · 2,2 МБ'));
+ assert.equal((page.match(/data-library-document="/g)||[]).length,publicLibraryDocuments.filter(d=>d.category==='drawings').length);
+ assert.ok(page.includes(`data-pdf-open="${d.id}"`));assert.ok(page.includes(`download="${d.downloadName}"`));
+ assert.equal(selectionSummary(documentLibrary,new Set([d.id])).selected[0],d);
+ assert.ok(!filterLibraryDocuments(documentLibrary,{product:'separatsiya-01'}).includes(d));
+});
+test('Полная линия сохраняет показатели, один fit-монитор и новый порядок разделов с двумя документами',async()=>{
+ const page=render('/catalog/lines/separatsiya-02');
+ const ids=['purpose','raw-materials','specs','process','composition','quality','placement','kair','photos','documents','equipment'];
+ let previous=-1;
+ for(const id of ids){const index=page.indexOf(`id="${id}"`);assert.ok(index>previous,id);previous=index;}
+ const nav=page.match(/<nav class="anchor-nav line-anchor-nav"[^>]*>(.*?)<\/nav>/s)[1];
+ assert.deepEqual([...nav.matchAll(/href="#([^"]+)"/g)].map(m=>m[1]),ids);
+ assert.equal((page.match(/data-diagram data-diagram-mode="fit"/g)||[]).length,1);
+ const composition=page.slice(page.indexOf('id="composition"'),page.indexOf('id="quality"'));
+ assert.equal((composition.match(/data-part-guide="/g)||[]).length,27);
+ assert.ok(!composition.includes('guide-line'));assert.ok(!composition.includes('guide-end'));assert.ok(!composition.includes('pin-masks'));
+ assert.ok(!page.includes('data-line-source-diagram'));assert.ok(!page.includes('id="line02-workshop"'));
+ assert.ok(!composition.includes('line-unit-grid'));assert.ok(page.includes('line-flow-diagram'));
+ const documents=page.slice(page.indexOf('id="documents"'),page.indexOf('id="equipment"'));
+ assert.equal((documents.match(/data-library-document="/g)||[]).length,2);
+ for(const id of ['separatsiya-02-technical','separatsiya-02-dimensions-a0'])assert.ok(documents.includes(`data-pdf-open="${id}"`));
+ assert.equal((page.match(/id="pdf-viewer"/g)||[]).length,1);assert.ok(page.includes('/line-documents.js?v='));
+ const equipment=page.slice(page.indexOf('id="equipment"'));assert.ok(equipment.includes('line-unit-grid'));assert.ok(equipment.includes('Предварительный распушитель'));assert.ok(equipment.includes('ДОПОЛНИТЕЛЬНЫЙ МОДУЛЬ'));
+ for(const text of ['402,67','281,87','4,7','750 кг/ч','50%','810 м²','9 м','≈6,5 м','2–10','5 раздельных потоков'])assert.ok(page.includes(text),text);
+ const mini=render('/catalog/lines/separatsiya-01');assert.ok(mini.includes('data-line-source-diagram'));assert.ok(!mini.includes('/line-monitor.js?'));assert.ok(!mini.includes('/line-documents.js?'));assert.ok(!mini.includes('dimensions-a0.pdf'));
+});
+test('Все четыре проекции имеют происхождение из единственного A0 и доступны в HTML',async()=>{
+ const manifest=JSON.parse(await readFile('content/separatsiya-02-dimensions.json','utf8'));
+ const assets=JSON.parse(await readFile('content/separatsiya-02-dimensions-assets.json','utf8'));
+ const {createHash}=await import('node:crypto'),page=render('/catalog/lines/separatsiya-02');
+ assert.equal(assets.sourceSha256,manifest.sourceSha256);assert.equal(assets.page,1);
+ assert.deepEqual(assets.views.map(v=>v.id),['top','side-1','side-2','sheet']);
+ for(const v of assets.views){
+  const source=manifest.views.find(e=>e.id===v.id);assert.deepEqual(v.clipPt,source.clipPt);
+  assert.ok(v.width>=3200);assert.ok(v.height>600);
+  const bytes=await readFile('public/assets/'+v.file);assert.equal(bytes.length,v.bytes);assert.equal(createHash('sha256').update(bytes).digest('hex'),v.sha256);
+  assert.ok(page.includes(`src="${basePath}/assets/${v.file}"`));assert.ok(page.includes(`data-dimension-tab="${v.id}"`));
+ }
+ assert.ok(page.includes('id="dimension-tab-top" aria-controls="dimension-view-top" aria-selected="true"'));
+ assert.ok(page.includes('Точная привязка выполняется под площадку заказчика.'));
+});
+test('Единая библиотека регистрирует все оригинальные PDF без дубликатов и с проверенными обложками',async()=>{
  const result=await validateDocumentLibrary();assert.equal(result.publicCount,publicLibraryDocuments.length);assert.ok(result.publicCount>=27);assert.deepEqual(result.unregistered,[]);
  assert.equal(new Set(publicLibraryDocuments.map(d=>d.file)).size,publicLibraryDocuments.length);assert.equal(new Set(publicLibraryDocuments.filter(d=>d.objectType==='node').map(d=>d.objectSlug)).size,12);
  assert.equal(new Set(publicLibraryDocuments.filter(d=>d.objectType==='line').map(d=>d.objectSlug)).size,2);

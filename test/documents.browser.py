@@ -4,19 +4,23 @@ from urllib.parse import quote, urlparse
 from hashlib import sha256
 from zipfile import ZipFile
 from io import BytesIO
-import json, os, time
+import json, os, time, subprocess
 from playwright.sync_api import sync_playwright
 base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3047/Website_ERA').rstrip('/')
 out=Path(os.environ.get('ERA_DOCUMENT_REPORT_DIR','/tmp/era-document-library-0360/browser'));out.mkdir(parents=True,exist_ok=True)
+documents=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {publicLibraryDocuments} from './content/document-library.mjs';console.log(JSON.stringify(publicLibraryDocuments))"],text=True))
+total_docs=len(documents)
+category_counts={c:sum(d['category']==c for d in documents) for c in ['brochures','technical','layouts','drawings','investments']}
+full_count=sum(d['objectType']=='line' and d['objectSlug']=='separatsiya-02' for d in documents)
 errors=[];report={'responsive':[],'pdf':[],'screenshots':False}
 with sync_playwright() as p:
  browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'])
  for width in [320,390,768,900,1200,1440,1920]:
   context=browser.new_context(viewport={'width':width,'height':1000},reduced_motion='reduce');page=context.new_page();requests=[]
   page.on('pageerror',lambda e:errors.append(str(e)));page.on('request',lambda request:requests.append(request.url))
-  page.goto(base+'/documents/');page.wait_for_function('document.querySelector("#document-result").textContent.includes("27")')
+  page.goto(base+'/documents/');page.wait_for_function('(n)=>document.querySelectorAll("[data-library-document]:not([hidden])").length===n',arg=total_docs)
   assert page.locator('h1').inner_text()=='Инженерная библиотека ЭРА.'
-  assert page.locator('[data-library-category]').count()==5 and page.locator('[data-library-document]:visible').count()==27
+  assert page.locator('[data-library-category]').count()==5 and page.locator('[data-library-document]:visible').count()==total_docs
   assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),width
   assert not any('/vendor/' in url or urlparse(url).path.endswith('.pdf') for url in requests),'PDF/vendor downloaded before opening'
   boxes=page.locator('.dl-category').evaluate_all('es=>es.map(e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width};})')
@@ -50,7 +54,7 @@ with sync_playwright() as p:
   report['responsive'].append(width);context.close()
  print('Responsive categories, lazy loading and 32-page PDF controls: OK',flush=True)
  context=browser.new_context(viewport={'width':1440,'height':1000},reduced_motion='reduce');page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)))
- scenarios=[('',27),('?product=ballisticheskiy-separator',2),('?product=ballisticheskiy-separator&kind='+quote('Брошюра'),1),('?objectType=line&product=separatsiya-01',1),('?objectType=line&product=separatsiya-02',2),('?objectType=line&product=separatsiya-02&category=technical',1),('?q='+quote('пленочный-флотатор'),2)]
+ scenarios=[('',total_docs),('?product=ballisticheskiy-separator',2),('?product=ballisticheskiy-separator&kind='+quote('Брошюра'),1),('?objectType=line&product=separatsiya-01',1),('?objectType=line&product=separatsiya-02',full_count),('?objectType=line&product=separatsiya-02&category=technical',1),('?q='+quote('пленочный-флотатор'),2)]
  for query,count in scenarios:
   page.goto(base+'/documents/'+query);page.wait_for_function('(n)=>document.querySelectorAll("[data-library-document]:not([hidden])").length===n',arg=count)
   if 'separatsiya-01' in query:assert page.locator('[data-library-document]:visible').get_attribute('data-library-document')=='separatsiya-01-mini-technical'
@@ -60,12 +64,12 @@ with sync_playwright() as p:
  page.go_back();page.wait_for_function('document.querySelectorAll("[data-library-document]:not([hidden])").length===2')
  page.locator('[name=q]').fill('несуществующийдокумент');page.wait_for_function('!document.querySelector("#document-empty").hidden')
  assert 'не найдены' in page.locator('[data-library-empty-title]').inner_text()
- page.locator('button[type=reset]').click();page.wait_for_function('document.querySelectorAll("[data-library-document]:not([hidden])").length===27')
- page.locator('[name=product]').select_option('line:separatsiya-02');page.wait_for_function('document.querySelectorAll("[data-library-document]:not([hidden])").length===2')
+ page.locator('button[type=reset]').click();page.wait_for_function('(n)=>document.querySelectorAll("[data-library-document]:not([hidden])").length===n',arg=total_docs)
+ page.locator('[name=product]').select_option('line:separatsiya-02');page.wait_for_function('(n)=>document.querySelectorAll("[data-library-document]:not([hidden])").length===n',arg=full_count)
  page.locator('[name=category]').select_option('technical');page.wait_for_url(base+'/documents/technical/**')
  page.wait_for_function('document.querySelectorAll("[data-library-document]:not([hidden])").length===1');assert 'separatsiya-02' in page.url
  page.goto(base+'/documents/')
- for category,count in [('brochures',13),('technical',14),('layouts',0),('drawings',0),('investments',0)]:
+ for category,count in category_counts.items():
   page.goto(base+'/documents/'+category+'/');page.wait_for_function('(n)=>document.querySelectorAll("[data-library-document]:not([hidden])").length===n',arg=count)
   assert page.locator('.site-header [data-menu-toggle]').get_attribute('data-current-section')=='true'
   if not count:
@@ -89,8 +93,8 @@ with sync_playwright() as p:
    page.wait_for_timeout(50)
   assert len(page.workers)==0,('worker leaked',d['id'])
   report['pdf'].append(d['id']);print('PDF checked:',d['id'],flush=True)
- print('All 27 PDF first pages rendered; downloads preserve SHA; workers released: OK',flush=True)
- page.locator('[data-select-mode]').click();small=sorted(docs,key=lambda d:d['bytes'])[:2]
+ print(f'All {len(docs)} PDF first pages rendered; downloads preserve SHA; workers released: OK',flush=True)
+ page.locator('[data-select-mode]').click();small=[next(d for d in docs if d['id']=='separatsiya-02-dimensions-a0'),min((d for d in docs if d['id']!='separatsiya-02-dimensions-a0'),key=lambda d:d['bytes'])]
  for d in small:page.locator('[data-select-document="'+d['id']+'"]').check()
  with page.expect_download() as download_info:page.locator('[data-download-selected]').click()
  download=download_info.value;zip_path=out/'selected.zip';download.save_as(zip_path)
@@ -130,8 +134,8 @@ with sync_playwright() as p:
   with page.expect_download() as download_info:page.locator('[data-pdf-download]').click()
   path=out/'fixture.pdf';download_info.value.save_as(path);assert path.read_bytes()==fixture.joinpath('fixture.pdf').read_bytes();path.unlink();context.close();fixture_pdf.unlink();fixture_cover.unlink();report['futureCategory']='Validated, filtered, rendered and downloaded from an isolated registry fixture'
  context=browser.new_context(java_script_enabled=False,viewport={'width':390,'height':844});page=context.new_page();page.goto(base+'/documents/')
- assert page.locator('[data-library-document]').count()==27 and page.locator('[data-library-document] a[download]').count()==27
- page.goto(base+'/documents/drawings/');assert page.locator('#document-empty').is_visible();assert page.locator('[data-library-empty-request]').get_attribute('href').startswith(urlparse(base).path+'/contacts?topic=')
+ assert page.locator('[data-library-document]').count()==total_docs and page.locator('[data-library-document] a[download]').count()==total_docs
+ page.goto(base+'/documents/layouts/');assert page.locator('#document-empty').is_visible();assert page.locator('[data-library-empty-request]').get_attribute('href').startswith(urlparse(base).path+'/contacts?topic=')
  context.close();browser.close()
 assert not errors,errors
 report['pageErrors']=errors;report['zip']='Original bytes verified; oversized selection blocked';report['brokenPdf']='Error and direct PDF fallback work'

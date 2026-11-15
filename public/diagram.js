@@ -1,4 +1,5 @@
 for(const root of document.querySelectorAll('[data-diagram]')){
+ if(root.dataset.diagramMode==='fit')continue;
  const pins=[...root.querySelectorAll('[data-part]')],guides=[...root.querySelectorAll('[data-part-guide]')];
  const selector=root.querySelector('[data-diagram-select]'),tooltip=root.querySelector('[data-diagram-tooltip]'),canvas=root.querySelector('.diagram-canvas');
  const viewButtons=[...root.querySelectorAll('[data-view-switch]')],fullscreen=root.querySelector('[data-diagram-fullscreen]');

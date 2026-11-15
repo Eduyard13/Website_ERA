@@ -1,0 +1,13 @@
+{
+  "source": "documents/drawings/era-separatsiya-02-dimensions-a0.pdf",
+  "sourceSha256": "8557bce36e8963146ec9fd33d11295c4483e2e4d4106f19ae41e7c50c39f98d0",
+  "page": 1,
+  "pageSizePt": [3370.389892578125, 2383.93994140625],
+  "outputWidth": 3200,
+  "views": [
+    {"id": "top", "label": "Вид сверху", "clipPt": [350, 680, 3040, 1862], "file": "lines/separatsiya-02/dimensions/top.webp"},
+    {"id": "side-1", "label": "Боковая проекция 1", "clipPt": [310, 140, 3040, 680], "file": "lines/separatsiya-02/dimensions/side-1.webp"},
+    {"id": "side-2", "label": "Боковая проекция 2", "clipPt": [390, 1864, 3010, 2383.93994140625], "file": "lines/separatsiya-02/dimensions/side-2.webp"},
+    {"id": "sheet", "label": "Весь лист A0", "clipPt": [0, 0, 3370.389892578125, 2383.93994140625], "file": "lines/separatsiya-02/dimensions/sheet.webp"}
+  ]
+}
