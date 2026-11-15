@@ -29,7 +29,8 @@ with sync_playwright() as p:
    assert page.locator('main img').evaluate_all('images=>images.every(image=>image.complete&&image.naturalWidth>0&&image.alt.length>0)')
    assert page.locator('main .au-team-card,main .cp-form-card,main .cp-map,main .cp-video-channel').evaluate_all('items=>items.every(item=>item.scrollWidth<=item.clientWidth+1)'),(width,path)
    assert page.locator('.footer-video-channel').count()==2
-   assert page.locator('.footer-video-channel a').count()==0
+   assert page.locator('a.footer-video-channel').count()==1
+   assert page.locator('a.footer-video-channel').get_attribute('href')=='https://www.youtube.com/@RASVET-LLC'
    assert not page.locator('#site-footer').inner_text().find('Реквизиты')>=0
    if path=='/about-us/':
     assert page.locator('[data-team-member]').count()==3
@@ -50,7 +51,9 @@ with sync_playwright() as p:
    if path=='/about-us/':
     toggle.focus();page.keyboard.press('Enter');assert panel.is_visible()
     assert toggle.get_attribute('aria-expanded')=='true'
-    assert panel.locator('a').count()==3
+    assert panel.locator('a').count()==4
+    assert panel.locator('.contact-messenger').count()==3
+    assert panel.locator('.contact-messenger:disabled').count()==2
     assert panel.locator('a').first.evaluate('element=>element===document.activeElement')
     assert panel.locator('a[href^="tel:"]').get_attribute('href')=='tel:+79032813535'
     assert panel.locator('a[href^="mailto:"]').get_attribute('href')=='mailto:edkom.office@mail.ru'
@@ -63,6 +66,21 @@ with sync_playwright() as p:
     page.locator('h1').click();assert panel.is_hidden()
    results.append({'width':width,'path':path,'outline':count,'overflow':False})
   print(f'About, contacts, images, channels, outline and quick-contact keyboard: {width} OK',flush=True)
+
+ # External navigation is intercepted; no messages or requests to the accounts.
+ for url in ['https://www.youtube.com/@RASVET-LLC','https://t.me/Eduyard13']:
+  page.context.route(url,lambda route:route.fulfill(status=200,content_type='text/html',body='<title>Navigation target verified</title>'))
+ for width in [390,1440]:
+  page.set_viewport_size({'width':width,'height':960})
+  load('/contacts/')
+  for selector,url in [('a.cp-video-channel','https://www.youtube.com/@RASVET-LLC'),('.cp-messengers a[data-channel=telegram]','https://t.me/Eduyard13'),('a.footer-video-channel','https://www.youtube.com/@RASVET-LLC')]:
+   with page.expect_popup() as event:page.locator(selector).click()
+   popup=event.value;popup.wait_for_load_state('domcontentloaded');assert popup.url==url;popup.close()
+  page.locator('[data-quick-contact-toggle]').click()
+  with page.expect_popup() as event:page.locator('#quick-contact-panel a[data-channel=telegram]').click()
+  popup=event.value;popup.wait_for_load_state('domcontentloaded');assert popup.url=='https://t.me/Eduyard13';popup.close()
+  assert page.locator('#quick-contact-panel').is_hidden()
+  print(f'YouTube and Telegram navigation from contacts, footer and quick contact: {width} OK',flush=True)
 
  page.set_viewport_size({'width':1440,'height':1000})
  for route in ['/','/technology/','/automation/','/economics/','/catalog/','/catalog/equipment/','/catalog/lines/','/media/','/documents/','/about-us/','/contacts/']:

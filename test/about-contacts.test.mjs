@@ -9,10 +9,12 @@ import {videoChannels,messengerChannels,confirmedChannelUrl} from '../scripts/co
 import {primaryLinks,navigationGroups} from '../content/navigation.mjs';
 import {render,routes,basePath,previewMode} from '../scripts/build.mjs';
 
-test('Макет не выдумывает участников, адрес, юридический статус и аккаунты',async()=>{
+test('Страницы используют подтверждённые каналы и не выдумывают участников или адрес',async()=>{
  assert.equal(aboutUsContent.team.length,3);
  for(const member of aboutUsContent.team){assert.equal(member.name,null);assert.equal(member.photo,null);assert.equal(member.roleApproved,false);}
- for(const value of Object.values(contactChannels))assert.equal(value,null);
+ assert.equal(contactChannels.youtube,'https://www.youtube.com/@RASVET-LLC');
+ assert.equal(contactChannels.telegram,'https://t.me/Eduyard13');
+ for(const key of ['vkVideo','max','whatsapp'])assert.equal(contactChannels[key],null);
  assert.equal(productionSite.country,'Китай');
  for(const key of ['city','address','lat','lon','mapUrl','mapEmbedUrl'])assert.equal(productionSite[key],null);
  const html=aboutUsPage();assert.equal((html.match(/Фотография будет добавлена/g)||[]).length,3);
@@ -26,8 +28,8 @@ test('Участник заполняется через данные и не п
  assert.equal((html.match(/Фотография будет добавлена/g)||[]).length,2);assert.equal((html.match(/Предварительное название роли/g)||[]).length,2);
 });
 test('Оба видеоканала видны без подставных URL; заполненный URL активирует только свой канал',()=>{
- const pending=videoChannels();assert.ok(pending.includes('YouTube')&&pending.includes('VK Видео'));assert.ok(!pending.includes('<a '));
- assert.equal((pending.match(/aria-disabled="true"/g)||[]).length,2);assert.ok(!messengerChannels().includes('<a '));
+ const pending=videoChannels({channels:{}});assert.ok(pending.includes('YouTube')&&pending.includes('VK Видео'));assert.ok(!pending.includes('<a '));
+ assert.equal((pending.match(/aria-disabled="true"/g)||[]).length,2);assert.ok(!messengerChannels({channels:{}}).includes('<a '));
  const ready=videoChannels({channels:{youtube:'https://www.youtube.com/@owner-supplied'}});
  assert.equal((ready.match(/<a /g)||[]).length,1);assert.ok(ready.includes('rel="noopener noreferrer"'));
  for(const value of [null,'','javascript:alert(1)','http://insecure.invalid','https://name:secret@example.org'])assert.equal(confirmedChannelUrl(value),null);
@@ -62,6 +64,9 @@ test('Быстрая связь одна на страницу, изолиров
   assert.equal((html.match(/id="quick-contact-panel"/g)||[]).length,1,path);
   assert.ok(html.includes('aria-controls="quick-contact-panel"'));assert.ok(html.includes(`href="${basePath}/contacts#project-form" data-project-request`));
   const panel=html.match(/<aside class="quick-contact"[\s\S]*?<\/aside>/)[0];assert.ok(!panel.includes('YouTube')&&!panel.includes('VK Видео'));
+  for(const key of ['telegram','max','whatsapp'])assert.ok(panel.includes(`data-channel="${key}"`));
+  assert.ok(panel.includes('href="https://t.me/Eduyard13"'));
+  assert.equal((panel.match(/class="contact-messenger is-pending"/g)||[]).length,2);
   assert.ok(!panel.includes('href="#"'));assert.equal(html.includes('/preview-only.js?v='),previewMode);
  }
  const preview=await readFile('public/preview-only.js','utf8');assert.ok(preview.includes('Предпросмотр: заявка не отправлена'));
