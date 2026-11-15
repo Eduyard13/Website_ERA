@@ -33,6 +33,10 @@ test('Участник заполняется через данные и не п
 test('Оба видеоканала видны без подставных URL; заполненный URL активирует только свой канал',()=>{
  const pending=videoChannels({channels:{}});assert.ok(pending.includes('YouTube')&&pending.includes('VK Видео'));assert.ok(!pending.includes('<a '));
  assert.equal((pending.match(/aria-disabled="true"/g)||[]).length,2);assert.ok(!messengerChannels({channels:{}}).includes('<a '));
+ assert.equal((pending.match(/Канал подключается<\/span>/g)||[]).length,2);assert.ok(!pending.includes('Ссылка будет добавлена'));
+ const both={youtube:contactChannels.youtube,vkVideo:'https://vkvideo.ru/@test-fixture'};
+ for(const compact of [false,true]){const active=videoChannels({compact,channels:both});assert.equal((active.match(/<a /g)||[]).length,2);assert.ok(active.includes('href="https://vkvideo.ru/@test-fixture"'));assert.ok(!active.includes('is-pending')&&!active.includes('Канал подключается'));}
+ for(const compact of [false,true]){const current=videoChannels({compact});assert.equal((current.match(/<a /g)||[]).length,1);assert.equal((current.match(/aria-disabled="true"/g)||[]).length,1);assert.ok(current.includes('Канал подключается'));assert.ok(!current.includes('href="#"')&&!current.includes('Ссылка будет добавлена'));}
  const ready=videoChannels({channels:{youtube:'https://www.youtube.com/@owner-supplied'}});
  assert.equal((ready.match(/<a /g)||[]).length,1);assert.ok(ready.includes('rel="noopener noreferrer"'));
  for(const value of [null,'','javascript:alert(1)','http://insecure.invalid','https://name:secret@example.org'])assert.equal(confirmedChannelUrl(value),null);
