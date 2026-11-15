@@ -77,6 +77,9 @@ jobs:
                       labels = re.findall(r'<span>(.*?)</span>', primary.group(1)) if primary else []
                       if labels != ['О проекте', 'Технология', 'Оборудование', 'Экономика', 'КАИР']:
                           raise RuntimeError(f'{urljoin(base, path)}: the new header order is missing')
+                      footer = re.search(r'<footer\b[^>]*>(.*?)</footer>', page, re.S)
+                      if not footer or 'Мы на связи' not in footer.group(1) or footer.group(1).count('class="footer-channel footer-') != 5:
+                          raise RuntimeError(f'{urljoin(base, path)}: the five footer channels are missing')
                       if '/preview-only.js?' in page:
                           raise RuntimeError(f'{urljoin(base, path)}: preview mode must not be published')
                       if path == 'media/':
@@ -86,17 +89,17 @@ jobs:
                           if not release:
                               raise RuntimeError('The gallery script is missing')
                           version = release.group(1)
-                  for file in ('gallery-showroom.js', 'gallery-viewer.js', 'gallery-model.js', 'gallery-showroom.css', 'quick-contact.js', 'quick-contact.css', 'about-us.css', 'contact-premium.css', 'assets/brands/telegram.svg', 'assets/brands/max.svg', 'assets/brands/whatsapp.svg', 'video-channels.css', 'navigation.css', 'navigation.js'):
+                  for file in ('gallery-showroom.js', 'gallery-viewer.js', 'gallery-model.js', 'gallery-showroom.css', 'quick-contact.js', 'quick-contact.css', 'about-us.css', 'contact-premium.css', 'assets/brands/telegram.svg', 'assets/brands/max.svg', 'assets/brands/whatsapp.svg', 'video-channels.css', 'navigation.css', 'navigation.js', 'footer.css'):
                       content_type, source = fetch(f'{file}?v={version}')
                       if not source.strip() or 'text/html' in content_type:
                           raise RuntimeError(f'{file}: expected a published asset')
                       if file.endswith('.svg') and (content_type != 'image/svg+xml' or '<svg' not in source):
                           raise RuntimeError(f'{file}: expected the brand SVG')
-                  print(f'::notice title=Public site verified::Home, about us, contacts, gallery and fourteen assets return HTTP 200. Preview mode is off. {base}')
+                  print(f'::notice title=Public site verified::Home, about us, contacts, gallery and fifteen assets return HTTP 200. Preview mode is off. {base}')
                   summary = os.environ.get('GITHUB_STEP_SUMMARY')
                   if summary:
                       with open(summary, 'a') as report:
-                          report.write(f'Public HTTP checks passed: [home]({base}), [about us]({base}about-us/), [contacts]({base}contacts/), [gallery]({base}media/) and fourteen assets. Preview mode is off.\n')
+                          report.write(f'Public HTTP checks passed: [home]({base}), [about us]({base}about-us/), [contacts]({base}contacts/), [gallery]({base}media/) and fifteen assets. Preview mode is off.\n')
                   break
               except Exception as error:
                   print(f'Public site check {attempt + 1}/6: {error}', flush=True)

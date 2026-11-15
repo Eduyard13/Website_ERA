@@ -19,11 +19,21 @@ export function contactIcon(name){
  };
  return `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name]||paths.message}</svg>`;
 }
+function compactChannel(channel,channels,{messenger=false}={}){
+ const url=confirmedChannelUrl(channels[channel.id]),label=escapeContact(channel.label),status=messenger?'Не подключён':'Канал подключается';
+ const content=`<span class="footer-channel-icon">${contactIcon(channel.id)}</span><span class="footer-channel-name"><strong>${label}</strong>${url?'':`<small>${status}</small>`}</span>${url?'<span class="footer-channel-arrow" aria-hidden="true">↗</span>':''}`;
+ const attributes=`class="footer-channel ${messenger?'footer-messenger':'footer-video-channel'}${url?'':' is-pending'}" ${messenger?'data-channel':'data-video-channel'}="${escapeContact(channel.id)}"`;
+ return url?`<a ${attributes} href="${escapeContact(url)}" target="_blank" rel="noopener noreferrer" aria-label="${messenger?'Написать в':'Открыть канал ЭРА —'} ${label}">${content}</a>`:`<div ${attributes} aria-disabled="true" aria-label="${label} — ${status.toLowerCase()}" title="${status}">${content}</div>`;
+}
+export function footerChannels({channels=contactChannels}={}){
+ return `<div class="footer-channels" aria-label="Мессенджеры и видеоканалы">${messengerDefinitions.map(channel=>compactChannel(channel,channels,{messenger:true})).join('')}${videoChannelDefinitions.map(channel=>compactChannel(channel,channels)).join('')}</div>`;
+}
 export function videoChannels({compact=false,channels=contactChannels}={}){
- return `<div class="${compact?'footer-video-channels':'cp-video-channels'}" aria-label="Наши видеоканалы">${videoChannelDefinitions.map(channel=>{
+ if(compact)return `<div class="footer-video-channels" aria-label="Наши видеоканалы">${videoChannelDefinitions.map(channel=>compactChannel(channel,channels)).join('')}</div>`;
+ return `<div class="cp-video-channels" aria-label="Наши видеоканалы">${videoChannelDefinitions.map(channel=>{
   const url=confirmedChannelUrl(channels[channel.id]),label=escapeContact(channel.label),icon=contactIcon(channel.id);
-  const content=compact?`<span class="footer-video-icon">${icon}</span><span class="footer-video-name"><strong>${label}</strong>${url?'':'<small>Канал подключается</small>'}</span>${url?'<span class="footer-video-arrow" aria-hidden="true">↗</span>':''}`:`<span class="cp-channel-head"><span class="cp-channel-badge">${icon}</span><strong>${label}</strong></span><span class="cp-channel-copy">${escapeContact(channel.description)}</span><span class="cp-channel-action${url?'':' is-status'}">${url?'Открыть канал <span aria-hidden="true">↗</span>':'Канал подключается'}</span>`;
-  const attributes=`class="${compact?'footer-video-channel':'cp-video-channel'}${url?'':' is-pending'}" data-video-channel="${escapeContact(channel.id)}"`;
+  const content=`<span class="cp-channel-head"><span class="cp-channel-badge">${icon}</span><strong>${label}</strong></span><span class="cp-channel-copy">${escapeContact(channel.description)}</span><span class="cp-channel-action${url?'':' is-status'}">${url?'Открыть канал <span aria-hidden="true">↗</span>':'Канал подключается'}</span>`;
+  const attributes=`class="cp-video-channel${url?'':' is-pending'}" data-video-channel="${escapeContact(channel.id)}"`;
   return url?`<a ${attributes} href="${escapeContact(url)}" target="_blank" rel="noopener noreferrer" aria-label="Открыть канал ЭРА — ${label}">${content}</a>`:`<div ${attributes} aria-disabled="true" aria-label="${label} — канал подключается" title="Канал подключается">${content}</div>`;
  }).join('')}</div>`;
 }
