@@ -107,8 +107,17 @@ jobs:
                       raise RuntimeError('Line PDF ownership is incorrect')
                   for category in data['categories']:
                       _, category_page = fetch('documents/' + category['id'] + '/')
-                      if '<h1>' + category['title'] + '.</h1>' not in category_page or 'data-route-category="' + category['id'] + '"' not in category_page:
+                      if '<h1>' + category['title'] + '</h1>' not in category_page or 'data-route-category="' + category['id'] + '"' not in category_page:
                           raise RuntimeError('Category route is missing: ' + category['id'])
+                      if 'data-library-layout="compact"' not in category_page or 'data-context-navigation' not in category_page or 'class="dl-category-grid"' in category_page:
+                          raise RuntimeError('Compact category navigation is missing: ' + category['id'])
+                  if 'class="dl-hero"' not in library or 'class="dl-category-grid"' not in library or 'data-document-card-style="technical-archive"' not in library:
+                      raise RuntimeError('Landing library or Technical Archive cards are missing')
+                  for nested in ('catalog/equipment/ballisticheskiy-separator/', 'catalog/lines/separatsiya-01/', 'catalog/lines/separatsiya-02/'):
+                      _, nested_page = fetch(nested)
+                      if nested_page.count('data-context-navigation ') != 1 or 'class="breadcrumbs"' in nested_page:
+                          raise RuntimeError('Context navigation is missing or duplicated: ' + nested)
+                  print('::notice title=Technical Archive verified::Five compact categories, preserved landing library, steel PDF cards and shared safe back navigation are published.')
                   for document in documents:
                       content_type, cover = fetch('assets/' + document['cover'], binary=True)
                       if content_type != 'image/webp' or cover[:4] != b'RIFF' or cover[8:12] != b'WEBP':
@@ -119,7 +128,7 @@ jobs:
                       if content_type != 'application/pdf' or not pdf.startswith(b'%PDF-') or len(pdf) != document['bytes'] or hashlib.sha256(pdf).hexdigest() != document['sha256']:
                           raise RuntimeError('Original PDF HTTP/SHA verification failed: ' + document_id)
                   print(f'::notice title=Engineering library verified::{len(documents)} original PDFs indexed, five category routes, all first-page covers and four PDF downloads verified over HTTP.')
-                  for file in ('gallery-showroom.js', 'gallery-viewer.js', 'gallery-model.js', 'gallery-showroom.css', 'quick-contact.js', 'quick-contact.css', 'about-us.css', 'contact-premium.css', 'assets/brands/telegram.svg', 'assets/brands/max.svg', 'assets/brands/whatsapp.svg', 'video-channels.css', 'navigation.css', 'navigation.js', 'footer.css', 'document-library.js', 'document-library-model.js', 'document-library.css', 'pdf-viewer.js', 'pdf-viewer.css', 'vendor/pdfjs/pdf.mjs', 'vendor/pdfjs/pdf.worker.mjs', 'vendor/fflate.js'):
+                  for file in ('gallery-showroom.js', 'gallery-viewer.js', 'gallery-model.js', 'gallery-showroom.css', 'quick-contact.js', 'quick-contact.css', 'about-us.css', 'contact-premium.css', 'assets/brands/telegram.svg', 'assets/brands/max.svg', 'assets/brands/whatsapp.svg', 'video-channels.css', 'navigation.css', 'navigation.js', 'footer.css', 'document-library.js', 'document-library-model.js', 'document-library.css', 'pdf-viewer.js', 'pdf-viewer.css', 'vendor/pdfjs/pdf.mjs', 'vendor/pdfjs/pdf.worker.mjs', 'vendor/fflate.js', 'context-navigation.css', 'context-navigation.js', 'context-history.js', 'interactions.js'):
                       content_type, source = fetch(f'{file}?v={version}')
                       if not source.strip() or 'text/html' in content_type:
                           raise RuntimeError(f'{file}: expected a published asset')
@@ -127,11 +136,11 @@ jobs:
                           raise RuntimeError(f'{file}: expected JavaScript MIME type')
                       if file.endswith('.svg') and (content_type != 'image/svg+xml' or '<svg' not in source):
                           raise RuntimeError(f'{file}: expected the brand SVG')
-                  print(f'::notice title=Public site verified::Home, about us, contacts, gallery and twenty-three assets return HTTP 200. Preview mode is off. {base}')
+                  print(f'::notice title=Public site verified::Home, about us, contacts, gallery and twenty-seven assets return HTTP 200. Preview mode is off. {base}')
                   summary = os.environ.get('GITHUB_STEP_SUMMARY')
                   if summary:
                       with open(summary, 'a') as report:
-                          report.write(f'Public HTTP checks passed: [home]({base}), [about us]({base}about-us/), [contacts]({base}contacts/), [gallery]({base}media/) and twenty-three assets. Preview mode is off.\n')
+                          report.write(f'Public HTTP checks passed: [home]({base}), [about us]({base}about-us/), [contacts]({base}contacts/), [gallery]({base}media/) and twenty-seven assets. Preview mode is off.\n')
                   break
               except Exception as error:
                   print(f'Public site check {attempt + 1}/6: {error}', flush=True)

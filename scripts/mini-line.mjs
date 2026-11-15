@@ -16,7 +16,7 @@ const rows=items=>items.map(([label,value])=>`<tr><th scope="row">${escape(label
 export function renderMiniFilmSeparation(line){
  const email='mailto:edkom.office@mail.ru?subject='+encodeURIComponent('Запрос ЭРА: Сепарация 01 — мини-комплектация');
  return `<div class="film-line mini-line">
- <div class="breadcrumbs"><a href="/">Главная</a> / <a href="/catalog">Оборудование</a> / <a href="/catalog/lines">Линии</a> / Сепарация 01</div>
+
  <section class="section line-hero">
   <div class="line-hero-copy"><p class="eyebrow">СЕПАРАЦИЯ 01 / МИНИ-КОМПЛЕКТАЦИЯ ЛС-1500</p><h1>Линия сухой сепарации плёнок и пакетов</h1><p class="line-slogan">Основные ступени очистки.<br>В компактной комплектации.</p><p class="line-lead">Раскрытие тюков, баллистическая и роторная очистка без использования воды. Цветной плёночный микс для продажи переработчикам или подачи на мойку. Сортировка по видам — дополнительная опция по согласованию.</p><div class="actions">${button('Обсудить мини-линию',email)}${button('Схема и состав','#composition',true)}</div><a class="text-link line-document-shortcut" href="#documents">Техническое описание · PDF, 14 страниц ↓</a></div>
   <div class="line-hero-visual">${picture('cover',{hero:true,caption:'Базовая линия: подготовка, сухая очистка и выдача плёнки'})}<div class="line-hero-tags"><span>Очистка без воды</span><span>Цветной плёночный микс</span><span>13 позиций</span></div></div>

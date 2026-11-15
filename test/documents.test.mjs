@@ -20,7 +20,7 @@ test('Единая библиотека регистрирует все 27 ор�
 test('Пять маршрутов используют общий renderer, настоящие PDF и честные пустые категории',async()=>{
  for(const category of documentCategories){
   const path='/documents/'+category.id;assert.ok(routes.includes(path));const html=render(path);
-  assert.ok(html.includes(`<h1>${category.title}.</h1>`));assert.ok(html.includes('data-document-library'));assert.ok(html.includes(`${basePath}/document-library.js?v=`));
+  assert.ok(html.includes(`<h1>${category.title}</h1>`));assert.ok(html.includes('data-document-library'));assert.ok(html.includes(`${basePath}/document-library.js?v=`));
   assert.ok(html.includes(`href="${basePath}/documents/"`));assert.ok(html.includes(`href="${basePath}/documents/${category.id}/"`));
   if(!publicLibraryDocuments.some(d=>d.category===category.id)){assert.ok(html.includes('Материалы готовятся'));assert.ok(html.includes('Запросить документацию'));assert.ok(!publicLibraryDocuments.some(d=>d.category===category.id));}
   assert.ok(!(html.match(/href="#"/g)||[]).length);
@@ -71,7 +71,7 @@ test('Новая схема добавляется записью и облож�
   assert.equal((await validateDocumentLibrary({entries:[entry],root:folder,coverMetadata:{[id]:covers[source.id]}})).publicCount,1);
   documentLibrary.push(entry);publicLibraryDocuments.push(entry);
   try{
-   const html=renderDocuments({categoryId:'layouts'});const start=html.indexOf('data-library-category="layouts"'),categoryHtml=html.slice(start,html.indexOf('</a>',start));assert.ok(categoryHtml.includes((initialCategoryCount+1)+' PDF'));assert.ok(html.includes('data-library-document="fixture-line-layout"'));assert.ok(html.includes('href="/documents/layouts/fixture.pdf"'));
+   const html=renderDocuments({categoryId:'layouts'});assert.ok(html.includes(`<span class="dl-compact-count">${initialCategoryCount+1} PDF</span>`));assert.ok(html.includes('data-library-document="fixture-line-layout"'));assert.ok(html.includes('href="/documents/layouts/fixture.pdf"'));
    assert.equal(filterLibraryDocuments(documentLibrary,{category:'layouts',objectType:'line',product:'separatsiya-02'}).length,initialObjectCount+1);
    const artifact=process.env.ERA_DOCUMENT_FIXTURE_DIR;
    if(artifact){await mkdir(artifact,{recursive:true});await writeFile(join(artifact,'index.html'),render('/documents/layouts'));await cp(join(folder,'documents',entry.file),join(artifact,'fixture.pdf'));await cp(join(folder,'assets',entry.cover),join(artifact,'fixture.webp'));}

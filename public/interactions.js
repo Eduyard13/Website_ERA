@@ -1,7 +1,8 @@
+import './context-history.js';
 import {countMedia,mediaCountLabels} from './media-counts.js';
 // Filters persist in the URL, so Back restores the same selection.
 const params=new URLSearchParams(location.search);
-function updateUrl(values){const next=new URL(location.href);for(const [key,value] of Object.entries(values)){if(value)next.searchParams.set(key,value);else next.searchParams.delete(key);}history.replaceState(null,'',next);}
+function updateUrl(values){const next=new URL(location.href);for(const [key,value] of Object.entries(values)){if(value)next.searchParams.set(key,value);else next.searchParams.delete(key);}history.replaceState(history.state,'',next);}
 const catalog=document.querySelector('#catalog-filters');
 if(catalog){
  const cards=[...document.querySelectorAll('[data-node]')];

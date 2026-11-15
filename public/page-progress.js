@@ -9,7 +9,7 @@
  let entries=[],links=[],frame=0;
  const clean=text=>text?.replace(/\s+/g,' ').trim()||'';
  const visible=element=>!element.closest('[hidden],[aria-hidden="true"],dialog,details:not([open])')&&element.getClientRects().length>0;
- const headerHeight=()=>header?.getBoundingClientRect().height||0;
+ const headerHeight=()=>(header?.getBoundingClientRect().height||0)+(document.querySelector('[data-context-navigation]')?.getBoundingClientRect().height||0);
  function labelFor(element){
   const home=homeLabels[element.dataset.homeBlock];if(home)return home;
   const label=element.getAttribute('data-page-progress-label')||element.getAttribute('aria-label');if(label)return clean(label);
