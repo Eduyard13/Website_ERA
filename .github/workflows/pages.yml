@@ -18,6 +18,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Install local viewer and archive dependencies
+        run: npm ci --omit=optional
       - name: Test root deployment
         run: npm test
       - name: Test project deployment
@@ -51,18 +53,19 @@ jobs:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
         run: |
           python - <<'PY'
-          import os, re, time, urllib.request
+          import os, re, time, json, hashlib, urllib.request
           from urllib.parse import urljoin
 
           base = os.environ['ERA_SITE_URL'].rstrip('/') + '/'
 
-          def fetch(path):
+          def fetch(path, binary=False):
               url = urljoin(base, path)
               request = urllib.request.Request(url, headers={'Cache-Control': 'no-cache'})
               with urllib.request.urlopen(request, timeout=25) as response:
                   if response.status != 200:
                       raise RuntimeError(f'{url}: HTTP {response.status}')
-                  return response.headers.get_content_type(), response.read(2_000_000).decode('utf-8')
+                  data = response.read(32_000_000 if binary else 4_000_000)
+                  return response.headers.get_content_type(), data if binary else data.decode('utf-8')
 
           for attempt in range(6):
               try:
@@ -89,17 +92,46 @@ jobs:
                           if not release:
                               raise RuntimeError('The gallery script is missing')
                           version = release.group(1)
-                  for file in ('gallery-showroom.js', 'gallery-viewer.js', 'gallery-model.js', 'gallery-showroom.css', 'quick-contact.js', 'quick-contact.css', 'about-us.css', 'contact-premium.css', 'assets/brands/telegram.svg', 'assets/brands/max.svg', 'assets/brands/whatsapp.svg', 'video-channels.css', 'navigation.css', 'navigation.js', 'footer.css'):
+                  _, library = fetch('documents/')
+                  if '<h1>Инженерная библиотека ЭРА.</h1>' not in library or 'data-document-library' not in library:
+                      raise RuntimeError('The engineering library is missing')
+                  release = re.search(r'document-library\.js\?v=([^"&]+)', library)
+                  if not release or release.group(1) != version:
+                      raise RuntimeError('Library and gallery releases do not match')
+                  data = json.loads(re.search(r'<script type="application/json" id="document-library-data">(.*?)</script>', library, re.S).group(1))
+                  documents = [d for d in data['documents'] if d['access'] == 'public' and d['status'] == 'published']
+                  if len(documents) < 27 or len({d['file'] for d in documents}) != len(documents):
+                      raise RuntimeError('The public PDF index is incomplete or duplicated')
+                  by_id = {d['id']: d for d in documents}
+                  if by_id['separatsiya-02-technical']['objectSlug'] != 'separatsiya-02' or by_id['separatsiya-01-mini-technical']['objectSlug'] != 'separatsiya-01':
+                      raise RuntimeError('Line PDF ownership is incorrect')
+                  for category in data['categories']:
+                      _, category_page = fetch('documents/' + category['id'] + '/')
+                      if '<h1>' + category['title'] + '.</h1>' not in category_page or 'data-route-category="' + category['id'] + '"' not in category_page:
+                          raise RuntimeError('Category route is missing: ' + category['id'])
+                  for document in documents:
+                      content_type, cover = fetch('assets/' + document['cover'], binary=True)
+                      if content_type != 'image/webp' or cover[:4] != b'RIFF' or cover[8:12] != b'WEBP':
+                          raise RuntimeError('PDF cover is missing: ' + document['id'])
+                  for document_id in ('ballisticheskiy-separator-brochure', 'separatsiya-01-mini-technical', 'separatsiya-02-overview', 'separatsiya-02-technical'):
+                      document = by_id[document_id]
+                      content_type, pdf = fetch('documents/' + document['file'], binary=True)
+                      if content_type != 'application/pdf' or not pdf.startswith(b'%PDF-') or len(pdf) != document['bytes'] or hashlib.sha256(pdf).hexdigest() != document['sha256']:
+                          raise RuntimeError('Original PDF HTTP/SHA verification failed: ' + document_id)
+                  print(f'::notice title=Engineering library verified::{len(documents)} original PDFs indexed, five category routes, all first-page covers and four PDF downloads verified over HTTP.')
+                  for file in ('gallery-showroom.js', 'gallery-viewer.js', 'gallery-model.js', 'gallery-showroom.css', 'quick-contact.js', 'quick-contact.css', 'about-us.css', 'contact-premium.css', 'assets/brands/telegram.svg', 'assets/brands/max.svg', 'assets/brands/whatsapp.svg', 'video-channels.css', 'navigation.css', 'navigation.js', 'footer.css', 'document-library.js', 'document-library-model.js', 'document-library.css', 'pdf-viewer.js', 'pdf-viewer.css', 'vendor/pdfjs/pdf.mjs', 'vendor/pdfjs/pdf.worker.mjs', 'vendor/fflate.js'):
                       content_type, source = fetch(f'{file}?v={version}')
                       if not source.strip() or 'text/html' in content_type:
                           raise RuntimeError(f'{file}: expected a published asset')
+                      if file.endswith(('.js', '.mjs')) and 'javascript' not in content_type:
+                          raise RuntimeError(f'{file}: expected JavaScript MIME type')
                       if file.endswith('.svg') and (content_type != 'image/svg+xml' or '<svg' not in source):
                           raise RuntimeError(f'{file}: expected the brand SVG')
-                  print(f'::notice title=Public site verified::Home, about us, contacts, gallery and fifteen assets return HTTP 200. Preview mode is off. {base}')
+                  print(f'::notice title=Public site verified::Home, about us, contacts, gallery and twenty-three assets return HTTP 200. Preview mode is off. {base}')
                   summary = os.environ.get('GITHUB_STEP_SUMMARY')
                   if summary:
                       with open(summary, 'a') as report:
-                          report.write(f'Public HTTP checks passed: [home]({base}), [about us]({base}about-us/), [contacts]({base}contacts/), [gallery]({base}media/) and fifteen assets. Preview mode is off.\n')
+                          report.write(f'Public HTTP checks passed: [home]({base}), [about us]({base}about-us/), [contacts]({base}contacts/), [gallery]({base}media/) and twenty-three assets. Preview mode is off.\n')
                   break
               except Exception as error:
                   print(f'Public site check {attempt + 1}/6: {error}', flush=True)

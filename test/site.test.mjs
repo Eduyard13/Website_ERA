@@ -525,16 +525,16 @@ test('Все 12 интерактивных схем сохраняют исхо�
  assert.equal(count,130);
 });
 
-test('24 документа переименованы, разложены по двум папкам и имеют согласованные ссылки',async()=>{
+test('24 документа узлов сохраняют исходные PDF и согласованные ссылки в новой библиотеке',async()=>{
  const {nodes}=await import('../content/catalog.mjs');
  const {documentManifest,documentCategories}=await import('../content/document-manifest.mjs');
- assert.equal(documentManifest.length,24);assert.equal(documentCategories.length,2);
+ assert.equal(documentManifest.length,24);assert.equal(documentCategories.length,5);
  assert.equal(new Set(documentManifest.map(d=>d.id)).size,24);
  assert.equal(new Set(documentManifest.map(d=>d.file)).size,24);
  const library=await readFile('dist/documents/index.html','utf8');
  for(const category of documentCategories){
-  assert.equal(documentManifest.filter(d=>d.category===category.id).length,12);
-  assert.ok(library.includes(`data-document-folder="${category.id}"`));
+  assert.equal(documentManifest.filter(d=>d.category===category.id).length,['brochures','technical'].includes(category.id)?12:0);
+  assert.ok(library.includes(`href="${basePath}/documents/${category.id}/"`));
  }
  for(const n of nodes){
   assert.equal(n.documents.filter(d=>d.category==='brochures').length,1);

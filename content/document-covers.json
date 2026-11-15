@@ -1,0 +1,218 @@
+{
+  "predvaritelnyy-izmelchitel-technical": {
+    "width": 650,
+    "height": 840,
+    "bytes": 57380,
+    "sha256": "b68f476049cea71336cd7f6bf5fb1f4ec52831a0a5445e5c7d587d4eae8bd560",
+    "sourceSha256": "51e681a430f8b428c82c7b132a3cc5816d8017873a3a8691eba2cf144073a8cc",
+    "page": 1
+  },
+  "predvaritelnyy-izmelchitel-brochure": {
+    "width": 650,
+    "height": 840,
+    "bytes": 86416,
+    "sha256": "7307d3f856da0adfcb64d139206348e1171d3a755ba8b909280e3e1e95434fa7",
+    "sourceSha256": "585251f150d270c6385b675126b8ead27970d46c57a1d89200f854c3d5ed72f4",
+    "page": 1
+  },
+  "predvaritelnyy-raspushitel-technical": {
+    "width": 650,
+    "height": 840,
+    "bytes": 58338,
+    "sha256": "6031680a2cae4c781e8d979baa2e77f581c6a277f758d804c0da9e9ed7fa69a9",
+    "sourceSha256": "a963e54163b9f2cb4af216166b42f3d2017b01535f83b56c4c2f01fc1b424bef",
+    "page": 1
+  },
+  "predvaritelnyy-raspushitel-brochure": {
+    "width": 650,
+    "height": 840,
+    "bytes": 80408,
+    "sha256": "87799907ecf62ca343ff3042bc7a522516a8fc78540380a6bd2b52c1e6588421",
+    "sourceSha256": "304e94f256ea1c3ca70387f50a2eda0faee1a21ff815d96d4e4b0972d7d1f662",
+    "page": 1
+  },
+  "ballisticheskiy-separator-technical": {
+    "width": 650,
+    "height": 840,
+    "bytes": 57596,
+    "sha256": "5e1ea1fda06a55bbce16cb422e819cdf62b21017e08a10a44d4bdbe6ecfaa63d",
+    "sourceSha256": "3a406b97bd1de134320a41904ba7ca630a96f93e8da27c7a86a3c4fa21e96a5c",
+    "page": 1
+  },
+  "ballisticheskiy-separator-brochure": {
+    "width": 650,
+    "height": 840,
+    "bytes": 85942,
+    "sha256": "f338953ebd53441255dfef009413679e84346ee8694ceaf80b50dd0aa46ee78a",
+    "sourceSha256": "bdd2d56d9758a1361423fef59ef0970b2fb81ce71853b83feae3f0349f327d3b",
+    "page": 1
+  },
+  "rotornyy-raspushitel-technical": {
+    "width": 594,
+    "height": 840,
+    "bytes": 66332,
+    "sha256": "19498441619288f4c69dbde6d2c27ed4a517a53894d3448b49e7efa81a9e5fa7",
+    "sourceSha256": "c4401d21626164e510a11b9bf4b0ac310dce802b93489794ff1126daa2896797",
+    "page": 1
+  },
+  "rotornyy-raspushitel-brochure": {
+    "width": 650,
+    "height": 840,
+    "bytes": 96462,
+    "sha256": "69a0708a848a712d8f94b1f6454ddfca7375a3b11e5d850f6c190c9de3f10434",
+    "sourceSha256": "17f11cf21ef47f74fd21c83627e04abf9161f307cbe986113817cb56d1004500",
+    "page": 1
+  },
+  "bunker-nakopitel-technical": {
+    "width": 650,
+    "height": 840,
+    "bytes": 56468,
+    "sha256": "4e46d098afbe1cb15888fcfddf5992574a52f8babfe7e8e3c5611f11b2d22629",
+    "sourceSha256": "132b85c8a487c32b429c7898899d314c6dc3ee99e179dacd7f669f260cec4111",
+    "page": 1
+  },
+  "bunker-nakopitel-brochure": {
+    "width": 650,
+    "height": 840,
+    "bytes": 91144,
+    "sha256": "338b8262b1b5a89daaf67e52df7b757500137774d5fecc2fe5edc481a4036960",
+    "sourceSha256": "f6955702998c8f3017670552cb0cb1c5419cb972176fd250788ed2eab4e3a2a3",
+    "page": 1
+  },
+  "vertikalno-rotornyy-izmelchitel-technical": {
+    "width": 650,
+    "height": 840,
+    "bytes": 53516,
+    "sha256": "4dff5648cbd26afa2436c6650196872e34c14e19b1eb7491631e57db3db7a6b2",
+    "sourceSha256": "1b412b52103f686b47066408438dba78cec554af1892824772a1b1a88fc54c22",
+    "page": 1
+  },
+  "vertikalno-rotornyy-izmelchitel-brochure": {
+    "width": 650,
+    "height": 840,
+    "bytes": 78952,
+    "sha256": "cfd927ccd881239acf47f3ec9a8d4e69ac9d7fe24441032796a973994d587366",
+    "sourceSha256": "8e0ba0e23ea50b56f85b7000655b436d04295286a8d21ef1801e5e1b064125b7",
+    "page": 1
+  },
+  "plenochnyy-flotator-technical": {
+    "width": 650,
+    "height": 840,
+    "bytes": 81166,
+    "sha256": "15b96de762ff5f9e7f87189bc60ee7a349a595c0b122445f3b870e644a90e9d1",
+    "sourceSha256": "68e4fce8b1795b1947392fdf51d249a537eab2e5a8dafa62112091dd40352969",
+    "page": 1
+  },
+  "plenochnyy-flotator-brochure": {
+    "width": 650,
+    "height": 840,
+    "bytes": 87208,
+    "sha256": "167e559be50d4323fddf5b39deddf193a27a73618891df650a65d6db91b40f3d",
+    "sourceSha256": "cc45afe1e34e44a12500d12e7fdaa984ab807367322f9d3b4d1ad09881876adf",
+    "page": 1
+  },
+  "rotornaya-tsentrifuga-technical": {
+    "width": 650,
+    "height": 840,
+    "bytes": 53928,
+    "sha256": "e81bd8e117db2a346bb7e63aa6288c9e5cddeab73a24e9aa864f2922d4615857",
+    "sourceSha256": "4f3515f000aaf59c59bbdbb7aab3317b72ce55baaec74e14fab59eb376f56389",
+    "page": 1
+  },
+  "rotornaya-tsentrifuga-brochure": {
+    "width": 650,
+    "height": 840,
+    "bytes": 75116,
+    "sha256": "08fd0343dd2b55fb727f1be77849a68beb51b5723c9074261618d309a7dcd3f9",
+    "sourceSha256": "09a77acaf6087921b116c7a7e155e4aa1b87384e3eb176f6f435c7b821228e77",
+    "page": 1
+  },
+  "vintovoy-press-technical": {
+    "width": 650,
+    "height": 840,
+    "bytes": 57418,
+    "sha256": "520d684fa85b9e9357459527a2df6c2812a31e84062967de6521d0832d2d803c",
+    "sourceSha256": "a3cbef825c856719560fcaa683f4381c194720cd1804914bad2c052a6935e2d4",
+    "page": 1
+  },
+  "vintovoy-press-brochure": {
+    "width": 650,
+    "height": 840,
+    "bytes": 75186,
+    "sha256": "a72cf7f427fc411b4eac47a8837721cd7590047136b1ddeb24543629aa75c691",
+    "sourceSha256": "c4ea6555e7914210967c7f92e78319e29cf00dc6aee2949b60d5771185b80037",
+    "page": 1
+  },
+  "kapsulyator-technical": {
+    "width": 594,
+    "height": 840,
+    "bytes": 69528,
+    "sha256": "f9dc83c6abdbb6f90dcb1f786078788160ba5943c9f84f47e5ba82e42adf24dc",
+    "sourceSha256": "d8a89e2c481cae95b5058eba492e4a673f0fd544098702c488ce0e8167d901e3",
+    "page": 1
+  },
+  "kapsulyator-brochure": {
+    "width": 650,
+    "height": 840,
+    "bytes": 88452,
+    "sha256": "58ba62a4fbb25dc2ec6cfef0cde0c7b3b9f2c63f9655ecd118f48283de7a3aa1",
+    "sourceSha256": "3b66556d883e0952ce1cc7f280767913b2ed312c9d1ad8284f4d7b1342fe69b4",
+    "page": 1
+  },
+  "ochistka-stokov-technical": {
+    "width": 594,
+    "height": 840,
+    "bytes": 33736,
+    "sha256": "2c0f0abbf703b809c99faee15aff22379afc27c76ce93b585559dd02a9b0a4b8",
+    "sourceSha256": "6a9d5af241210294d608b5abedbbdf1490ed1f3dca45a58552103b8a4a6a5368",
+    "page": 1
+  },
+  "ochistka-stokov-brochure": {
+    "width": 650,
+    "height": 840,
+    "bytes": 69164,
+    "sha256": "8b42a9fdd72b460f67951d80bdda1b72ecdbf67c0df921b63d103ff3e2a3d9ec",
+    "sourceSha256": "666858e18bcf8213e2a9b97860e055c81e5212dd1079443e4369c383da2960ba",
+    "page": 1
+  },
+  "rama-napolnitel-technical": {
+    "width": 594,
+    "height": 840,
+    "bytes": 82232,
+    "sha256": "69212439e8ffce0d92ed3291691ddf7991af39bafd2bdab2116e31986a42b9ab",
+    "sourceSha256": "af18e8619842a82d182e78aa9b5adfd2bec9ea2fc5ee164cf5774d020ef292b5",
+    "page": 1
+  },
+  "rama-napolnitel-brochure": {
+    "width": 650,
+    "height": 840,
+    "bytes": 95144,
+    "sha256": "9a932b6ccea4c4ea63a00eb6fd3ff24aabd96e13794a5d6a0c3ccfa6c827ccc6",
+    "sourceSha256": "7713ec3e73eb21d46d4a6bbdf87cfbab4cfdf97eb37d0ca351564b7ccaf0b8be",
+    "page": 1
+  },
+  "separatsiya-01-mini-technical": {
+    "width": 594,
+    "height": 840,
+    "bytes": 59446,
+    "sha256": "70fe7333c6e9a9e00621c24478e38cc4885e4f1ec1016af849c2591951c0d671",
+    "sourceSha256": "07e383f99d3abd1049d4b1ff4472749a510005311558993e46ea87e0409a3a3d",
+    "page": 1
+  },
+  "separatsiya-02-technical": {
+    "width": 594,
+    "height": 840,
+    "bytes": 54790,
+    "sha256": "740c988810bca6be2533d17924903587dd2064ebcf84f0362c6323b049a2805c",
+    "sourceSha256": "d9a4a879a62cfa9601eba6b54e0a12977e063709192c18841730e1055014d39e",
+    "page": 1
+  },
+  "separatsiya-02-overview": {
+    "width": 650,
+    "height": 840,
+    "bytes": 96312,
+    "sha256": "35ea90362ebd193eb8e1bb452fe1ffdd648444ba84a4244d106977131d2e921b",
+    "sourceSha256": "80876c22af16480aafa298b7a0630b26c2a88a9341d577867300a49e7b58a068",
+    "page": 1
+  }
+}

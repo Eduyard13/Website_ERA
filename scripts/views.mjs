@@ -5,6 +5,7 @@ import {renderEquipment,renderDocuments} from './equipment.mjs';
 import {renderFilmSeparation} from './line.mjs';
 import {renderMiniFilmSeparation} from './mini-line.mjs';
 import {presentationTechnology,presentationAutomation} from './home.mjs';
+import {documentCategories} from '../content/document-manifest.mjs';
 import {nodes,lines,categories} from '../content/catalog.mjs';
 import {stages} from '../content/site.mjs';
 const link=(t,h,secondary=false)=>`<a class="button ${secondary?'secondary':''}" href="${h}">${t}<span aria-hidden="true">↗</span></a>`;
@@ -18,9 +19,10 @@ const lineCard=l=>{
  return `<article class="line-card line-card--draft${reserved?' line-card--reserved':''}" ${attributes}>${reserved?'<div class="line-card-placeholder" aria-hidden="true"><span>01</span></div>':''}<div class="line-card-draft-content"><span class="eyebrow">${l.number?'СЕПАРАЦИЯ '+l.number:'ГОРЯЧАЯ МОЙКА'}</span><h3 id="line-${l.slug}-title">${l.title}</h3>${l.cardDescription?`<p class="line-card-subtitle">${l.cardDescription}</p>`:''}<span class="status">В разработке</span></div></article>`;
 };
 export {galleryDialog} from './media.mjs';
-export const extraRoutes=[...nodes.slice(1).map(n=>n.path),...lines.filter(l=>l.enabled).map(l=>l.path)];
+export const extraRoutes=[...documentCategories.map(c=>'/documents/'+c.id),...nodes.slice(1).map(n=>n.path),...lines.filter(l=>l.enabled).map(l=>l.path)];
 export function revisedPage(path){
  if(path==='/documents')return renderDocuments();
+ if(path.startsWith('/documents/')){const category=documentCategories.find(c=>path==='/documents/'+c.id);if(category)return renderDocuments({categoryId:category.id});}
  const equipment=nodes.find(n=>n.path===path);if(equipment)return renderEquipment(equipment);
  if(path==='/technology')return presentationTechnology();
  if(path==='/automation')return presentationAutomation();

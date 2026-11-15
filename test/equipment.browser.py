@@ -30,15 +30,15 @@ with sync_playwright() as p:
  page.get_by_role('searchbox').fill('флотатор');assert page.locator('[data-node]:visible').count()==1
  page.locator('[data-node]:visible').click();assert page.url.endswith('/plenochnyy-flotator')
  page.go_back();assert page.locator('[data-node]:visible').count()==1
- page.goto(base+'/documents');assert page.locator('[data-document]').count()==24
- assert page.locator('[data-document-folder]').count()==2
- page.locator('#document-filters [name=product]').select_option('ballisticheskiy-separator');assert page.locator('[data-document]:visible').count()==2
+ page.goto(base+'/documents');assert page.locator('[data-library-document]').count()==27
+ assert page.locator('[data-library-category]').count()==5
+ page.locator('#document-filters [name=product]').select_option('node:ballisticheskiy-separator');assert page.locator('[data-library-document]:visible').count()==2
  with page.expect_download() as download_info:
-  page.locator('[data-document]:visible a[download]').first.click()
+  page.locator('[data-library-document]:visible a[download]').first.click()
  download=download_info.value;download.save_as(str(out/'download-check.pdf'));assert Path(out/'download-check.pdf').read_bytes().startswith(b'%PDF')
- page.get_by_role('button',name='Сбросить',exact=True).click();page.wait_for_timeout(100)
- page.locator('[name=kind]').select_option('Паспорт и техническое описание');assert page.locator('[data-document]:visible').count()==2
- page.get_by_role('button',name='Сбросить',exact=True).click();page.wait_for_timeout(100)
+ page.get_by_role('button',name='Сбросить фильтры',exact=True).click();page.wait_for_timeout(100)
+ page.get_by_role('searchbox').fill('Паспорт');page.wait_for_timeout(250);assert page.locator('[data-library-document]:visible').count()==2
+ page.get_by_role('button',name='Сбросить фильтры',exact=True).click();page.wait_for_timeout(100)
  page.get_by_role('searchbox').fill('неттакогослова');assert page.locator('#document-empty').is_visible()
  page.goto(base+'/catalog/equipment/plenochnyy-flotator')
  page.locator('.equipment-live-photos .media-open').first.click();assert page.locator('#media-viewer').is_visible();page.keyboard.press('Escape');assert not page.locator('#media-viewer').is_visible()

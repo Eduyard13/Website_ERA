@@ -10,8 +10,8 @@ export function normalizeNavigationPath(value,basePath=''){
 export function navigationState(value,{basePath=''}={}){
  const original=normalizeNavigationPath(value,basePath),path=original==='/company-details'?'/contacts':original;
  const primary=primaryLinks.find(item=>item.href==='/'?path==='/':belongs(path,item.href));
- const section=primary?.section||([...navigationGroups.flatMap(g=>g.links),...hiddenNavigationLinks].some(l=>l.href===path)||path==='/contacts/sent'?'all':null);
- const panelPath=belongs(path,'/catalog/equipment')?'/catalog/equipment':belongs(path,'/catalog/lines')?'/catalog/lines':path==='/contacts/sent'?'/contacts':path;
+ const section=primary?.section||([...navigationGroups.flatMap(g=>g.links),...hiddenNavigationLinks].some(l=>l.href===path)||belongs(path,'/documents')||path==='/contacts/sent'?'all':null);
+ const panelPath=belongs(path,'/documents')?'/documents':belongs(path,'/catalog/equipment')?'/catalog/equipment':belongs(path,'/catalog/lines')?'/catalog/lines':path==='/contacts/sent'?'/contacts':path;
  return {path,section,panelPath};
 }
 const contactHref=()=>'/contacts#project-form';
