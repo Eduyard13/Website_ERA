@@ -1,4 +1,15 @@
 export const siteContacts={email:'edkom.office@mail.ru',phone:'+7 903 281-35-35',phoneHref:'tel:+79032813535'};
+// Only confirmed account URLs belong here. A null URL never becomes a link.
+export const contactChannels={youtube:null,vkVideo:null,telegram:null,max:null,whatsapp:null};
+export const videoChannelDefinitions=[
+ {id:'youtube',label:'YouTube',description:'Видеопрезентации, оборудование в работе и технологические процессы.'},
+ {id:'vkVideo',label:'VK Видео',description:'Материалы ЭРА для просмотра на российской видеоплощадке.'},
+];
+export const messengerDefinitions=[{id:'telegram',label:'Telegram'},{id:'max',label:'MAX'},{id:'whatsapp',label:'WhatsApp'}];
+export const productionSite={
+ country:'Китай',city:null,address:null,lat:null,lon:null,mapUrl:null,mapEmbedUrl:null,
+ image:{file:'photos/ballisticheskiy-separator/02.webp',width:1448,height:1086,alt:'Участок сухой сепарации с подающими транспортёрами',caption:'Фотография оборудования ЭРА'},
+};
 export const projectRequest={
  endpoint:`https://formsubmit.co/${siteContacts.email}`,
  recipient:siteContacts.email,

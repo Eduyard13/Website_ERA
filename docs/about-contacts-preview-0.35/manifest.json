@@ -1,0 +1,55 @@
+{
+  "version": "0.35.0-preview.1",
+  "baseCommit": "ec83717d3af13d0e727441394d0381fec4685006",
+  "date": "2026-11-15",
+  "productionPublished": false,
+  "photos": [
+    {
+      "file": "public/assets/photos/ballisticheskiy-separator/01.webp",
+      "width": 1448,
+      "height": 1086,
+      "sha256": "2f8dd0cd685be5a730090ede17d1391a02ac04af5cea1334e7913f2210d42c43",
+      "bytes": 316152
+    },
+    {
+      "file": "public/assets/photos/ballisticheskiy-separator/02.webp",
+      "width": 1448,
+      "height": 1086,
+      "sha256": "d24c61fe72eacc70ffafee4c4301d72227b1889c871f2c11b898b899986fe966",
+      "bytes": 245954
+    },
+    {
+      "file": "public/assets/photos/predvaritelnyy-izmelchitel/02.webp",
+      "width": 1448,
+      "height": 1086,
+      "sha256": "90c07495f8bc15ba7eff842a7a3ac8a6867c24f762022191f75ab1cac4e4d8e2",
+      "bytes": 276786
+    },
+    {
+      "file": "public/assets/photos/predvaritelnyy-izmelchitel/04.webp",
+      "width": 1448,
+      "height": 1086,
+      "sha256": "a89d9efceb32c3578c94031bd54e94ea4cdbd5591ee87639bbf56692b4348afd",
+      "bytes": 243812
+    }
+  ],
+  "protectedFiles": 519,
+  "changedProtectedFiles": [],
+  "missingOwnerData": [
+    "Имена, фамилии, портреты и окончательные названия ролей трёх участников",
+    "Город, адрес и координаты площадки, провайдер карты",
+    "Подтверждённые URL YouTube и VK Видео",
+    "Подтверждённые URL мессенджеров"
+  ],
+  "browserWidths": [
+    320,
+    375,
+    390,
+    430,
+    768,
+    1024,
+    1280,
+    1440,
+    1920
+  ]
+}

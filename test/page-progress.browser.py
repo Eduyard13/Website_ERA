@@ -6,7 +6,7 @@ import os,json
 base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3029/Website_ERA').rstrip('/')
 out=Path(os.environ.get('ERA_SCREENSHOT_DIR','/tmp/era-scroll-030/browser'));out.mkdir(parents=True,exist_ok=True)
 errors=[];failed=[];inventory=[]
-expected={'/':8,'/technology/':15,'/automation/':9,'/economics/':9,'/catalog/':2,'/catalog/equipment/':2,'/catalog/lines/':2,'/media/':8,'/documents/':2,'/contacts/':2}
+expected={'/':8,'/technology/':15,'/automation/':9,'/economics/':9,'/catalog/':2,'/catalog/equipment/':2,'/catalog/lines/':2,'/media/':8,'/documents/':2,'/contacts/':5,'/about-us/':6}
 with sync_playwright() as p:
  browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'])
  page=browser.new_page(viewport={'width':1440,'height':900},reduced_motion='reduce')
@@ -33,7 +33,7 @@ with sync_playwright() as p:
  paths=[]
  for file in sorted(Path('dist').rglob('*.html')):
   relative=file.relative_to('dist').as_posix()
-  if relative in ['about/index.html','ai/index.html']:continue
+  if relative in ['about/index.html','ai/index.html','company-details/index.html']:continue
   paths.append('/404.html' if relative=='404.html' else '/'+relative.removesuffix('index.html'))
  for path in paths:
   load(path)

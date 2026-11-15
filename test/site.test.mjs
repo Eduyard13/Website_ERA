@@ -40,7 +40,7 @@ test('Индикатор разделов подключён на содержа
  const home=await readFile('dist/index.html','utf8');
  assert.ok(!home.includes('home-slides'));assert.ok(!home.includes('dataset.homeView='));
  assert.equal([...home.matchAll(/data-home-block="/g)].length,8);
- for(const route of new Set(routes.filter(route=>!['/about','/ai'].includes(route)))){
+ for(const route of new Set(routes.filter(route=>!['/about','/ai','/company-details'].includes(route)))){
   const html=await readFile('dist'+(route==='/'?'':route)+'/index.html','utf8');
   assert.ok(html.includes(`${basePath}/page-progress.css?v=`),route);assert.ok(html.includes(`${basePath}/page-progress.js?v=`),route);
   assert.ok(!html.includes('home-slides')&&!html.includes('dataset.homeView='),route);
@@ -373,7 +373,7 @@ test('Навигация различает точную страницу, ра�
   assert.match(navigation(path),new RegExp('href="'+path+'"[^>]*aria-current="page"[^>]*data-current-section="true"'));
   assert.ok(!siteHeader(path).includes('aria-controls="site-menu" data-current-section="true"'));
  }
- for(const path of ['/documents','/news','/blog','/contacts','/company-details','/media']){
+ for(const path of ['/documents','/news','/blog','/contacts','/about-us','/media']){
   assert.equal(navigationState(path).section,'all');
   assert.match(siteHeader(path),/aria-controls="site-menu" data-current-section="true"/);
   assert.match(siteMenu(path),new RegExp('href="'+path+'" aria-current="page"'));
@@ -450,7 +450,7 @@ test('Полные ролики проверены по контрольным �
 test('Панель ЦБ РФ доступна на всех страницах и не содержит выдуманных курсов',async()=>{
  const {version}=JSON.parse(await readFile('package.json','utf8'));
  for(const route of new Set(routes)){
-  if(['/about','/ai'].includes(route))continue; // Legacy redirects render the destination header.
+  if(['/about','/ai','/company-details'].includes(route))continue; // Legacy redirects render the destination header.
   const html=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
   assert.equal([...html.matchAll(/data-fx-bar /g)].length,1,route);
   assert.ok(html.includes('https://www.cbr.ru/currency_base/daily/'));
@@ -593,7 +593,7 @@ test('Счётчики различают типы и не дублируют ф
 });
 test('Клиентский режим: единый кириллический бренд, групповой подвал и один валютный блок',async()=>{
  const {navigationGroups}=await import('../content/navigation.mjs');
- for(const route of new Set(routes.filter(r=>!['/about','/ai'].includes(r)))){
+ for(const route of new Set(routes.filter(r=>!['/about','/ai','/company-details'].includes(r)))){
   const html=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
   const header=html.match(/<header[\s\S]*?<\/header>/)[0];
   const footer=html.match(/<footer[\s\S]*?<\/footer>/)[0];
@@ -762,7 +762,7 @@ test('Заявка имеет настоящий multipart POST, адрес по
  assert.ok(html.includes(`value="https://eduyard13.github.io${basePath}/contacts/sent/"`));
  assert.ok(!html.includes('name="_captcha"'));assert.ok(!html.includes('mailto:edkom.office@mail.ru?subject='));
  const thankYou=await readFile('dist/contacts/sent/index.html','utf8');assert.ok(thankYou.includes('Спасибо за обращение.'));
- for(const route of new Set(routes.filter(path=>!['/about','/ai'].includes(path)))){
+ for(const route of new Set(routes.filter(path=>!['/about','/ai','/company-details'].includes(path)))){
   const page=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
   assert.equal([...page.matchAll(/data-request-form(?=[\s>])/g)].length,1,route);
   assert.ok(page.includes(`href="${basePath}/contacts#project-form"`),route);

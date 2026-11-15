@@ -10,7 +10,7 @@ base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3024/Website_ERA').rstri
 out=Path(os.environ.get('ERA_SCREENSHOT_DIR','/tmp/era-navigation-request-025'));out.mkdir(parents=True,exist_ok=True)
 repo=Path(__file__).resolve().parents[1]
 endpoint='https://formsubmit.co/edkom.office@mail.ru'
-labels=['О проекте','Технология','Система управления','Каталог оборудования','Галерея']
+labels=['О проекте','Технология','Система управления','Экономика','Каталог']
 photo=(repo/'public/assets/presentation/kair.webp').read_bytes()
 video=b'\x00\x00\x00\x18ftypmp42'+bytes(range(256))*100
 with sync_playwright() as p:

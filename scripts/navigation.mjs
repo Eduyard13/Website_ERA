@@ -9,7 +9,7 @@ export function normalizeNavigationPath(value,basePath=''){
  return path.replace(/\/+$/,'')||'/';
 }
 export function navigationState(value,{basePath=''}={}){
- const path=normalizeNavigationPath(value,basePath);
+ const original=normalizeNavigationPath(value,basePath),path=original==='/company-details'?'/contacts':original;
  const primary=primaryLinks.find(item=>item.href==='/'?path==='/':belongs(path,item.href));
  const section=primary?.section||(navigationGroups.flatMap(g=>g.links).some(l=>l.href===path)||path==='/contacts/sent'?'all':null);
  const panelPath=belongs(path,'/catalog/equipment')?'/catalog/equipment':belongs(path,'/catalog/lines')?'/catalog/lines':path==='/contacts/sent'?'/contacts':path;
