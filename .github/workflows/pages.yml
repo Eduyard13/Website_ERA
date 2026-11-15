@@ -11,6 +11,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      PREVIEW_MODE: '0'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -64,10 +66,15 @@ jobs:
 
           for attempt in range(6):
               try:
-                  for path in ('', 'media/'):
+                  markers = {'': 'data-resource-home', 'media/': 'data-gallery-showroom', 'about-us/': 'class="about-us-page"', 'contacts/': 'class="contact-premium-page"'}
+                  for path, marker in markers.items():
                       content_type, page = fetch(path)
                       if content_type != 'text/html' or '<html lang="ru">' not in page:
                           raise RuntimeError(f'{urljoin(base, path)}: expected the ERA page')
+                      if marker not in page or 'id="quick-contact"' not in page:
+                          raise RuntimeError(f'{urljoin(base, path)}: the published update is missing')
+                      if '/preview-only.js?' in page:
+                          raise RuntimeError(f'{urljoin(base, path)}: preview mode must not be published')
                       if path == 'media/':
                           if 'data-gallery-showroom' not in page or 'id="gallery-data"' not in page:
                               raise RuntimeError('The gallery update is missing')
@@ -75,15 +82,15 @@ jobs:
                           if not release:
                               raise RuntimeError('The gallery script is missing')
                           version = release.group(1)
-                  for file in ('gallery-showroom.js', 'gallery-viewer.js', 'gallery-model.js', 'gallery-showroom.css'):
+                  for file in ('gallery-showroom.js', 'gallery-viewer.js', 'gallery-model.js', 'gallery-showroom.css', 'quick-contact.js', 'quick-contact.css', 'about-us.css', 'contact-premium.css'):
                       content_type, source = fetch(f'{file}?v={version}')
                       if not source.strip() or 'text/html' in content_type:
                           raise RuntimeError(f'{file}: expected a stylesheet or JavaScript')
-                  print(f'::notice title=Public site verified::Home, gallery and four gallery assets return HTTP 200. {base}media/')
+                  print(f'::notice title=Public site verified::Home, about us, contacts, gallery and eight assets return HTTP 200. Preview mode is off. {base}')
                   summary = os.environ.get('GITHUB_STEP_SUMMARY')
                   if summary:
                       with open(summary, 'a') as report:
-                          report.write(f'Public HTTP checks passed: [home]({base}), [gallery]({base}media/) and four gallery assets.\n')
+                          report.write(f'Public HTTP checks passed: [home]({base}), [about us]({base}about-us/), [contacts]({base}contacts/), [gallery]({base}media/) and eight assets. Preview mode is off.\n')
                   break
               except Exception as error:
                   print(f'Public site check {attempt + 1}/6: {error}', flush=True)
