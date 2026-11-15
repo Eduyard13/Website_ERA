@@ -1,6 +1,6 @@
 export const siteContacts={email:'edkom.office@mail.ru',phone:'+7 903 281-35-35',phoneHref:'tel:+79032813535'};
 // Only confirmed account URLs belong here. A null URL never becomes a link.
-export const contactChannels={youtube:'https://www.youtube.com/@RASVET-LLC',vkVideo:null,telegram:'https://t.me/Eduyard13',max:null,whatsapp:null};
+export const contactChannels={youtube:'https://www.youtube.com/@RASVET-LLC',vkVideo:null,telegram:'https://t.me/Eduyard13',max:'https://max.ru/u/f9LHodD0cOLJG4FZs3gHL3lpPmwQ0qEBZoRlKgEs72lHGd9FC0S8W-9NfpA',whatsapp:'https://wa.me/79032813535'};
 export const videoChannelDefinitions=[
  {id:'youtube',label:'YouTube',description:'Видеопрезентации, оборудование в работе и технологические процессы.'},
  {id:'vkVideo',label:'VK Видео',description:'Материалы ЭРА для просмотра на российской видеоплощадке.'},

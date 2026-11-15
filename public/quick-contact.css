@@ -11,12 +11,12 @@
 .quick-contact-links .quick-contact-request{border-top:1px solid var(--era-border);margin-top:10px;padding-top:18px;font-size:14px;gap:14px}.quick-contact-request>span:last-child{margin-left:auto;color:var(--era-gold-dark)}
 .contact-messengers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
 .contact-messengers .contact-messenger{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:0;min-height:91px;width:100%;padding:13px 8px;border:1px solid var(--era-border);border-radius:7px;background:#fffdf7;color:var(--era-blue);text-align:center;font:inherit;text-decoration:none}
-.contact-messenger-icon{display:block;width:29px;height:29px;color:var(--era-blue)}.contact-messenger-icon>svg{display:block;width:100%;height:100%}
+.contact-messenger-icon{display:block;width:29px;height:29px;color:var(--era-blue)}.contact-messenger-icon>:is(svg,img){display:block;width:100%;height:100%;object-fit:contain}
 .contact-messenger[data-channel=telegram] .contact-messenger-icon{color:#249acf}
 .contact-messenger-name{font-size:12px;font-weight:500;line-height:1.4;white-space:nowrap}
 .contact-messengers .contact-messenger>small{font-size:9px;line-height:1.5;font-weight:400;white-space:nowrap;color:var(--era-muted)}
 .contact-messengers .is-available{border-color:#b59c5988;box-shadow:0 3px 12px #10132e05;cursor:pointer}.contact-messengers .is-available:hover{border-color:var(--era-gold-dark);background:#f4eee1;color:var(--era-blue)}
-.contact-messengers .is-pending{background:#efede7;color:#676c7c;cursor:default}.contact-messenger.is-pending .contact-messenger-icon{color:#868a98}.contact-messenger.is-pending small{color:#727787}
+.contact-messengers .is-pending{background:#efede7;color:#676c7c;cursor:default}.contact-messenger.is-pending .contact-messenger-icon{color:#868a98;filter:grayscale(1);opacity:.65}.contact-messenger.is-pending small{color:#727787}
 .quick-contact-messengers{margin-top:16px;padding-top:16px;border-top:1px solid var(--era-border)}.quick-contact-messengers h3{font-size:11px;font-weight:400;line-height:1.6;letter-spacing:.02em;margin:0 0 12px;color:var(--era-muted)}
 .quick-contact .contact-messengers{gap:7px}.quick-contact .contact-messenger{padding:11px 5px;min-height:88px}.quick-contact .contact-messenger-name{font-size:11px}.quick-contact .contact-messenger>small{font-size:8px}.quick-contact .contact-messenger-icon{width:27px;height:27px}
 .quick-contact :focus-visible,.quick-contact-fallback:focus-visible{outline:2px solid var(--era-gold-dark);outline-offset:4px}.quick-contact-toggle:focus-visible{outline-color:var(--era-gold)}

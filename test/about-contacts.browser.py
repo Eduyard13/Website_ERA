@@ -26,7 +26,7 @@ with sync_playwright() as p:
    assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),(width,path)
    assert page.locator('.page-progress-rail a').count()==count,(width,path)
    assert page.locator('.primary-nav a').all_text_contents()==['О проекте','Технология','Система управления','Экономика','Каталог']
-   assert page.locator('main img').evaluate_all('images=>images.every(image=>image.complete&&image.naturalWidth>0&&image.alt.length>0)')
+   assert page.locator('main img').evaluate_all('images=>images.every(image=>image.complete&&image.naturalWidth>0&&(image.alt.length>0||image.getAttribute("aria-hidden")==="true"))')
    assert page.locator('main .au-team-card,main .cp-form-card,main .cp-map,main .cp-video-channel').evaluate_all('items=>items.every(item=>item.scrollWidth<=item.clientWidth+1)'),(width,path)
    assert page.locator('.footer-video-channel').count()==2
    assert page.locator('a.footer-video-channel').count()==1
@@ -51,9 +51,9 @@ with sync_playwright() as p:
    if path=='/about-us/':
     toggle.focus();page.keyboard.press('Enter');assert panel.is_visible()
     assert toggle.get_attribute('aria-expanded')=='true'
-    assert panel.locator('a').count()==4
+    assert panel.locator('a').count()==6
     assert panel.locator('.contact-messenger').count()==3
-    assert panel.locator('.contact-messenger:disabled').count()==2
+    assert panel.locator('.contact-messenger:disabled').count()==0
     assert panel.locator('a').first.evaluate('element=>element===document.activeElement')
     assert panel.locator('a[href^="tel:"]').get_attribute('href')=='tel:+79032813535'
     assert panel.locator('a[href^="mailto:"]').get_attribute('href')=='mailto:edkom.office@mail.ru'
@@ -68,19 +68,22 @@ with sync_playwright() as p:
   print(f'About, contacts, images, channels, outline and quick-contact keyboard: {width} OK',flush=True)
 
  # External navigation is intercepted; no messages or requests to the accounts.
- for url in ['https://www.youtube.com/@RASVET-LLC','https://t.me/Eduyard13']:
+ messenger_urls=[('telegram','https://t.me/Eduyard13'),('max','https://max.ru/u/f9LHodD0cOLJG4FZs3gHL3lpPmwQ0qEBZoRlKgEs72lHGd9FC0S8W-9NfpA'),('whatsapp','https://wa.me/79032813535')]
+ for url in ['https://www.youtube.com/@RASVET-LLC',*[url for _,url in messenger_urls]]:
   page.context.route(url,lambda route:route.fulfill(status=200,content_type='text/html',body='<title>Navigation target verified</title>'))
  for width in [390,1440]:
   page.set_viewport_size({'width':width,'height':960})
   load('/contacts/')
-  for selector,url in [('a.cp-video-channel','https://www.youtube.com/@RASVET-LLC'),('.cp-messengers a[data-channel=telegram]','https://t.me/Eduyard13'),('a.footer-video-channel','https://www.youtube.com/@RASVET-LLC')]:
+  targets=[('a.cp-video-channel','https://www.youtube.com/@RASVET-LLC'),*[(f'.cp-messengers a[data-channel={channel}]',url) for channel,url in messenger_urls],('a.footer-video-channel','https://www.youtube.com/@RASVET-LLC')]
+  for selector,url in targets:
    with page.expect_popup() as event:page.locator(selector).click()
    popup=event.value;popup.wait_for_load_state('domcontentloaded');assert popup.url==url;popup.close()
-  page.locator('[data-quick-contact-toggle]').click()
-  with page.expect_popup() as event:page.locator('#quick-contact-panel a[data-channel=telegram]').click()
-  popup=event.value;popup.wait_for_load_state('domcontentloaded');assert popup.url=='https://t.me/Eduyard13';popup.close()
-  assert page.locator('#quick-contact-panel').is_hidden()
-  print(f'YouTube and Telegram navigation from contacts, footer and quick contact: {width} OK',flush=True)
+  for channel,url in messenger_urls:
+   page.locator('[data-quick-contact-toggle]').click()
+   with page.expect_popup() as event:page.locator(f'#quick-contact-panel a[data-channel={channel}]').click()
+   popup=event.value;popup.wait_for_load_state('domcontentloaded');assert popup.url==url;popup.close()
+   assert page.locator('#quick-contact-panel').is_hidden()
+  print(f'YouTube, Telegram, MAX and WhatsApp navigation from contacts, footer and quick contact: {width} OK',flush=True)
 
  page.set_viewport_size({'width':1440,'height':1000})
  for route in ['/','/technology/','/automation/','/economics/','/catalog/','/catalog/equipment/','/catalog/lines/','/media/','/documents/','/about-us/','/contacts/']:
@@ -89,6 +92,10 @@ with sync_playwright() as p:
   assert page.locator('#quick-contact-panel').is_hidden()
   assert page.locator('#site-menu .drawer-link[href="'+prefix+'/about-us"]').count()==1
   assert page.locator('#site-menu .drawer-link[href="'+prefix+'/company-details"]').count()==0
+  group=page.locator('#site-menu .drawer-group').filter(has=page.locator('a[href="'+prefix+'/contacts"]'))
+  assert group.locator('a').evaluate_all('links=>links.map(link=>link.getAttribute("href"))')==[prefix+'/about-us',prefix+'/contacts']
+  footer_group=page.locator('.footer-nav-group').filter(has=page.locator('a[href="'+prefix+'/contacts"]'))
+  assert footer_group.locator('a').evaluate_all('links=>links.map(link=>link.getAttribute("href"))')==[prefix+'/about-us',prefix+'/contacts']
   page.keyboard.press('Escape');page.wait_for_selector('#quick-contact:not([hidden])')
  print('Shared widget and menu integration: 11 routes OK',flush=True)
 

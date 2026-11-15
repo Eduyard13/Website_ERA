@@ -14,13 +14,16 @@ test('Страницы используют подтверждённые кан�
  for(const member of aboutUsContent.team){assert.equal(member.name,null);assert.equal(member.photo,null);assert.equal(member.roleApproved,false);}
  assert.equal(contactChannels.youtube,'https://www.youtube.com/@RASVET-LLC');
  assert.equal(contactChannels.telegram,'https://t.me/Eduyard13');
- for(const key of ['vkVideo','max','whatsapp'])assert.equal(contactChannels[key],null);
+ assert.equal(contactChannels.max,'https://max.ru/u/f9LHodD0cOLJG4FZs3gHL3lpPmwQ0qEBZoRlKgEs72lHGd9FC0S8W-9NfpA');
+ assert.equal(contactChannels.whatsapp,'https://wa.me/79032813535');
+ assert.equal(contactChannels.vkVideo,null);
  assert.equal(productionSite.country,'Китай');
  for(const key of ['city','address','lat','lon','mapUrl','mapEmbedUrl'])assert.equal(productionSite[key],null);
  const html=aboutUsPage();assert.equal((html.match(/Фотография будет добавлена/g)||[]).length,3);
  assert.equal((html.match(/<section\b/g)||[]).length,6);assert.equal((html.match(/<h1>/g)||[]).length,1);
  assert.ok(html.includes('Опыт участников команды'));assert.ok(!html.includes('ООО'));
  for(const image of [aboutUsContent.hero,...aboutUsContent.engineering.map(stage=>stage.image),productionSite.image])await stat('public/assets/'+image.file);
+ for(const brand of ['telegram','max','whatsapp'])await stat('public/assets/brands/'+brand+'.svg');
 });
 test('Участник заполняется через данные и не превращает текст в разметку',()=>{
  const data=structuredClone(aboutUsContent);Object.assign(data.team[0],{name:'Иван <script> & "ЭРА"',photo:'photos/predvaritelnyy-izmelchitel/02.webp',alt:'Портрет "имя"',roleApproved:true});
@@ -39,6 +42,9 @@ test('Навигация сохраняет пять разделов, доку�
  const links=navigationGroups.flatMap(group=>group.links);
  for(const path of ['/about-us','/contacts','/documents','/media','/news','/blog'])assert.ok(links.some(link=>link.href===path),path);
  assert.ok(!links.some(link=>link.href==='/company-details'||link.label==='Реквизиты'));
+ const contacts=navigationGroups.find(group=>group.links.some(link=>link.href==='/contacts'));
+ assert.deepEqual(contacts.links.map(link=>link.href),['/about-us','/contacts']);
+ assert.ok(!navigationGroups[0].links.some(link=>link.href==='/about-us'));
 });
 test('Контакты используют единственную прежнюю форму и реальные контакты',()=>{
  const html=contactPage({basePath});assert.equal((html.match(/data-request-form(?=[\s>])/g)||[]).length,1);
@@ -66,7 +72,8 @@ test('Быстрая связь одна на страницу, изолиров
   const panel=html.match(/<aside class="quick-contact"[\s\S]*?<\/aside>/)[0];assert.ok(!panel.includes('YouTube')&&!panel.includes('VK Видео'));
   for(const key of ['telegram','max','whatsapp'])assert.ok(panel.includes(`data-channel="${key}"`));
   assert.ok(panel.includes('href="https://t.me/Eduyard13"'));
-  assert.equal((panel.match(/class="contact-messenger is-pending"/g)||[]).length,2);
+  assert.equal((panel.match(/class="contact-messenger is-pending"/g)||[]).length,0);
+  assert.equal((panel.match(/class="contact-messenger is-available"/g)||[]).length,3);
   assert.ok(!panel.includes('href="#"'));assert.equal(html.includes('/preview-only.js?v='),previewMode);
  }
  const preview=await readFile('public/preview-only.js','utf8');assert.ok(preview.includes('Предпросмотр: заявка не отправлена'));
