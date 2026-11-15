@@ -17,7 +17,8 @@ if(menu&&toggle){
  toggle.addEventListener('click',()=>menu.open?close():open());
  menu.querySelector('[data-menu-close]').addEventListener('click',close);
  menu.addEventListener('cancel',event=>{event.preventDefault();close();});
- menu.addEventListener('close',()=>{if(!menu.open)restore();});
+ // close() already restored focus before a link opened the inline contact form.
+ menu.addEventListener('close',()=>{if(!menu.open&&document.body.classList.contains('menu-open'))restore();});
  const outside=event=>{const r=menu.getBoundingClientRect();return event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom;};
  let startedOutside=false;
  menu.addEventListener('pointerdown',event=>{startedOutside=event.target===menu&&outside(event);});

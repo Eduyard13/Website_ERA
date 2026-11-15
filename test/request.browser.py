@@ -10,7 +10,7 @@ base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3024/Website_ERA').rstri
 out=Path(os.environ.get('ERA_SCREENSHOT_DIR','/tmp/era-navigation-request-025'));out.mkdir(parents=True,exist_ok=True)
 repo=Path(__file__).resolve().parents[1]
 endpoint='https://formsubmit.co/edkom.office@mail.ru'
-labels=['О проекте','Технология','Система управления','Экономика','Каталог']
+labels=['О проекте','Технология','Оборудование','Экономика','КАИР']
 photo=(repo/'public/assets/presentation/kair.webp').read_bytes()
 video=b'\x00\x00\x00\x18ftypmp42'+bytes(range(256))*100
 with sync_playwright() as p:
@@ -46,8 +46,8 @@ with sync_playwright() as p:
   if width>=1200:page.locator('.header-cta').click()
   else:
    page.locator('[data-menu-toggle]').click()
-   assert page.locator('.drawer-primary a').all_text_contents()==labels
-   page.locator('.drawer-top-cta').click()
+   assert page.locator('.drawer-major-groups .drawer-group').count()==3
+   page.locator('.drawer-contact-cta').click()
    assert not page.locator('#site-menu').is_visible()
   dialog=page.locator('#project-request');form=dialog.locator('form')
   assert dialog.is_visible();assert page.evaluate('document.activeElement.name')=='Имя'
@@ -64,7 +64,7 @@ with sync_playwright() as p:
    assert page.locator('.header-cta').evaluate('(e)=>e===document.activeElement')
    page.locator('.header-cta').click()
   else:
-   page.locator('[data-menu-toggle]').click();page.locator('.drawer-top-cta').click()
+   page.locator('[data-menu-toggle]').click();page.locator('.drawer-contact-cta').click()
   assert form.locator('[name="Имя"]').input_value()=='Тестовый клиент'
   before=len(posts);form.locator('[type=submit]').click();assert len(posts)==before
   form.locator('[name="Компания"]').fill('Компания клиента')

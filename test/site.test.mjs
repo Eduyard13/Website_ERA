@@ -376,7 +376,8 @@ test('Навигация различает точную страницу, ра�
  for(const path of ['/documents','/news','/blog','/contacts','/about-us','/media']){
   assert.equal(navigationState(path).section,'all');
   assert.match(siteHeader(path),/aria-controls="site-menu" data-current-section="true"/);
-  assert.match(siteMenu(path),new RegExp('href="'+path+'" aria-current="page"'));
+  if(['/news','/blog'].includes(path))assert.ok(!siteMenu(path).includes('href="'+path+'"'));
+  else assert.match(siteMenu(path),new RegExp('href="'+path+'" aria-current="page"'));
  }
  assert.match(siteMenu(product),/href="\/catalog\/equipment" data-current-branch="true"/);
  assert.match(siteMenu('/catalog/lines/separatsiya-02'),/href="\/catalog\/lines" data-current-branch="true"/);
@@ -743,7 +744,7 @@ test('Отдельная страница ИИ удалена из меню и �
 });
 test('Пять основных направлений ведут к прежним страницам и сохраняют активный раздел',async()=>{
  const {primaryLinks}=await import('../content/navigation.mjs');
- assert.deepEqual(primaryLinks.map(link=>[link.label,link.href]),[['О проекте','/'],['Технология','/technology'],['Система управления','/automation'],['Экономика','/economics'],['Каталог','/catalog']]);
+ assert.deepEqual(primaryLinks.map(link=>[link.label,link.href]),[['О проекте','/'],['Технология','/technology'],['Оборудование','/catalog'],['Экономика','/economics'],['КАИР','/automation']]);
  const {navigationState}=await import('../scripts/navigation.mjs');
  assert.equal(navigationState('/automation/?v=latest').section,'control');
  assert.equal(navigationState('/media/?type=video').section,'all');

@@ -1,99 +1,116 @@
-"""Acceptance scenarios from ERA_Header_Navigation_Codex.md."""
+"""Navigation 3 + 2: real transitions, geometry and keyboard; no screenshots."""
 from pathlib import Path
-from playwright.sync_api import sync_playwright
 from urllib.parse import urlparse
-import os
-
-base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3010/Website_ERA').rstrip('/')
-root_path=urlparse(base).path
-out=Path(os.environ.get('ERA_SCREENSHOT_DIR','/workspace/era-review/navigation-v0.10'));out.mkdir(parents=True,exist_ok=True)
-product='/catalog/equipment/predvaritelnyy-izmelchitel/'
-cases=[('/', 'project','/'),('/catalog/','equipment','/catalog'),('/catalog/equipment/?q=флотатор','equipment','/catalog/equipment'),(product,'equipment','/catalog/equipment'),('/catalog/lines/','equipment','/catalog/lines'),('/catalog/lines/separatsiya-02/','equipment','/catalog/lines'),('/technology/#hot-washing','technology','/technology'),('/automation/','control','/automation'),('/media/','all','/media'),('/economics/','economics','/economics')]+[(p,'all',p) for p in ['/documents','/news','/blog','/contacts','/about-us']]
+import json, os
+from playwright.sync_api import sync_playwright
+base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3045/Website_ERA').rstrip('/')
+root=urlparse(base).path
+labels=['О проекте','Технология','Оборудование','Экономика','КАИР']
+groups=['Проект','Технология','Оборудование','Материалы','Команда и контакты']
+paths=['/','/economics','/technology','/automation','/catalog','/catalog/lines','/catalog/equipment','/media','/documents','/about-us','/contacts']
+results={'widths':[],'routes':[],'links':[],'forms':[],'screenshots':False};errors=[]
+def open_menu(page):
+ page.locator('[data-menu-toggle]').click();menu=page.locator('#site-menu')
+ assert menu.is_visible() and page.locator('[data-menu-toggle]').get_attribute('aria-expanded')=='true'
+ assert page.evaluate('document.body.classList.contains("menu-open")')
+ assert menu.locator('[data-menu-close]').evaluate('(e)=>document.activeElement===e')
+ return menu
+def closed(page):
+ assert not page.locator('#site-menu').is_visible()
+ assert page.locator('[data-menu-toggle]').get_attribute('aria-expanded')=='false'
+ assert not page.evaluate('document.body.classList.contains("menu-open")')
 with sync_playwright() as p:
- proxy=os.environ.get('HTTPS_PROXY') or os.environ.get('HTTP_PROXY')
- browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'],proxy={'server':proxy,'bypass':'127.0.0.1,localhost'} if proxy else None)
- for width in [360,768,1024,1440]:
-  context=browser.new_context(viewport={'width':width,'height':1000},reduced_motion='reduce')
-  page=context.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
-  for route,section,panel_path in cases:
-   page.goto(base+route)
-   assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),(width,route)
-   header=page.locator('.site-header');toggle=page.locator('[data-menu-toggle]');menu=page.locator('#site-menu')
-   assert (64 if width<1200 else 72)<=header.bounding_box()['height']<=80,(width,route,header.bounding_box())
-   assert page.locator('.primary-nav a').all_text_contents()==['О проекте','Технология','Система управления','Экономика','Каталог']
-   assert page.locator('.primary-nav').is_visible()==(width>=1200)
-   expected={'project':'/','equipment':'/catalog','technology':'/technology','control':'/automation','economics':'/economics'}.get(section)
-   if section=='all':
-    assert toggle.get_attribute('data-current-section')=='true'
-    assert header.locator('.primary-link[data-current-section=true]').count()==0
-   else:
-    assert header.locator('.primary-link[data-current-section=true]').get_attribute('href')==root_path+expected
-    assert toggle.get_attribute('data-current-section') is None
-   assert not menu.is_visible()
-   assert toggle.bounding_box()['height']>=44
-   if route in ['/',product,'/documents']:
-    before=header.locator('[data-current-section=true]').evaluate_all('es=>es.map(e=>({label:e.dataset.label,href:e.getAttribute("href")}))')
-    if route in ['/',product]:
-     page.wait_for_function('!!document.querySelector("[data-fx-bar]").dataset.state')
-     page.screenshot(path=str(out/f'{"home" if route=="/" else "equipment"}-header-{width}.png'))
-    trigger=toggle.bounding_box();toggle.click()
-    assert menu.is_visible();assert toggle.get_attribute('aria-expanded')=='true'
-    assert page.evaluate('document.body.classList.contains("menu-open")')
-    assert header.locator('[data-current-section=true]').evaluate_all('es=>es.map(e=>({label:e.dataset.label,href:e.getAttribute("href")}))')==before
-    active=menu.locator('.drawer-link[aria-current=page],.drawer-link[data-current-branch=true]')
-    assert active.count()==1,(width,route)
-    assert active.get_attribute('href')==root_path+panel_path
-    assert menu.locator('.drawer-link').evaluate_all('items=>items.every(e=>e.getBoundingClientRect().height>=44)')
-    assert menu.locator('[data-menu-close]').evaluate('(e)=>document.activeElement===e')
-    scroll_before=page.evaluate('window.scrollY')
-    area=menu.locator('.drawer-scroll').bounding_box();page.mouse.move(area['x']+area['width']/2,area['y']+area['height']/2);page.mouse.wheel(0,180)
-    assert page.evaluate('window.scrollY')==scroll_before
-    for key in ['Tab']*24+['Shift+Tab']*24:
-     page.keyboard.press(key)
-     assert page.evaluate('document.querySelector("#site-menu").contains(document.activeElement)'),(width,route,key)
-    menu.locator('[data-menu-close]').focus()
-    menu.locator('.drawer-scroll').evaluate('(e)=>e.scrollTop=0')
-    if route in ['/',product]:page.screenshot(path=str(out/f'{"home" if route=="/" else "equipment"}-menu-{width}.png'))
-    page.keyboard.press('Escape')
-    assert not menu.is_visible()
-    assert toggle.get_attribute('aria-expanded')=='false'
-    assert toggle.evaluate('(e)=>document.activeElement===e')
-    assert not page.evaluate('document.body.classList.contains("menu-open")')
-    toggle.click();page.mouse.click(trigger['x']+trigger['width']/2,trigger['y']+trigger['height']/2)
-    assert not menu.is_visible(),('repeat press',width,route)
-    toggle.click();menu.locator('[data-menu-close]').click();assert not menu.is_visible()
-    if width>=1200:
-     toggle.click();page.mouse.click(5,300);assert not menu.is_visible()
-  # Both entry branches keep their original content and filters.
-  page.goto(base+'/catalog/');assert page.locator('.catalog-door').count()==2
-  assert page.locator('.catalog-door h2').all_text_contents()==['Линии и комплексы','Отдельные узлы']
-  page.screenshot(path=str(out/f'catalog-hub-{width}.png'),full_page=True)
-  page.locator('.catalog-door').nth(1).click();assert page.locator('[data-node]:visible').count()==12
-  page.get_by_role('searchbox').fill('флотатор');assert page.locator('[data-node]:visible').count()==1
-  page.locator('[data-node]:visible .card-action').click()
-  assert page.locator('.primary-nav [data-current-section=true]').inner_text()=='Каталог'
-  page.go_back();assert page.locator('[data-node]:visible').count()==1
-  page.reload();assert page.locator('[data-node]:visible').count()==1
-  page.goto(base+'/documents');page.locator('[data-menu-toggle]').click()
-  page.locator('.drawer-groups a[href="'+root_path+'/catalog/lines"]').click()
-  assert page.url.rstrip('/').endswith('/catalog/lines')
-  assert not page.locator('#site-menu').is_visible()
-  page.go_back();assert page.locator('[data-menu-toggle]').get_attribute('data-current-section')=='true'
-  assert not page.evaluate('document.body.classList.contains("menu-open")')
-  page.goto(base+'/');page.locator('[data-menu-toggle]').click()
-  page.locator('.drawer-top-cta' if width<1200 else '.drawer-contact-cta').click()
-  assert page.locator('#project-request').is_visible();assert not page.locator('#site-menu').is_visible()
+ browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'])
+ for width in [320,390,768,900,1024,1200,1280,1440,1920]:
+  context=browser.new_context(viewport={'width':width,'height':1000},reduced_motion='reduce');page=context.new_page()
+  page.on('pageerror',lambda e:errors.append(str(e)));page.goto(base+'/')
+  assert page.locator('.primary-nav a').all_text_contents()==labels
+  assert page.locator('.primary-nav').is_visible()==(width>=1200)
+  assert page.locator('.primary-nav a[aria-current=page]').inner_text()=='О проекте'
+  assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
+  menu=open_menu(page)
+  assert menu.get_attribute('data-menu-layout')=='3-plus-2'
+  assert menu.locator('.drawer-group h2>span:last-child').all_text_contents()==groups
+  assert menu.locator('.drawer-major-groups>section').count()==3
+  assert menu.locator('.drawer-support-groups>section').count()==2
+  assert menu.locator('.drawer-link').count()==11 and menu.locator('.drawer-contact-cta').count()==1
+  assert menu.locator('.drawer-top-cta,.drawer-primary').count()==0
+  assert menu.locator('.drawer-link,button,.drawer-contact-cta').evaluate_all('es=>es.every(e=>e.getBoundingClientRect().height>=44)')
+  assert menu.locator('.drawer-scroll').evaluate('(e)=>e.scrollWidth<=e.clientWidth+1')
+  assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
+  boxes=menu.locator('.drawer-group').evaluate_all('es=>es.map(e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height};})')
+  panel=menu.bounding_box();assert panel['x']>=0 and panel['x']+panel['width']<=width+1
+  if width>=1200:
+   assert 1000<=panel['width']<=1120
+   assert max(b['y'] for b in boxes[:3])-min(b['y'] for b in boxes[:3])<1
+   assert boxes[0]['x']<boxes[1]['x']<boxes[2]['x'] and abs(boxes[3]['y']-boxes[4]['y'])<1
+   assert boxes[3]['y']>=max(b['y']+b['h'] for b in boxes[:3])+20
+   assert menu.locator('.drawer-contact-cta').bounding_box()['y']+48<1000
+  elif width>=768:
+   assert abs(boxes[0]['y']-boxes[1]['y'])<1 and boxes[0]['x']<boxes[1]['x']
+   assert abs(boxes[2]['y']-boxes[3]['y'])<1 and boxes[2]['y']>boxes[0]['y'] and boxes[4]['y']>boxes[2]['y']
+  else:
+   assert max(b['x'] for b in boxes)-min(b['x'] for b in boxes)<1
+   assert all(boxes[i+1]['y']>boxes[i]['y']+boxes[i]['h'] for i in range(4))
+  close_y=menu.locator('[data-menu-close]').bounding_box()['y'];background_y=page.evaluate('scrollY')
+  menu.locator('.drawer-scroll').evaluate('(e)=>e.scrollTop=e.scrollHeight')
+  assert menu.locator('[data-menu-close]').bounding_box()['y']==close_y and page.evaluate('scrollY')==background_y
+  menu.locator('[data-menu-close]').focus();page.keyboard.press('Shift+Tab')
+  assert menu.locator('.drawer-contact-cta').evaluate('(e)=>document.activeElement===e')
+  page.keyboard.press('Tab');assert menu.locator('[data-menu-close]').evaluate('(e)=>document.activeElement===e')
+  for key in ['Tab']*14+['Shift+Tab']*14:
+   page.keyboard.press(key);assert menu.evaluate('(e)=>e.contains(document.activeElement)')
+  page.keyboard.press('Escape');closed(page)
+  assert page.locator('[data-menu-toggle]').evaluate('(e)=>document.activeElement===e')
+  open_menu(page).locator('[data-menu-close]').click();closed(page)
+  if width>=1200:
+   open_menu(page);page.mouse.click(5,300);closed(page)
+  results['widths'].append({'width':width,'menuWidth':panel['width']});context.close()
+ print('Responsive layout, controls, scrolling and keyboard: 9 widths OK',flush=True)
+ cases=[('/','project','/'),('/technology/','technology','/technology'),('/catalog/','equipment','/catalog'),('/catalog/lines/','equipment','/catalog/lines'),('/catalog/lines/separatsiya-01/','equipment','/catalog/lines'),('/catalog/lines/separatsiya-02/','equipment','/catalog/lines'),('/catalog/equipment/predvaritelnyy-izmelchitel/','equipment','/catalog/equipment'),('/economics/','economics','/economics'),('/automation/','control','/automation')]
+ cases += [(s+'/','all',s) for s in ['/media','/documents','/about-us','/contacts']]+[(s+'/','all',None) for s in ['/news','/blog']]
+ for width in [390,1440]:
+  context=browser.new_context(viewport={'width':width,'height':1000},reduced_motion='reduce');page=context.new_page()
+  page.on('pageerror',lambda e:errors.append(str(e)))
+  for route,section,active_path in cases:
+   response=page.goto(base+route);assert response.status==200,(route,response.status)
+   current=page.locator('.site-header [data-current-section=true]');assert current.count()==1
+   if section=='all':assert current.get_attribute('data-menu-toggle') is not None
+   else:assert current.get_attribute('href')==root+{'project':'/','technology':'/technology','equipment':'/catalog','economics':'/economics','control':'/automation'}[section]
+   menu=open_menu(page);selected=menu.locator('[aria-current=page],[data-current-branch=true]')
+   assert selected.count()==(1 if active_path else 0),(width,route)
+   if active_path:assert selected.get_attribute('href')==root+active_path
+   assert menu.locator('a[href$="/news"],a[href$="/blog"]').count()==0
+   page.keyboard.press('Escape');results['routes'].append({'width':width,'route':route})
+  for path in paths:
+   page.goto(base+'/documents/');open_menu(page).locator(f'.drawer-link[href="{root+path}"]').click()
+   page.wait_for_url(base+path.rstrip('/')+('/' if path=='/' else '**'))
+   assert urlparse(page.url).path.rstrip('/')==(root+path).rstrip('/'),(path,page.url)
+   closed(page);assert page.locator('h1').count()==1;results['links'].append({'width':width,'path':path,'from':'menu'})
+  for path in ['/economics','/automation','/catalog','/media','/documents','/about-us','/contacts']:
+   page.goto(base+'/');page.locator(f'.site-footer a[href="{root+path}"]').first.click();page.wait_for_url(base+path+'**')
+   assert urlparse(page.url).path.rstrip('/')==root+path
+   results['links'].append({'width':width,'path':path,'from':'footer'})
+  page.goto(base+'/');open_menu(page).locator('.drawer-contact-cta').click()
+  page.locator('#project-request').wait_for(state='visible');closed(page)
+  assert page.locator('#project-request [name="Имя"]').evaluate('(e)=>document.activeElement===e')
   page.keyboard.press('Escape');assert not page.locator('#project-request').is_visible()
-  assert page.locator('.primary-nav a[aria-current=page]').inner_text()=='О проекте'
-  page.goto(base+'/about/');page.wait_for_url(base+'/')
-  assert page.locator('.primary-nav a[aria-current=page]').inner_text()=='О проекте'
-  assert page.locator('#about-era').count()==1
+  page.goto(base+'/contacts/');open_menu(page).locator('.drawer-contact-cta').click();closed(page);page.wait_for_timeout(100)
+  assert page.locator('#project-form [name="Имя"]').evaluate('(e)=>document.activeElement===e'),'Inline form must retain focus after closing the menu'
+  assert page.locator('#project-request').count()==0;results['forms'].append({'width':width,'modal':'OK','inline':'OK'})
+  for old,target in [('/about/','/'),('/company-details/','/contacts/'),('/ai/','/automation/')]:
+   page.goto(base+old);page.wait_for_url(lambda url:urlparse(url).path.rstrip('/')==(root+target).rstrip('/'))
   page.goto(base+'/does-not-exist');assert page.locator('h1').inner_text()=='404'
-  assert page.locator('.site-header [data-current-section=true]').count()==0
-  assert not errors,errors
-  print('Routes, parent branches, current/open states, 44px controls, focus trap, close methods, back, filters, hub, legacy redirect and 404:',width,'OK',flush=True)
-  context.close()
- # Redirect also works without JavaScript on static hosting.
- context=browser.new_context(java_script_enabled=False);page=context.new_page()
- page.goto(base+'/about/');page.wait_for_url(base+'/');assert page.locator('.primary-nav a[aria-current=page]').inner_text()=='О проекте'
- context.close();browser.close()
+  assert page.locator('.site-header [data-current-section=true]').count()==0;context.close()
+  print(f'Active routes, menu/footer transitions, forms and redirects: {width} OK',flush=True)
+ print('Active states, 36 real transitions, forms and redirects OK',flush=True)
+ context=browser.new_context(viewport={'width':1440,'height':620},reduced_motion='reduce');page=context.new_page();page.goto(base+'/')
+ menu=open_menu(page);assert menu.locator('.drawer-scroll').evaluate('(e)=>e.scrollHeight>e.clientHeight')
+ menu.locator('.drawer-contact-cta').click();assert page.locator('#project-request').is_visible();context.close()
+ context=browser.new_context(java_script_enabled=False,viewport={'width':390,'height':844});page=context.new_page()
+ page.goto(base+'/about/');page.wait_for_url(base+'/');assert page.locator('.site-footer a').count()>=11
+ assert page.locator('.primary-nav a').all_text_contents()==labels;context.close();browser.close()
+assert not errors,errors
+results['short_viewport']='OK';results['no_javascript']='Footer and redirect OK';results['page_errors']=errors
+report=Path(os.environ.get('ERA_NAV_REPORT','/tmp/era-navigation-0354/browser/results.json'));report.parent.mkdir(parents=True,exist_ok=True)
+report.write_text(json.dumps(results,ensure_ascii=False,indent=2)+'\n');print(f'Acceptance passed: {report}',flush=True)

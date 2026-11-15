@@ -42,13 +42,16 @@ test('Оба видеоканала видны без подставных URL; 
  for(const value of [null,'','javascript:alert(1)','http://insecure.invalid','https://name:secret@example.org'])assert.equal(confirmedChannelUrl(value),null);
 });
 test('Навигация сохраняет пять разделов, документацию и добавляет О нас без реквизитов',()=>{
- assert.deepEqual(primaryLinks.map(link=>link.label),['О проекте','Технология','Система управления','Экономика','Каталог']);
+ assert.deepEqual(primaryLinks.map(link=>link.label),['О проекте','Технология','Оборудование','Экономика','КАИР']);
  const links=navigationGroups.flatMap(group=>group.links);
- for(const path of ['/about-us','/contacts','/documents','/media','/news','/blog'])assert.ok(links.some(link=>link.href===path),path);
+ for(const path of ['/about-us','/contacts','/documents','/media'])assert.ok(links.some(link=>link.href===path),path);
  assert.ok(!links.some(link=>link.href==='/company-details'||link.label==='Реквизиты'));
  const contacts=navigationGroups.find(group=>group.links.some(link=>link.href==='/contacts'));
  assert.deepEqual(contacts.links.map(link=>link.href),['/about-us','/contacts']);
  assert.ok(!navigationGroups[0].links.some(link=>link.href==='/about-us'));
+ assert.deepEqual(navigationGroups.map(group=>group.label),['Проект','Технология','Оборудование','Материалы','Команда и контакты']);
+ assert.deepEqual(navigationGroups.map(group=>group.links.map(link=>[link.label,link.href])),[[['О проекте','/'],['Экономика переработки','/economics']],[['Технология переработки','/technology'],['Управление КАИР','/automation']],[['Весь каталог','/catalog'],['Линии и комплексы','/catalog/lines'],['Отдельные узлы','/catalog/equipment']],[['Фото и видео','/media'],['Техническая документация','/documents']],[['О нас','/about-us'],['Контакты','/contacts']]]);
+ for(const path of ['/news','/blog']){assert.ok(!links.some(link=>link.href===path));assert.ok(routes.includes(path));}
 });
 test('Контакты используют единственную прежнюю форму и реальные контакты',()=>{
  const html=contactPage({basePath});assert.equal((html.match(/data-request-form(?=[\s>])/g)||[]).length,1);

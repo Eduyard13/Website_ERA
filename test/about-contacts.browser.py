@@ -25,7 +25,7 @@ with sync_playwright() as p:
    assert page.locator('main h1').count()==1
    assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),(width,path)
    assert page.locator('.page-progress-rail a').count()==count,(width,path)
-   assert page.locator('.primary-nav a').all_text_contents()==['О проекте','Технология','Система управления','Экономика','Каталог']
+   assert page.locator('.primary-nav a').all_text_contents()==['О проекте','Технология','Оборудование','Экономика','КАИР']
    assert page.locator('main img').evaluate_all('images=>images.every(image=>image.complete&&image.naturalWidth>0&&(image.alt.length>0||image.getAttribute("aria-hidden")==="true"))')
    assert page.locator('main .au-team-card,main .cp-form-card,main .cp-map,main .cp-video-channel').evaluate_all('items=>items.every(item=>item.scrollWidth<=item.clientWidth+1)'),(width,path)
    assert page.locator('.footer-video-channel').count()==2

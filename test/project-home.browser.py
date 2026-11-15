@@ -26,7 +26,7 @@ with sync_playwright() as p:
   assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),width
   assert page.locator('.resource-hero-proof').inner_text().startswith('до 80%')
   assert page.locator('[data-econ-widget]').count()==0
-  assert page.locator('.primary-nav a').all_text_contents()==['О проекте','Технология','Система управления','Экономика','Каталог']
+  assert page.locator('.primary-nav a').all_text_contents()==['О проекте','Технология','Оборудование','Экономика','КАИР']
   assert page.locator('#site-menu .drawer-groups a[href$="/media"]').count()==1
   assert page.locator('[data-home-block=process] [data-video-slot=promo]').count()==1
   promo=page.locator('[data-video-slot=promo]');assert promo.locator('video').count()==1

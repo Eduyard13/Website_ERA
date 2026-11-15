@@ -52,8 +52,8 @@ with sync_playwright() as p:
    page.keyboard.press('Escape')
   else:assert page.locator('.primary-nav a[data-current-section=true]').get_attribute('href')==('/Website_ERA/technology' if route=='/technology' else '/Website_ERA/catalog')
  page.set_viewport_size({'width':360,'height':850});page.goto(base+'/documents');page.get_by_role('button',name='Меню',exact=True).click();assert page.locator('#site-menu').is_visible()
- page.locator('.drawer-primary a[href="/Website_ERA/"]').click();assert page.url in [base+'/',base]
- page.get_by_role('button',name='Меню',exact=True).click();assert page.locator('.drawer-primary a[href="/Website_ERA/"]').get_attribute('aria-current')=='page'
+ page.locator('.drawer-groups a[href="/Website_ERA/"]').click();assert page.url in [base+'/',base]
+ page.get_by_role('button',name='Меню',exact=True).click();assert page.locator('.drawer-groups a[href="/Website_ERA/"]').get_attribute('aria-current')=='page'
  page.keyboard.press('Escape');assert not page.locator('#site-menu').is_visible()
  assert not errors,errors;assert not failed,failed
  print('Filters, back restoration, PDF download, modal, ancestor selection and mobile home navigation: OK',flush=True)
