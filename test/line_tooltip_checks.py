@@ -40,4 +40,3 @@ def assert_tooltip_clearance(tooltip, width, context):
         }
         return true;
     }"""), (context, placement)
-
