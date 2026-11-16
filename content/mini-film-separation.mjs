@@ -1,5 +1,6 @@
 // Источник: «ТО Линия Сепарации Пленок (мини).pdf», 03.11.2026, 14 страниц.
 // Оригиналы иллюстраций и контрольные суммы: docs/mini-film-separation-assets.json.
+import presentation from './separatsiya-01-presentation-assets.json' with {type:'json'};
 export const miniFilmSeparationDocument={
  id:'separatsiya-01-mini-technical',slug:'separatsiya-01',
  title:'Техническое описание — Линия сухой сепарации плёнок и пакетов · мини',
@@ -58,6 +59,15 @@ miniFilmSeparationMedia.cover={
  file:miniFilmSeparation.cardFile,thumbnail:miniFilmSeparation.cardSmallFile,
  product:'/catalog/lines/separatsiya-01',productTitle:'Сепарация 01',
  caption:'Мини-комплектация линии сепарации плёнок и пакетов · подготовленная иллюстрация',
+};
+// Detail-page finish has its own key; the catalogue and gallery keep their sources.
+export const miniLineHeroMedia={
+ id:'separatsiya-01-mini-hero-titanium',type:'visualization',page:1,topic:'Линия целиком',
+ title:'Общая компоновка мини-линии сухой сепарации',
+ file:presentation.hero.file,thumbnail:presentation.hero.smallFile,smallFile:presentation.hero.smallFile,
+ width:presentation.hero.width,height:presentation.hero.height,
+ product:'/catalog/lines/separatsiya-01',productTitle:'Сепарация 01',
+ caption:'Инженерная визуализация мини-линии · ТО, стр. 1 · оформление Titanium Gallery',
 };
 
 export const miniLineMetrics=[

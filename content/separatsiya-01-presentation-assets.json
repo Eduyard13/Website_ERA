@@ -1,0 +1,105 @@
+{
+  "hero": {
+    "file": "lines/separatsiya-01-mini/hero-titanium.webp",
+    "width": 1500,
+    "height": 1010,
+    "bytes": 212194,
+    "sha256": "74adba4fd4eb002e6e0afcff47738ec9a3b77b2acb209ba5f7a46f3d11392191",
+    "smallFile": "lines/separatsiya-01-mini/hero-titanium-768.webp",
+    "small": {
+      "file": "lines/separatsiya-01-mini/hero-titanium-768.webp",
+      "width": 768,
+      "height": 517,
+      "bytes": 77536,
+      "sha256": "88887fbdb728638dfa4e109e30a05a3a3b00cde8c1208289e621487c88ff5880"
+    },
+    "source": {
+      "file": "lines/separatsiya-01-mini/overview.webp",
+      "width": 1500,
+      "height": 1010,
+      "bytes": 153020,
+      "sha256": "f6856720aaca10b144ba5f3ca136d43e79134cb67246d29868c5f38d80d2a6bb"
+    },
+    "background": {
+      "file": "lines/separatsiya-01/titanium-gallery-plate.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 29828,
+      "sha256": "e1e8169e9a37ceb3fdcc694e0f0f44f753aa75099c75a674ab93e072bb2708de"
+    },
+    "contactShadows": [
+      [
+        65,
+        667,
+        240,
+        738
+      ],
+      [
+        270,
+        778,
+        500,
+        860
+      ],
+      [
+        470,
+        818,
+        650,
+        889
+      ],
+      [
+        570,
+        457,
+        680,
+        504
+      ],
+      [
+        850,
+        619,
+        1130,
+        728
+      ],
+      [
+        1210,
+        328,
+        1435,
+        391
+      ],
+      [
+        860,
+        902,
+        1100,
+        1005
+      ]
+    ],
+    "method": "Same white-matte removal as Separation 02; original equipment pixels on the existing titanium plate."
+  },
+  "diagram": {
+    "file": "lines/separatsiya-01-mini/layout-native.webp",
+    "width": 2042,
+    "height": 1350,
+    "bytes": 1433692,
+    "sha256": "5c1fcf25051d6fa96b2bbe9d6a8a1e096a698bdc73c0e62ecd34b3abac243ab3",
+    "source": {
+      "file": "lines/separatsiya-01-mini/overview.webp",
+      "width": 1500,
+      "height": 1010,
+      "bytes": 153020,
+      "sha256": "f6856720aaca10b144ba5f3ca136d43e79134cb67246d29868c5f38d80d2a6bb"
+    },
+    "numberedSource": {
+      "file": "lines/separatsiya-01-mini/layout.webp",
+      "width": 2042,
+      "height": 1350,
+      "bytes": 1185742,
+      "sha256": "3b675a44e1105109bd5a48ac22ba736d682b060b4afe3e3bfc6e2c0335965729"
+    },
+    "registration": {
+      "scale": 1.2520274454340496,
+      "translate": [
+        68.17629278355454,
+        34.55781503840613
+      ]
+    },
+    "method": "Unnumbered source, white-matte removal, uniform scale onto the original 2042x1350 drawing canvas."
+  }
+}

@@ -1,7 +1,7 @@
 const data=document.querySelector('#line-document-data');
 const entries=data?JSON.parse(data.textContent):[];
 let viewer;
-for(const link of document.querySelectorAll('.film-line--full [data-pdf-open]')){
+for(const link of document.querySelectorAll(':is(.film-line--full,.mini-line) [data-pdf-open]')){
  link.addEventListener('click',async event=>{
   if(event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
   const entry=entries.find(d=>d.id===link.dataset.pdfOpen);

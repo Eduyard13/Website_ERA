@@ -6,9 +6,55 @@ import {render,basePath} from '../scripts/build.mjs';
 import {nodes,lines} from '../content/catalog.mjs';
 import {lineUnits,filmSeparationMedia} from '../content/film-separation.mjs';
 import {equipmentCardImages} from '../content/equipment-card-images.mjs';
-import {fullLineDiagram} from '../content/line-diagrams.mjs';
+import {fullLineDiagram,miniLineDiagram} from '../content/line-diagrams.mjs';
 import assets from '../content/separatsiya-02-presentation-assets.json' with {type:'json'};
 import mask from '../content/separatsiya-02-occupancy.json' with {type:'json'};
+import miniAssets from '../content/separatsiya-01-presentation-assets.json' with {type:'json'};
+import miniMask from '../content/separatsiya-01-occupancy.json' with {type:'json'};
+
+test('Мини-линия сохраняет свои исходники, 11 точных выносок, 13 позиций и собственный светлый первый экран',async()=>{
+ const page=render('/catalog/lines/separatsiya-01');
+ const ids=['purpose','raw-materials','specs','process','composition','quality','placement','kair','photos','documents','equipment'];
+ const order=ids.map(id=>page.indexOf(`id="${id}"`));
+ assert.ok(order.every((position,index)=>position>=0&&(!index||position>order[index-1])));
+ assert.deepEqual([...page.match(/<nav class="anchor-nav line-anchor-nav"[^>]*>(.*?)<\/nav>/s)[1].matchAll(/href="#([^"]+)"/g)].map(m=>m[1]),ids);
+ assert.ok(page.includes('data-hero-finish="titanium-gallery-mini"'));
+ assert.ok(page.includes('width="1500" height="1010" fetchpriority="high"'));
+ assert.ok(page.includes(`srcset="${basePath}/assets/${miniAssets.hero.smallFile} 768w, ${basePath}/assets/${miniAssets.hero.file} 1500w"`));
+ assert.ok(page.includes(`data-image="${basePath}/assets/${miniAssets.hero.file}"`));
+ for(const asset of [miniAssets.hero,miniAssets.hero.small,miniAssets.hero.source,miniAssets.hero.background,miniAssets.diagram]){
+  const bytes=await readFile('dist/assets/'+asset.file);
+  assert.equal(bytes.length,asset.bytes);assert.equal(createHash('sha256').update(bytes).digest('hex'),asset.sha256);
+ }
+ assert.deepEqual([miniAssets.hero.small.width,miniAssets.hero.small.height],[768,517]);
+ assert.equal(miniAssets.hero.background.sha256,assets.hero.background.sha256);
+ assert.equal(miniMask.imageSha256,miniAssets.diagram.sha256);
+ const sourcePoints=[[1970,260,1780,307],[1440,224,1464,394],[1158,112,1090,358],[632,245,737,367],[399,458,548,652],[76,768,264,814],[535,1221,703,1045],[803,730,977,790],[1655,826,1398,828],[889,1173,1043,1010],[1560,1210,1410,1135]];
+ assert.equal(miniLineDiagram.parts.length,11);assert.equal(miniLineDiagram.defaultPart,3);
+ assert.deepEqual([miniLineDiagram.width,miniLineDiagram.height],[2042,1350]);
+ for(const [index,part] of miniLineDiagram.parts.entries()){
+  const callout=part.callouts[0];assert.equal(part.callouts.length,1);
+  const actual=[...callout.badge,...callout.target].map(v=>v*2042/1000);
+  for(let n=0;n<4;n++)assert.ok(Math.abs(actual[n]-sourcePoints[index][n])<.002);
+  assert.deepEqual(callout.pdfLeader.at(-1),callout.target);assert.ok(callout.tooltipDescription.length>35);
+ }
+ const composition=page.slice(page.indexOf('id="composition"'),page.indexOf('id="quality"'));
+ for(const attribute of ['data-line-leader','data-callout-hit'])assert.equal([...composition.matchAll(new RegExp(attribute+'="','g'))].length,11);
+ assert.equal([...composition.matchAll(/class="guide-end"/g)].length,11);
+ assert.ok(!composition.includes('pin-masks'));assert.ok(composition.includes('layout-native.webp'));
+ assert.ok(!composition.includes('line-unit-grid'));
+ assert.ok(page.indexOf('id="options"')>page.indexOf('id="quality"')&&page.indexOf('id="options"')<page.indexOf('id="placement"'));
+ const documents=page.slice(page.indexOf('id="documents"'),page.indexOf('id="equipment"'));
+ assert.equal([...documents.matchAll(/data-library-document="/g)].length,1);
+ assert.ok(documents.includes('data-pdf-open="separatsiya-01-mini-technical"'));
+ assert.equal([...page.matchAll(/id="pdf-viewer"/g)].length,1);
+ const equipment=page.slice(page.indexOf('id="equipment"'));
+ assert.equal([...equipment.matchAll(/data-catalogue-image="/g)].length,3);
+ for(const slug of ['predvaritelnyy-izmelchitel','ballisticheskiy-separator','rotornyy-raspushitel'])assert.ok(equipment.includes(equipmentCardImages[slug].file));
+ assert.ok(!page.includes('402,67'));assert.ok(!page.includes('dimensions-a0.pdf'));assert.ok(!page.includes('5 раздельных потоков'));
+ const catalogue=render('/catalog/lines');assert.ok(!catalogue.includes(miniAssets.hero.file));
+ assert.ok(!render('/media').includes(miniAssets.hero.file));
+});
 
 test('Titanium Gallery использует отдельный экспорт исходной линии только на её странице',async()=>{
  const page=render('/catalog/lines/separatsiya-02');
@@ -61,8 +107,8 @@ test('Полная схема использует прозрачную моде
  assert.notEqual(trucks.callouts[0].tooltipDescription,trucks.callouts[1].tooltipDescription);
  for(const [n,count] of [[20,5],[25,4],[27,2]])assert.equal(fullLineDiagram.parts.find(p=>p.number===n).regions.length,count);
  const {version}=JSON.parse(await readFile('package.json','utf8'));
- assert.ok(page.includes(`/line-monitor.js?v=${version}-callouts-2`));assert.ok(page.includes(`/line-monitor.css?v=${version}-callouts-2`));
- assert.ok((await readFile('dist/line-monitor.js','utf8')).includes(`./line-callout-layout.mjs?v=${version}-callouts-2`));
+ assert.ok(page.includes(`/line-monitor.js?v=${version}-callouts-3`));assert.ok(page.includes(`/line-monitor.css?v=${version}-callouts-3`));
+ assert.ok((await readFile('dist/line-monitor.js','utf8')).includes(`./line-callout-layout.mjs?v=${version}-callouts-3`));
 });
 
 test('Шесть компактных карточек сохраняют данные и ссылки, используя точные изображения каталога',()=>{

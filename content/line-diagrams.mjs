@@ -1,6 +1,8 @@
 import {linePositions} from './film-separation.mjs';
 import {miniSpecification} from './mini-film-separation.mjs';
 import fullLineMarkers from './era-separatsiya-02-markers.json' with {type:'json'};
+import miniOccupancy from './separatsiya-01-occupancy.json' with {type:'json'};
+import fullOccupancy from './separatsiya-02-occupancy.json' with {type:'json'};
 
 // Pin centres, leader targets and visible object outlines use source-image pixels.
 // Source: mini TO p.5 (2042×1350), full TO p.6 (1853×1299), p.25 (1706×1275).
@@ -39,7 +41,26 @@ const miniGeometry={
  10:[[[889,1173]],[[1043,1010]],[[[803,892],[866,870],[1206,970],[1293,1031],[1183,1093],[1012,1052],[871,1002]]]],
  11:[[[1560,1210]],[[1410,1135]],[[[1183,1013],[1419,1078],[1418,1214],[1329,1291],[1173,1213]]]],
 };
-export const miniLineDiagram=diagram({id:'line01-construction',slug:'separatsiya-01',title:'Узлы мини-линии и движение материала',file:'lines/separatsiya-01-mini/layout.webp',width:2042,height:1350,page:5,defaultPart:3,labels:miniSpecification.slice(0,11).map(([n,label])=>[Number(n),label]),descriptions:miniDescriptions,geometry:miniGeometry});
+const miniBase=diagram({id:'line01-construction',slug:'separatsiya-01',title:'Узлы мини-линии и движение материала',file:'lines/separatsiya-01-mini/layout-native.webp',width:2042,height:1350,page:5,defaultPart:3,labels:miniSpecification.slice(0,11).map(([n,label])=>[Number(n),label]),descriptions:miniDescriptions,geometry:miniGeometry});
+const miniTooltips=[
+ 'Вскрывает тюки и измельчает плёнку для последующей сепарации.',
+ 'Подаёт материал от измельчителя в баллистический сепаратор.',
+ 'Разделяет плоскую плёнку, объёмные предметы и мелкие примеси.',
+ 'Удерживает материал при изменении наклона сепаратора.',
+ 'Ведёт плёнку к распушителю и даёт доступ для удаления видимых примесей.',
+ 'Раскрывает слипшиеся слои и отделяет оставшиеся мелкие примеси.',
+ 'Отводит твёрдые включения из роторного узла.',
+ 'Передаёт просев баллистического сепаратора на сборную ленту.',
+ 'Передаёт крупные отделённые включения на сборную ленту.',
+ 'Собирает твёрдые примеси с отводящих конвейеров и подаёт их в биг-бэг.',
+ 'Удерживает мешок для сбора отделённых примесей.',
+];
+export const miniLineDiagram={...miniBase,occupancy:miniOccupancy,
+ parts:miniBase.parts.map((part,index)=>({...part,callouts:[{
+  id:String(part.number).padStart(2,'0'),badge:part.pins[0],target:part.targets[0],
+  pdfLeader:[part.targets[0]],tooltipLabel:part.label,tooltipDescription:miniTooltips[index],
+ }]})),
+};
 
 const fullDescriptions={
  1:'Раскрывает тюки, разрывает связанные и слипшиеся фрагменты и предварительно измельчает плёнку перед разделением.',
@@ -107,6 +128,7 @@ const fullGeometry={
 const registeredRegion=region=>region.map(([x,y])=>[(x*2.1138496030752303+30.57053708379414)/4,(y*2.1149255018508146+30.032929924436107)/4]);
 const quarter=point=>point.map(value=>value/4);
 export const fullLineDiagram={
+ occupancy:fullOccupancy,
  id:'line02-construction',slug:'separatsiya-02',title:'Узлы расширенной линии и движение материала',page:6,
  file:'lines/separatsiya-02/'+fullLineMarkers.asset.file,width:fullLineMarkers.asset.width,height:fullLineMarkers.asset.height,defaultPart:fullLineMarkers.defaultPart,
  parts:fullLineMarkers.positions.map(position=>({

@@ -8,47 +8,7 @@ base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3052').rstrip('/')
 out=Path(os.environ.get('ERA_LINE_REPORT_DIR','/tmp/era-separation-02-0362/browser'));out.mkdir(parents=True,exist_ok=True)
 data=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {fullLineDiagram} from './content/line-diagrams.mjs';console.log(JSON.stringify(fullLineDiagram))"],text=True))
 errors=[];failures=[];report={'widths':[],'screenshots':False}
-def assert_tooltip_clearance(tooltip, width, context):
-    placement = tooltip.get_attribute('data-placement')
-    box = tooltip.bounding_box()
-    assert box['x'] >= 0 and box['x'] + box['width'] <= width + 1, (context, box)
-    if placement == 'floating':
-        assert box['y'] >= 0 and box['y'] + box['height'] <= 1001, (context, box)
-    else:
-        assert placement == 'dock', (context, placement)
-    assert tooltip.evaluate("""tip => {
-        const root = tip.closest('#line02-construction');
-        const t = tip.getBoundingClientRect();
-        const overlaps = b => t.left < b.right && t.right > b.left && t.top < b.bottom && t.bottom > b.top;
-        const drawing = root.querySelector('[data-diagram-viewport]');
-        if (tip.dataset.placement === 'dock') return !overlaps(drawing.getBoundingClientRect());
-
-        const image = drawing.querySelector('svg image').getBoundingClientRect();
-        const [cw,ch,encoded] = root.dataset.calloutMask.split(',');
-        const columns = Number(cw), rows = Number(ch), bits = atob(encoded);
-        const x0 = Math.max(0, Math.floor((t.left-image.left)/image.width*columns));
-        const x1 = Math.min(columns, Math.ceil((t.right-image.left)/image.width*columns));
-        const y0 = Math.max(0, Math.floor((t.top-image.top)/image.height*rows));
-        const y1 = Math.min(rows, Math.ceil((t.bottom-image.top)/image.height*rows));
-        for (let y=y0; y<y1; y++) {
-            for (let x=x0; x<x1; x++) {
-                const i = y*columns+x;
-                if ((bits.charCodeAt(i >> 3) >> (i & 7)) & 1) return false;
-            }
-        }
-        for (const pin of drawing.querySelectorAll('button[data-callout]')) {
-            if (overlaps(pin.getBoundingClientRect())) return false;
-        }
-        for (const guide of drawing.querySelectorAll('[data-active="true"] [data-line-leader]')) {
-            const length = guide.getTotalLength(), matrix = guide.getScreenCTM();
-            for (let i=0; i<=100; i++) {
-                const q = guide.getPointAtLength(length*i/100);
-                const p = new DOMPoint(q.x,q.y).matrixTransform(matrix);
-                if (p.x >= t.left && p.x <= t.right && p.y >= t.top && p.y <= t.bottom) return false;
-            }
-        }
-        return true;
-    }"""), (context, placement)
+from line_tooltip_checks import assert_tooltip_clearance
 
 with sync_playwright() as p:
  browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'])
@@ -224,11 +184,13 @@ with sync_playwright() as p:
   assert expand.evaluate('(e)=>document.activeElement===e')
   assert page.locator('body').evaluate('(e)=>getComputedStyle(e).overflow')!='hidden'
   assert page.evaluate('document.documentElement.scrollWidth<=innerWidth');context.close()
- # Legacy mini-line and one equipment node retain their own interfaces.
+ # Both lines opt into one fit controller; equipment nodes retain their own interface.
  context=browser.new_context(viewport={'width':390,'height':844},reduced_motion='reduce');page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)))
- page.goto(base+'/catalog/lines/separatsiya-01/');assert page.locator('[data-diagram-mode=fit]').count()==0
+ page.goto(base+'/catalog/lines/separatsiya-01/');page.wait_for_selector('#line01-construction[data-monitor-ready=true]');assert page.locator('[data-diagram-mode=fit]').count()==1
  mini=page.locator('[data-line-diagram=separatsiya-01]');mini.locator('[data-diagram-select]').select_option('11')
- assert mini.locator('[data-detail-label]').inner_text() and mini.locator('[data-diagram-tooltip]').is_visible()
+ assert mini.locator('[data-detail-label]').inner_text() and mini.locator('[data-diagram-tooltip]').is_hidden()
+ assert mini.locator('[data-line-leader]').count()==11 and mini.locator('.line-diagram-pin-masks').count()==0
+ mini.locator('button[data-callout="11"]').click();assert mini.locator('[data-diagram-tooltip]').is_visible()
  assert page.locator('[data-line-source-diagram]').count()==1
  page.goto(base+'/catalog/equipment/ballisticheskiy-separator/');node=page.locator('[data-diagram]');node.locator('[data-part]').first.focus();assert node.locator('[data-diagram-tooltip]').is_visible()
  context.close()

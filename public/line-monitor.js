@@ -1,7 +1,7 @@
 import { findCalloutPosition, readOccupancy } from './line-callout-layout.mjs';
 
-// This controller is scoped to the full-line vector-callout block only.
-for(const root of document.querySelectorAll('#line02-construction[data-diagram-mode="fit"]')){
+// Both line pages opt in explicitly; node and other legacy diagrams stay separate.
+for(const root of document.querySelectorAll(':is(#line01-construction,#line02-construction)[data-diagram-mode="fit"]')){
  const pins=[...root.querySelectorAll('button[data-part]')],guides=[...root.querySelectorAll('[data-part-guide]')];
  const byCallout=new Map(pins.map(pin=>[pin.dataset.callout,pin]));
  const select=root.querySelector('[data-diagram-select]'),expand=root.querySelector('[data-diagram-fullscreen]');

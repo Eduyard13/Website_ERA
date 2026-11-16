@@ -216,7 +216,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Verify public diagram hover in Chrome
+      - name: Verify both public line diagrams in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
         run: node test/line-diagram-public.mjs
