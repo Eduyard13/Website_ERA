@@ -16,7 +16,7 @@ import {contactPage,requestDialog,requestSentPage,enhanceProjectRequests} from '
 export const basePath=(process.env.BASE_PATH||'').replace(/\/$/,'');
 if(basePath&&!/^\/[A-Za-z0-9_/-]+$/.test(basePath))throw new Error('Invalid BASE_PATH');
 const version=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8')).version;
-const lineDiagramVersion=version+'-callouts-1';
+const lineDiagramVersion=version+'-callouts-2';
 export const previewMode=process.env.PREVIEW_MODE==='1';
 const withBase=html=>(previewMode?html.replace(/(<button\b[^>]*\bdata-request-submit)(?=[\s>])/g,'$1 disabled'):html).replace(/(href|src|poster|data-product|data-image|data-video|data-poster|data-gallery-base|value)="\/(?!\/)/g,`$1="${basePath}/`).replace(/srcset="([^"]+)"/g,(_,sources)=>`srcset="${sources.replace(/(^|,)(\s*)\/(?!\/)/g,`$1$2${basePath}/`)}"`);
 const escape=s=>String(s).replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;').replaceAll('>','&gt;');
@@ -64,5 +64,7 @@ for(const name of ['interactions','context-navigation','document-library','comme
  const file=`dist/${name}.js`,source=await readFile(file,'utf8');
  await writeFile(file,source.replace(/from '(\.\/[^']+\.js)'/g,`from '$1?v=${version}'`).replace(/import '(\.\/[^']+\.js)'/g,`import '$1?v=${version}'`));
 }
+const lineController=await readFile('dist/line-monitor.js','utf8');
+await writeFile('dist/line-monitor.js',lineController.replace("from './line-callout-layout.mjs'",`from './line-callout-layout.mjs?v=${lineDiagramVersion}'`));
 for(const path of new Set(routes)){const dir='dist'+(path==='/'?'':path);await mkdir(dir,{recursive:true});await writeFile(dir+'/index.html',render(path));}
 await writeFile('dist/robots.txt','User-agent: *\nDisallow: /\n');await writeFile('dist/404.html',renderNotFound());console.log(`Built ${new Set(routes).size} pages`);

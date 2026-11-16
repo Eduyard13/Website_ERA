@@ -1,3 +1,5 @@
+import { findCalloutPosition, readOccupancy } from './line-callout-layout.mjs';
+
 // This controller is scoped to the full-line vector-callout block only.
 for(const root of document.querySelectorAll('#line02-construction[data-diagram-mode="fit"]')){
  const pins=[...root.querySelectorAll('button[data-part]')],guides=[...root.querySelectorAll('[data-part-guide]')];
@@ -6,6 +8,16 @@ for(const root of document.querySelectorAll('#line02-construction[data-diagram-m
  const zoom=root.querySelector('[data-diagram-zoom]'),zoomLabel=root.querySelector('[data-fullscreen-zoom]');
  const viewport=root.querySelector('[data-diagram-viewport]'),canvas=root.querySelector('.diagram-canvas'),projection=root.querySelector('.diagram-projection');
  const tooltip=root.querySelector('[data-diagram-tooltip]');
+ const image=projection.querySelector('svg image');
+ const viewBox=projection.querySelector('svg').viewBox.baseVal;
+ const [columns,rows,encoded]=root.dataset.calloutMask.split(',');
+ const occupancy=readOccupancy(Number(columns),Number(rows),encoded);
+ const leaderPoints=new Map(guides.map(guide=>[
+  guide.dataset.partGuide,
+  [...guide.querySelectorAll('[data-line-leader]')].map(path=>path
+   .getAttribute('d').split(/[ML]/).filter(point=>point.trim())
+   .map(point=>point.trim().split(/\s+/).map(Number)))
+ ]));
  let selected=select.value,activePin=pins.find(p=>p.dataset.part===selected),tipPin=null,pinned=false;
  let modal=null,placeholder=null,drag=null,previousOverflow='',expanded=false,fitBase=1;
  function nearestPin(number){
@@ -29,20 +41,36 @@ for(const root of document.querySelectorAll('#line02-construction[data-diagram-m
   if(!tipPin||tooltip.hidden)return;
   const pin=tipPin.getBoundingClientRect(),v=viewport.getBoundingClientRect();
   const header=expanded?0:Math.max(0,...[...document.querySelectorAll('.site-header,[data-context-navigation]')].map(e=>e.getBoundingClientRect().bottom));
-  const topLimit=Math.max(8,header+8),bottomLimit=innerHeight-8;
+  const bounds={
+   left:Math.max(8,v.left+8),
+   right:Math.min(innerWidth-8,v.right-8),
+   top:Math.max(8,header+8,v.top+8),
+   bottom:Math.min(innerHeight-8,v.bottom-8)
+  };
   const x=pin.left+pin.width/2,y=pin.top+pin.height/2;
-  if(x<v.left||x>v.right||y<v.top||y>v.bottom||x<0||x>innerWidth||y<topLimit||y>bottomLimit){hideTip();return;}
-  const leftLimit=Math.max(8,v.left+6),rightLimit=Math.min(innerWidth-8,v.right-6);
-  tooltip.style.width=Math.max(1,Math.min(330,rightLimit-leftLimit))+'px';
-  const tip=tooltip.getBoundingClientRect(),gap=10;
-  const candidates=[[x-tip.width/2,pin.top-tip.height-gap],[x-tip.width/2,pin.bottom+gap],[pin.right+gap,y-tip.height/2],[pin.left-tip.width-gap,y-tip.height/2]];
-  const ranked=candidates.map(([left,top],i)=>{
-   const clipped=Math.max(0,leftLimit-left)+Math.max(0,left+tip.width-rightLimit)+Math.max(0,topLimit-top)+Math.max(0,top+tip.height-bottomLimit);
-   left=Math.max(leftLimit,Math.min(rightLimit-tip.width,left));top=Math.max(topLimit,Math.min(bottomLimit-tip.height,top));
-   const overlap=Math.max(0,Math.min(left+tip.width,pin.right+3)-Math.max(left,pin.left-3))*Math.max(0,Math.min(top+tip.height,pin.bottom+3)-Math.max(top,pin.top-3));
-   return {left,top,score:overlap*10000+clipped*20+i};
-  }).sort((a,b)=>a.score-b.score);
-  tooltip.style.left=ranked[0].left+'px';tooltip.style.top=ranked[0].top+'px';
+  if(x<v.left||x>v.right||y<v.top||y>v.bottom||x<0||x>innerWidth||y<header||y>innerHeight){
+   hideTip();
+   return;
+  }
+
+  const scene=image.getBoundingClientRect();
+  const markers=pins.map(button=>button.getBoundingClientRect());
+  const leaders=leaderPoints.get(tipPin.dataset.part).map(points=>points.map(([x,y])=>[
+   scene.left+x*scene.width/viewBox.width,
+   scene.top+y*scene.height/viewBox.height
+  ]));
+  tooltip.dataset.placement='floating';
+  const space=bounds.right-bounds.left;
+  tooltip.style.width=Math.max(1,Math.min(300,Math.max(220,space*.52),space))+'px';
+  const size=tooltip.getBoundingClientRect();
+  const position=findCalloutPosition({bounds,scene,pin,size,occupancy,markers,leaders});
+  if(position){
+   tooltip.style.left=position.left+'px';
+   tooltip.style.top=position.top+'px';
+  }else{
+   tooltip.dataset.placement='dock';
+   for(const property of ['width','left','top'])tooltip.style.removeProperty(property);
+  }
  }
  function showTip(pin,persist=false){
   if(!pin||drag)return;

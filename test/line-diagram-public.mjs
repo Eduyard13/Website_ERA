@@ -41,29 +41,45 @@ try{
  await command('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
  const navigation=await command('Page.navigate',{url});if(navigation.errorText)throw new Error(navigation.errorText);
  await wait('document.readyState==="complete"&&document.querySelector("#line02-construction[data-line-callouts=vector-1][data-monitor-ready=true]")');
+ const presentation=await evaluate(String.raw`(async()=>{const root=document.querySelector('#line02-construction'),canvas=root.querySelector('.diagram-canvas'),css=[...document.querySelectorAll('link[rel=stylesheet]')].find(e=>e.href.includes('/line-monitor.css?')),script=[...document.scripts].find(e=>e.src.includes('/line-monitor.js?')),response=await fetch(script.src,{cache:'reload'}),source=await response.text(),helper=source.match(/from '(\.\/line-callout-layout\.mjs\?v=[^']+)'/),module=helper&&await fetch(new URL(helper[1],script.src),{cache:'reload'});return {background:getComputedStyle(canvas).backgroundColor,grid:getComputedStyle(canvas).backgroundImage,css:css.href,script:script.src,helper:helper?.[1],helperStatus:module?.status,helperType:module?.headers.get('content-type')};})()`);
+ const revision=new URL(presentation.css).searchParams.get('v');
+ if(presentation.background!=='rgb(228, 233, 237)'||!presentation.grid.includes('linear-gradient')||!revision?.endsWith('-callouts-2')||new URL(presentation.script).searchParams.get('v')!==revision||!presentation.helper?.endsWith('v='+revision)||presentation.helperStatus!==200||!presentation.helperType?.includes('javascript'))throw new Error('Published titanium background or versioned module is missing: '+JSON.stringify(presentation));
  const geometry=await evaluate(`(()=>{const root=document.querySelector('#line02-construction'),svg=root.querySelector('svg'),m=svg.getScreenCTM();let maximum=0;for(const pin of root.querySelectorAll('button[data-callout]')){const path=root.querySelector('[data-line-leader="'+pin.dataset.callout+'"]'),start=path.getPointAtLength(0),point=new DOMPoint(start.x,start.y).matrixTransform(m),r=pin.getBoundingClientRect();maximum=Math.max(maximum,Math.hypot(point.x-r.left-r.width/2,point.y-r.top-r.height/2));}return {pins:root.querySelectorAll('button[data-callout]').length,leaders:root.querySelectorAll('[data-line-leader]').length,maximum};})()`);
  if(geometry.pins!==28||geometry.leaders!==28||geometry.maximum>1)throw new Error('Published callout geometry is misaligned: '+JSON.stringify(geometry));
  const image=await evaluate(`(async()=>{const path=document.querySelector('#line02-construction svg image').href.baseVal,r=await fetch(path,{cache:'reload'}),buffer=await r.arrayBuffer(),hash=await crypto.subtle.digest('SHA-256',buffer);return {status:r.status,type:r.headers.get('content-type'),bytes:buffer.byteLength,sha256:[...new Uint8Array(hash)].map(n=>n.toString(16).padStart(2,'0')).join('')};})()`);
  if(image.status!==200||!image.type.includes('image/webp')||image.sha256!=='a1adfaac6f64e0b43113543ed1816f2ab63090753717bf792e1a3da646daed66')throw new Error('Published source WebP failed HTTP/SHA verification');
  await evaluate(`window.__eraDiagramClicks=0;document.querySelector('#line02-construction').addEventListener('click',()=>window.__eraDiagramClicks++);true`);
  const checked=[];
- for(const key of ['04','13','17','20','27-loading','27-unloading']){
+ for(const key of ['04','08','09','13','15','17','20','27-loading','27-unloading']){
   await command('Input.dispatchMouseEvent',{type:'mouseMoved',x:2,y:2});
   await evaluate(`document.querySelector('#line02-construction button[data-callout="${key}"]').scrollIntoView({block:'center',behavior:'instant'});true`);
   await delay(120);
   const point=await evaluate(`(()=>{const r=document.querySelector('#line02-construction button[data-callout="${key}"]').getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2};})()`);
   await command('Input.dispatchMouseEvent',{type:'mouseMoved',...point});
   await wait(`(()=>{const root=document.querySelector('#line02-construction'),pin=root.querySelector('button[data-callout="${key}"]'),tip=root.querySelector('[role=tooltip]');return !tip.hidden&&root.dataset.selectedCallout==='${key}'&&tip.querySelector('[data-tip-description]').textContent===pin.dataset.tooltipDescription;})()`);
-  const tip=await evaluate(`(()=>{const r=document.querySelector('#line02-construction [role=tooltip]'),b=r.getBoundingClientRect();return {title:r.querySelector('strong').textContent,text:r.querySelector('p').textContent,inside:b.left>=0&&b.right<=innerWidth&&b.top>=0&&b.bottom<=innerHeight};})()`);
-  if(!tip.inside)throw new Error('Published tooltip exceeds viewport: '+key);
+  const tip=await evaluate(`(()=>{
+   const root=document.querySelector('#line02-construction'),r=root.querySelector('[role=tooltip]'),b=r.getBoundingClientRect(),drawing=root.querySelector('[data-diagram-viewport]'),panel=root.querySelector('.diagram-details').getBoundingClientRect();
+   const overlaps=a=>b.left<a.right&&b.right>a.left&&b.top<a.bottom&&b.bottom>a.top;
+   let clear=true;
+   if(r.dataset.placement==='dock')clear=!overlaps(drawing.getBoundingClientRect())&&b.left>=panel.left&&b.right<=panel.right&&b.top>=panel.top&&b.bottom<=panel.bottom;
+   else if(r.dataset.placement==='floating'){
+    const image=root.querySelector('svg image').getBoundingClientRect(),[cw,ch,encoded]=root.dataset.calloutMask.split(','),columns=Number(cw),rows=Number(ch),bits=atob(encoded);
+    const x0=Math.max(0,Math.floor((b.left-image.left)/image.width*columns)),x1=Math.min(columns,Math.ceil((b.right-image.left)/image.width*columns)),y0=Math.max(0,Math.floor((b.top-image.top)/image.height*rows)),y1=Math.min(rows,Math.ceil((b.bottom-image.top)/image.height*rows));
+    for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){const i=y*columns+x;if((bits.charCodeAt(i>>3)>>(i&7))&1)clear=false;}
+    if([...root.querySelectorAll('button[data-callout]')].some(pin=>overlaps(pin.getBoundingClientRect())))clear=false;
+    for(const guide of root.querySelectorAll('[data-active=true] [data-line-leader]')){const length=guide.getTotalLength(),matrix=guide.getScreenCTM();for(let i=0;i<=100;i++){const q=guide.getPointAtLength(length*i/100),p=new DOMPoint(q.x,q.y).matrixTransform(matrix);if(p.x>=b.left&&p.x<=b.right&&p.y>=b.top&&p.y<=b.bottom)clear=false;}}
+   }else clear=false;
+   return {title:r.querySelector('strong').textContent,text:r.querySelector('p').textContent,placement:r.dataset.placement,clear,inside:b.left>=0&&b.right<=innerWidth&&b.top>=0&&b.bottom<=innerHeight};
+  })()`);
+  if(!tip.clear||(tip.placement==='floating'&&!tip.inside))throw new Error('Published tooltip obscures equipment, callouts or leaders: '+key+' '+JSON.stringify(tip));
   if(key==='27-loading'&&!tip.text.includes('Подаёт тюки сырья'))throw new Error('Loading forklift tooltip is incorrect');
   if(key==='27-unloading'&&!tip.text.includes('Забирает готовые тюки'))throw new Error('Unloading forklift tooltip is incorrect');
   checked.push({callout:key,...tip});
  }
  if(await evaluate('window.__eraDiagramClicks')!==0)throw new Error('Hover verification unexpectedly used a click');
  if(exceptions.length)throw new Error('Published diagram JavaScript errors: '+exceptions.join('; '));
- console.log(JSON.stringify({url,geometry,image,hoveredWithoutClick:checked,screenshots:false},null,2));
- console.log('::notice title=Published diagram hover verified::Real Chrome mouse hover without clicks passed for 04, 13, 17, 20, 27-loading and 27-unloading. Both forklift texts, viewport bounds, 28 full SVG leaders and source WebP SHA are verified on the public page.');
+ console.log(JSON.stringify({url,geometry,image,presentation,hoveredWithoutClick:checked,screenshots:false},null,2));
+ console.log('::notice title=Published diagram hover verified::Real Chrome mouse hover without clicks passed for 04, 08, 09, 13, 15, 17, 20, 27-loading and 27-unloading. Titanium background, callouts-2 CSS/JS, clear tooltip placement, both forklift texts, 28 full SVG leaders and source WebP SHA are verified on the public page.');
 }finally{
  socket?.close();chrome.kill('SIGTERM');await delay(250);await rm(profile,{recursive:true,force:true});
 }

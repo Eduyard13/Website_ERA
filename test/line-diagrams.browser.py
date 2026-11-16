@@ -8,6 +8,48 @@ base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3052').rstrip('/')
 out=Path(os.environ.get('ERA_LINE_REPORT_DIR','/tmp/era-separation-02-0362/browser'));out.mkdir(parents=True,exist_ok=True)
 data=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {fullLineDiagram} from './content/line-diagrams.mjs';console.log(JSON.stringify(fullLineDiagram))"],text=True))
 errors=[];failures=[];report={'widths':[],'screenshots':False}
+def assert_tooltip_clearance(tooltip, width, context):
+    placement = tooltip.get_attribute('data-placement')
+    box = tooltip.bounding_box()
+    assert box['x'] >= 0 and box['x'] + box['width'] <= width + 1, (context, box)
+    if placement == 'floating':
+        assert box['y'] >= 0 and box['y'] + box['height'] <= 1001, (context, box)
+    else:
+        assert placement == 'dock', (context, placement)
+    assert tooltip.evaluate("""tip => {
+        const root = tip.closest('#line02-construction');
+        const t = tip.getBoundingClientRect();
+        const overlaps = b => t.left < b.right && t.right > b.left && t.top < b.bottom && t.bottom > b.top;
+        const drawing = root.querySelector('[data-diagram-viewport]');
+        if (tip.dataset.placement === 'dock') return !overlaps(drawing.getBoundingClientRect());
+
+        const image = drawing.querySelector('svg image').getBoundingClientRect();
+        const [cw,ch,encoded] = root.dataset.calloutMask.split(',');
+        const columns = Number(cw), rows = Number(ch), bits = atob(encoded);
+        const x0 = Math.max(0, Math.floor((t.left-image.left)/image.width*columns));
+        const x1 = Math.min(columns, Math.ceil((t.right-image.left)/image.width*columns));
+        const y0 = Math.max(0, Math.floor((t.top-image.top)/image.height*rows));
+        const y1 = Math.min(rows, Math.ceil((t.bottom-image.top)/image.height*rows));
+        for (let y=y0; y<y1; y++) {
+            for (let x=x0; x<x1; x++) {
+                const i = y*columns+x;
+                if ((bits.charCodeAt(i >> 3) >> (i & 7)) & 1) return false;
+            }
+        }
+        for (const pin of drawing.querySelectorAll('button[data-callout]')) {
+            if (overlaps(pin.getBoundingClientRect())) return false;
+        }
+        for (const guide of drawing.querySelectorAll('[data-active="true"] [data-line-leader]')) {
+            const length = guide.getTotalLength(), matrix = guide.getScreenCTM();
+            for (let i=0; i<=100; i++) {
+                const q = guide.getPointAtLength(length*i/100);
+                const p = new DOMPoint(q.x,q.y).matrixTransform(matrix);
+                if (p.x >= t.left && p.x <= t.right && p.y >= t.top && p.y <= t.bottom) return false;
+            }
+        }
+        return true;
+    }"""), (context, placement)
+
 with sync_playwright() as p:
  browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'])
  for width in [320,390,768,1024,1440,1920]:
@@ -19,6 +61,7 @@ with sync_playwright() as p:
   root=page.locator('.line-monitor');viewport=root.locator('[data-diagram-viewport]');select=root.locator('[data-diagram-select]')
   assert root.get_attribute('data-construction-finish')=='light-engineering'
   assert root.locator('.diagram-heading h3').inner_text()=='Линия изнутри. В деталях.'
+  assert root.locator('.diagram-canvas').evaluate('(e)=>getComputedStyle(e).backgroundColor')=='rgb(228, 233, 237)'
   assert root.evaluate('(e)=>getComputedStyle(e).backgroundColor')=='rgb(244, 242, 237)'
   hero=page.locator('[data-hero-finish=titanium-gallery]');hero.locator('img').evaluate('(e)=>e.decode()')
   assert hero.locator('img').get_attribute('src').endswith('/lines/separatsiya-01/hero-titanium.webp')
@@ -69,7 +112,7 @@ with sync_playwright() as p:
     assert tooltip.locator('[data-tip-description]').inner_text()==callout['tooltipDescription']
     assert tooltip.locator('[data-tip-label]').inner_text()==str(part['number']).zfill(2)+' · '+callout['tooltipLabel']
     assert button.get_attribute('aria-describedby')=='line02-construction-tooltip'
-    box=tooltip.bounding_box();assert box['x']>=0 and box['x']+box['width']<=width+1 and box['y']>=0 and box['y']+box['height']<=1001,(width,callout['id'],box)
+    assert_tooltip_clearance(tooltip,width,(width,callout['id']))
     if width>=768:
      page.mouse.move(1,1);assert not tooltip.is_visible()
   # A real click on a full vector path chooses that callout, rather than a neighbour.
@@ -77,6 +120,7 @@ with sync_playwright() as p:
   point=path.evaluate('''e=>{const m=e.getScreenCTM();for(const fraction of [.2,.35,.5,.65,.8]){const q=e.getPointAtLength(e.getTotalLength()*fraction),p=new DOMPoint(q.x,q.y).matrixTransform(m);if(p.y>180&&p.y<innerHeight-10&&p.x>2&&p.x<innerWidth-2&&document.elementFromPoint(p.x,p.y)===e)return {x:p.x,y:p.y};}return null;}''')
   assert point,(width,'no visible guide hit');page.mouse.click(point['x'],point['y'])
   assert root.get_attribute('data-selected-callout')=='17' and tooltip.is_visible()
+  assert_tooltip_clearance(tooltip,width,(width,'click on guide 17'))
   root.locator('.diagram-heading h3').click();assert not tooltip.is_visible()
   # Real keyboard/pointer interaction on the original numbered callouts.
   pin=root.locator('[data-part="4"]').first;pin.scroll_into_view_if_needed();y=page.evaluate('scrollY')
@@ -97,8 +141,32 @@ with sync_playwright() as p:
   expand=root.locator('[data-diagram-fullscreen]');expand.click();page.wait_for_function('document.querySelector(".line-monitor").dataset.expanded==="true"')
   assert root.locator('[data-diagram-zoom]').input_value()=='fit'
   assert viewport.evaluate('(e)=>e.scrollWidth<=e.clientWidth+2&&e.scrollHeight<=e.clientHeight+2'),('fullscreen fit',width)
+  # In expanded fit mode every tooltip still clears the equipment and active paths.
+  for part in data['parts']:
+   for callout in part['callouts']:
+    button=root.locator('button[data-callout="'+callout['id']+'"]')
+    stable=viewport.bounding_box()
+    if width<768:button.tap()
+    else:
+     page.mouse.move(1,1);button.hover()
+    tooltip.wait_for(state='visible')
+    assert root.get_attribute('data-selected-callout')==callout['id']
+    assert tooltip.locator('[data-tip-description]').inner_text()==callout['tooltipDescription']
+    assert_tooltip_clearance(tooltip,width,(width,callout['id'],'fullscreen fit'))
+    after=viewport.bounding_box()
+    assert abs(after['width']-stable['width'])<=1 and abs(after['height']-stable['height'])<=1
+    if width>=768:page.mouse.move(1,1)
   before=root.locator('.diagram-projection').bounding_box()['width']
   root.locator('[data-diagram-zoom]').select_option('2');assert root.locator('.diagram-projection').bounding_box()['width']>=before*1.99
+  for key in ['08','09','15','27-loading','27-unloading']:
+   button=root.locator('button[data-callout="'+key+'"]');button.scroll_into_view_if_needed()
+   if width<768:button.tap()
+   else:
+    page.mouse.move(1,1);button.hover()
+   tooltip.wait_for(state='visible')
+   assert root.get_attribute('data-selected-callout')==key
+   assert_tooltip_clearance(tooltip,width,(width,key,'fullscreen 200%'))
+   if width>=768:page.mouse.move(1,1)
   select.select_option('27');assert root.locator('[data-detail-label]').inner_text()==data['parts'][-1]['label']
   if width<768:
    root.locator('[data-diagram-zoom]').select_option('detail')
@@ -110,6 +178,8 @@ with sync_playwright() as p:
     assert nearest==expected
     select.select_option('27');assert root.get_attribute('data-selected-callout')==expected
     assert page.evaluate('scrollY')==outer
+    root.locator('button[data-callout="'+expected+'"]').tap()
+    assert_tooltip_clearance(tooltip,width,(width,expected,'zoomed'))
 
   if width in [390,1440]:page.keyboard.press('Escape')
   else:expand.click()

@@ -8,6 +8,7 @@ import {lineUnits,filmSeparationMedia} from '../content/film-separation.mjs';
 import {equipmentCardImages} from '../content/equipment-card-images.mjs';
 import {fullLineDiagram} from '../content/line-diagrams.mjs';
 import assets from '../content/separatsiya-02-presentation-assets.json' with {type:'json'};
+import mask from '../content/separatsiya-02-occupancy.json' with {type:'json'};
 
 test('Titanium Gallery использует отдельный экспорт исходной линии только на её странице',async()=>{
  const page=render('/catalog/lines/separatsiya-02');
@@ -37,6 +38,10 @@ test('Полная схема использует прозрачную моде
  assert.equal(fullLineDiagram.width,4000);assert.equal(fullLineDiagram.height,2820);assert.ok(diagram.includes('viewBox="0 0 1000 705"'));
  const bytes=await readFile('dist/assets/lines/separatsiya-02/'+manifest.asset.file);
  assert.equal(createHash('sha256').update(bytes).digest('hex'),manifest.asset.sha256);
+ assert.equal(mask.imageSha256,manifest.asset.sha256);
+ assert.equal(Buffer.from(mask.occupiedTilesBase64,'base64').length,Math.ceil(mask.columns*mask.rows/8));
+ assert.ok(diagram.includes(`data-callout-mask="${mask.columns},${mask.rows},${mask.occupiedTilesBase64}"`));
+ assert.match(diagram,/<div class="line-details-copy">.*?role="tooltip"/s);
  assert.equal(manifest.asset.sha256,'a1adfaac6f64e0b43113543ed1816f2ab63090753717bf792e1a3da646daed66');
  assert.equal(bytes.subarray(12,16).toString(),'VP8L');const bits=bytes.readUInt32LE(21);
  assert.equal((bits&0x3fff)+1,4000);assert.equal(((bits>>>14)&0x3fff)+1,2820);assert.ok(bits&0x10000000,'source has real alpha');
@@ -56,7 +61,8 @@ test('Полная схема использует прозрачную моде
  assert.notEqual(trucks.callouts[0].tooltipDescription,trucks.callouts[1].tooltipDescription);
  for(const [n,count] of [[20,5],[25,4],[27,2]])assert.equal(fullLineDiagram.parts.find(p=>p.number===n).regions.length,count);
  const {version}=JSON.parse(await readFile('package.json','utf8'));
- assert.ok(page.includes(`/line-monitor.js?v=${version}-callouts-1`));assert.ok(page.includes(`/line-monitor.css?v=${version}-callouts-1`));
+ assert.ok(page.includes(`/line-monitor.js?v=${version}-callouts-2`));assert.ok(page.includes(`/line-monitor.css?v=${version}-callouts-2`));
+ assert.ok((await readFile('dist/line-monitor.js','utf8')).includes(`./line-callout-layout.mjs?v=${version}-callouts-2`));
 });
 
 test('Шесть компактных карточек сохраняют данные и ссылки, используя точные изображения каталога',()=>{
