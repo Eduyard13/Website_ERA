@@ -33,7 +33,7 @@ test('Полная линия сохраняет показатели, один 
  assert.equal((page.match(/data-diagram data-diagram-mode="fit"/g)||[]).length,1);
  const composition=page.slice(page.indexOf('id="composition"'),page.indexOf('id="quality"'));
  assert.equal((composition.match(/data-part-guide="/g)||[]).length,27);
- assert.equal((composition.match(/data-leader-join="/g)||[]).length,28);assert.ok(!composition.includes('guide-end'));assert.ok(!composition.includes('pin-masks'));
+ assert.equal((composition.match(/data-line-leader="/g)||[]).length,28);assert.equal((composition.match(/class="guide-end"/g)||[]).length,28);assert.ok(!composition.includes('pin-masks'));
  assert.ok(!page.includes('data-line-source-diagram'));assert.ok(!page.includes('id="line02-workshop"'));
  assert.ok(!composition.includes('line-unit-grid'));assert.ok(page.includes('line-flow-diagram'));
  const documents=page.slice(page.indexOf('id="documents"'),page.indexOf('id="equipment"'));

@@ -34,8 +34,11 @@ with sync_playwright() as p:
    page.keyboard.press('Escape');assert not page.locator('#media-viewer').is_visible()
   assert page.locator('[data-diagram]').count()==1 and select.locator('option').count()==27
   assert root.locator('[data-fullscreen-zoom]').is_hidden()
-  assert root.locator('[data-leader-join]').count()==28
-  assert root.locator('.guide-end,.line-diagram-pin-masks').count()==0
+  assert root.locator('[data-line-leader]').count()==28
+  assert root.locator('[data-leader-join]').count()==0
+  assert root.locator('[data-callout-hit]').count()==28
+  assert root.locator('.guide-end').count()==28
+  assert root.locator('.line-diagram-pin-masks').count()==0
   assert root.locator('[data-part] span').count()==28
   assert root.locator('[data-part]').count()==28
   assert viewport.evaluate('(e)=>e.scrollWidth<=e.clientWidth+1&&e.scrollHeight<=e.clientHeight+1&&getComputedStyle(e).overflow==="visible"')
@@ -52,6 +55,29 @@ with sync_playwright() as p:
    assert active.locator('.diagram-part-region').count()==len(part['regions'])
    assert viewport.evaluate('(e)=>e.scrollLeft===0&&e.scrollTop===0')
    assert root.locator('.diagram-details').evaluate('(e)=>e.scrollHeight<=e.clientHeight+1'),(width,part['number'],'console overflow')
+  # Every supplied callout has an immediate short tooltip, including both 27 instances.
+  tooltip=root.locator('[role=tooltip]')
+  for part in data['parts']:
+   for callout in part['callouts']:
+    button=root.locator('button[data-callout="'+callout['id']+'"]')
+    button.scroll_into_view_if_needed()
+    if width<768:button.tap()
+    else:
+     page.mouse.move(1,1);button.hover()
+    tooltip.wait_for(state='visible')
+    assert root.get_attribute('data-selected-callout')==callout['id']
+    assert tooltip.locator('[data-tip-description]').inner_text()==callout['tooltipDescription']
+    assert tooltip.locator('[data-tip-label]').inner_text()==str(part['number']).zfill(2)+' · '+callout['tooltipLabel']
+    assert button.get_attribute('aria-describedby')=='line02-construction-tooltip'
+    box=tooltip.bounding_box();assert box['x']>=0 and box['x']+box['width']<=width+1 and box['y']>=0 and box['y']+box['height']<=1001,(width,callout['id'],box)
+    if width>=768:
+     page.mouse.move(1,1);assert not tooltip.is_visible()
+  # A real click on a full vector path chooses that callout, rather than a neighbour.
+  path=root.locator('[data-callout-hit="17"]');path.scroll_into_view_if_needed()
+  point=path.evaluate('''e=>{const m=e.getScreenCTM();for(const fraction of [.2,.35,.5,.65,.8]){const q=e.getPointAtLength(e.getTotalLength()*fraction),p=new DOMPoint(q.x,q.y).matrixTransform(m);if(p.y>180&&p.y<innerHeight-10&&p.x>2&&p.x<innerWidth-2&&document.elementFromPoint(p.x,p.y)===e)return {x:p.x,y:p.y};}return null;}''')
+  assert point,(width,'no visible guide hit');page.mouse.click(point['x'],point['y'])
+  assert root.get_attribute('data-selected-callout')=='17' and tooltip.is_visible()
+  root.locator('.diagram-heading h3').click();assert not tooltip.is_visible()
   # Real keyboard/pointer interaction on the original numbered callouts.
   pin=root.locator('[data-part="4"]').first;pin.scroll_into_view_if_needed();y=page.evaluate('scrollY')
   pin.evaluate('(e)=>e.focus({preventScroll:true})');assert select.input_value()=='4'
@@ -74,6 +100,17 @@ with sync_playwright() as p:
   before=root.locator('.diagram-projection').bounding_box()['width']
   root.locator('[data-diagram-zoom]').select_option('2');assert root.locator('.diagram-projection').bounding_box()['width']>=before*1.99
   select.select_option('27');assert root.locator('[data-detail-label]').inner_text()==data['parts'][-1]['label']
+  if width<768:
+   root.locator('[data-diagram-zoom]').select_option('detail')
+   assert root.locator('.diagram-projection').bounding_box()['width']>=1199
+   outer=page.evaluate('scrollY')
+   for direction,expected in [('start','27-loading'),('end','27-unloading')]:
+    viewport.evaluate('(e,d)=>{e.scrollLeft=d==="start"?0:e.scrollWidth-e.clientWidth;e.scrollTop=d==="start"?e.scrollHeight-e.clientHeight:0}',direction)
+    nearest=root.locator('button[data-part="27"]').evaluate_all('''es=>{const v=document.querySelector('#line02-construction [data-diagram-viewport]').getBoundingClientRect();return es.map(e=>{const p=e.getBoundingClientRect();return {id:e.dataset.callout,d:Math.hypot(p.left+p.width/2-v.left-v.width/2,p.top+p.height/2-v.top-v.height/2)}}).sort((a,b)=>a.d-b.d)[0].id;}''')
+    assert nearest==expected
+    select.select_option('27');assert root.get_attribute('data-selected-callout')==expected
+    assert page.evaluate('scrollY')==outer
+
   if width in [390,1440]:page.keyboard.press('Escape')
   else:expand.click()
   page.wait_for_function('document.querySelector(".line-monitor").dataset.expanded==="false"')

@@ -41,6 +41,7 @@ jobs:
     permissions:
       pages: write
       id-token: write
+      contents: read
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -127,8 +128,17 @@ jobs:
                       raise RuntimeError('Separation 02 viewer assets are stale')
                   if 'data-hero-finish="titanium-gallery"' not in full_line or 'data-construction-finish="light-engineering"' not in full_line or 'Линия изнутри. В деталях.' not in full_line:
                       raise RuntimeError('Titanium Gallery or light construction display is missing')
-                  if full_line.count('data-leader-join="') != 28 or 'assets/lines/separatsiya-01/layout-interactive.webp' not in full_line:
-                      raise RuntimeError('Live construction markers or clean source layer is missing')
+                  if full_line.count('data-line-leader="') != 28 or 'data-leader-join="' in full_line or 'assets/lines/separatsiya-02/era-separatsiya-02-layout.webp' not in full_line:
+                      raise RuntimeError('The 28 complete vector callouts or new transparent source are missing')
+                  for callout in ('27-loading', '27-unloading'):
+                      if 'data-line-leader="' + callout + '"' not in full_line or 'data-callout="' + callout + '"' not in full_line:
+                          raise RuntimeError('Separate forklift callout is missing: ' + callout)
+                  if full_line.count('role="tooltip"') != 1 or 'data-tip-description' not in full_line:
+                      raise RuntimeError('The shared callout tooltip is missing')
+                  controller_path = re.search(r'src="([^"]*/line-monitor\.js\?v=[^"]+)"', full_line).group(1)
+                  _, controller = fetch(controller_path)
+                  if 'data-callout-hit' not in controller or 'positionTip' not in controller or 'showTip' not in controller:
+                      raise RuntimeError('The published callout controller is stale')
                   unit_cards = re.findall(r'<article class="line-unit-card[^>]*>.*?</article>', full_line, re.S)
                   catalogue_slugs = re.findall(r'data-catalogue-image="([^"]+)"', full_line)
                   if len(unit_cards) != 6 or len(catalogue_slugs) != 5 or 'node-card-specs' in ''.join(unit_cards):
@@ -145,7 +155,7 @@ jobs:
                   blue_cover = 'assets/lines/separatsiya-01/catalog-cover.webp'
                   if blue_cover not in lines_catalogue:
                       raise RuntimeError('The approved blue line catalogue cover is missing')
-                  for image_path in ('assets/lines/separatsiya-01/hero-titanium.webp', 'assets/lines/separatsiya-01/hero-titanium-768.webp', 'assets/lines/separatsiya-01/layout-interactive.webp', blue_cover):
+                  for image_path in ('assets/lines/separatsiya-01/hero-titanium.webp', 'assets/lines/separatsiya-01/hero-titanium-768.webp', 'assets/lines/separatsiya-02/era-separatsiya-02-layout.webp', blue_cover):
                       content_type, image = fetch(image_path, binary=True)
                       if content_type != 'image/webp' or image[:4] != b'RIFF' or image[8:12] != b'WEBP':
                           raise RuntimeError('Titanium, construction or approved catalogue WebP is missing: ' + image_path)
@@ -198,3 +208,15 @@ jobs:
                       raise
                   time.sleep(10)
           PY
+      - name: Read the published diagram browser check
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: test/line-diagram-public.mjs
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify public diagram hover in Chrome
+        env:
+          ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: node test/line-diagram-public.mjs

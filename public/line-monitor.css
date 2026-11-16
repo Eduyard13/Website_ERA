@@ -36,8 +36,6 @@
 .line-monitor .diagram-pin span{display:grid;place-items:center;width:min(32px,100%);height:auto;aspect-ratio:1;border:1px solid #9eacb8;border-radius:50%;background:#f7f7f4;color:var(--era-blue);font-size:12px;font-weight:500;line-height:1;box-shadow:0 2px 6px #10132e0c;transition:border-color .16s,background .16s,box-shadow .16s}
 .line-monitor .diagram-pin:hover span,.line-monitor .diagram-pin[aria-pressed=true] span{background:var(--era-blue);color:var(--era-cream);border-color:var(--era-gold);box-shadow:0 0 0 4px #c6a43b20}
 .line-monitor .diagram-pin:focus-visible{outline:2px solid var(--era-gold-dark);outline-offset:2px}
-.line-monitor .diagram-guides .guide-line--annotation-join{stroke:#89949f;stroke-width:.6;opacity:.7}
-.line-monitor .diagram-guides [data-active=true] .guide-line--annotation-join{stroke:var(--era-gold-dark);stroke-width:1;opacity:1}
 .line-monitor .diagram-details{display:grid;grid-template-columns:46px minmax(0,1fr) auto;align-items:start;gap:18px;height:160px;min-height:160px;padding:20px 0;border-color:#b8c0c880}
 .line-monitor .diagram-details>div{min-width:0}
 .line-monitor .diagram-detail-number{color:var(--era-gold-dark)}
@@ -150,3 +148,17 @@
 .film-line--full .line-unit-card .line-unit-copy p{color:#303244}
 .film-line--full .line-unit-card .line-unit-visual>span{background:#f8f0e4eb;border-color:#a88b6670}
 @media(prefers-reduced-motion:reduce){.film-line--full .line-unit-card,.film-line--full .line-unit-card::after{transition:none}}
+
+/* Owner-supplied transparent model and full vector leaders: this block only. */
+#line02-construction .diagram-projection{container-type:inline-size}
+#line02-construction .diagram-pin{width:min(44px,3.4%);height:auto;aspect-ratio:1;min-width:0;min-height:0}
+#line02-construction .diagram-pin span{width:100%;max-width:32px;height:auto;aspect-ratio:1;font-size:clamp(5.5px,1cqw,12px);line-height:1}
+#line02-construction .diagram-part-region{pointer-events:none}
+#line02-construction .guide-line{stroke:#7b8794;stroke-width:.7;opacity:.65;fill:none;vector-effect:non-scaling-stroke;pointer-events:none}
+#line02-construction .guide-end{fill:#7b8794;opacity:.8;pointer-events:none}
+#line02-construction .guide-hit{stroke:transparent;stroke-width:9;fill:none;vector-effect:non-scaling-stroke;pointer-events:stroke;cursor:pointer}
+#line02-construction [data-active=true] .guide-line{stroke:var(--era-gold-dark);stroke-width:1.6;opacity:1}
+#line02-construction [data-active=true] .guide-end{fill:var(--era-gold-dark);opacity:1}
+#line02-construction .line-callout-tooltip{position:fixed;z-index:100;display:block;max-width:calc(100vw - 16px);padding:12px 14px;border:1px solid #c6a43b99;border-radius:6px;background:var(--era-blue);color:var(--era-cream);box-shadow:0 8px 24px #10132e24;pointer-events:auto;text-align:left;overflow-wrap:break-word}
+#line02-construction .line-callout-tooltip>strong{display:block;color:#f2df9c;font-size:14px;font-weight:500;line-height:1.4}
+.film-line #line02-construction .line-callout-tooltip>p{font-size:13px;line-height:1.55;color:var(--era-cream);margin:6px 0 0;max-width:none}
