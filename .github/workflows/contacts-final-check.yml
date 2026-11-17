@@ -1,0 +1,47 @@
+name: Verify final contacts release
+on:
+  push:
+    branches: [contacts-final-v0392-check-20261117]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PREVIEW_MODE: '0'
+      ERA_CHROME_PATH: /usr/bin/google-chrome
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci --omit=optional
+      - run: python -m pip install playwright
+      - name: Test root deployment
+        run: npm test
+      - name: Check root contacts and native provider maps
+        run: |
+          node --input-type=module -e "import {createStaticServer} from './scripts/static-server.mjs';createStaticServer({root:'dist',basePath:''}).listen(3110,'0.0.0.0');" > /tmp/era-root-server.log 2>&1 &
+          PREVIEW_PID=$!
+          trap 'kill "$PREVIEW_PID"' EXIT
+          curl --retry 8 --retry-connrefused --retry-delay 1 -fsS http://127.0.0.1:3110/contacts/ -o /dev/null
+          ERA_PREVIEW_URL=http://127.0.0.1:3110 python test/contacts.browser.py
+          ERA_PREVIEW_URL=http://127.0.0.1:3110 ERA_VERIFY_MAP_PROVIDERS=1 node test/contacts-public.mjs
+      - name: Test project deployment
+        run: npm test
+        env:
+          BASE_PATH: /Website_ERA
+      - name: Check project contacts and form
+        run: |
+          node --input-type=module -e "import {createStaticServer} from './scripts/static-server.mjs';createStaticServer({root:'dist',basePath:'/Website_ERA'}).listen(3111,'0.0.0.0');" > /tmp/era-base-server.log 2>&1 &
+          PREVIEW_PID=$!
+          trap 'kill "$PREVIEW_PID"' EXIT
+          curl --retry 8 --retry-connrefused --retry-delay 1 -fsS http://127.0.0.1:3111/Website_ERA/contacts/ -o /dev/null
+          ERA_PREVIEW_URL=http://127.0.0.1:3111/Website_ERA python test/contacts.browser.py
+          ERA_PREVIEW_URL=http://127.0.0.1:3111/Website_ERA node test/contacts-public.mjs
+      - name: Production build
+        run: npm run build
+        env:
+          BASE_PATH: /Website_ERA
+      - run: npm run documents:validate

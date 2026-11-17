@@ -59,14 +59,45 @@
     "googleEmbed": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3387.1186854646453!2d120.54503629999999!3d31.903372499999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x35b3de30aaecfbc9%3A0xc69270bb0704fe55!2sBei'er%20Machinery!5e0!3m2!1sen!2sus!4v1656289004886!5m2!1sen!2sus",
     "googleEmbedReproduced": true,
     "googleEmbedEvidence": "В Chrome на официальной странице BEIER прочитан cross-origin iframe через CDP: Map data ©2026 Google, Keyboard shortcuts, Terms; декодированы 42 изображения карты. HTTP и событие load сами по себе не считались подтверждением.",
-    "googleCoordinates": null,
-    "yandexCoordinates": null,
-    "coordinateSystemsVerified": false,
-    "samePhysicalMarkerVisuallyVerified": false,
-    "yandexStatus": "Внешний поиск по официальному китайскому адресу. Браузер получает limited; точная карточка/пин и совпадение зданий между картами не подтверждены. Встраивание и произвольная метка не публикуются.",
+    "googleCoordinates": {
+      "lat": 31.9033725,
+      "lon": 120.5450363,
+      "coordinateSystem": "GCJ-02"
+    },
+    "yandexCoordinates": {
+      "lat": 31.90547,
+      "lon": 120.54073,
+      "coordinateSystem": "WGS-84"
+    },
+    "coordinateSystemsVerified": true,
+    "samePhysicalMarkerVisuallyVerified": true,
+    "yandexStatus": "map-widget/v1 на yandex.com с параметром pt воспроизведён в Chrome: спутниковые снимки, собственная метка, controls и атрибуция. DOM содержит map-placemark, декодировано 20 изображений; pin осмотрен на внутреннем снимке экрана. Карточка организации и constructor ID не создавались. Полные страницы иногда возвращали limited; виджет подтверждён отдельно.",
     "rejectedCoordinates": [
       "32.047463, 120.244562 — сторонний агрегатор, не первичный картографический источник."
     ],
-    "coordinatePolicy": "Числа из viewport не объявлены точным входом. Координаты и markerVerified остаются nullable/false до независимого визуального сопоставления Google и Яндекс."
+    "coordinatePolicy": "Площадка beier-zhangjiagang, два поставщико-специфических набора координат. Google: !3d/!4d данных конкретного CID, не @viewport. Яндекс: собственная точка WGS-84 после преобразования и сверки. Никаких text= как замены pin, платных ключей, выдуманных constructor ID или координат из деклараций.",
+    "googleMarkerVerified": true,
+    "yandexMarkerVerified": true,
+    "yandexEmbedReproduced": true,
+    "visualMatchMethod": "На схеме Google по официальному CID BEIER находится с северной стороны North 2nd Ring Road, непосредственно восточнее Gangcheng Avenue / X204. После учёта смещения китайского слоя точка Яндекса попадает на въезд той же территории: офисный корпус западнее ворот, крупные производственные корпуса за ним, канал севернее. Фасад/компоновка сверены с утверждённым фото BEIER и фото карточки Google. Копирование одинаковых чисел было проверено и отвергнуто: точка WGS-84 попадала на соседний участок к юго-востоку. На Google satellite слой POI смещён относительно снимка; сверялись его схема/перекрёсток и спутник Яндекса, а не совпадение экранных пикселей pin.",
+    "coordinateConversion": {
+      "reference": "https://github.com/wandergis/coordtransform",
+      "function": "gcj02towgs84",
+      "unroundedCandidate": {
+        "lon": 120.540729604582,
+        "lat": 31.905470488135485
+      },
+      "method": "Кандидат обратного преобразования проверен визуально по зданиям/дорогам до публикации. Геодезическая точность не заявляется."
+    },
+    "checkedAt": "2026-11-17",
+    "verificationRuns": [
+      44155950353,
+      44156869892
+    ]
+  },
+  "layoutUpdate": {
+    "version": "0.39.2",
+    "processing": "CSS cover с object-position 15% 50%. Оригинальные WebP и SHA-256 не менялись. Фасад/название и въезд сохранены, полос нет. В desktop-column используется полный исходник для достаточного вертикального разрешения; mobile сохраняет srcset. Один sizes.",
+    "corporateNavigation": "Переходы производителя удалены только с /contacts/. Источники сохранены в данных и реестре, ссылки /about-us/ сохранены."
   }
 }

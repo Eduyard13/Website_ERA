@@ -1,13 +1,14 @@
-"""Contacts acceptance: no screenshots, no real submissions or map requests."""
+"""Contacts acceptance with intercepted form requests and map fixtures."""
 import os,json
 from playwright.sync_api import sync_playwright
 
 base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3091').rstrip('/')
-widths=[320,375,390,768,1024,1280,1440,1920]
+widths=[320,360,375,390,768,1024,1280,1440,1920]
 with sync_playwright() as p:
- browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'])
+ browser=p.chromium.launch(executable_path=os.environ.get('ERA_CHROME_PATH','/usr/bin/chromium'),args=['--no-sandbox'])
  context=browser.new_context(reduced_motion='reduce',permissions=['clipboard-read','clipboard-write'])
  context.route('https://formsubmit.co/**',lambda route:route.abort())
+ context.route('https://yandex.com/map-widget/**',lambda r:r.fulfill(status=200,content_type='text/html',body='<title>Map fixture</title>'))
  context.route('https://www.google.com/maps/**',lambda route:route.fulfill(status=200,content_type='text/html',body='<title>Map fixture</title>'))
  page=context.new_page();errors=[];page.on('pageerror',lambda error:errors.append(str(error)))
  for width in widths:
@@ -24,7 +25,7 @@ with sync_playwright() as p:
   assert page.locator('[data-request-files]').count()==1
   assert page.locator('[data-request-submit]').is_visible()
   assert page.locator('[data-map-panel=google]').is_visible()
-  assert page.locator('.cp-map iframe').count()==0
+  assert page.locator('.cp-map iframe').count()==1
   assert page.locator('[data-map-external]').count()==2
   assert page.locator('a.cp-video-channel').count()==1
   assert page.locator('div.cp-video-channel.is-pending').count()==1
@@ -42,18 +43,24 @@ with sync_playwright() as p:
    button=page.locator('[data-map-select='+provider+']');button.focus();page.keyboard.press('Enter')
    assert button.get_attribute('aria-pressed')=='true'
    assert page.locator('[data-map-panel='+provider+']').is_visible()
-   assert page.locator('.cp-map iframe').count()==0
-  page.locator('[data-map-load]').click();assert page.locator('.cp-map iframe').count()==1
+   assert page.locator('.cp-map iframe').count()==1
   assert page.locator('.cp-map iframe').get_attribute('title').startswith('Google Maps')
-  # Cross-origin load is never presented as a success message.
-  assert 'карта загружена' not in page.locator('.cp-map').inner_text().lower()
-  page.locator('[data-map-select=yandex]').click();assert page.locator('.cp-map iframe').count()==0
-  assert 'Точная метка' in page.locator('[data-map-panel=yandex]').inner_text()
-  page.locator('[data-map-select=google]').click();page.locator('[data-map-load]').click()
+  assert page.locator('[data-map-load]').count()==0
+  page.locator('[data-map-select=yandex]').click();assert page.locator('.cp-map iframe').count()==1
+  assert 'pt=' in page.locator('.cp-map iframe').get_attribute('src')
+  page.locator('[data-map-select=google]').click()
   page.locator('.cp-map iframe').evaluate("frame=>frame.dispatchEvent(new Event('error'))")
   assert page.locator('.cp-map iframe').count()==0
-  assert 'Не удалось' in page.locator('[data-map-panel=google] [data-map-status]').inner_text()
+  assert 'Карта недоступна' in page.locator('[data-map-panel=google] [data-map-status]').inner_text()
   assert page.locator('[data-map-external=google]').is_visible()
+  figure=page.locator('.cp-production-image').bounding_box();map_box=page.locator('.cp-map').bounding_box()
+  if width>=768:assert abs(figure['y']-map_box['y'])<1 and abs(figure['height']-map_box['height'])<1
+  image=page.locator('.cp-production-frame img');frame=page.locator('.cp-production-frame')
+  assert image.evaluate("i=>getComputedStyle(i).objectFit==='cover'")
+  assert abs(image.bounding_box()['height']-frame.bounding_box()['height'])<1 and abs(image.bounding_box()['width']-frame.bounding_box()['width'])<1
+  assert image.evaluate("i=>i.outerHTML.match(/\\bsizes=/g).length===1")
+  if width>=768:assert image.evaluate("i=>i.naturalWidth===1920")
+  assert page.locator('main a').evaluate_all("links=>links.every(a=>!/(^|\\.)(beierpm|beierrecycling|beiermachinery)\\.com$/.test(new URL(a.href).hostname))")
   page.locator('[data-contact-optional] summary').click()
   assert page.locator('[data-request-topic]').is_visible()
   assert page.locator('[name="Ссылки"]').is_visible()
@@ -63,10 +70,11 @@ with sync_playwright() as p:
  page.locator('[data-copy-address]').click()
  page.wait_for_function("document.querySelector('[data-copy-status]').textContent==='Адрес скопирован.'")
  assert page.evaluate('navigator.clipboard.readText()')==page.locator('address [lang=en]').inner_text()
- # Storage remembers only an explicitly chosen provider, without loading an iframe.
+ # Storage remembers the explicitly chosen provider and mounts only that iframe.
  page.locator('[data-map-select=yandex]').click();page.reload()
  assert page.locator('[data-map-select=yandex]').get_attribute('aria-pressed')=='true'
- assert page.locator('.cp-map iframe').count()==0
+ assert page.locator('.cp-map iframe').count()==1
+ assert page.locator('.cp-map iframe').get_attribute('src').startswith('https://yandex.com/')
  page.evaluate("localStorage.removeItem('era-contact-map-provider')")
  page.goto(base+'/contacts/?topic=%3Cscript%3E%22%D0%A6%D0%B5%D1%85%22%3C%2Fscript%3E#project-form')
  assert page.locator('[data-contact-optional]').get_attribute('open') is not None
@@ -143,6 +151,7 @@ with sync_playwright() as p:
  assert f.locator('address').is_visible()
  assert f.locator('[data-map-external=google]').is_visible() and f.locator('[data-map-external=yandex]').is_visible()
  assert f.locator('[data-map-switch]').is_hidden()
+ assert f.locator('.cp-map iframe').count()==1
  f.locator('[data-contact-optional] summary').click();assert f.locator('[name="Ссылки"]').is_visible()
  assert f.locator('[data-request-form]').get_attribute('method')=='post'
  nojs.close();assert not errors,errors
