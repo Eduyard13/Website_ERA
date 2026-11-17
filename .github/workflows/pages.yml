@@ -232,6 +232,7 @@ jobs:
       - name: Verify published company page in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
+          ERA_VERIFY_FACTORY_TOUR: '1'
         run: node test/about-us-public.mjs
       - name: Verify published technology in Chrome
         env:

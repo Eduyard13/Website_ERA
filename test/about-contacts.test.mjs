@@ -13,7 +13,8 @@ import {render,routes,basePath,previewMode} from '../scripts/build.mjs';
 test('О нас разделяет опыт команды, производственную базу и подтверждённые проекты',async()=>{
  assert.equal(aboutUsContent.team.length,3);
  assert.deepEqual(aboutUsContent.team.map(member=>member.id),['engineering','development','coordination']);
- for(const member of aboutUsContent.team){assert.equal(member.name,null);assert.equal(member.photo,null);assert.equal(member.roleApproved,false);}
+ for(const member of aboutUsContent.team){assert.equal(member.name,null);assert.ok(member.photo.startsWith('about/team/'));assert.equal(member.roleApproved,true);assert.equal(member.profileApproved,true);}
+ assert.deepEqual(aboutUsContent.team.map(m=>m.publicLabel),['Инженерно-технологическое направление','Коммерческое развитие и партнерство','Производственная интеграция']);
  const html=aboutUsPage();
  assert.equal((html.match(/<section\b/g)||[]).length,8);assert.equal((html.match(/<h1>/g)||[]).length,1);
  const ids=[...html.matchAll(/<section[^>]*id="([^"]+)"/g)].map(match=>match[1]);
@@ -24,15 +25,18 @@ test('О нас разделяет опыт команды, производст
  assert.ok(hero.includes('href="#projects"'));assert.ok(hero.includes('href="/contacts#project-form"'));
  assert.doesNotMatch(html,/Фотография будет добавлена|Имя и фамилия|Предварительное название роли/);
  assert.equal((html.match(/data-team-member=/g)||[]).length,3);
- assert.equal((html.match(/data-profile-state="pending"/g)||[]).length,3);
- for(const member of aboutUsContent.team){assert.ok(html.includes(`<h3>${member.publicLabel}</h3>`));assert.ok(!html.includes(member.role));}
+ assert.equal((html.match(/data-profile-state="ready"/g)||[]).length,3);
+ for(const member of aboutUsContent.team)assert.ok(html.includes(`<h3>${member.publicLabel}</h3>`));
+ assert.ok(!html.includes('class="au-team-role"'));
  const team=html.match(/<section[^>]*id="team"[\s\S]*?<\/section>/)[0];
- assert.ok(team.includes('Наша команда.'));assert.ok(!team.includes('<img'));
+ assert.ok(team.includes('Ключевые специалисты проекта'));assert.equal((team.match(/<img /g)||[]).length,3);
  assert.equal((html.match(/class="au-projects-grid"/g)||[]).length,1);
  for(const id of ['venray','chelyabinsk'])assert.equal((html.match(new RegExp(`id="project-${id}"`,'g'))||[]).length,1);
  assert.equal((html.match(/data-media-group="venray"/g)||[]).length,3);
  assert.equal((html.match(/data-media-group="chelyabinsk"/g)||[]).length,1);
- assert.equal((html.match(/class="au-gallery au-project-thumbnails"/g)||[]).length,1);
+ assert.ok(html.includes('class="au-gallery au-project-gallery au-project-venray"'));assert.ok(!html.includes('au-project-thumbnails'));
+ const venray=html.match(/<article[^>]*id="project-venray"[\s\S]*?<\/article>/)[0];
+ assert.ok(venray.lastIndexOf('data-media-group="venray"')<venray.indexOf('class="au-project-copy"'));
  assert.doesNotMatch(html,/au-project-layout|au-project-reverse/);
  assert.ok(html.includes('Евростек')&&html.includes('Германию'));
  assert.ok(html.includes('55 000 м²')&&html.includes('Начало 2020-х'));
@@ -60,24 +64,23 @@ test('О нас разделяет опыт команды, производст
  assert.ok(Number.isFinite(productionSite.location.lat)&&Number.isFinite(productionSite.location.lon));
  for(const map of productionSite.maps){assert.equal(map.siteId,productionSite.id);assert.equal(map.markerVerified,true);assert.equal(map.embedReproduced,true);}
 });
-test('Три слота команды видны сразу; готовность и безопасность каждого профиля независимы',()=>{
+test('Готовность портрета требует согласования и локального файла, но не имени',()=>{
  const data=structuredClone(aboutUsContent);
  const teamHtml=()=>aboutUsPage(data).match(/<section[^>]*id="team"[\s\S]*?<\/section>/)[0];
  const count=(html,state)=>(html.match(new RegExp(`data-profile-state="${state}"`,'g'))||[]).length;
- const first=data.team[0];
- Object.assign(first,{name:'Иван <script> & "ЭРА"',photo:'photos/predvaritelnyy-izmelchitel/02.webp',alt:'Портрет "имя"',roleApproved:true});
- let html=teamHtml();assert.equal(count(html,'ready'),1);assert.equal(count(html,'pending'),2);
- assert.equal((html.match(/data-team-member=/g)||[]).length,3);assert.equal((html.match(/<img /g)||[]).length,1);
- assert.ok(html.includes('Иван &lt;script&gt; &amp; &quot;ЭРА&quot;'));assert.ok(!html.includes('Иван <script>'));
- assert.ok(html.includes('alt="Портрет &quot;имя&quot;"'));
- first.roleApproved=false;html=teamHtml();assert.equal(count(html,'pending'),3);assert.ok(!html.includes('Иван')&&!html.includes('<img'));
- for(const member of data.team){member.name||='Тестовый сотрудник';member.photo||='photos/predvaritelnyy-izmelchitel/02.webp';member.roleApproved=true;}
- html=teamHtml();assert.equal(count(html,'ready'),3);assert.equal((html.match(/<img /g)||[]).length,3);
- for(const value of ['../private.png','photos/not-a-provided-portrait.webp','https://example.org/portrait.png','photos/x.webp" onerror="alert(1)']){
-  first.photo=value;html=teamHtml();assert.equal(count(html,'ready'),2);assert.equal(count(html,'pending'),1);assert.ok(!html.includes(value));
+ const first=data.team[0];let html=teamHtml();assert.equal(count(html,'ready'),3);
+ first.name='Иван <script> & "ЭРА"';first.alt='Портрет "имя"';
+ html=teamHtml();assert.ok(!html.includes('Иван'));assert.ok(html.includes('alt="Портрет &quot;имя&quot;"'));
+ first.name='   ';html=teamHtml();assert.equal(count(html,'ready'),3);
+ first.roleApproved=false;html=teamHtml();assert.equal(count(html,'ready'),2);assert.equal(count(html,'pending'),1);
+ first.roleApproved=true;first.profileApproved=false;html=teamHtml();assert.equal(count(html,'ready'),2);assert.equal(count(html,'pending'),1);
+ first.profileApproved=true;
+ for(const value of [null,'../private.png','/../private.png','photos/not-a-provided-portrait.webp','https://example.org/portrait.png','about/team/x.webp" onerror="alert(1)']){
+  first.photo=value;html=teamHtml();assert.equal(count(html,'ready'),2);assert.equal(count(html,'pending'),1);if(value)assert.ok(!html.includes(value));
  }
- first.name='   ';html=teamHtml();assert.equal(count(html,'pending'),1);
+ first.photo=aboutUsContent.team[0].photo;first.publicLabel='   ';html=teamHtml();assert.equal(count(html,'ready'),2);
  first.publicLabel='<img src=x onerror=alert(1)>';html=teamHtml();assert.ok(html.includes('&lt;img'));assert.ok(!html.includes('<img src=x'));
+ data.team[1].roleApproved=false;data.team[2].photo=null;html=teamHtml();assert.equal(count(html,'ready'),1);assert.equal(count(html,'pending'),2);
  data.showTeam=false;html=teamHtml();assert.ok(!html.includes('data-team-member'));assert.ok(html.includes('командная работа.'));
  data.productionBase.tourUrl='javascript:alert(1)';data.hero.title='<script>alert("x")</script>';
  html=aboutUsPage(data);assert.ok(!html.includes('javascript:'));assert.ok(!html.includes('<script>alert'));assert.ok(html.includes('&lt;script&gt;'));
@@ -85,19 +88,30 @@ test('Три слота команды видны сразу; готовност
 test('Официальные источники и происхождение всех фото опубликованной страницы сохранены',async()=>{
  const {createHash}=await import('node:crypto');
  const registry=JSON.parse(await readFile('docs/about-us-assets.json','utf8'));
- const all=[aboutUsContent.hero,...aboutUsContent.productionBase.gallery,...aboutUsContent.projects.cases.flatMap(project=>project.gallery),...aboutUsContent.engineering.map(stage=>stage.image)];
+ const all=[aboutUsContent.hero,...aboutUsContent.productionBase.gallery,...aboutUsContent.projects.cases.flatMap(project=>project.gallery),...aboutUsContent.engineering.map(stage=>stage.image),...aboutUsContent.team.map(member=>({file:member.photo}))];
  assert.deepEqual(new Set(registry.images.map(image=>image.file)),new Set(all.map(image=>image.file)));
  for(const image of registry.images){
   assert.ok(image.source&&image.permission&&image.caption&&image.alt);
   assert.equal(createHash('sha256').update(await readFile('public/assets/'+image.file)).digest('hex'),image.sha256);
+  if(image.small)assert.equal(createHash('sha256').update(await readFile('public/assets/'+image.small.file)).digest('hex'),image.small.sha256);
  }
  const photo=registry.images.find(image=>image.file.includes('chelyabinsk-2021'));
  assert.ok(photo.locationConfirmedByOwner);assert.ok(photo.processing.includes('освещения'));
  assert.equal(registry.externalPhotosPublished,false);
  const html=aboutUsPage();
- for(const url of ['https://en.beierpm.com/about/','https://en.beierpm.com/contact/','https://en.beierpm.com/vr/']){
-  assert.ok(html.includes(`href="${url}" target="_blank" rel="noopener noreferrer"`));
+ const production=html.match(/<section[^>]*id="production-base"[\s\S]*?<\/section>/)[0];
+ const external=[...production.matchAll(/<a[^>]*href="(https:[^"]+)"[^>]*>/g)];
+ assert.equal(external.length,1);assert.equal(external[0][1],'https://en.beierpm.com/vr/');
+ assert.ok(production.includes('target="_blank" rel="noopener noreferrer"'));
+ assert.ok(production.includes(aboutUsContent.productionBase.address));
+ const manifest=JSON.parse(await readFile('docs/about-us-portrait-manifest.json','utf8'));
+ for(const entry of manifest){
+  const member=aboutUsContent.team.find(m=>m.id===entry.id);assert.equal(member.name,null);assert.equal(member.publicLabel,entry.label);
+  assert.equal(member.photo,'about/team/'+entry.web[0].file.split('/').at(-1));assert.equal(member.photoWidth,entry.web[0].width);assert.equal(member.photoHeight,entry.web[0].height);
+  for(const asset of entry.web){assert.equal(createHash('sha256').update(await readFile(asset.destination)).digest('hex'),asset.sha256);assert.ok(html.includes(asset.destination.replace('public','')));}
  }
+ assert.equal(registry.images.filter(i=>i.category==='owner-provided-portrait').length,3);
+
 });
 test('Оба видеоканала видны без подставных URL; заполненный URL активирует только свой канал',()=>{
  const pending=videoChannels({channels:{}});assert.ok(pending.includes('YouTube')&&pending.includes('VK Видео'));assert.ok(!pending.includes('<a '));

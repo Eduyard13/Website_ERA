@@ -1,0 +1,83 @@
+[
+  {
+    "position": 1,
+    "id": "engineering",
+    "label": "Инженерно-технологическое направление",
+    "original": "portraits/originals/01-engineering.jpg",
+    "original_sha256": "fb8e910622033614f4593b364a2513ca6d3b0f9d6cc1ac545a59a8b2be77324d",
+    "source_dimensions": [
+      1536,
+      2048
+    ],
+    "web": [
+      {
+        "file": "portraits/web/01-engineering.webp",
+        "destination": "public/assets/about/team/01-engineering.webp",
+        "width": 1200,
+        "height": 1600,
+        "sha256": "5e3081f2701446a476af4b030724e6dfd9ed19457a4e3526aa4479657ac3726b"
+      },
+      {
+        "file": "portraits/web/01-engineering-600.webp",
+        "destination": "public/assets/about/team/01-engineering-600.webp",
+        "width": 600,
+        "height": 800,
+        "sha256": "f97635abcaa56e4e9acf6e2f0aa325eee817fedb6aa5de9450866eef9a7be368"
+      }
+    ]
+  },
+  {
+    "position": 2,
+    "id": "development",
+    "label": "Коммерческое развитие и партнерство",
+    "original": "portraits/originals/02-commercial.png",
+    "original_sha256": "7d5015c4a95e04135235b482bbefc29978995e1f1917f5176d20b2c42659ea1a",
+    "source_dimensions": [
+      1254,
+      1254
+    ],
+    "web": [
+      {
+        "file": "portraits/web/02-commercial.webp",
+        "destination": "public/assets/about/team/02-commercial.webp",
+        "width": 1200,
+        "height": 1200,
+        "sha256": "555f3ef3120334a7c26099cbe52346a9ff7bd63d4added6450769b4b2358790e"
+      },
+      {
+        "file": "portraits/web/02-commercial-600.webp",
+        "destination": "public/assets/about/team/02-commercial-600.webp",
+        "width": 600,
+        "height": 600,
+        "sha256": "0595627d0cfd9847cd5488923fe3700096b47e830efb2cdefd0315b00e2713f6"
+      }
+    ]
+  },
+  {
+    "position": 3,
+    "id": "coordination",
+    "label": "Производственная интеграция",
+    "original": "portraits/originals/03-integration.jpg",
+    "original_sha256": "3bb82c63f6a4c9f3676d333ad25630e1a82a8b3c22eb7ea70366374c8105f5cc",
+    "source_dimensions": [
+      1536,
+      2048
+    ],
+    "web": [
+      {
+        "file": "portraits/web/03-integration.webp",
+        "destination": "public/assets/about/team/03-integration.webp",
+        "width": 1200,
+        "height": 1600,
+        "sha256": "924acd6fdc7d0b4804c7f03d8db11ef2811d28ca6bddf485d1fa1c5abfec494b"
+      },
+      {
+        "file": "portraits/web/03-integration-600.webp",
+        "destination": "public/assets/about/team/03-integration-600.webp",
+        "width": 600,
+        "height": 800,
+        "sha256": "cf0ea86f24e9a00b1cd5091f31013b3bb11376964d29bcc25665e89deb2cf521"
+      }
+    ]
+  }
+]

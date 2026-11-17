@@ -1,6 +1,6 @@
 {
   "page": "/about-us/",
-  "version": "0.38.0",
+  "version": "0.39.3",
   "checkedOn": "2026-11-17",
   "externalPhotosPublished": false,
   "images": [
@@ -357,6 +357,99 @@
       "locationConfirmedByOwner": false,
       "processing": "Ранее подготовленная веб-копия из материалов владельца; без новой обработки содержания.",
       "checkedOn": "2026-11-17"
+    },
+    {
+      "file": "about/team/01-engineering.webp",
+      "roles": [
+        "team-engineering"
+      ],
+      "category": "owner-provided-portrait",
+      "profileId": "engineering",
+      "width": 1200,
+      "height": 1600,
+      "bytes": 138554,
+      "sha256": "5e3081f2701446a476af4b030724e6dfd9ed19457a4e3526aa4479657ac3726b",
+      "small": {
+        "file": "about/team/01-engineering-600.webp",
+        "width": 600,
+        "height": 800,
+        "bytes": 62024,
+        "sha256": "f97635abcaa56e4e9acf6e2f0aa325eee817fedb6aa5de9450866eef9a7be368"
+      },
+      "caption": "Инженерно-технологическое направление",
+      "alt": "Специалист ЭРА: инженерно-технологическое направление",
+      "source": {
+        "manifest": "docs/about-us-portrait-manifest.json",
+        "archive": "ERA_ABOUT_US_FINAL_TEAM_PACKAGE.zip",
+        "file": "portraits/originals/01-engineering.jpg",
+        "sourceSha256": "fb8e910622033614f4593b364a2513ca6d3b0f9d6cc1ac545a59a8b2be77324d"
+      },
+      "permission": "Портрет предоставлен владельцем ЭРА и утверждён к публикации в составе указанного направления в задании от 17.11.2026.",
+      "profileApproved": true,
+      "processing": "Подготовленные владельцем WebP скопированы побайтно, без ретуши, изменения лица, одежды, фона или логотипов. Кадрирование превью только CSS; оригинал не изменён.",
+      "checkedOn": "2026-11-17"
+    },
+    {
+      "file": "about/team/02-commercial.webp",
+      "roles": [
+        "team-development"
+      ],
+      "category": "owner-provided-portrait",
+      "profileId": "development",
+      "width": 1200,
+      "height": 1200,
+      "bytes": 207182,
+      "sha256": "555f3ef3120334a7c26099cbe52346a9ff7bd63d4added6450769b4b2358790e",
+      "small": {
+        "file": "about/team/02-commercial-600.webp",
+        "width": 600,
+        "height": 600,
+        "bytes": 64226,
+        "sha256": "0595627d0cfd9847cd5488923fe3700096b47e830efb2cdefd0315b00e2713f6"
+      },
+      "caption": "Коммерческое развитие и партнерство",
+      "alt": "Специалист ЭРА: коммерческое развитие и партнерство",
+      "source": {
+        "manifest": "docs/about-us-portrait-manifest.json",
+        "archive": "ERA_ABOUT_US_FINAL_TEAM_PACKAGE.zip",
+        "file": "portraits/originals/02-commercial.png",
+        "sourceSha256": "7d5015c4a95e04135235b482bbefc29978995e1f1917f5176d20b2c42659ea1a"
+      },
+      "permission": "Портрет предоставлен владельцем ЭРА и утверждён к публикации в составе указанного направления в задании от 17.11.2026.",
+      "profileApproved": true,
+      "processing": "Подготовленные владельцем WebP скопированы побайтно, без ретуши, изменения лица, одежды, фона или логотипов. Кадрирование превью только CSS; оригинал не изменён.",
+      "checkedOn": "2026-11-17"
+    },
+    {
+      "file": "about/team/03-integration.webp",
+      "roles": [
+        "team-coordination"
+      ],
+      "category": "owner-provided-portrait",
+      "profileId": "coordination",
+      "width": 1200,
+      "height": 1600,
+      "bytes": 341824,
+      "sha256": "924acd6fdc7d0b4804c7f03d8db11ef2811d28ca6bddf485d1fa1c5abfec494b",
+      "small": {
+        "file": "about/team/03-integration-600.webp",
+        "width": 600,
+        "height": 800,
+        "bytes": 133520,
+        "sha256": "cf0ea86f24e9a00b1cd5091f31013b3bb11376964d29bcc25665e89deb2cf521"
+      },
+      "caption": "Производственная интеграция",
+      "alt": "Специалист ЭРА: производственная интеграция",
+      "source": {
+        "manifest": "docs/about-us-portrait-manifest.json",
+        "archive": "ERA_ABOUT_US_FINAL_TEAM_PACKAGE.zip",
+        "file": "portraits/originals/03-integration.jpg",
+        "sourceSha256": "3bb82c63f6a4c9f3676d333ad25630e1a82a8b3c22eb7ea70366374c8105f5cc"
+      },
+      "permission": "Портрет предоставлен владельцем ЭРА и утверждён к публикации в составе указанного направления в задании от 17.11.2026.",
+      "profileApproved": true,
+      "processing": "Подготовленные владельцем WebP скопированы побайтно, без ретуши, изменения лица, одежды, фона или логотипов. Кадрирование превью только CSS; оригинал не изменён.",
+      "checkedOn": "2026-11-17"
     }
   ],
   "officialSources": [
@@ -386,5 +479,6 @@
     "Нидерландская серия подтверждена разделом 11, стр. 29 технического описания. Исторический путь separatsiya-01 не устанавливает модель внедрения.",
     "Китайские фотографии подтверждены стр. 28 технического описания. Подписи не утверждают, что это офис, кампус или конкретная фабрика BEIER.",
     "Челябинск и 2021 год прямо подтверждены владельцем для присланной фотографии 17.11.2026; изображение обработано по его запросу."
-  ]
+  ],
+  "portraitsPublished": true
 }
