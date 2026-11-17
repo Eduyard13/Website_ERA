@@ -1,0 +1,25 @@
+name: Verify final contacts map pins
+on:
+  push:
+    branches: [contacts-map-pin-check-20261117]
+permissions:
+  contents: read
+jobs:
+  sources:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/contact-map-check.mjs
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Inspect official map objects and pin candidates in Chrome
+        run: node .github/contact-map-check.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: era-final-contact-map-check
+          path: sources
+          retention-days: 3
