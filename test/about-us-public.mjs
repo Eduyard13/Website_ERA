@@ -62,7 +62,7 @@ try{
  const sections=['about-us-intro','experience','production-base','projects','engineering','team','working-together','about-us-contact'];
  const snapshot=()=>evaluate(`(()=>{const r=document.querySelector('.about-us-page');return {overflow:document.documentElement.scrollWidth>innerWidth,sections:[...r.querySelectorAll('section')].map(s=>s.id),facts:r.querySelectorAll('.au-company-facts>div').length,profiles:r.querySelectorAll('[data-team-member]').length,ready:r.querySelectorAll('[data-profile-state="ready"]').length,portraitImages:r.querySelectorAll('#team .au-portrait img').length,projectGrids:r.querySelectorAll('.au-projects-grid').length,projectBoxes:[...r.querySelectorAll('.au-projects-grid>.au-project')].map(e=>{const b=e.getBoundingClientRect();return {x:b.x,y:b.y,width:b.width,height:b.height,trailingSpace:b.bottom-e.lastElementChild.getBoundingClientRect().bottom};}),teamBoxes:[...r.querySelectorAll('.au-team-card')].map(e=>{const b=e.getBoundingClientRect();return {x:b.x,y:b.y,width:b.width,height:b.height};}),previewRatios:[...r.querySelectorAll('.au-project-gallery>.au-gallery-item:first-child img')].map(i=>{const b=i.getBoundingClientRect();return Math.abs(b.width/b.height-i.naturalWidth/i.naturalHeight);}),cards:r.querySelectorAll('.au-engineering-card').length,projects:r.querySelectorAll('.au-project').length,rail:document.querySelectorAll('.page-progress-rail a').length,brokenImages:[...r.querySelectorAll('img')].filter(i=>!i.complete||!i.naturalWidth||!i.alt).map(i=>i.src)}})()`);
  await command('Page.enable');await command('Runtime.enable');
- for(const width of [320,375,390,768,1024,1280,1440,1920]){
+ for(const width of [320,375,390,600,768,1024,1200,1280,1440,1920]){
   await command('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:width<768});
   await command('Page.navigate',{url});
   await wait(`document.readyState==='complete'&&document.querySelector('.page-progress-rail a')`);
@@ -78,7 +78,12 @@ try{
   assert.ok(state.projectBoxes.every(b=>b.trailingSpace<=30),'No stretched project cards');
   assert.ok(state.previewRatios.every(d=>d<.02),'Natural main photograph proportions');
   assert.equal(state.teamBoxes.length,3);assert.ok(state.teamBoxes.every(b=>b.width>0&&b.height>0));
-  if(width>=1024)assert.ok(state.teamBoxes.every(b=>Math.abs(b.y-state.teamBoxes[0].y)<1),'Three team columns');
+  if(width>=1200){
+   assert.ok(state.teamBoxes.every(b=>Math.abs(b.y-state.teamBoxes[0].y)<1),'Three team columns');
+   assert.ok(state.teamBoxes.every(b=>Math.abs(b.width-state.teamBoxes[0].width)<1&&Math.abs(b.height-state.teamBoxes[0].height)<1),'Equal team cards');
+  }else for(let i=1;i<state.teamBoxes.length;i++)assert.ok(state.teamBoxes[i].y>=state.teamBoxes[i-1].y+state.teamBoxes[i-1].height,'Stacked horizontal profiles');
+  assert.equal(await evaluate(`Array.from(document.querySelectorAll('#team .au-team-card')).every(c=>{const p=c.querySelector('.au-portrait').getBoundingClientRect(),t=c.querySelector('.au-team-copy').getBoundingClientRect();return p.width<=150&&p.right<t.left&&Math.abs(p.top-t.top)<1&&c.scrollWidth<=c.clientWidth&&Array.from(c.querySelectorAll('h3,p')).every(e=>e.scrollWidth<=e.clientWidth+1);})`),true,'Compact photographs on the left and uncut text on the right');
+  assert.equal(await evaluate(`Array.from(document.querySelectorAll('#team img')).every(i=>i.getAttribute('sizes')==='(max-width: 479px) 76px, (max-width: 767px) 100px, (max-width: 1199px) 128px, clamp(100px, 8.3vw, 128px)')`),true,'Responsive team sizes');
  }
  const details=await evaluate(`(()=>{const r=document.querySelector('.about-us-page'),p=r.querySelector('#production-base');return {headings:[...r.querySelectorAll('.au-team-card h3')].map(e=>e.textContent),teamOrder:[...r.querySelectorAll('[data-team-member]')].map(e=>e.dataset.teamMember),teamPhotos:[...r.querySelectorAll('#team .au-portrait img')].map(i=>i.getAttribute('src').split('/').at(-1)),locations:[...r.querySelectorAll('.au-team-location')].map(e=>e.textContent),externalLinks:[...p.querySelectorAll('a[href^="https:"]')].map(e=>e.href),projectCounts:[...r.querySelectorAll('.au-project-gallery')].map(g=>g.querySelectorAll('[data-media]').length),projectMediaBeforeCopy:[...r.querySelectorAll('.au-project')].every(c=>!!(c.querySelector('.au-project-gallery').compareDocumentPosition(c.querySelector('.au-project-copy'))&Node.DOCUMENT_POSITION_FOLLOWING)),inlineFrames:r.querySelectorAll('iframe').length};})()`);
  assert.deepEqual(details.headings,['Инженерно-технологическое направление','Коммерческое развитие и партнерство','Производственная интеграция']);
@@ -112,7 +117,7 @@ try{
   console.log('::notice title=Virtual tour link verified::Official VR URL returned HTTP 200, contains the panorama provider and opened in its own browser tab.');
  }
  assert.deepEqual(errors,[],'Published company browser errors');
- console.log('::notice title=Published company page verified::ERA-only hero, one BEIER virtual tour, full production collage, three Venray views, one Chelyabinsk photo and three approved direction portraits, natural project photos, 15 complete images and 6 verified portrait WebP assets, 8 navigation anchors, 8 responsive widths, isolated galleries, single-photo controls, Escape, focus restoration and project CTA passed on the actual public site. '+url);
+ console.log('::notice title=Published company page verified::ERA-only hero, one BEIER virtual tour, full production collage, three Venray views, one Chelyabinsk photo and three approved direction portraits, natural project photos, 15 complete images and 6 verified portrait WebP assets, 8 navigation anchors, 10 responsive widths, compact horizontal profiles, isolated galleries, single-photo controls, Escape, focus restoration and project CTA passed on the actual public site. '+url);
 }finally{
  socket?.close();chrome.kill('SIGTERM');await delay(250);await rm(profile,{recursive:true,force:true});
 }

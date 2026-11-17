@@ -10,8 +10,9 @@ ids=['about-us-intro','experience','production-base','projects','engineering','t
 with sync_playwright() as p:
  browser=p.chromium.launch(executable_path=os.environ.get('ERA_CHROME_PATH','/usr/bin/chromium'),args=['--no-sandbox'])
  context=browser.new_context(reduced_motion='reduce');context.route('https://formsubmit.co/**',lambda route:route.abort())
- page=context.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
- for width in [320,360,390,768,1024,1280,1440,1920]:
+ page=context.new_page();errors=[];failures=[];page.on('pageerror',lambda e:errors.append(str(e)))
+ page.on('response',lambda r:failures.append((r.status,r.url)) if r.status>=400 and r.url.startswith(base) else None)
+ for width in [320,360,390,600,768,1024,1200,1280,1440,1920]:
   page.set_viewport_size({'width':width,'height':1000});page.goto(base+'/about-us/');page.wait_for_selector('.page-progress-rail a')
   page.locator('main img').evaluate_all("items=>Promise.all(items.map(i=>{i.loading='eager';return i.decode().catch(()=>{});} ))")
   assert page.locator('main h1').count()==1 and page.locator('.page-progress-rail a').count()==8
@@ -25,8 +26,22 @@ with sync_playwright() as p:
   assert team.locator('.au-team-role').count()==0 and team.locator('.au-team-location').all_text_contents()==['Производственная площадка · Китай','Внедрение проектов · Россия']
   assert team.locator('.au-portrait').evaluate_all('items=>items.every(i=>Math.abs(i.getBoundingClientRect().width/i.getBoundingClientRect().height-.8)<.005)')
   assert team.locator('.au-portrait img').evaluate_all('items=>items.every(i=>getComputedStyle(i).objectFit==="cover")')
-  if width>=1024:
-   tops=team.locator('.au-team-card').evaluate_all('items=>items.map(i=>i.getBoundingClientRect().y)');assert max(tops)-min(tops)<1
+  profiles=team.locator('.au-team-card').evaluate_all('items=>items.map(c=>{const b=c.getBoundingClientRect(),p=c.querySelector(".au-portrait").getBoundingClientRect(),t=c.querySelector(".au-team-copy").getBoundingClientRect(),s=getComputedStyle(c);return {x:b.x,y:b.y,w:b.width,h:b.height,photo:{x:p.x,y:p.y,w:p.width,h:p.height},text:{x:t.x,y:t.y,w:t.width,h:t.height},inside:c.scrollWidth<=c.clientWidth&&c.scrollHeight<=c.clientHeight+1,children:[...c.querySelectorAll("h3,p")].every(e=>e.scrollWidth<=e.clientWidth+1),columns:s.gridTemplateColumns.split(" ").length};})')
+  for profile in profiles:
+   photo,text=profile['photo'],profile['text']
+   assert profile['inside'] and profile['children'] and profile['columns']==2,(width,profile)
+   assert photo['x']+photo['w']<text['x'] and abs(photo['y']-text['y'])<1
+   assert photo['w']<=150 and photo['w']<profile['w']/2
+   assert abs(photo['h']/photo['w']-1.25)<.01
+   if width>=1200:assert text['w']>=205
+  if width>=1200:
+   assert max(p['y'] for p in profiles)-min(p['y'] for p in profiles)<1
+   assert max(p['w'] for p in profiles)-min(p['w'] for p in profiles)<1
+   assert max(p['h'] for p in profiles)-min(p['h'] for p in profiles)<1
+  else:
+   for first,second in zip(profiles,profiles[1:]):assert second['y']>=first['y']+first['h'] and abs(first['x']-second['x'])<1
+  assert team.locator('.au-team-card a,.au-team-card button').count()==0
+  assert team.locator('.au-team-copy p').evaluate_all('items=>items.every(e=>parseFloat(getComputedStyle(e).fontSize)>=11&&getComputedStyle(e).webkitLineClamp==="none")')
   production=page.locator('#production-base');assert production.locator('a[href^="https:"]').count()==1
   tour=production.locator('a[href^="https:"]');assert tour.get_attribute('href')=='https://en.beierpm.com/vr/' and tour.get_attribute('target')=='_blank'
   assert 'noopener' in tour.get_attribute('rel') and 'noreferrer' in tour.get_attribute('rel')
@@ -50,8 +65,8 @@ with sync_playwright() as p:
   if width>=768:assert x['width']>=190
   if width>=1024:assert abs(first.bounding_box()['y']-second.bounding_box()['y'])<1
   else:assert second.bounding_box()['y']>=first.bounding_box()['y']+first.bounding_box()['height']
-  if os.environ.get('ERA_CAPTURE_INTERNAL')=='1' and width in [320,390,768,1024,1280,1440]:
-   out=Path('/workspace/era-about-final-package/visual');out.mkdir(exist_ok=True)
+  if os.environ.get('ERA_CAPTURE_INTERNAL')=='1' and width in [320,390,600,768,1024,1200,1280,1440,1920]:
+   out=Path(os.environ.get('ERA_SCREENSHOT_DIR','/tmp/era-about-team-review'));out.mkdir(parents=True,exist_ok=True)
    for selector,name in [('.au-production-gallery','production'),('.au-projects-grid','projects'),('.au-team-grid','team')]:page.locator(selector).screenshot(path=str(out/f'{name}-{width}.png'))
   print('About: approved portraits, one tour, full collage, 3/1 project views, layout and outline:',width,'OK',flush=True)
  for group,count,part in [('production',3,'china-'),('venray',3,'netherlands-'),('chelyabinsk',1,'chelyabinsk-2021')]:
@@ -66,4 +81,4 @@ with sync_playwright() as p:
  nojs=browser.new_context(java_script_enabled=False);p2=nojs.new_page();p2.goto(base+'/about-us/')
  assert p2.locator('#team img').count()==3 and p2.locator('[data-media-group=venray]').count()==3
  assert p2.locator('main h1').count()==1 and p2.locator('.au-tour-link').is_visible();nojs.close()
- assert not errors,errors;browser.close();print('About: isolated originals, Escape/focus, CTA and no-JS passed; no forms submitted.',flush=True)
+ assert not errors,errors;assert not failures,failures;browser.close();print('About: isolated originals, Escape/focus, CTA, no-JS and no local HTTP failures passed; no forms submitted.',flush=True)

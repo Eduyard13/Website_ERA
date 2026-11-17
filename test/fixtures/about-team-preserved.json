@@ -1,0 +1,9 @@
+{
+  "base": "4b91c9cbffb25d06ec91a070299a9928afd9b03a",
+  "aboutOutsideTeam": "34c3fcf9adec60a44af42d13c4fe9cc6e5e9a55390aa6ef1280c11a98c01482c",
+  "portraits": [
+    "<img src=\"/assets/about/team/01-engineering.webp\" srcset=\"/assets/about/team/01-engineering-600.webp 600w, /assets/about/team/01-engineering.webp 1200w\" width=\"1200\" height=\"1600\" alt=\"Специалист ЭРА: инженерно-технологическое направление\" loading=\"lazy\" decoding=\"async\">",
+    "<img src=\"/assets/about/team/02-commercial.webp\" srcset=\"/assets/about/team/02-commercial-600.webp 600w, /assets/about/team/02-commercial.webp 1200w\" width=\"1200\" height=\"1200\" alt=\"Специалист ЭРА: коммерческое развитие и партнерство\" loading=\"lazy\" decoding=\"async\">",
+    "<img src=\"/assets/about/team/03-integration.webp\" srcset=\"/assets/about/team/03-integration-600.webp 600w, /assets/about/team/03-integration.webp 1200w\" width=\"1200\" height=\"1600\" alt=\"Специалист ЭРА: производственная интеграция\" loading=\"lazy\" decoding=\"async\">"
+  ]
+}

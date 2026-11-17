@@ -1,5 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
 import {readFile,stat} from 'node:fs/promises';
 import {aboutUsContent} from '../content/about-us.mjs';
 import {siteContacts,projectRequest,contactChannels,productionSite} from '../content/contact.mjs';
@@ -9,6 +10,16 @@ import {videoChannels,messengerChannels,confirmedChannelUrl} from '../scripts/co
 import {mapCapabilities,productionMap} from '../scripts/contact-maps.mjs';
 import {primaryLinks,navigationGroups} from '../content/navigation.mjs';
 import {render,routes,basePath,previewMode} from '../scripts/build.mjs';
+
+test('Компактная команда сохраняет три исходных портрета и весь HTML остальных разделов',async()=>{
+ const original=JSON.parse(await readFile('test/fixtures/about-team-preserved.json','utf8'));
+ const html=aboutUsPage(),team=html.match(/<section[^>]*id="team"[\s\S]*?<\/section>/)[0];
+ const outside=html.replace(team,'<section id="team"></section>');
+ assert.equal(createHash('sha256').update(outside).digest('hex'),original.aboutOutsideTeam);
+ assert.deepEqual([...team.matchAll(/<img[^>]+>/g)].map(m=>m[0].replace(/ sizes="[^"]*"/,'')),original.portraits);
+ const sizes='(max-width: 479px) 76px, (max-width: 767px) 100px, (max-width: 1199px) 128px, clamp(100px, 8.3vw, 128px)';
+ assert.equal((team.match(new RegExp('sizes="'+sizes.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'"','g'))||[]).length,3);
+});
 
 test('О нас разделяет опыт команды, производственную базу и подтверждённые проекты',async()=>{
  assert.equal(aboutUsContent.team.length,3);
