@@ -1,0 +1,40 @@
+name: Verify public contact sources
+on:
+  push:
+    branches: [contacts-source-check-20261117]
+permissions:
+  contents: read
+jobs:
+  sources:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Collect official public assets and source pages
+        run: |
+          mkdir -p sources
+          python - <<'PY'
+          import urllib.request, pathlib, json, hashlib
+          resources = {
+            'beier-about.html': 'https://www.beierrecycling.com/about-us/',
+            'beier-contact.html': 'https://www.beierrecycling.com/contact-us/',
+            'beier-address.html': 'https://en.beierpm.com/contact/',
+            'beier-factory.webp': 'https://www.beierrecycling.com/wp-content/themes/beierrecycling/images/about.jpg.webp',
+            'vk-page.html': 'https://m.vkvideo.ru/landings/pwa/index.html',
+            'vk-video.svg': 'https://m.vkvideo.ru/landings/pwa/assets/logo_vk_video.svg',
+          }
+          report = []
+          for name, url in resources.items():
+            try:
+              with urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent':'Mozilla/5.0'}), timeout=50) as response:
+                body=response.read(10_000_000)
+                pathlib.Path('sources',name).write_bytes(body)
+                report.append({'file':name,'url':url,'finalUrl':response.url,'status':response.status,'contentType':response.headers.get_content_type(),'bytes':len(body),'sha256':hashlib.sha256(body).hexdigest()})
+            except Exception as error:
+              report.append({'file':name,'url':url,'error':str(error)})
+          pathlib.Path('sources/report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: era-contact-official-sources
+          path: sources
+          retention-days: 3
