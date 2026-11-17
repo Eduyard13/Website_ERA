@@ -1,0 +1,129 @@
+{
+  "sourceArchive": "ERA_TECHNOLOGY_GRAPHICS_PACKAGE_UNIFIED.zip",
+  "sourceArchiveSha256": "40e559e03595f54cb35e3066f44d622939adc19cb00af17db4df9836679e6368",
+  "checkedOn": "2026-11-17",
+  "preparation": "Использованы пять готовых иллюстраций из архива владельца. Новая генерация или изменение содержания не выполнялись; пропорциональное уменьшение и сжатие WebP.",
+  "caption": "Иллюстрации возможных направлений применения",
+  "images": [
+    {
+      "id": "film",
+      "type": "owner-provided-application-illustration",
+      "sourceFile": "01_film_and_rolls.png",
+      "sourceSha256": "e93a1abe945487e288a3cc7e3edac97d473b9f840e2b1f63126e5e0e6e77e7b7",
+      "author": "Готовая графическая серия предоставлена владельцем; автор не указан.",
+      "permission": "Предоставлено владельцем для публикации на сайте ЭРА.",
+      "purpose": "Возможное направление применения материала, не фотография оборудования ЭРА.",
+      "alt": "Иллюстрация возможного применения вторичного полиэтилена: рулоны плёнки и пакеты",
+      "image": {
+        "file": "technology/applications/film.webp",
+        "width": 1200,
+        "height": 900,
+        "bytes": 93940,
+        "sha256": "4b504ccd3188e58ab77521a632a02a0d1bc9c4484c02b799957a340a63712c32"
+      },
+      "small": {
+        "file": "technology/applications/film-600.webp",
+        "width": 600,
+        "height": 450,
+        "bytes": 26210,
+        "sha256": "8fc5e1d45d7533bd5689e694d6f96fdd20a4407b428aa33156d75fb51d24cdee"
+      }
+    },
+    {
+      "id": "pipes",
+      "type": "owner-provided-application-illustration",
+      "sourceFile": "02_polymer_pipes_and_fittings.png",
+      "sourceSha256": "ce56e623ff75ac3ab9e9613e131c436df92e5734d98c3bd8e830366253dd4bfa",
+      "author": "Готовая графическая серия предоставлена владельцем; автор не указан.",
+      "permission": "Предоставлено владельцем для публикации на сайте ЭРА.",
+      "purpose": "Возможное направление применения материала, не фотография оборудования ЭРА.",
+      "alt": "Иллюстрация возможного применения материала: полимерные трубы и профильные изделия",
+      "image": {
+        "file": "technology/applications/pipes.webp",
+        "width": 1200,
+        "height": 900,
+        "bytes": 148592,
+        "sha256": "83438f5baf4826151152c1ea0fc43461e8755405a52ecf1d5a29290605a4e538"
+      },
+      "small": {
+        "file": "technology/applications/pipes-600.webp",
+        "width": 600,
+        "height": 450,
+        "bytes": 40736,
+        "sha256": "8c50b55b96a3c3a10b19b660e0915709102f46bb3a33d34e3f91ff1bdced31d5"
+      }
+    },
+    {
+      "id": "containers",
+      "type": "owner-provided-application-illustration",
+      "sourceFile": "03_plastic_containers_and_products.png",
+      "sourceSha256": "da78d1cbeb6cba6ea2d816be4225576a28439e0214eaa67112fa8eccd8a448ad",
+      "author": "Готовая графическая серия предоставлена владельцем; автор не указан.",
+      "permission": "Предоставлено владельцем для публикации на сайте ЭРА.",
+      "purpose": "Возможное направление применения материала, не фотография оборудования ЭРА.",
+      "alt": "Иллюстрация возможного применения материала: техническая тара и полимерные изделия",
+      "image": {
+        "file": "technology/applications/containers.webp",
+        "width": 1200,
+        "height": 900,
+        "bytes": 115924,
+        "sha256": "551e1a6bbfb08312524870f817ad9ebcead9be4c92e2f49d437066380473778b"
+      },
+      "small": {
+        "file": "technology/applications/containers-600.webp",
+        "width": 600,
+        "height": 450,
+        "bytes": 33734,
+        "sha256": "18cee34f8d927f83d9bb1e8ef99641b9dbd7c736eeb306e3c1c0fce59cb1c9e8"
+      }
+    },
+    {
+      "id": "pyrolysis",
+      "type": "owner-provided-application-illustration",
+      "sourceFile": "04_pyrolysis_and_fuel_fractions.png",
+      "sourceSha256": "aec774d50e5776000ecf72dbac8408dc08aa9a915aabae3b9d234567f6b95f74",
+      "author": "Готовая графическая серия предоставлена владельцем; автор не указан.",
+      "permission": "Предоставлено владельцем для публикации на сайте ЭРА.",
+      "purpose": "Возможное направление применения материала, не фотография оборудования ЭРА.",
+      "alt": "Условная иллюстрация пиролиза и последующей подготовки углеводородных фракций",
+      "image": {
+        "file": "technology/applications/pyrolysis.webp",
+        "width": 1200,
+        "height": 900,
+        "bytes": 169658,
+        "sha256": "5b20a154e34b675646d5bb9d05dad2deea5c18c82d50ca3888836850f7ea8326"
+      },
+      "small": {
+        "file": "technology/applications/pyrolysis-600.webp",
+        "width": 600,
+        "height": 450,
+        "bytes": 46440,
+        "sha256": "1f3d17853387481eeb72111ce310ed094797f6181f2f7a84583aafc73237cb8d"
+      }
+    },
+    {
+      "id": "energy",
+      "type": "owner-provided-application-illustration",
+      "sourceFile": "05_electrical_energy_generation.png",
+      "sourceSha256": "5afd49563c2efa21d4d75e58db151c511f279b829a3d3a098ae42766cd469932",
+      "author": "Готовая графическая серия предоставлена владельцем; автор не указан.",
+      "permission": "Предоставлено владельцем для публикации на сайте ЭРА.",
+      "purpose": "Возможное направление применения материала, не фотография оборудования ЭРА.",
+      "alt": "Условная иллюстрация специализированного оборудования для энергетического использования подходящих фракций",
+      "image": {
+        "file": "technology/applications/energy.webp",
+        "width": 1200,
+        "height": 900,
+        "bytes": 149040,
+        "sha256": "c837e6fef53a3a4f4cbdc4943695fd7923b448259399512eee2d42f494c535d2"
+      },
+      "small": {
+        "file": "technology/applications/energy-600.webp",
+        "width": 600,
+        "height": 450,
+        "bytes": 42468,
+        "sha256": "72d086fbdc10b26a63fede3ebb5047ae01253070093db591afaeaef6a83dfa3d"
+      }
+    }
+  ]
+}
