@@ -608,8 +608,8 @@ test('Клиентский режим: единый кириллический �
   for(const group of navigationGroups){assert.ok(footer.includes(group.label));for(const link of group.links)assert.ok(footer.includes(`href="${basePath}${link.href}"`));}
   const visible=html.replace(/<script[\s\S]*?<\/script>/g,'').replace(/<[^>]+>/g,' ');
   const labels=[...html.matchAll(/(?:aria-label|alt|title|data-source|data-title|content)="([^"]*)"/g)].map(m=>m[1]).join(' ');
-  // The owner explicitly requests this source citation for the single manual experiment.
-  const copy=(visible+' '+labels).replaceAll('Опыт, приведённый в презентации ЭРА.','').replaceAll(route==='/economics'?'Источник: ':'\u0000','');
+  // Owner-approved public citations: the economics experiment and the BEIER corporate profile.
+  const copy=(visible+' '+labels).replaceAll('Опыт, приведённый в презентации ЭРА.','').replaceAll(route==='/economics'?'Источник: ':route==='/about-us'?'Источник: корпоративный профиль BEIER Machinery':'\u0000','');
   assert.doesNotMatch(copy,/\bERA\b|прототип|для согласования|из презентации|в презентации|предоставленному КП|источник:|слайд №|сайт объединяет/iu,route);
   assert.match(html,/noindex,nofollow/,route);
  }
