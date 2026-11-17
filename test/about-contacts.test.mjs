@@ -56,7 +56,9 @@ test('О нас разделяет опыт команды, производст
  assert.equal(productionSite.city,'Чжанцзяган');
  assert.equal(productionSite.address,aboutUsContent.productionBase.address);
  assert.equal(productionSite.manufacturer,aboutUsContent.productionBase.manufacturer);
- assert.equal(productionSite.location.lat,null);assert.equal(productionSite.location.lon,null);
+ assert.equal(productionSite.location.coordinateSystem,'WGS-84');
+ assert.ok(Number.isFinite(productionSite.location.lat)&&Number.isFinite(productionSite.location.lon));
+ for(const map of productionSite.maps){assert.equal(map.siteId,productionSite.id);assert.equal(map.markerVerified,true);assert.equal(map.embedReproduced,true);}
 });
 test('Три слота команды видны сразу; готовность и безопасность каждого профиля независимы',()=>{
  const data=structuredClone(aboutUsContent);
@@ -124,8 +126,12 @@ test('Контакты используют единственную прежн�
  const html=contactPage({basePath});assert.equal((html.match(/data-request-form(?=[\s>])/g)||[]).length,1);
  assert.ok(html.includes(requestForm({prefix:'contact',basePath,compactOptional:true})));
  assert.ok(html.includes(siteContacts.phoneHref)&&html.includes(siteContacts.email));
- assert.ok(html.includes(projectRequest.endpoint));assert.ok(!html.includes('<iframe'));
- assert.ok(html.includes('Найти адрес в Яндекс Картах'));
+ assert.ok(html.includes(projectRequest.endpoint));assert.equal((html.match(/<iframe\b/g)||[]).length,1);
+ assert.ok(html.includes('Открыть в Яндекс Картах'));
+ assert.ok(!html.includes('data-map-load')&&!html.includes('Показать карту'));
+ for(const [,href] of html.matchAll(/<a[^>]*href="([^"]+)"/g))if(href.startsWith('https:'))assert.ok(!/(^|\.)(beierpm|beierrecycling|beiermachinery)\.com$/.test(new URL(href).hostname));
+ assert.ok(html.includes('href="/about-us#production-base"'));
+ const photo=html.match(/<img[^>]*src="[^"]*beier-zhangjiagang-factory.webp"[^>]*>/)[0];assert.equal((photo.match(/\bsizes=/g)||[]).length,1);
  assert.ok(html.includes('data-map-select="google"'));
  for(const id of ['contacts-intro','direct-contact','project-form','production-site','contact-task','official-videos','contacts-next'])assert.ok(html.includes(`id="${id}"`));
  assert.ok(html.includes('От вашей задачи — к нашему решению.'));
@@ -157,25 +163,23 @@ test('Быстрая связь одна на страницу, изолиров
  const preview=await readFile('public/preview-only.js','utf8');assert.ok(preview.includes('Предпросмотр: заявка не отправлена'));
 });
 
-test('Карты отделяют адрес, внешнюю ссылку, проверенную метку и воспроизводимый iframe',()=>{
+test('Карты проверяют pin, HTTPS, hostname и src независимо от внешней ссылки',()=>{
  const fixture={provider:'google',url:'https://www.google.com/maps?cid=14308622914688450133',embedUrl:'https://www.google.com/maps/embed?pb=official-fixture',embedReproduced:true,markerVerified:false,lat:null,lon:null};
  let state=mapCapabilities(fixture,productionSite);
  assert.equal(state.hasVerifiedMarker,false);assert.equal(state.hasExternalLink,true);assert.equal(state.hasEmbed,true);
- // Loss of an embed never removes a valid external link.
  state=mapCapabilities({...fixture,embedUrl:null},productionSite);assert.equal(state.hasEmbed,false);assert.equal(state.hasExternalLink,true);
  for(const bad of ['http://www.google.com/maps/embed','https://evil.invalid/maps/embed','https://www.google.com.evil.invalid/maps/embed','https://name:secret@www.google.com/maps/embed','https://www.google.com/maps/place/fake'])assert.equal(mapCapabilities({...fixture,embedUrl:bad},productionSite).hasEmbed,false,bad);
  assert.equal(mapCapabilities({...fixture,embedReproduced:false},productionSite).hasEmbed,false);
  assert.equal(mapCapabilities({...fixture,provider:'<script>'},productionSite).provider,null);
- assert.equal(mapCapabilities({...fixture,url:'javascript:alert(1)'},productionSite).hasExternalLink,false);
- const yandex={provider:'yandex',url:'https://yandex.ru/maps/?pt=120,32',embedUrl:'https://yandex.ru/map-widget/v1/?pt=120,32',embedReproduced:true,markerVerified:false,lat:32,lon:120,coordinateSystem:'WGS-84'};
- state=mapCapabilities(yandex,productionSite);assert.equal(state.hasEmbed,false);assert.equal(state.hasVerifiedMarker,false);
- assert.ok(state.url.includes('?text='));assert.ok(!state.url.includes('pt='));
- assert.equal(mapCapabilities(yandex,{address:null}).hasExternalLink,false);
+ for(const url of ['javascript:alert(1)','https://www.beierrecycling.com/contact-us/'])assert.equal(mapCapabilities({...fixture,url},productionSite).hasExternalLink,false);
+ const yandex={provider:'yandex',url:'https://yandex.com/maps/?pt=120,32',embedUrl:'https://yandex.com/map-widget/v1/?pt=120,32',embedReproduced:true,markerVerified:false,lat:32,lon:120,coordinateSystem:'WGS-84'};
+ state=mapCapabilities(yandex,productionSite);assert.equal(state.hasEmbed,false);assert.equal(state.hasVerifiedMarker,false);assert.equal(state.hasExternalLink,false);
  state=mapCapabilities({...yandex,markerVerified:true},productionSite);assert.equal(state.hasVerifiedMarker,true);assert.equal(state.hasEmbed,true);
+ for(const bad of ['https://yandex.com/map-widget/v1/?text=fixture','https://yandex.com/map-widget/v1/?pt=121,33','https://evil.invalid/map-widget/v1/?pt=120,32','http://yandex.com/map-widget/v1/?pt=120,32','https://name:secret@yandex.com/map-widget/v1/?pt=120,32'])assert.equal(mapCapabilities({...yandex,markerVerified:true,embedUrl:bad},productionSite).hasEmbed,false,bad);
  assert.equal(mapCapabilities({...yandex,markerVerified:true,lat:200},productionSite).hasVerifiedMarker,false);
  const html=productionMap({...productionSite,maps:[{...fixture,label:'Google <script> " &'}]});
- assert.ok(html.includes('&lt;script&gt; &quot; &amp;'));assert.ok(!html.includes('<iframe'));assert.ok(html.includes('data-map-embed="https://www.google.com/maps/embed?pb=official-fixture"'));
- assert.ok(html.includes('data-map-switch hidden'));
+ assert.ok(html.includes('&lt;script&gt; &quot; &amp;'));assert.equal((html.match(/<iframe\b/g)||[]).length,1);
+ assert.ok(html.includes('data-map-switch hidden'));assert.ok(!html.includes('data-map-load'));
 });
 
 test('Локальные фото BEIER и фирменный VK Видео имеют проверяемое происхождение',async()=>{

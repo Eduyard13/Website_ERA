@@ -240,4 +240,5 @@ jobs:
       - name: Verify published contacts in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
+          ERA_VERIFY_MAP_PROVIDERS: '1'
         run: node test/contacts-public.mjs

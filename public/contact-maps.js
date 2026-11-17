@@ -27,38 +27,41 @@ if(!map)return;
 const buttons=[...map.querySelectorAll('[data-map-select]')],panels=[...map.querySelectorAll('[data-map-panel]')];
 const storageKey='era-contact-map-provider';
 const allowedEmbed=value=>{
- try{const url=new URL(value);return url.protocol==='https:'&&!url.username&&!url.password&&((url.hostname==='www.google.com'&&url.pathname==='/maps/embed')||(['yandex.ru','yandex.com'].includes(url.hostname)&&url.pathname==='/map-widget/v1/'))?url.href:null;}catch{return null;}
+ try{const url=new URL(value);return url.protocol==='https:'&&!url.username&&!url.password&&((url.hostname==='www.google.com'&&url.pathname==='/maps/embed')||(url.hostname==='yandex.com'&&url.pathname==='/map-widget/v1/'&&url.searchParams.has('pt')))?url.href:null;}catch{return null;}
 };
-const removeFrames=()=>{
- for(const panel of panels){
-  panel.querySelectorAll('iframe').forEach(frame=>frame.remove());
-  const message=panel.querySelector('.cp-map-message');if(message)message.hidden=false;
-  const status=panel.querySelector('[data-map-status]');if(status)status.textContent='';
+function showUnavailable(panel){
+ panel.querySelectorAll('iframe').forEach(frame=>frame.remove());
+ panel.querySelector('.cp-map-message').hidden=false;
+ panel.querySelector('[data-map-status]').textContent='Карта недоступна в этом браузере. Откройте её в картографическом сервисе.';
+}
+function mount(panel){
+ const src=allowedEmbed(panel.dataset.mapEmbed);
+ if(!src)return;
+ let frame=panel.querySelector('iframe');
+ if(frame&&frame.src!==src){frame.remove();frame=null;}
+ if(!frame){
+  frame=document.createElement('iframe');frame.src=src;
+  frame.title=panel.dataset.mapLabel+' — производственная площадка ЭРА · BEIER Machinery';
+  frame.width='100%';frame.height='340';frame.loading='lazy';frame.referrerPolicy='no-referrer-when-downgrade';
+  panel.querySelector('[data-map-stage]').append(frame);
  }
-};
+ if(!frame.dataset.mapBound){
+  frame.dataset.mapBound='true';frame.addEventListener('error',()=>showUnavailable(panel),{once:true});
+ }
+ panel.querySelector('.cp-map-message').hidden=true;
+ // A load event cannot establish that a cross-origin map rendered.
+}
 function select(provider,{remember=false}={}){
  if(!panels.some(panel=>panel.dataset.mapPanel===provider))return;
- removeFrames();
- panels.forEach(panel=>{panel.hidden=panel.dataset.mapPanel!==provider;});
+ for(const panel of panels){
+  panel.hidden=panel.dataset.mapPanel!==provider;
+  if(panel.hidden)panel.querySelectorAll('iframe').forEach(frame=>frame.remove());
+  else mount(panel);
+ }
  buttons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.mapSelect===provider)));
  if(remember)try{localStorage.setItem(storageKey,provider);}catch{}
 }
 for(const button of buttons)button.addEventListener('click',()=>select(button.dataset.mapSelect,{remember:true}));
-for(const panel of panels){
- const load=panel.querySelector('[data-map-load]'),url=allowedEmbed(panel.dataset.mapEmbed);
- if(!load||!url)continue;
- load.hidden=false;
- load.addEventListener('click',()=>{
-  removeFrames();
-  const frame=document.createElement('iframe');frame.title=panel.dataset.mapLabel+' — производственная площадка BEIER';frame.loading='lazy';frame.referrerPolicy='no-referrer-when-downgrade';frame.src=url;
-  frame.addEventListener('error',()=>{
-   frame.remove();panel.querySelector('.cp-map-message').hidden=false;
-   panel.querySelector('[data-map-status]').textContent='Не удалось открыть карту. Воспользуйтесь ссылкой ниже.';
-  },{once:true});
-  // A load event cannot establish that a cross-origin map really rendered.
-  panel.querySelector('.cp-map-message').hidden=true;panel.querySelector('[data-map-stage]').append(frame);
- });
-}
 map.querySelector('[data-map-switch]').hidden=false;
 let preferred='google';try{preferred=localStorage.getItem(storageKey)||preferred;}catch{}
 select(buttons.some(button=>button.dataset.mapSelect===preferred)?preferred:'google');
