@@ -1,0 +1,114 @@
+{
+  "base": "3ee697be21a242d7357f6e202cd7204b69ce1b4c",
+  "registry": "8d5c988332f138af891effac0fbdd1beea89e5d1d5f768bbd5750792533061da",
+  "nodeCards": [
+    {
+      "slug": "predvaritelnyy-izmelchitel",
+      "sha256": "c1a7b999cda6cf39b455b2f24d7af81b709a4fd116f23bb48267af15d001ecc6"
+    },
+    {
+      "slug": "predvaritelnyy-raspushitel",
+      "sha256": "63ff90a5d08485f2aa55fcd89cba79998d5a3ae4dabf115ce297e9783fa39dc6"
+    },
+    {
+      "slug": "ballisticheskiy-separator",
+      "sha256": "830116c98fd344e689aeaf82f32aee8ae3f2c4cfb6e9fa0d67c33b5458b493de"
+    },
+    {
+      "slug": "rotornyy-raspushitel",
+      "sha256": "9492a7b1bfadb3a277682d289e1b9919ec60f1c431557d6c0d99fd4b2fcdf21c"
+    },
+    {
+      "slug": "bunker-nakopitel",
+      "sha256": "0c91fcaad16dbf4e86ae29deda82bbdb21cba91b9f61c8b6f1de016269a2b08f"
+    },
+    {
+      "slug": "vertikalno-rotornyy-izmelchitel",
+      "sha256": "b9a07be7675b96cc5a20bfa887bdd4de60284a8a8d6d6fc9977aaf6439046017"
+    },
+    {
+      "slug": "plenochnyy-flotator",
+      "sha256": "6c70951e29357f032e9609e1859d90c8479d03257fd140a893e30e816256473f"
+    },
+    {
+      "slug": "rotornaya-tsentrifuga",
+      "sha256": "af86c51e845c0cdc67fddfe470d326b1e8f728e578e98438e49a3597c490580e"
+    },
+    {
+      "slug": "vintovoy-press",
+      "sha256": "2ab727ec864616fcd5f87095fb16b94e0e1b7600f6262b292ad1443a9ad0d782"
+    },
+    {
+      "slug": "kapsulyator",
+      "sha256": "b28049bd9f12d2328377f5165ac7e7cd437c56c65fa56264849c957d83842a7b"
+    },
+    {
+      "slug": "ochistka-stokov",
+      "sha256": "f0e40578980099a7b386af3b59c3fcda35b56cec43c34fe8b188b45e8e2f95b7"
+    },
+    {
+      "slug": "rama-napolnitel",
+      "sha256": "59b98acde48f105066805dcd1c532197ab4c0a8c71fac1e0b651938b90528a12"
+    }
+  ],
+  "readyCards": [
+    {
+      "slug": "separatsiya-01",
+      "sha256": "f246795f838418e0d15041e06d1c7b0c3c07c6cd3cfcf75e09e4dbe93aaf422c"
+    },
+    {
+      "slug": "separatsiya-02",
+      "sha256": "049d9bb07d045e160220048850f89bffdc53a4deb0a64492df82778e90627980"
+    }
+  ],
+  "details": {
+    "/catalog/equipment/predvaritelnyy-izmelchitel": "3ae436e4382dc4f0e2fc6c342a82830a7cbf468343705d23e237918fb75e1a30",
+    "/catalog/equipment/predvaritelnyy-raspushitel": "59bc3e68f9e5d28295fcb5adf2d21a1cbf147176ec098bf70658d3edde4e6e65",
+    "/catalog/equipment/ballisticheskiy-separator": "523d11638a60c61e181ba94141b9aec59cdab3f2751e3dbddb1a1a4985332ed9",
+    "/catalog/equipment/rotornyy-raspushitel": "02051f6b735d58cd30b56c734571c5e34fa5b3b14a9e5fa025474acda2662359",
+    "/catalog/equipment/bunker-nakopitel": "dd9d6e67413293952e39db90a31cb91b283ea17ee5b23da70ebf0cbcf8828108",
+    "/catalog/equipment/vertikalno-rotornyy-izmelchitel": "0cd1504018e17f064c3977fb5239ced8044f02ad3fc9a0aa7bfb3dfa2d30e0d8",
+    "/catalog/equipment/plenochnyy-flotator": "03682787bce3ff7747bcab78e1a6544bc998177adb3832a13889a9cee94f6798",
+    "/catalog/equipment/rotornaya-tsentrifuga": "3b2de565737f03ff93eda9deecc1542fa14eb9743c03b4b195e9e6e50b93ec6b",
+    "/catalog/equipment/vintovoy-press": "e3a627efcababac0c29903ddf356f33f83a9e7edd2013e949f67af057f8f591b",
+    "/catalog/equipment/kapsulyator": "b58b26ddea636319cb4eb8a9af9081d23acc3b2473fe8cc708a96bf57b601e0a",
+    "/catalog/equipment/ochistka-stokov": "b5ca0e34b3c1c4cc36e2d16048990bb5af8cd44ff1266c0c902e8308ffd421e1",
+    "/catalog/equipment/rama-napolnitel": "7e938c479aee1e3e575a1ead12cb24fa3787b3b09c17b0a4a57d98d6110cbbf3",
+    "/catalog/lines/separatsiya-01": "316372f46950ad09946bb58bfae2dd9babf7f862ee539ef145242c086e8f5f8c",
+    "/catalog/lines/separatsiya-02": "07c92cd598f1a2b8c2a09f061355bd9578f5004fbfc6da8d9623ca5a3f447991"
+  },
+  "assets": {
+    "assets/catalogue/equipment/ballisticheskiy-separator-768.webp": "9de451654bcc0a202fd1200f63096448a2b0918d506fbb3f0f051de8c119a06d",
+    "assets/catalogue/equipment/ballisticheskiy-separator.webp": "f2eeccf63b735f2b82811aca83d22a6cfdf9c26d90088f8aff42b1b4d55d68d5",
+    "assets/catalogue/equipment/bunker-nakopitel-768.webp": "efe36ebaab6b6e65abb908309cefa23daf238b9b3383c128f3cef26d92235e2e",
+    "assets/catalogue/equipment/bunker-nakopitel.webp": "f844bf255d489657cd60337a8561d0c09497b4e248fa83bedf848fb59f6fb194",
+    "assets/catalogue/equipment/kapsulyator-768.webp": "23c98cc1d03e0a6897bc2636e93281f754208535eaf16db863e264af14db4329",
+    "assets/catalogue/equipment/kapsulyator.webp": "96774a131e775abdeea0b4ed76bc9770f156b9f4ddf97b9c5c71728ce6c393ab",
+    "assets/catalogue/equipment/ochistka-stokov-768.webp": "aca661017a31e0401db3d827143ce17e29ad68d0f5c51cc50fe7e07ec13f5ef7",
+    "assets/catalogue/equipment/ochistka-stokov.webp": "fdac6cbe7e9dc21eaf1f8dc06ab5fa16b25db2552a35f839bbbcf4b4c59b9da9",
+    "assets/catalogue/equipment/plenochnyy-flotator-768.webp": "263d0b62da749f57ac8d82cbfde0a34f7bf98706f19bda24ad377e6cca3603c5",
+    "assets/catalogue/equipment/plenochnyy-flotator.webp": "3f96cf22a78f78353e92e265d5a2ae93312e8e77319287c83469aa73ee856924",
+    "assets/catalogue/equipment/predvaritelnyy-izmelchitel-768.webp": "5315407ad53e28785295218c2ebf9d3d628bb0f91a5abd8e26279df658d63707",
+    "assets/catalogue/equipment/predvaritelnyy-izmelchitel.webp": "7f69daed2fabb9222a204e0d55fc4ae8bb41b6c535f5e11a10091acfe1bcc184",
+    "assets/catalogue/equipment/predvaritelnyy-raspushitel-768.webp": "0e54f90608c32bb4d92882ac780e989f8408f83d64682ff58bc6eb8b525fafaa",
+    "assets/catalogue/equipment/predvaritelnyy-raspushitel.webp": "5decf02250de0dd91a1040141913dbf15ed7e720a116aeda0915d7bf850597f1",
+    "assets/catalogue/equipment/rama-napolnitel-768.webp": "59f2212defce2f9462902c04c7088be0f6c921ac13782638f349183656654f8c",
+    "assets/catalogue/equipment/rama-napolnitel.webp": "6bfdaf2ea7535071423c87dc97596528cfa15fd42fa1781292b6c7aeae97dd91",
+    "assets/catalogue/equipment/rotornaya-tsentrifuga-768.webp": "5d77f1f95059adac1a93c3eb8fc9758ee31bab6ad434f21908482db314d3373f",
+    "assets/catalogue/equipment/rotornaya-tsentrifuga.webp": "6e0d2d68e79ad5119ac87cc09437fd659f416d71df87baa05958de08bd30882e",
+    "assets/catalogue/equipment/rotornyy-raspushitel-768.webp": "ad7bf5ea40ee64ece7796c4aa210d295d4666a8e811731ae635151c0c13a851f",
+    "assets/catalogue/equipment/rotornyy-raspushitel.webp": "a027fab5cb627c4b6b250a05f1d62c10ea5e6aa395ace8b5c4b278a8ac2574f5",
+    "assets/catalogue/equipment/vertikalno-rotornyy-izmelchitel-768.webp": "8ad038006ef61b174f6d1a576bf296c952b94b689d6337bb95fcd554b656a378",
+    "assets/catalogue/equipment/vertikalno-rotornyy-izmelchitel.webp": "b4a634701a350c0a84f8b8c93d9d8650656125ca9d9a081667d6a8e883715e1b",
+    "assets/catalogue/equipment/vintovoy-press-768.webp": "db0bde6ad326c7c920ff3ccafe330485629d227b0d417b3cdb9331c4e5d39eb0",
+    "assets/catalogue/equipment/vintovoy-press.webp": "1eef84ca4fbdee961c6a9d51bc2a398e861cc765b9631726cd57ad90f97006e4",
+    "assets/covers/catalog-lines-compact-768.webp": "1d07760a418fba1ec04a7450d7cfd0c38892247d0b1ed2f174da75cd4a72ef2a",
+    "assets/covers/catalog-lines-compact.webp": "25521d76243e54cb456a53efce29314aacd3a099c40d0d6fe3e9e6319928649c",
+    "assets/covers/catalog-nodes-close-768.webp": "21dd74d9ea87241d28dd4e446e2148eb3c8074cc0d3392d441b9631c12434932",
+    "assets/covers/catalog-nodes-close.webp": "c7a42fbf84522ee8c33d822d1b9fa7c0129099034ebdf418f78a42b74f523f92",
+    "assets/lines/separatsiya-01/catalog-cover.webp": "6c287c05cb55dcf7f05153e94ad18ff02c791d19c9e48de5a878d00bc3ae427b",
+    "assets/lines/separatsiya-01/catalog-cover-768.webp": "8b7b4581fef304ded6482e494f12a899c40ae2998d8edc2349cdbd1a4b6bb841",
+    "assets/lines/separatsiya-01-mini/catalog-cover-navy.webp": "cfd24d8922bd4cd1c4b7fdc3ab9951942aa48a62ec4278881c476f2ace27d418",
+    "assets/lines/separatsiya-01-mini/catalog-cover-navy-768.webp": "1ea9de3390b7126a0eb449664dcc77dc8775a80e58602c2a803d98fb10431242"
+  }
+}

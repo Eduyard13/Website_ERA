@@ -3,22 +3,6 @@ import {countMedia,mediaCountLabels} from './media-counts.js';
 // Filters persist in the URL, so Back restores the same selection.
 const params=new URLSearchParams(location.search);
 function updateUrl(values){const next=new URL(location.href);for(const [key,value] of Object.entries(values)){if(value)next.searchParams.set(key,value);else next.searchParams.delete(key);}history.replaceState(history.state,'',next);}
-const catalog=document.querySelector('#catalog-filters');
-if(catalog){
- const cards=[...document.querySelectorAll('[data-node]')];
- for(const key of ['q','category','material'])catalog.elements[key].value=params.get(key)||'';
- const apply=()=>{const q=catalog.elements.q.value.trim().toLocaleLowerCase('ru'),category=catalog.elements.category.value,material=catalog.elements.material.value;let count=0;
- cards.forEach(card=>{card.hidden=!(card.dataset.title.includes(q)&&(!category||card.dataset.category===category)&&(!material||card.dataset.materials.split('|').includes(material)));if(!card.hidden)count++;});
- document.querySelector('#catalog-result').textContent=`Найдено: ${count} из ${cards.length} узлов`;
- document.querySelector('#catalog-empty').hidden=count>0;updateUrl({q,category,material});};
- catalog.addEventListener('submit',e=>e.preventDefault());catalog.addEventListener('input',apply);catalog.addEventListener('change',apply);catalog.addEventListener('reset',()=>setTimeout(apply,0));apply();
-}
-const lineFilters=document.querySelector('#line-filters');
-if(lineFilters){
- const group=lineFilters.querySelector('[name=group]');group.value=params.get('group')||'';
- const apply=()=>{let count=0;document.querySelectorAll('[data-line]').forEach(card=>{card.hidden=!!group.value&&group.value!==card.dataset.group;if(!card.hidden)count++;});document.querySelector('#line-result').textContent=`Комплектаций: ${count}`;updateUrl({group:group.value,optional:''});};
- lineFilters.addEventListener('change',apply);lineFilters.querySelector('[data-line-reset]').addEventListener('click',()=>{group.value='';apply();});apply();
-}
 const mediaFilters=document.querySelector('#media-filters');
 document.querySelectorAll('[data-photo-gallery]').forEach(link=>{const target=new URL(link.href);target.searchParams.set('product',link.dataset.product);link.href=target;});
 const defaultMediaType=mediaFilters?.dataset.defaultType||'all';

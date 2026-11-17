@@ -217,6 +217,8 @@ jobs:
             test/about-us-public.mjs
             test/technology-final-public.mjs
             test/contacts-public.mjs
+            test/catalog-public.mjs
+            test/fixtures/catalog-preserved.json
           sparse-checkout-cone-mode: false
       - uses: actions/setup-node@v4
         with:
@@ -243,3 +245,7 @@ jobs:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
           ERA_VERIFY_MAP_PROVIDERS: '1'
         run: node test/contacts-public.mjs
+      - name: Verify published catalogue in Chrome
+        env:
+          ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: node test/catalog-public.mjs

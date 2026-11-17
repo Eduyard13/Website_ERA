@@ -55,13 +55,14 @@ with sync_playwright() as p:
  assert page.locator('[data-node]:visible').count()==1;page.locator('[data-node]:visible').click()
  assert page.url.endswith('/plenochnyy-flotator');page.go_back();assert page.locator('[data-node]:visible').count()==1
  page.get_by_role('button',name='Сбросить',exact=True).click();page.wait_for_function('document.querySelectorAll("[data-node]:not([hidden])").length===12')
- page.locator('[name=category]').select_option('Обезвоживание');assert page.locator('[data-node]:visible').count()==3
+ page.get_by_role('button',name='Обезвоживание',exact=True).click();assert page.locator('[data-node]:visible').count()==3
  page.get_by_role('button',name='Сбросить',exact=True).click();page.wait_for_function('document.querySelectorAll("[data-node]:not([hidden])").length===12')
  page.locator('[name=material]').select_option('Рабочая моющая жидкость');assert page.locator('[data-node]:visible').count()==1
  assert 'Комплекс очистки стоков' in page.locator('[data-node]:visible').inner_text()
  page.goto(base+'/catalog/equipment');page.emulate_media(reduced_motion='no-preference')
  for i in [0,2,3,10,11]:
-  card=page.locator('[data-node]').nth(i);before=card.bounding_box();card.hover();page.wait_for_timeout(360)
+  card=page.locator('[data-node]').nth(i);before=card.bounding_box();card.hover()
+  page.wait_for_function('(e)=>getComputedStyle(e,"::after").opacity==="1"',arg=card.element_handle())
   assert card.evaluate('(e)=>getComputedStyle(e,"::after").opacity')=='1'
   assert card.evaluate('(e)=>getComputedStyle(e,"::after").borderTopColor')=='rgb(198, 164, 59)'
   assert card.bounding_box()['width']==before['width'] and card.bounding_box()['height']==before['height']
