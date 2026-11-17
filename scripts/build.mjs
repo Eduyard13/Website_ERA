@@ -62,7 +62,7 @@ for(const resource of ['build/pdf.mjs','build/pdf.worker.mjs','cmaps','standard_
 await cp('node_modules/fflate/esm/browser.js','dist/vendor/fflate.js');
 await cp('node_modules/fflate/LICENSE','dist/vendor/fflate-LICENSE.txt');
 // Keep each browser module graph on the same release.
-for(const name of ['interactions','context-navigation','document-library','commercial','economics-controller','economics-model','economics-view','economics-page-controller','economics-page-state','economics-page-view','gallery-showroom','gallery-viewer','gallery-model','presentation-web']){
+for(const name of ['interactions','context-navigation','document-library','commercial','economics-controller','economics-model','economics-payback','economics-market','economics-view','economics-page-controller','economics-page-state','economics-page-view','gallery-showroom','gallery-viewer','gallery-model','presentation-web']){
  const file=`dist/${name}.js`,source=await readFile(file,'utf8');
  await writeFile(file,source.replace(/from '(\.\/[^']+\.js)'/g,`from '$1?v=${version}'`).replace(/import '(\.\/[^']+\.js)'/g,`import '$1?v=${version}'`));
 }

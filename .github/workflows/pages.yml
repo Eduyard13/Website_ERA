@@ -208,10 +208,12 @@ jobs:
                       raise
                   time.sleep(10)
           PY
-      - name: Read the published diagram browser check
+      - name: Read the public browser checks
         uses: actions/checkout@v4
         with:
-          sparse-checkout: test/line-diagram-public.mjs
+          sparse-checkout: |
+            test/line-diagram-public.mjs
+            test/economics-public.mjs
           sparse-checkout-cone-mode: false
       - uses: actions/setup-node@v4
         with:
@@ -220,3 +222,7 @@ jobs:
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
         run: node test/line-diagram-public.mjs
+      - name: Verify published economics in Chrome
+        env:
+          ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: node test/economics-public.mjs

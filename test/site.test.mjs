@@ -609,7 +609,7 @@ test('Клиентский режим: единый кириллический �
   const visible=html.replace(/<script[\s\S]*?<\/script>/g,'').replace(/<[^>]+>/g,' ');
   const labels=[...html.matchAll(/(?:aria-label|alt|title|data-source|data-title|content)="([^"]*)"/g)].map(m=>m[1]).join(' ');
   // The owner explicitly requests this source citation for the single manual experiment.
-  const copy=(visible+' '+labels).replaceAll('Опыт, приведённый в презентации ЭРА.','');
+  const copy=(visible+' '+labels).replaceAll('Опыт, приведённый в презентации ЭРА.','').replaceAll(route==='/economics'?'Источник: ':'\u0000','');
   assert.doesNotMatch(copy,/\bERA\b|прототип|для согласования|из презентации|в презентации|предоставленному КП|источник:|слайд №|сайт объединяет/iu,route);
   assert.match(html,/noindex,nofollow/,route);
  }
@@ -632,27 +632,27 @@ test('Контакты сохранены, КАИР перенесён в тех
  const single=kairMonitor([kairSlides[0]],{...kairPresentation,autoplay:false});
  assert.ok(!single.includes('data-kair-next'));assert.ok(!single.includes('data-kair-pause'));
 });
-test('Экономика содержит девять связанных этапов и сохраняет цены модели отдельно от продавцов',async()=>{
+test('Экономика связывает восемь разделов, месяц и год, сохраняя цены модели отдельно от рынка',async()=>{
  const {economicsConfig,marketOffers}=await import('../public/economics-config.js');
  const {calculateEconomics}=await import('../public/economics-model.js');
  const {millions}=await import('../public/economics-view.js');
  const html=await readFile('dist/economics/index.html','utf8'),result=calculateEconomics();
- assert.ok(html.includes('От сложного сырья —'));assert.ok(!html.includes('class="pitch-stage-nav'));
+ assert.ok(html.includes('Экономика вашего производства.'));assert.ok(!html.includes('class="pitch-stage-nav'));
  assert.ok(!html.includes('class="raw-story"'));assert.ok(!html.includes('data-kair-inspect'));
  for(const id of ['market','economics'])assert.equal([...html.matchAll(new RegExp(`id="${id}"`,'g'))].length,1,id);
- assert.ok(html.includes(economicsConfig.disclosure));assert.ok(html.includes(economicsConfig.taxDisclosure));
+ assert.ok(html.includes('База расходов — 05.11.2026'));assert.ok(html.includes(economicsConfig.taxDisclosure));
  assert.equal([...html.matchAll(/data-economics-page/g)].length,1);
- assert.equal([...html.matchAll(/class="ec-section(?: |")/g)].length,9);
- assert.ok(html.includes('Сколько стоит произвести тонну'));
+ assert.equal([...html.matchAll(/class="ec-section(?: |")/g)].length,8);
+ assert.ok(html.includes('От цены реализации до чистой прибыли.'));
  assert.ok(html.includes('Выручка без НДС'));
- assert.ok(html.includes('Предложения сторонних продавцов'));
+ assert.ok(html.includes('Российские предложения гранулы'));
  assert.ok(!html.includes('Демонстрационный расчёт'));
  assert.ok(!html.includes('Условный налог'));
  for(const value of [result.revenue,result.net])assert.ok(html.includes(millions(value)));
  for(const marker of ['data-econ-month','data-econ-bridge','data-econ-curve','data-econ-range','data-econ-number','data-econ-lines="3"'])assert.ok(html.includes(marker),marker);
  assert.ok(html.includes(`src="${basePath}/commercial.js?v=`));
- assert.ok(html.includes('Все ТКО, образованные в России за 2025 год'));
- assert.ok(html.includes('Показатель 46,4 млн т охватывает все ТКО'));
+ assert.ok(html.includes('Петербургская биржа'));assert.ok(html.includes('17.11.2026'));
+ assert.ok(html.includes('Пластинфо · ППИ-вСТ'));assert.ok(html.includes('myCEPPI / PlasticPortal'));
  for(const offer of marketOffers){assert.ok(html.includes(`href="${offer.href}"`));assert.ok(offer.minimum);assert.ok(offer.vat);assert.ok(offer.delivery);}
  const deployed=await readFile('dist/economics-page-state.js','utf8');assert.match(deployed,/from '\.\/economics-model\.js\?v=/);
 });
