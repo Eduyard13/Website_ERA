@@ -4,9 +4,9 @@ import {mkdtemp,readFile,writeFile,mkdir} from 'node:fs/promises';
 import {tmpdir} from 'node:os';import {join} from 'node:path';import {setTimeout as delay} from 'node:timers/promises';
 await mkdir('sources',{recursive:true});
 const googleEmbed="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3387.1186854646453!2d120.54503629999999!3d31.903372499999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x35b3de30aaecfbc9%3A0xc69270bb0704fe55!2sBei%27er%20Machinery!5e0!3m2!1sen!2sus!4v1656289004886!5m2!1sen!2sus";
-const candidates={google:googleEmbed,yandex:'https://yandex.com/map-widget/v1/?ll=120.5450363%2C31.9033725&pt=120.5450363%2C31.9033725%2Cpm2rdm&z=17&l=map'};
+const candidates={google:googleEmbed,yandex:'https://yandex.com/map-widget/v1/?ll=120.540729604582%2C31.905470488135485&pt=120.540729604582%2C31.905470488135485%2Cpm2rdm&z=17&l=sat'};
 const server=createServer((req,res)=>{res.setHeader('Content-Type','text/html');res.end('<!doctype html><meta charset="utf-8"><title>Map rendering verification</title><iframe title="Official map rendering check" src="'+candidates[req.url.slice(1)]+'" style="width:1100px;height:760px;border:0"></iframe>');});await new Promise(r=>server.listen(3434,'127.0.0.1',r));
-const pages=[['google-place','https://www.google.com/maps?cid=14308622914688450133&z=18'],['google-satellite','https://www.google.com/maps?cid=14308622914688450133&t=k&z=18'],['google-embed','http://127.0.0.1:3434/google'],['yandex-com','https://yandex.com/maps/?ll=120.5450363%2C31.9033725&pt=120.5450363%2C31.9033725&z=17&l=map'],['yandex-satellite','https://yandex.com/maps/?ll=120.5450363%2C31.9033725&pt=120.5450363%2C31.9033725&z=17&l=sat'],['yandex-widget','http://127.0.0.1:3434/yandex'],['yandex-constructor','https://yandex.ru/map-constructor/']];
+const pages=[['google-more','https://www.google.com/maps?cid=14308622914688450133&t=k'],['yandex-corrected','https://yandex.com/maps/?ll=120.540729604582%2C31.905470488135485&pt=120.540729604582%2C31.905470488135485&z=18&l=sat'],['yandex-sat-widget','http://127.0.0.1:3434/yandex']];
 const profile=await mkdtemp(join(tmpdir(),'era-pins-'));const chrome=spawn('/usr/bin/google-chrome',['--headless=new','--no-sandbox','--disable-dev-shm-usage','--no-first-run','--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{stdio:'ignore'});let socket;
 try{
  let port;for(let i=0;i<150;i++){try{port=Number((await readFile(join(profile,'DevToolsActivePort'),'utf8')).split('\n')[0]);break;}catch{await delay(100);}}
@@ -17,7 +17,7 @@ try{
  await call('Page.enable');await call('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});const results=[];
  for(const [name,url] of pages){
   try{
-   await call('Page.navigate',{url});await delay(13000);const data=await inspect();const frameDocs=[];
+   await call('Page.navigate',{url});await delay(13000);if(name==='google-more'){await call('Runtime.evaluate',{expression:"document.querySelector('[aria-label=\"Zoom in\"]')?.click()"});await delay(5000);}const data=await inspect();const frameDocs=[];
    const all=await call('Target.getTargets');for(const t of all.targetInfos.filter(t=>t.type==='iframe'&&/google|yandex/.test(t.url))){try{const a=await call('Target.attachToTarget',{targetId:t.targetId,flatten:true});frameDocs.push(await inspect(a.sessionId));}catch(error){frameDocs.push({url:t.url,error:String(error)});}}
    const shot=await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});await writeFile('sources/'+name+'.png',Buffer.from(shot.data,'base64'));await writeFile('sources/'+name+'.json',JSON.stringify({...data,frameDocs},null,2));
    const compact={name,url:data.url,title:data.title,text:data.text.slice(0,2500),frames:frameDocs.map(d=>({url:d.url,text:d.text?.slice(0,2500),canvases:d.canvases,decodedImages:d.images?.filter(i=>i.complete&&i.width).length,error:d.error}))};results.push(compact);console.log(JSON.stringify(compact));
