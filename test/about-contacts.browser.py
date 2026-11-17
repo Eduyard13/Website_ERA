@@ -33,8 +33,17 @@ with sync_playwright() as p:
    assert page.locator('a.footer-video-channel').get_attribute('href')=='https://www.youtube.com/@RASVET-LLC'
    assert not page.locator('#site-footer').inner_text().find('Реквизиты')>=0
    if path=='/about-us/':
-    assert page.locator('[data-team-member]').count()==0
-    assert page.locator('.au-portrait.is-placeholder').count()==0
+    assert page.locator('[data-team-member]').count()==3
+    assert page.locator('[data-profile-state="pending"]').count()==3
+    assert page.locator('#team .au-portrait img').count()==0
+    assert page.locator('.au-projects-grid').count()==1
+    boxes=page.locator('.au-projects-grid>.au-project').evaluate_all('items=>items.map(e=>{const b=e.getBoundingClientRect();return {x:b.x,y:b.y,width:b.width,height:b.height};})')
+    assert len(boxes)==2 and abs(boxes[0]['width']-boxes[1]['width'])<1
+    if width>=900:assert abs(boxes[0]['y']-boxes[1]['y'])<1 and boxes[1]['x']>boxes[0]['x']
+    else:assert boxes[1]['y']>=boxes[0]['y']+boxes[0]['height'] and abs(boxes[0]['x']-boxes[1]['x'])<1
+    if width>=1024:
+     tops=page.locator('.au-team-card').evaluate_all('items=>items.map(e=>e.getBoundingClientRect().y)');assert max(tops)-min(tops)<1
+    assert page.locator('.au-portrait.is-placeholder').count()==3
     assert page.locator('.au-company-facts > div').count()==3
     assert page.locator('#project-chelyabinsk img').count()==1
     assert page.locator('#project-chelyabinsk img').get_attribute('src').endswith('/about/projects/chelyabinsk-2021.webp')
@@ -157,6 +166,8 @@ with sync_playwright() as p:
  nojs.goto(base+'/about-us/');assert nojs.locator('.quick-contact-fallback').is_visible()
  assert nojs.locator('main h1').inner_text()=='От практики переработки — к промышленным технологиям.'
  assert nojs.locator('main section').count()==8
+ assert nojs.locator('[data-team-member]').count()==3
+ assert nojs.locator('.au-projects-grid>.au-project').count()==2
  assert nojs.locator('#project-chelyabinsk a.media-open').get_attribute('href').endswith('/about/projects/chelyabinsk-2021.webp')
  nojs.locator('.au-hero-actions a[href="#projects"]').click();assert nojs.url.endswith('#projects')
  nojs.locator('.au-final-actions .button').focus();nojs.keyboard.press('Enter');nojs.wait_for_url(base+'/contacts#project-form');assert nojs.locator('#contact-form').is_visible()

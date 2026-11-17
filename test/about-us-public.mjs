@@ -54,15 +54,23 @@ try{
  const wait=async expression=>{for(let i=0;i<300;i++){if(await evaluate(expression))return;await delay(100);}throw new Error('Public company page condition failed: '+expression);};
  const click=selector=>evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
  const sections=['about-us-intro','experience','production-base','projects','engineering','team','working-together','about-us-contact'];
- const snapshot=()=>evaluate(`(()=>{const r=document.querySelector('.about-us-page');return {overflow:document.documentElement.scrollWidth>innerWidth,sections:[...r.querySelectorAll('section')].map(s=>s.id),facts:r.querySelectorAll('.au-company-facts>div').length,profiles:r.querySelectorAll('[data-team-member]').length,cards:r.querySelectorAll('.au-engineering-card').length,projects:r.querySelectorAll('.au-project').length,rail:document.querySelectorAll('.page-progress-rail a').length,brokenImages:[...r.querySelectorAll('img')].filter(i=>!i.complete||!i.naturalWidth||!i.alt).map(i=>i.src)}})()`);
+ const snapshot=()=>evaluate(`(()=>{const r=document.querySelector('.about-us-page');return {overflow:document.documentElement.scrollWidth>innerWidth,sections:[...r.querySelectorAll('section')].map(s=>s.id),facts:r.querySelectorAll('.au-company-facts>div').length,profiles:r.querySelectorAll('[data-team-member]').length,pending:r.querySelectorAll('[data-profile-state="pending"]').length,portraitImages:r.querySelectorAll('#team .au-portrait img').length,projectGrids:r.querySelectorAll('.au-projects-grid').length,projectBoxes:[...r.querySelectorAll('.au-projects-grid>.au-project')].map(e=>{const b=e.getBoundingClientRect();return {x:b.x,y:b.y,width:b.width,height:b.height,trailingSpace:b.bottom-e.lastElementChild.getBoundingClientRect().bottom};}),teamBoxes:[...r.querySelectorAll('.au-team-card')].map(e=>{const b=e.getBoundingClientRect();return {x:b.x,y:b.y,width:b.width,height:b.height};}),previewRatios:[...r.querySelectorAll('.au-project-gallery img')].map(i=>{const b=i.getBoundingClientRect();return Math.abs(b.width/b.height-i.naturalWidth/i.naturalHeight);}),cards:r.querySelectorAll('.au-engineering-card').length,projects:r.querySelectorAll('.au-project').length,rail:document.querySelectorAll('.page-progress-rail a').length,brokenImages:[...r.querySelectorAll('img')].filter(i=>!i.complete||!i.naturalWidth||!i.alt).map(i=>i.src)}})()`);
  await command('Page.enable');await command('Runtime.enable');
- for(const width of [320,375,390,768,1024,1440,1920]){
+ for(const width of [320,375,390,768,1024,1280,1440,1920]){
   await command('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:width<768});
   await command('Page.navigate',{url});
   await wait(`document.readyState==='complete'&&document.querySelector('.page-progress-rail a')`);
   await evaluate(`Promise.all([...document.querySelectorAll('.about-us-page img')].map(i=>{i.loading='eager';return i.decode().catch(()=>{});} ))`);
   const state=await snapshot();assert.ok(!state.overflow,'Responsive overflow at '+width);
-  assert.deepEqual(state.sections,sections);assert.equal(state.facts,3);assert.equal(state.profiles,0);assert.equal(state.cards,4);assert.equal(state.projects,2);assert.equal(state.rail,8);assert.deepEqual(state.brokenImages,[]);
+  assert.deepEqual(state.sections,sections);assert.equal(state.facts,3);assert.equal(state.profiles,3);assert.equal(state.pending,3);assert.equal(state.portraitImages,0);assert.equal(state.projectGrids,1);assert.equal(state.cards,4);assert.equal(state.projects,2);assert.equal(state.rail,8);assert.deepEqual(state.brokenImages,[]);
+  const [first,second]=state.projectBoxes;assert.equal(state.projectBoxes.length,2);
+  assert.ok(Math.abs(first.width-second.width)<1,'Equal project widths');
+  if(width>=900){assert.ok(Math.abs(first.y-second.y)<1&&first.x<second.x,'Two project columns');}
+  else{assert.ok(Math.abs(first.x-second.x)<1&&second.y>=first.y+first.height,'Stacked project order');}
+  assert.ok(state.projectBoxes.every(b=>b.trailingSpace<=30),'No stretched project cards');
+  assert.ok(state.previewRatios.every(d=>d<.02),'Natural main photograph proportions');
+  assert.equal(state.teamBoxes.length,3);assert.ok(state.teamBoxes.every(b=>b.width>0&&b.height>0));
+  if(width>=1024)assert.ok(state.teamBoxes.every(b=>Math.abs(b.y-state.teamBoxes[0].y)<1),'Three team columns');
  }
  for(const [group,part,count] of [['production','china-',3],['venray','netherlands-',3],['chelyabinsk','chelyabinsk-2021',1]]){
   const selector='[data-media-group="'+group+'"] .media-open';
@@ -83,7 +91,7 @@ try{
  assert.equal(await evaluate(`document.querySelectorAll('#project-request [data-request-form]').length`),1);
  await evaluate(`document.querySelector('#project-request').close()`);
  assert.deepEqual(errors,[],'Published company browser errors');
- console.log('::notice title=Published company page verified::ERA-only hero, BEIER section, Venray and Chelyabinsk cases, enhanced Chelyabinsk photo, 12 complete images, 8 navigation anchors, 7 responsive widths, isolated galleries, single-photo controls, Escape, focus restoration and project CTA passed on the actual public site. '+url);
+ console.log('::notice title=Published company page verified::ERA-only hero, BEIER section, compact Venray and Chelyabinsk cards, three visible pending team profiles, natural project photos, 12 complete images, 8 navigation anchors, 8 responsive widths, isolated galleries, single-photo controls, Escape, focus restoration and project CTA passed on the actual public site. '+url);
 }finally{
  socket?.close();chrome.kill('SIGTERM');await delay(250);await rm(profile,{recursive:true,force:true});
 }

@@ -97,11 +97,11 @@ export const aboutUsContent = {
     {title: 'Интеллектуальная автоматизация', text: 'Развиваем КАИР — систему управления, объединяющую работу технологических узлов и контроль производственного процесса.', href: '/automation', linkLabel: 'Подробнее о КАИР', image: {file: 'kair/01.webp', smallFile: 'kair/01-768.webp', width: 1919, height: 1078, alt: 'КАИР: общий экран линии и сигналы системы управления', caption: 'Реальный интерфейс управления КАИР'}},
     {title: 'Внедрение и сопровождение', text: 'Интегрируем оборудование в инфраструктуру заказчика, согласовываем компоновку, запуск и техническое сопровождение в соответствии с условиями сотрудничества.', image: {file: 'photos/ballisticheskiy-separator/02.webp', smallFile: 'photos/ballisticheskiy-separator/02-thumb.webp', smallWidth: 800, width: 1448, height: 1086, alt: 'Участок сухой сепарации ЭРА с подающими транспортёрами', caption: 'Участок сухой сепарации ЭРА'}},
   ],
-  // Enable automatically only when all three real profiles have approved roles.
+  // Visible direction cards; personal details require individual approval.
   team: [
-    {id: 'engineering', name: null, role: 'Руководитель инженерного направления', roleApproved: false, description: 'Разработка технологии, технические решения и конструкция оборудования.', photo: null, alt: null},
-    {id: 'development', name: null, role: 'Руководитель проекта и развития', roleApproved: false, description: 'Развитие проекта, взаимодействие с партнёрами и заказчиками, коммерческая стратегия.', photo: null, alt: null},
-    {id: 'coordination', name: null, role: 'Координатор проектов и технического сопровождения', roleApproved: false, description: 'Согласование производственных задач, координация взаимодействия, сопровождение реализации.', photo: null, alt: null},
+    {id: 'engineering', publicLabel: 'Инженерное направление', name: null, role: 'Руководитель инженерного направления', roleApproved: false, description: 'Разработка технологии, технические решения и конструкция оборудования.', photo: null, alt: null},
+    {id: 'development', publicLabel: 'Развитие проекта', name: null, role: 'Руководитель проекта и развития', roleApproved: false, description: 'Развитие проекта, взаимодействие с партнёрами и заказчиками, коммерческая стратегия.', photo: null, alt: null},
+    {id: 'coordination', publicLabel: 'Координация проектов', name: null, role: 'Координатор проектов и технического сопровождения', roleApproved: false, description: 'Согласование производственных задач, координация взаимодействия, сопровождение реализации.', photo: null, alt: null},
   ],
   steps: [
     {title: 'Анализ сырья и производственной задачи', text: 'Изучаем исходный материал и требования к готовой продукции.'},
