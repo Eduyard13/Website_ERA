@@ -59,7 +59,7 @@ with sync_playwright() as p:
   assert image.evaluate("i=>getComputedStyle(i).objectFit==='cover'")
   assert abs(image.bounding_box()['height']-frame.bounding_box()['height'])<1 and abs(image.bounding_box()['width']-frame.bounding_box()['width'])<1
   assert image.evaluate("i=>i.outerHTML.match(/\\bsizes=/g).length===1")
-  if width>=768:assert image.evaluate("i=>i.naturalWidth===1920")
+  if width>=768:assert image.evaluate("i=>i.currentSrc.endsWith('/assets/contacts/beier-zhangjiagang-factory.webp')")
   assert page.locator('main a').evaluate_all("links=>links.every(a=>!/(^|\\.)(beierpm|beierrecycling|beiermachinery)\\.com$/.test(new URL(a.href).hostname))")
   page.locator('[data-contact-optional] summary').click()
   assert page.locator('[data-request-topic]').is_visible()

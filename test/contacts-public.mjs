@@ -50,7 +50,7 @@ try{
   assert.deepEqual(result,{overflow:false,h1:1,anchors:5,photos:true,panels:true,fields:true},'Contacts layout '+width);
  }
  assert.equal(await evaluate('document.querySelectorAll(".cp-map iframe").length'),1);
- const crop=await evaluate("(()=>{const p=document.querySelector('.cp-production-image'),m=document.querySelector('.cp-map'),i=p.querySelector('img'),f=p.querySelector('.cp-production-frame');return {fill:getComputedStyle(i).objectFit==='cover'&&Math.abs(i.getBoundingClientRect().height-f.getBoundingClientRect().height)<1,equal:Math.abs(p.getBoundingClientRect().height-m.getBoundingClientRect().height)<1,fullResolution:i.naturalWidth===1920,sizes:(i.outerHTML.match(/\\bsizes=/g)||[]).length}})()");
+ const crop=await evaluate("(()=>{const p=document.querySelector('.cp-production-image'),m=document.querySelector('.cp-map'),i=p.querySelector('img'),f=p.querySelector('.cp-production-frame');return {fill:getComputedStyle(i).objectFit==='cover'&&Math.abs(i.getBoundingClientRect().height-f.getBoundingClientRect().height)<1,equal:Math.abs(p.getBoundingClientRect().height-m.getBoundingClientRect().height)<1,fullResolution:i.currentSrc.endsWith('/assets/contacts/beier-zhangjiagang-factory.webp'),sizes:(i.outerHTML.match(/\\bsizes=/g)||[]).length}})()");
  assert.deepEqual(crop,{fill:true,equal:true,fullResolution:true,sizes:1},'Full desktop cover and one sizes attribute');
  if(process.env.ERA_VERIFY_MAP_PROVIDERS==='1'){
   for(const provider of ['google','yandex']){
