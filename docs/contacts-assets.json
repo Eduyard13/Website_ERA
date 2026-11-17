@@ -1,0 +1,72 @@
+{
+  "checkedAt": "2026-11-17",
+  "assets": [
+    {
+      "file": "contacts/beier-zhangjiagang-factory.webp",
+      "sourceUrl": "https://www.beierrecycling.com/wp-content/themes/beierrecycling/images/about.jpg.webp",
+      "sourcePage": "https://www.beierrecycling.com/about-us/",
+      "checkedAt": "2026-11-17",
+      "width": 1920,
+      "height": 714,
+      "bytes": 175454,
+      "sha256": "53cdb1a830a21c13c4a81a0e6b348720789cf06dd2667d5c38d4a9a8cfe65c0c",
+      "processing": "Оригинальный WebP сохранён без изменений; без кадрирования, коррекции и генерации.",
+      "ownerPermissionConfirmed": true,
+      "permission": "Владелец подтвердил право использования материалов BEIER в задании ERA_CODEX_CONTACTS_PREMIUM_BEIER_MAPS_VK_VIDEO_IMPLEMENT_DEPLOY_v0390.md, раздел 3.1.",
+      "verification": "Фото просмотрено: фасад с логотипом BEIER Machinery, вход и производственные корпуса. На официальной странице используется как beier machinery factory перед профилем головной площадки Zhangjiagang; снимок новой площадки Nantong размещён отдельно в истории, 2022. Независимое сопоставление фасада со спутником не выполнено."
+    },
+    {
+      "file": "contacts/beier-zhangjiagang-factory-768.webp",
+      "sourceUrl": "https://www.beierrecycling.com/wp-content/themes/beierrecycling/images/about.jpg.webp",
+      "sourcePage": "https://www.beierrecycling.com/about-us/",
+      "checkedAt": "2026-11-17",
+      "width": 768,
+      "height": 286,
+      "bytes": 68090,
+      "sha256": "a940635162cf3f05a38e2ebbb005fb0d9aebf0979cafca054b42234aba18160b",
+      "processing": "Уменьшение оригинала до ширины 768 px, сохранение пропорций, WebP quality 85; без увеличения и изменения архитектуры.",
+      "ownerPermissionConfirmed": true,
+      "permission": "Владелец подтвердил право использования материалов BEIER в задании ERA_CODEX_CONTACTS_PREMIUM_BEIER_MAPS_VK_VIDEO_IMPLEMENT_DEPLOY_v0390.md, раздел 3.1.",
+      "verification": "Фото просмотрено: фасад с логотипом BEIER Machinery, вход и производственные корпуса. На официальной странице используется как beier machinery factory перед профилем головной площадки Zhangjiagang; снимок новой площадки Nantong размещён отдельно в истории, 2022. Независимое сопоставление фасада со спутником не выполнено."
+    },
+    {
+      "file": "brands/vk-video.svg",
+      "sourceUrl": "https://m.vkvideo.ru/landings/pwa/assets/logo_vk_video.svg",
+      "sourcePage": "https://m.vkvideo.ru/landings/pwa/index.html",
+      "checkedAt": "2026-11-17",
+      "width": 72,
+      "height": 72,
+      "bytes": 1289,
+      "sha256": "d57706eca8b610bd31a685a2315b6e12e2e33954f374d3d22776f524c0445126",
+      "processing": "Оригинальный SVG сохранён без изменений. Проверены XML, отсутствие scripts, foreignObject, обработчиков и внешних ссылок. Просмотрен на светлом и тёмном фоне.",
+      "ownerPermissionConfirmed": false,
+      "permission": "Официальный знак сервиса для обозначения канала VK Видео.",
+      "verification": "Фирменные #0077FF, #FF2B42 и белая форма воспроизведения, исходный viewBox 0 0 72 72; декодирован и просмотрен."
+    }
+  ],
+  "sourceRetrieval": {
+    "method": "Официальные HTTPS-источники скачаны в изолированной GitHub Actions ветке; артефакт загружен в рабочую среду для декодирования и проверки. Ветка не публикует сайт.",
+    "assetRun": 44147453902,
+    "googleMapBrowserRun": 44149533498
+  },
+  "location": {
+    "id": "beier-zhangjiagang",
+    "addressSource": "https://en.beierpm.com/contact/",
+    "additionalSource": "https://www.beierrecycling.com/contact-us/",
+    "googleObjectId": "0x35b3de30aaecfbc9:0xc69270bb0704fe55",
+    "googleCid": "14308622914688450133",
+    "googlePlaceObserved": "Bei'er Machinery; beierpm.com; N 2nd Ring Rd, Zhangjiagang, Suzhou, Jiangsu, China. Проверено в Chrome через прямую карточку Google.",
+    "googleEmbed": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3387.1186854646453!2d120.54503629999999!3d31.903372499999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x35b3de30aaecfbc9%3A0xc69270bb0704fe55!2sBei'er%20Machinery!5e0!3m2!1sen!2sus!4v1656289004886!5m2!1sen!2sus",
+    "googleEmbedReproduced": true,
+    "googleEmbedEvidence": "В Chrome на официальной странице BEIER прочитан cross-origin iframe через CDP: Map data ©2026 Google, Keyboard shortcuts, Terms; декодированы 42 изображения карты. HTTP и событие load сами по себе не считались подтверждением.",
+    "googleCoordinates": null,
+    "yandexCoordinates": null,
+    "coordinateSystemsVerified": false,
+    "samePhysicalMarkerVisuallyVerified": false,
+    "yandexStatus": "Внешний поиск по официальному китайскому адресу. Браузер получает limited; точная карточка/пин и совпадение зданий между картами не подтверждены. Встраивание и произвольная метка не публикуются.",
+    "rejectedCoordinates": [
+      "32.047463, 120.244562 — сторонний агрегатор, не первичный картографический источник."
+    ],
+    "coordinatePolicy": "Числа из viewport не объявлены точным входом. Координаты и markerVerified остаются nullable/false до независимого визуального сопоставления Google и Яндекс."
+  }
+}

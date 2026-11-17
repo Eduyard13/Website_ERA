@@ -52,7 +52,8 @@ with sync_playwright() as p:
     assert page.locator('#project-request').count()==0
     assert page.locator('.cp-video-channel').count()==2
     assert page.locator('.cp-map iframe').count()==0
-    assert page.locator('.cp-map-button').is_disabled()
+    assert page.locator('[data-map-external]').count()==2
+    assert page.locator('[data-map-select]').count()==2
    toggle=page.locator('[data-quick-contact-toggle]');panel=page.locator('#quick-contact-panel')
    bounds=toggle.bounding_box();assert bounds['width']>=48 and bounds['height']>=48
    if os.environ.get('ERA_CAPTURE_INTERNAL')=='1' and width in [390,1440]:
@@ -153,13 +154,19 @@ with sync_playwright() as p:
  load('/catalog/equipment/predvaritelnyy-izmelchitel/')
  page.locator('[data-media]:not([data-type=video]) .media-open').first.click();assert page.locator('#media-viewer').is_visible();assert page.locator('#quick-contact').is_hidden()
  page.keyboard.press('Escape');page.wait_for_selector('#quick-contact:not([hidden])')
- load('/technology/');page.locator('[data-kair-inspect]').click();assert page.locator('[data-kair-viewer]').is_visible();assert page.locator('#quick-contact').is_hidden()
+ load('/technology/')
+ inspector=page.locator('[data-kair-inspect]')
+ for details in inspector.locator('xpath=ancestor::details').all():
+  if details.get_attribute('open') is None:details.locator('summary').first.click()
+ inspector.click();assert page.locator('[data-kair-viewer]').is_visible();assert page.locator('#quick-contact').is_hidden()
  page.locator('[data-kair-close]').click();page.wait_for_selector('#quick-contact:not([hidden])')
  print('Request, gallery, legacy photo, KAIR and mobile-field integration: OK',flush=True)
 
  load('/about-us/');page.locator('[data-menu-toggle]').click()
- page.screenshot(path=str(out/'navigation-1440.png'));page.keyboard.press('Escape')
- page.locator('#site-footer').scroll_into_view_if_needed();page.screenshot(path=str(out/'footer-1440.png'))
+ if os.environ.get('ERA_CAPTURE_INTERNAL')=='1':page.screenshot(path=str(out/'navigation-1440.png'))
+ page.keyboard.press('Escape')
+ page.locator('#site-footer').scroll_into_view_if_needed()
+ if os.environ.get('ERA_CAPTURE_INTERNAL')=='1':page.screenshot(path=str(out/'footer-1440.png'))
  load('/company-details/?topic=legacy#project-form');page.wait_for_url(base+'/contacts?topic=legacy#project-form')
  load('/about/');page.wait_for_url(base+'/')
  context=browser.new_context(java_script_enabled=False,viewport={'width':390,'height':844},reduced_motion='reduce');nojs=context.new_page()

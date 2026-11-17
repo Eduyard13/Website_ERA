@@ -1,3 +1,4 @@
+import {beierProduction} from './production.mjs';
 // Company experience and the manufacturing group's facts remain separate.
 export const aboutUsContent = {
   hero: {
@@ -56,11 +57,11 @@ export const aboutUsContent = {
       {file: 'lines/separatsiya-01/china-ballistic.webp', smallFile: 'lines/separatsiya-01/china-ballistic-thumb.webp', width: 2000, height: 1127, alt: 'Баллистический сепаратор ЭРА на производственном участке в Китае', caption: 'Баллистический сепаратор ЭРА · Китай'},
       {file: 'lines/separatsiya-01/china-air-separation.webp', smallFile: 'lines/separatsiya-01/china-air-separation-thumb.webp', width: 1072, height: 602, alt: 'Узел воздушной сепарации оборудования ЭРА в Китае', caption: 'Воздушная сепарация ЭРА · Китай'},
     ],
-    manufacturer: 'Jiangsu BEIER Machinery Co., Ltd.',
-    address: 'Китай, провинция Цзянсу, г. Чжанцзяган, Национальная зона экономического и технологического развития, North 2nd Ring Road, 318, 215600.',
-    profileUrl: 'https://en.beierpm.com/about/',
-    contactUrl: 'https://en.beierpm.com/contact/',
-    tourUrl: 'https://en.beierpm.com/vr/',
+    manufacturer: beierProduction.manufacturer,
+    address: beierProduction.address,
+    profileUrl: beierProduction.profileUrl,
+    contactUrl: beierProduction.addressSource,
+    tourUrl: beierProduction.tourUrl,
   },
   projects: {
     title: 'Технологии, проверенные промышленной эксплуатацией.',

@@ -216,6 +216,7 @@ jobs:
             test/economics-public.mjs
             test/about-us-public.mjs
             test/technology-final-public.mjs
+            test/contacts-public.mjs
           sparse-checkout-cone-mode: false
       - uses: actions/setup-node@v4
         with:
@@ -236,3 +237,7 @@ jobs:
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
         run: node test/technology-final-public.mjs
+      - name: Verify published contacts in Chrome
+        env:
+          ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: node test/contacts-public.mjs

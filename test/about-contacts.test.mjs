@@ -6,6 +6,7 @@ import {siteContacts,projectRequest,contactChannels,productionSite} from '../con
 import {aboutUsPage} from '../scripts/about-us.mjs';
 import {contactPage,requestForm} from '../scripts/contact.mjs';
 import {videoChannels,messengerChannels,confirmedChannelUrl} from '../scripts/contact-channels.mjs';
+import {mapCapabilities,productionMap} from '../scripts/contact-maps.mjs';
 import {primaryLinks,navigationGroups} from '../content/navigation.mjs';
 import {render,routes,basePath,previewMode} from '../scripts/build.mjs';
 
@@ -52,7 +53,10 @@ test('О нас разделяет опыт команды, производст
  assert.equal(contactChannels.max,'https://max.ru/u/f9LHodD0cOLJG4FZs3gHL3lpPmwQ0qEBZoRlKgEs72lHGd9FC0S8W-9NfpA');
  assert.equal(contactChannels.whatsapp,'https://wa.me/79032813535');assert.equal(contactChannels.vkVideo,null);
  assert.equal(productionSite.country,'Китай');
- for(const key of ['city','address','lat','lon','mapUrl','mapEmbedUrl'])assert.equal(productionSite[key],null);
+ assert.equal(productionSite.city,'Чжанцзяган');
+ assert.equal(productionSite.address,aboutUsContent.productionBase.address);
+ assert.equal(productionSite.manufacturer,aboutUsContent.productionBase.manufacturer);
+ assert.equal(productionSite.location.lat,null);assert.equal(productionSite.location.lon,null);
 });
 test('Три слота команды видны сразу; готовность и безопасность каждого профиля независимы',()=>{
  const data=structuredClone(aboutUsContent);
@@ -118,10 +122,14 @@ test('Навигация сохраняет пять разделов, доку�
 });
 test('Контакты используют единственную прежнюю форму и реальные контакты',()=>{
  const html=contactPage({basePath});assert.equal((html.match(/data-request-form(?=[\s>])/g)||[]).length,1);
- assert.ok(html.includes(requestForm({prefix:'contact',basePath})));
+ assert.ok(html.includes(requestForm({prefix:'contact',basePath,compactOptional:true})));
  assert.ok(html.includes(siteContacts.phoneHref)&&html.includes(siteContacts.email));
  assert.ok(html.includes(projectRequest.endpoint));assert.ok(!html.includes('<iframe'));
- assert.match(html,/<button[^>]*class="cp-map-button"[^>]*disabled>/);
+ assert.ok(html.includes('Найти адрес в Яндекс Картах'));
+ assert.ok(html.includes('data-map-select="google"'));
+ for(const id of ['contacts-intro','direct-contact','project-form','production-site','contact-task','official-videos','contacts-next'])assert.ok(html.includes(`id="${id}"`));
+ assert.ok(html.includes('От вашей задачи — к нашему решению.'));
+ assert.ok(html.includes('BEIER Machinery · Китай'));
  assert.equal((html.match(/<h1>/g)||[]).length,1);assert.equal((html.match(/class="cp-video-channel/g)||[]).length,3); // grid plus both channels
 });
 test('Новые маршруты, безопасные старые URL и стили учитывают BASE_PATH',()=>{
@@ -147,4 +155,54 @@ test('Быстрая связь одна на страницу, изолиров
   assert.ok(!panel.includes('href="#"'));assert.equal(html.includes('/preview-only.js?v='),previewMode);
  }
  const preview=await readFile('public/preview-only.js','utf8');assert.ok(preview.includes('Предпросмотр: заявка не отправлена'));
+});
+
+test('Карты отделяют адрес, внешнюю ссылку, проверенную метку и воспроизводимый iframe',()=>{
+ const fixture={provider:'google',url:'https://www.google.com/maps?cid=14308622914688450133',embedUrl:'https://www.google.com/maps/embed?pb=official-fixture',embedReproduced:true,markerVerified:false,lat:null,lon:null};
+ let state=mapCapabilities(fixture,productionSite);
+ assert.equal(state.hasVerifiedMarker,false);assert.equal(state.hasExternalLink,true);assert.equal(state.hasEmbed,true);
+ // Loss of an embed never removes a valid external link.
+ state=mapCapabilities({...fixture,embedUrl:null},productionSite);assert.equal(state.hasEmbed,false);assert.equal(state.hasExternalLink,true);
+ for(const bad of ['http://www.google.com/maps/embed','https://evil.invalid/maps/embed','https://www.google.com.evil.invalid/maps/embed','https://name:secret@www.google.com/maps/embed','https://www.google.com/maps/place/fake'])assert.equal(mapCapabilities({...fixture,embedUrl:bad},productionSite).hasEmbed,false,bad);
+ assert.equal(mapCapabilities({...fixture,embedReproduced:false},productionSite).hasEmbed,false);
+ assert.equal(mapCapabilities({...fixture,provider:'<script>'},productionSite).provider,null);
+ assert.equal(mapCapabilities({...fixture,url:'javascript:alert(1)'},productionSite).hasExternalLink,false);
+ const yandex={provider:'yandex',url:'https://yandex.ru/maps/?pt=120,32',embedUrl:'https://yandex.ru/map-widget/v1/?pt=120,32',embedReproduced:true,markerVerified:false,lat:32,lon:120,coordinateSystem:'WGS-84'};
+ state=mapCapabilities(yandex,productionSite);assert.equal(state.hasEmbed,false);assert.equal(state.hasVerifiedMarker,false);
+ assert.ok(state.url.includes('?text='));assert.ok(!state.url.includes('pt='));
+ assert.equal(mapCapabilities(yandex,{address:null}).hasExternalLink,false);
+ state=mapCapabilities({...yandex,markerVerified:true},productionSite);assert.equal(state.hasVerifiedMarker,true);assert.equal(state.hasEmbed,true);
+ assert.equal(mapCapabilities({...yandex,markerVerified:true,lat:200},productionSite).hasVerifiedMarker,false);
+ const html=productionMap({...productionSite,maps:[{...fixture,label:'Google <script> " &'}]});
+ assert.ok(html.includes('&lt;script&gt; &quot; &amp;'));assert.ok(!html.includes('<iframe'));assert.ok(html.includes('data-map-embed="https://www.google.com/maps/embed?pb=official-fixture"'));
+ assert.ok(html.includes('data-map-switch hidden'));
+});
+
+test('Локальные фото BEIER и фирменный VK Видео имеют проверяемое происхождение',async()=>{
+ const {createHash}=await import('node:crypto');
+ const registry=JSON.parse(await readFile('docs/contacts-assets.json','utf8'));
+ for(const asset of registry.assets){
+  const bytes=await readFile('public/assets/'+asset.file);
+  assert.equal(createHash('sha256').update(bytes).digest('hex'),asset.sha256);
+  assert.ok(asset.sourceUrl&&asset.sourcePage&&asset.checkedAt&&asset.processing);
+ }
+ assert.equal(registry.assets.find(asset=>asset.file===productionSite.image.file).ownerPermissionConfirmed,true);
+ assert.equal(productionSite.image.width,1920);assert.equal(productionSite.image.height,714);
+ const svg=await readFile('public/assets/brands/vk-video.svg','utf8');
+ assert.ok(svg.includes('viewBox="0 0 72 72"')&&svg.includes('#0077FF')&&svg.includes('#FF2B42'));
+ assert.doesNotMatch(svg,/<script|foreignObject|on\w+=|(?:href|src)=/i);
+ for(const compact of [false,true])assert.ok(videoChannels({compact}).includes('/assets/brands/vk-video.svg'));
+ const source=await readFile('scripts/contact-channels.mjs','utf8');assert.ok(!source.includes('vkChannelMark')&&!source.includes('Simple Icons'));
+});
+
+test('Раскрывающиеся поля включены только на Контактах; протокол и обязательность формы сохранены',()=>{
+ const normal=requestForm({basePath}),compact=requestForm({basePath,compactOptional:true});
+ assert.ok(!normal.includes('<details'));assert.ok(compact.includes('<details class="cp-optional"'));
+ const inputs=html=>[...html.matchAll(/<(?:input|textarea)\b[^>]*>/g)].map(match=>match[0]).sort();
+ assert.deepEqual(inputs(normal),inputs(compact));
+ assert.ok(compact.includes('enctype="multipart/form-data"')&&compact.includes('method="post"')&&compact.includes('data-max-bytes="5000000"'));
+ for(const name of ['Имя','email','Задача'])assert.match(compact,new RegExp('(?:input|textarea)[^>]*name="'+name+'"[^>]*required'));
+ for(const path of ['/about-us','/technology','/economics','/catalog'])assert.ok(!render(path).includes('data-contact-optional')&&!render(path).includes('/contact-maps.js?'));
+ assert.ok(render('/contacts').includes(`src="${basePath}/contact-maps.js?v=`));
+ assert.ok(render('/contacts').includes(`srcset="${basePath}/assets/contacts/beier-zhangjiagang-factory-768.webp 768w, ${basePath}/assets/contacts/beier-zhangjiagang-factory.webp 1920w"`));
 });
