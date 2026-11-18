@@ -122,8 +122,7 @@ test('Страницы вне комплектаций сохраняют утв
  for(const [path,sha256] of Object.entries(basePath?original.unchangedPagesBase:original.unchangedPages)){
   if(!lines.some(entry=>entry.enabled&&entry.path===path))assert.equal(hash(render(path).replaceAll(release,'RELEASE')),sha256,path);
  }
- const tech=render('/technology').replace(/<a class="tf-hot-wash-card"[\s\S]*?<\/a>/,'<a data-wash-route></a>').replaceAll(release,'RELEASE');
- assert.equal(hash(tech),basePath?original.technologyOutsideWashCardBase:original.technologyOutsideWashCard);
- const html=render('/technology');assert.ok(html.includes(`href="${basePath}/catalog/lines/moyka-plenki"`));
- assert.ok(html.includes('data-washing-configuration="')&&!html.includes('tf-wash-pending'));
+ const html=render('/technology');
+ assert.ok(html.includes(`href="${basePath}/catalog/lines/moyka-plenki" data-technology-line="moyka-plenki"`));
+ assert.ok(html.includes('catalog-cover-detailed.webp')&&html.includes('data-washing-configuration="existing-granulator"'));
 });

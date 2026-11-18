@@ -1,76 +1,361 @@
-import {presentationStages} from '../content/presentation.mjs';
+import {lines,nodes} from '../content/catalog.mjs';
 import {technologyContent as content} from '../content/technology-final.mjs';
-import {drySeparationOverview as overview, washingConfigurations} from '../content/technology-lines.mjs';
-import {technicalInputs, projectParameters} from '../content/presentation-web.mjs';
-import {controlStory, projectContactStory} from './project-story.mjs';
-import {materialBalance, dryNodeRoles, washingRoles} from './presentation-web.mjs';
-import {qualityVisual, technicalQuality} from './quality.mjs';
+import {drySeparationOverview as overview,washingConfigurations} from '../content/technology-lines.mjs';
+import {hotWashMedia} from '../content/hot-film-washing.mjs';
+import {equipmentCardImages} from '../content/equipment-card-images.mjs';
+import {kairSlides,kairPresentation} from '../content/kair.mjs';
+import {technicalInputs} from '../content/presentation-web.mjs';
+import {projectRequestHref} from './contact.mjs';
 import {escapeContact as escape} from './contact-channels.mjs';
+import {imageSize} from './image-size.mjs';
+import {lineCoverFiles} from './line-page-media.mjs';
+import {materialBalance} from './presentation-web.mjs';
+import {qualityVisual} from './quality.mjs';
+import {kairMonitor} from './kair.mjs';
 export {renderKairSystem as presentationAutomation} from './kair-system.mjs';
 
-import {hotFilmWashing,hotWashMedia} from '../content/hot-film-washing.mjs';
+const arrow='<span aria-hidden="true">↗</span>';
+const stageArrow='<span aria-hidden="true">→</span>';
+const dryLines=lines.filter(line=>line.enabled&&line.group==='Сепарация');
+const dryExample=dryLines.find(line=>line.slug==='separatsiya-02');
+const washLine=lines.find(line=>line.slug==='moyka-plenki'&&line.enabled);
+const findNode=slug=>nodes.find(node=>node.slug===slug);
+const dimensions=file=>imageSize(new URL('../public/assets/'+file,import.meta.url));
+const materialSizes='(max-width:599px) calc(100vw - 40px), (max-width:999px) 46vw, 416px';
 
-const arrow = '<span aria-hidden="true">↗</span>';
-const photo = (file, alt, width, height, {small, smallWidth = 600, sizes = '(max-width:767px) calc(100vw - 40px), 400px', hero = false} = {}) => `<img src="/assets/${escape(file)}"${small ? ` srcset="/assets/${escape(small)} ${smallWidth}w, /assets/${escape(file)} ${width}w" sizes="${escape(sizes)}"` : ''} width="${width}" height="${height}" alt="${escape(alt)}"${hero ? ' fetchpriority="high"' : ' loading="lazy" decoding="async"'}>`;
-const heading = (number, label, title, id, lead = '') => `<div class="tf-heading"><p class="eyebrow">${number} / ${escape(label)}</p><h2 id="${id}">${escape(title)}</h2>${lead ? `<p class="tf-lead">${escape(lead)}</p>` : ''}</div>`;
-const list = items => `<ul>${items.map(item => `<li>${escape(item)}</li>`).join('')}</ul>`;
-const sourceLinks = () => `<nav class="tf-sources" aria-label="Методики и технические источники">${content.sources.map(source=>`<a href="${escape(source.url)}" target="_blank" rel="noopener noreferrer">${escape(source.title)} ${arrow}</a>`).join('')}</nav>`;
-const metric = (item, index) => `<div><dt>${escape(index === 3 ? 'Расчётная потребляемая мощность' : item.label)}</dt><dd>${escape(item.value)} <small>${escape(item.unit)}</small></dd>${item.note ? `<p>${escape(item.note)}</p>` : ''}</div>`;
-
-function hero() {
-  return `<section class="story-section tf-hero era-indigo-surface" id="technology-intro" data-page-progress-label="Технология переработки"><div class="tf-container"><div class="tf-hero-grid"><div><p class="eyebrow">ЭРА / ТЕХНОЛОГИЯ ПЕРЕРАБОТКИ</p><h1>${escape(content.hero.title)}</h1><p class="tf-lead">${escape(content.hero.lead)}</p><a class="button tf-gold-button" href="#raw-material">Как работает технология <span aria-hidden="true">↓</span></a><ul class="tf-hero-accents">${content.hero.accents.map(text => `<li>${escape(text)}</li>`).join('')}</ul></div><div class="tf-hero-route" aria-label="От сырья к готовой продукции"><div class="tf-route-material">${photo('presentation/raw-film.webp', 'Загрязнённое плёночное сырьё', 880, 1157, {small:'presentation/raw-film-480.webp',smallWidth:480,sizes:'110px',hero:true})}<div><small>НА ВХОДЕ</small><strong>Плёночное сырьё</strong></div></div><ol>${content.stages.map(stage => `<li><span>${stage.number}</span><strong>${escape(stage.title)}</strong></li>`).join('')}</ol><div class="tf-route-material tf-route-finish">${photo('presentation/granules.webp', 'Готовая вторичная полиэтиленовая гранула', 390, 304)}<div><small>НА ВЫХОДЕ</small><strong>Готовая продукция</strong></div></div></div></div><nav class="tf-outline" aria-label="Разделы технологии">${[['Сырьё','raw-material'],['Этапы','solution'],['Готовая продукция','output-title'],['Качество','granule-quality'],['Применение','applications'],['Оборудование','standalone-equipment']].map(([label,id])=>`<a href="#${id}">${label}</a>`).join('')}</nav></div></section>`;
+function photo({file,small,alt},{sizes=materialSizes,eager=false,priority=false}={}){
+ const {width,height}=dimensions(file);
+ const smallWidth=small&&small!==file?dimensions(small).width:0;
+ const srcset=smallWidth&&smallWidth<width?` srcset="/assets/${escape(small)} ${smallWidth}w, /assets/${escape(file)} ${width}w" sizes="${escape(sizes)}"`:'';
+ return `<img src="/assets/${escape(file)}"${srcset} width="${width}" height="${height}" alt="${escape(alt)}"${eager?'':' loading="lazy"'}${priority?' fetchpriority="high"':''} decoding="async">`;
 }
 
-function rawMaterials() {
-  return `<section class="story-section tf-section" id="raw-material" data-page-progress-label="Сырьё и очистка"><div class="tf-container"><div class="tf-raw-intro"><div>${heading('01','СЫРЬЁ, ЗАГРЯЗНЕНИЯ И РЕШЕНИЯ','Работаем с реальными плёночными отходами.','raw-title','Плёнки и пакеты после использования удерживают загрязнения между слоями и на поверхности. Сырьё различается по полимерному составу, влажности, размеру фрагментов и характеру включений. Для каждой группы загрязнений применяются свои операции очистки.')}<dl class="tf-trial-facts"><div><dt>До 80%</dt><dd>загрязнённость испытанного сырья</dd></div><div><dt>До 30%</dt><dd>влажность испытанного сырья</dd></div></dl><p class="tf-caption">Диапазоны испытаний из технического описания и визитки линии. Это отдельные показатели, а не одновременная гарантированная комбинация и не обещание одинакового выпуска при любом засоре.</p></div><figure class="tf-raw-photo">${photo('presentation/raw-film.webp','Спрессованное загрязнённое плёночное сырьё',880,1157,{small:'presentation/raw-film-480.webp',smallWidth:480,sizes:'(max-width:767px) 260px, 330px'})}<figcaption>Реальный материал из архива ЭРА</figcaption></figure></div>
-    <div class="tf-cleaning" id="contaminants"><h3 id="raw-cleaning-title">Сырьё → загрязнения → технологические решения</h3><p>Один вид плёнки может содержать несколько групп включений. Операции подбираются по составу партии и работают последовательно.</p><div class="tf-matrix"><div class="tf-feedstocks"><h4>Сырьё</h4>${content.feedstockGroups.map(group => `<div class="tf-feedstock-group"><h5>${escape(group.title)}</h5><ul>${group.items.map(item => `<li data-feedstock-type>${escape(item)}</li>`).join('')}</ul></div>`).join('')}</div><table class="tf-cleaning-table"><caption class="tf-sr-only">Загрязнения и соответствующие технологические решения</caption><thead><tr><th scope="col">Загрязнение</th><th scope="col">Решение</th></tr></thead><tbody>${content.cleaning.map(row => `<tr id="contaminant-${row.id}" data-contaminant-row="${row.id}"><th scope="row"><span class="tf-cell-label" aria-hidden="true">Загрязнение</span><strong>${escape(row.title)}</strong><p>${escape(row.examples)}</p></th><td><span class="tf-cell-label" aria-hidden="true">Решение</span><span class="tf-stage-tag">${escape(row.stage)}</span><p>${escape(row.operation)}</p></td></tr>`).join('')}</tbody></table></div><p class="tf-caption tf-composition-note">Перечень относится к задачам подготовки при соответствующей комплектации. Биг-бэги часто изготовлены из ПП; смешанные, многослойные и отличающиеся полимерные фракции сортируют и проверяют отдельно. Влажность и засорённость учитываются раздельно.</p></div>
-    <details class="tf-details"><summary>Почему раскрытие и очистку механизируют</summary><div><p>В опыте ручного раскрытия и вытряхивания десяти пакетов получили 40 г материала за 33 секунды — около 4,36 кг/ч. Такой способ трудно масштабировать на промышленный поток.</p><p class="tf-caption">Опыт, приведённый в презентации ЭРА. Раскрытие и вытряхивание пакетов, не сортировка полезных фракций.</p><details class="tf-details"><summary>Арифметика единичного опыта</summary><div><p>0,040 кг ÷ 33 с × 3 600 с = 4,3636 кг/ч. При условной ставке 260 ₽/ч: 260 ÷ 4,3636 ≈ 59,6 ₽/кг. При принятом в исходном примере темпе 4 кг/ч: 65 ₽/кг, или 65 000 ₽/т.</p><p>Ставка и сниженный темп — допущения этого расчёта, не рыночная оценка труда и не сравнительная себестоимость линии.</p></div></details><p>Механизация раскрытия и очистки пакетов не исключает сортировку полезных фракций. Персонал выделяет нужные материалы, контролирует поток и обслуживает линию.</p></div></details>
-    <details class="tf-details tf-balance-disclosure"><summary>Рассчитать долю полезного материала</summary><div>${materialBalance()}</div></details><p class="tf-insight">Разные виды загрязнений невозможно эффективно устранить одной операцией. Поэтому технология ЭРА объединяет последовательные стадии, каждая из которых решает свою задачу.</p></div></section>`;
+function mediaImage(media){
+ return {file:media.file,small:media.smallFile,alt:media.title};
 }
 
-function route() {
-  return `<section class="story-section tf-section tf-route-section" id="solution" data-page-progress-label="Три стадии переработки"><div class="tf-container">${heading('02','ЛОГИКА ТЕХНОЛОГИИ','Эффективная переработка требует поэтапной технологии.','solution-title','Сначала освобождаем и отделяем основную массу посторонних включений без использования воды. Затем отмываем остаточные загрязнения, обезвоживаем материал и подготавливаем его к гранулированию.')}<ol class="tf-process-route">${content.stages.map(stage => `<li><a href="#${stage.id}"><span class="tf-stage-number">${stage.number}</span><h3>${escape(stage.title)}</h3><p>${escape(stage.text)}</p><strong class="tf-stage-result">${escape(stage.result)}</strong><span class="tf-route-down" aria-hidden="true">↓</span></a><p class="tf-route-branch">${escape(stage.branch)}</p></li>`).join('')}</ol><p class="tf-water-loop">Контур мойки: рабочая жидкость → очистка → возврат в процесс; отделённые примеси и осадок выводятся, подпитка определяется проектом.</p><p class="tf-caption">В полном цикле материал направляется с сухой стадии на мойку без обязательного прессования. Капсуляция — опция выбранной комплектации.</p><div class="tf-kair-compact"><div><p class="eyebrow">УПРАВЛЕНИЕ КАИР</p><h3>Согласованная работа технологических узлов.</h3><p>Состояние оборудования, подача и предусмотренные режимы — в едином интерфейсе.</p></div><a class="text-link" href="/automation">Возможности КАИР ${arrow}</a></div><details class="tf-details tf-kair-details"><summary>Управление процессом и реальные экраны КАИР</summary><div>${controlStory().replace('data-autoplay="true"','data-autoplay="false"')}</div></details></div></section>`;
+function equipmentImage(node){
+ const image=equipmentCardImages[node.slug];
+ return {file:image.file,small:image.smallFile,alt:`Каталожный рендер · ${node.title}`};
 }
 
-function dryStage(stage) {
-  return `<section class="story-section tf-section" id="dry-separation" data-page-progress-label="Сухая сепарация"><div class="tf-container">${heading('03','СУХАЯ СЕПАРАЦИЯ','Сухая сепарация — первый и ключевой этап подготовки сырья.','dry-separation-title','На этапе сухой сепарации материал раскрывается, освобождается от основной массы минеральных, органических и объёмных включений. Ручной отбор ценных фракций, раздельное накопление и автоматическое прессование позволяют получать очищенную плёнку как самостоятельный товарный продукт или направлять её на дальнейшую глубокую очистку.')}<a class="tech-line-card tf-line-card" href="${overview.linePath}" data-technology-line="separatsiya-02" aria-labelledby="tech-line-02-title"><div class="tf-line-image">${photo(overview.image,'Комплектация линии с сортировочной площадкой, пятью бункерами и автоматическим прессом',...overview.imageDimensions,{small:overview.smallImage,smallWidth:768,sizes:'(max-width:899px) calc(100vw - 80px), 620px'})}<div class="tf-line-comparison">${overview.comparisons.map(([id,label,alt])=>`<figure>${photo('technology/separation/'+id+'.webp',alt,466,262)}<figcaption>${escape(label)}</figcaption></figure>`).join('')}</div></div><div class="tf-line-copy"><p class="eyebrow">СЕПАРАЦИЯ 02 / ДЕЙСТВУЮЩАЯ КОМПЛЕКТАЦИЯ</p><h3 id="tech-line-02-title">${escape(overview.title)}</h3><p>${escape(overview.subtitle)}</p><dl class="tf-line-metrics">${overview.metrics.map((item,index)=>[0,1,3,4].includes(index)?metric(item,index):'').join('')}</dl><ul class="tf-line-features">${overview.features.map(item=>`<li>${escape(item)}</li>`).join('')}</ul><span class="tf-line-action">Подробнее о линии сухой сепарации ${arrow}</span></div></a><p class="tf-caption">1 500 кг/ч — входящая смесь, 750 кг/ч — ориентир при среднем засоре около 50%. 281,87 кВт — расчётная мощность, 70% от установленной. Снимки сырья показывают формы материала, а не сравнение одной партии.</p><div class="tf-resources"><a class="text-link" href="/documents/${overview.document.file}" download="${escape(overview.document.downloadName)}">Визитка линии · PDF, 3 страницы <span aria-hidden="true">↓</span></a><a class="text-link" href="/catalog/lines">Все комплектации линий ${arrow}</a></div><details class="tf-details"><summary>Состав операций, мощности и размещение</summary><div><dl class="tf-extra-metrics">${overview.metrics.map((item,index)=>[2,5].includes(index)?metric(item,index):'').join('')}</dl><p>Пять бункеров: четыре выбранные фракции и основной микс. Автоматический пресс формирует раздельные товарные тюки при выборе этого маршрута.</p><p>${escape(stage.description)}</p>${list(stage.details)}${dryNodeRoles()}</div></details></div></section>`;
+function heading(id,title,{lead='',kicker=''}={}){
+ return `<header class="tf-heading">${kicker?`<p class="eyebrow">${escape(kicker)}</p>`:''}<h2 id="${id}">${escape(title)}</h2>${lead?`<p class="tf-lead">${escape(lead)}</p>`:''}</header>`;
 }
 
-function hotWashTechnologyCard(){
- const image=hotWashMedia['catalog-cover-navy'];
- return `<a class="tf-hot-wash-card" data-technology-line="moyka-plenki" href="/catalog/lines/moyka-plenki" aria-labelledby="tech-hot-wash-title"><div class="tf-hot-wash-image">${photo(image.file,image.title,image.width,image.height,{small:image.smallFile,smallWidth:image.smallWidth,sizes:'(max-width:329px) calc(100vw - 70px), (max-width:599px) 260px, 160px'})}</div><div><p class="eyebrow">ГОРЯЧАЯ МОЙКА / ГОТОВАЯ ЛИНИЯ</p><h3 id="tech-hot-wash-title">${hotFilmWashing.cardTitle}</h3><dl>${[hotFilmWashing.cardMetrics[0],hotFilmWashing.cardMetrics[1],hotFilmWashing.cardMetrics[3],hotFilmWashing.cardMetrics[4]].map(m=>`<div><dt>${m.label}</dt><dd>${m.value} <small>${m.unit}</small></dd><p>${m.note}</p></div>`).join('')}</dl><span class="tf-line-action">Подробнее о линии ${arrow}</span></div></a>`;
+function disclosure(title,body){
+ return `<details class="tf-details" data-keep-open><summary>${escape(title)}</summary><div>${body}</div></details>`;
 }
 
-function washingStage(stage) {
-  return `<section class="story-section tf-section tf-washing" id="hot-washing" data-page-progress-label="Горячая мойка"><div class="tf-container">${heading('04','ГОРЯЧАЯ МОЙКА','Горячая мойка — этап глубокой очистки материала.','hot-washing-title','После сухой сепарации плёночное сырьё проходит очистку в жидкой среде. Горячая мойка и механическое воздействие направлены на удаление остаточной органики, масел, жиров, этикеток и клеевых загрязнений. После мойки материал обезвоживают и подготавливают к последующей переработке.')}<div class="tf-wash-module"><ol class="tf-wash-steps"><li><span>01</span><h3>Глубокая очистка</h3><p>Мойка и механическое воздействие в жидкой среде.</p></li><li><span>02</span><h3>Обезвоживание</h3><p>Отделение жидкости от подготовленной плёнки.</p></li><li><span>03</span><h3>Подготовка материала</h3><p>Влажность и фракция под следующую операцию.</p></li></ol><p class="tf-wash-loop">Очистка рабочей жидкости <span aria-hidden="true">↻</span> Возврат в процесс</p>${hotWashTechnologyCard()}</div><div class="tf-washing-options">${washingConfigurations.map(option=>`<article data-washing-configuration="${option.id}"><h3>${escape(option.title)}</h3><p>${escape(option.text)}</p></article>`).join('')}</div><details class="tf-details"><summary>Операции и задачи оборудования мокрой части</summary><div><p>Гранулятор входит в комплектацию линии горячей мойки; при собственной грануляции предприятия возможна поставка без него.</p><p>${escape(stage.description)}</p>${list(stage.details)}${washingRoles()}<figure class="tf-concept-image">${photo('presentation/hot-washing.webp','Концептуальная компоновка горячей мойки',1400,991)}<figcaption>Концептуальная компоновка стадии, не утверждённый состав будущей поставки.</figcaption></figure></div></details></div></section>`;
+function hero(){
+ const raw={file:'presentation/raw-film.webp',small:'presentation/raw-film-480.webp',alt:'Спрессованное загрязнённое плёночное сырьё'};
+ const granule={file:'presentation/granules.webp',alt:'Образцы вторичной полиэтиленовой гранулы'};
+ return `<section class="tf-hero tf-dark era-indigo-surface" id="technology-intro" data-page-progress-label="Технология переработки">
+  <div class="tf-container tf-hero-grid">
+   <div class="tf-hero-copy">
+    <p class="eyebrow">ЭРА / ТЕХНОЛОГИЯ ЗАМКНУТОГО ЦИКЛА</p>
+    <h1>Из плёнки<br> в плёнку<span>.</span></h1>
+    <p class="tf-hero-subtitle">Технология полного цикла переработки загрязнённых полимерных плёнок и пакетов.</p>
+    <p>От плёночных отходов, сложных для переработки, — к очищенному полимеру, готовому вернуться в производство. Ключ к результату — последовательное удаление загрязнений до гранулирования.</p>
+    <a class="button tf-gold-button" href="#raw-material">Как работает технология <span aria-hidden="true">↓</span></a>
+   </div>
+   <figure class="tf-hero-visual">
+    <div class="tf-hero-samples">
+     <div>${photo(raw,{sizes:'(max-width:599px) 43vw, 286px',eager:true,priority:true})}<span>Плёночное сырьё</span></div>
+     ${stageArrow}
+     <div>${photo(granule,{eager:true})}<span>Вторичная ПЭ-гранула</span></div>
+    </div>
+    <figcaption><a href="#dry-separation">Сухая сепарация</a>${stageArrow}<a href="#hot-washing">Горячая мойка</a>${stageArrow}<a href="#granulation">Гранулирование</a>${stageArrow}<a href="#applications">Новые изделия</a></figcaption>
+   </figure>
+  </div>
+ </section>`;
 }
 
-function granulationStage(stage) {
-  return `<section class="story-section tf-section" id="granulation" data-page-progress-label="Гранулирование"><div class="tf-container">${heading('05','ГРАНУЛИРОВАНИЕ','Гранулирование — это формирование гранулы, а не очистка сырья.','granulation-title','После качественной сухой сепарации, горячей мойки и подготовки материала полимер поступает на гранулирование. Его основная задача — перевести уже очищенный материал в удобную для дальнейшего промышленного использования форму.')}<div class="tf-granulation-grid"><div><p class="tf-key-message">Качество подготовки материала формируется до гранулятора.</p><p>С подготовленным сырьём сможет работать практически любой промышленный гранулятор, подходящий для данного типа полиэтилена, фракции, влажности и требуемой производительности.</p><p>Фильтрация расплава и дегазация могут удалить часть остаточных включений и летучих компонентов, но не заменяют полноценную предварительную очистку. Режим переработки также влияет на конечные свойства гранулы.</p><p class="tf-caption">Завершающий этап в составе линии мойки или на собственном оборудовании предприятия после проверки условий интеграции. Капсулятор отжимает и уплотняет промежуточный материал; гранулу формирует гранулятор.</p></div><div class="tf-granulation-visual"><ol><li>Подготовленный материал</li><li>Плавление и формирование</li><li>Гранула</li></ol><figure>${photo('presentation/granules.webp','Образцы вторичной полиэтиленовой гранулы',390,304)}<figcaption>Вторичная ПЭ-гранула</figcaption></figure></div></div><details class="tf-details"><summary>Технологические операции стадии</summary><div>${list(stage.details)}<p>${escape(stage.result)}</p></div></details></div></section>`;
-}
-function processStage(stage) {
-  return stage.id === 'dry-separation' ? dryStage(stage) : stage.id === 'hot-washing' ? washingStage(stage) : granulationStage(stage);
+function outline(){
+ const sections=[['Сырьё','raw-material'],['Технология','solution'],['Продукция','products'],['Качество','granule-quality'],['Применение','applications']];
+ return `<nav class="tf-outline" aria-label="Разделы технологии"><div class="tf-outline-track">${sections.map(([label,id])=>`<a href="#${id}">${label}</a>`).join('')}</div></nav>`;
 }
 
-function outputsAndQuality() {
-  const q=content.quality;
-  const technicalCopy=technicalQuality().match(/<div class="quality-technical-copy">([\s\S]*?)<\/div>/)[1];
-  return `<section class="story-section tf-section tf-output-section" id="products" data-page-progress-label="Продукция и качество"><div class="tf-container">${heading('06','ГОТОВАЯ ПРОДУКЦИЯ','На выходе — готовый продукт с контролируемыми характеристиками.','output-title','В зависимости от выбранного маршрута переработки предприятие может выпускать очищенную плёнку, уплотнённый промежуточный материал или вторичную полиэтиленовую гранулу.')}<div class="tf-output-grid">${content.outputs.map(output=>`<article data-technology-output="${output.id}"><figure>${photo(output.file,output.alt,output.width,output.height)}<figcaption>${escape(output.phase)}</figcaption></figure><h3>${escape(output.title)}</h3><p>${escape(output.text)}</p></article>`).join('')}</div><p class="tf-caption">Фотографии показывают формы материала на разных стадиях, а не сравнение одной партии до и после. Применение вторичного материала определяется составом и характеристиками партии.</p><div class="tf-quality" id="granule-quality"><div class="tf-quality-heading"><p class="eyebrow">КАЧЕСТВО ГРАНУЛЫ</p><h3 id="granule-quality-title">Два показателя для промышленного применения.</h3></div><div class="tf-quality-metrics"><article><h4>Показатель текучести расплава — ПТР</h4><p class="tf-quality-value">${q.mfr} <small>${q.mfrUnit}</small></p><p class="tf-quality-condition">${q.conditions}</p><p>Показатель показывает, сколько полимера проходит через стандартное отверстие за установленное время при заданной температуре и нагрузке. Он помогает подобрать режим переработки и применение материала.</p><p class="tf-caption">Сравнивают значения при одинаковых условиях. Подходящий диапазон определяется изделием; ISO 1133-1 описывает метод измерения.</p></article><article><h4>Остаточные посторонние включения</h4><p class="tf-quality-value">${q.inclusions} <small>${q.inclusionsUnit}</small></p><p class="tf-quality-condition">${q.mass} · ${q.percent}</p><p>Массовая доля контролируемых посторонних включений. При прочих равных снижение таких включений уменьшает риск точек и локальных дефектов в изделии.</p><p class="tf-caption">1 ppm = 1 мг/кг = 1 г/т. Метод контроля согласуют отдельно; массовую долю не смешивают с числом частиц, влажностью или размером фильтра.</p></article></div><p class="tf-quality-note">${escape(q.note)}</p>${qualityVisual()}<details class="tf-details"><summary>Подробнее о контроле качества</summary><div>${technicalCopy}<h4>Что проверяют для конкретного применения</h4>${list(['Состав и однородность полимерной фракции','ПТР при заданной температуре и нагрузке','Влажность и остаточные включения','Цвет и запах','Результаты пробной переработки на оборудовании покупателя'])}<p>Показатели ЭРА — рабочие целевые ориентиры, предоставленные владельцем. Их подтверждение для партии определяется согласованной методикой и спецификацией; перечисленные источники не подтверждают сертификацию оборудования или универсальный результат на любом сырье.</p>${sourceLinks()}</div></details></div></div></section>`;
+function rawMaterials(){
+ return `<section class="tf-section" id="raw-material" data-page-progress-label="Сырьё">
+  <div class="tf-container">
+   ${heading('raw-title','Мы работаем со сложным плёночным сырьём.',{lead:'Плёнки после использования удерживают загрязнения между слоями, в складках и на поверхности. Для переработки важны состав, форма материала, засорённость и влажность.'})}
+   <div class="tf-feedstocks">
+    ${content.feedstocks.map(({id,title,text,image})=>`<article class="tf-material-card" data-feedstock-type="${id}">
+     ${image?`<figure>${photo(image)}</figure>`:''}
+     <div class="tf-material-copy"><h3>${escape(title)}</h3><p>${escape(text)}</p>${image?.note?`<p class="tf-image-note">${escape(image.note)}</p>`:''}</div>
+    </article>`).join('')}
+   </div>
+   <p class="tf-caption">Биг-бэги часто изготовлены из ПП. Совместимость ПЭ, ПП, многослойных и других полимеров определяют отдельно.</p>
+   <div class="tf-trials">
+    <dl><div><dt>до 80%</dt><dd>засорённость испытанного сырья</dd></div><div><dt>до 30%</dt><dd>влажность испытанного сырья</dd></div></dl>
+    <p>Предельные показатели испытаний оценивают раздельно. Производительность при совместном влиянии влаги и включений проверяют на конкретном сырье.</p>
+   </div>
+  </div>
+ </section>`;
 }
 
-function applications() {
-  const cards = group => content.applications.filter(item=>item.group===group).map(item=>`<article class="tf-application" data-technology-application="${item.id}"><figure>${photo('technology/applications/'+item.id+'.webp',item.alt,1200,900,{small:'technology/applications/'+item.id+'-600.webp',sizes:group==='polymer'?'(max-width:599px) calc(100vw - 40px), (max-width:1023px) 45vw, 410px':'(max-width:599px) calc(100vw - 40px), (max-width:1023px) 45vw, 620px'})}</figure><div><h4>${escape(item.title)}</h4><p>${escape(item.text)}</p></div></article>`).join('');
-  return `<section class="story-section tf-section" id="applications" data-page-progress-label="Направления применения"><div class="tf-container">${heading('07','ВОЗМОЖНОСТИ МАТЕРИАЛА','Что можно производить из полученного материала.','applications-title')}<p class="tf-caption">Иллюстрации возможных направлений применения</p><h3 class="tf-application-group-title">Новая полимерная продукция</h3><div class="tf-applications-grid">${cards('polymer')}</div><h3 class="tf-application-group-title tf-alternative-title">Альтернативные направления переработки</h3><div class="tf-applications-grid tf-applications-alternative">${cards('alternative')}</div><p class="tf-applications-note">Рациональный маршрут зависит от полимерного состава, качества, требований к продукту и оборудования потребителя. ЭРА разрабатывает решения предварительной подготовки и механической переработки; химические и энергетические установки здесь показаны как возможные последующие направления применения материала.</p></div></section>`;
+function contaminants(){
+ return `<section class="tf-section tf-contaminants-section" id="contaminants" data-page-progress-label="Загрязнения и решения">
+  <div class="tf-container">
+   ${heading('raw-cleaning-title','Каждому загрязнению — своё инженерное решение.',{lead:'Сначала высвобождаем включения. Затем отделяем их по форме, размеру и характеру движения, а стойкие поверхностные остатки отмываем.'})}
+   <div class="tf-contaminants">
+    ${content.cleaning.map(({id,title,examples,operation,target,image,detail})=>`<article class="tf-contaminant${image?'':' tf-contaminant--text'}" id="contaminant-${id}" data-contaminant-row="${id}">
+     ${image?`<figure>${photo(image)}</figure>`:''}
+     <div class="tf-contaminant-copy">
+      <h3>${escape(title)}</h3><p>${escape(examples)}</p>
+      <p class="tf-contaminant-solution"><span>Решение</span><a href="#${target}">${escape(operation)}&nbsp;${stageArrow}</a></p>
+      ${detail?disclosure('Условия отбора',`<p>${escape(detail)}</p>`):''}
+     </div>
+    </article>`).join('')}
+   </div>
+   <div class="tf-evidence">
+    <article class="tf-hand-test">
+     <h3>Ручное раскрытие трудно масштабировать</h3>
+     <dl><div><dt>10</dt><dd>пакетов</dd></div><div><dt>33</dt><dd>секунды</dd></div><div><dt>40</dt><dd>г материала</dd></div></dl>
+     <p>В единичном опыте раскрытия и вытряхивания пакетов это соответствует темпу 4,36 кг/ч. Механизация освобождает время для отбора полезных фракций и контроля.</p>
+     ${disclosure('Арифметика опыта','<p>0,040 кг ÷ 33 с × 3 600 с ≈ 4,36 кг/ч. При условной ставке 260 ₽/ч это 59,6 ₽/кг. При округлённом темпе 4 кг/ч — 65 ₽/кг.</p><p>Расчёт иллюстрирует единичное раскрытие и вытряхивание пакетов. Для оценки себестоимости и сравнения с линией нужны отдельные данные.</p>')}
+    </article>
+    ${materialBalance()}
+   </div>
+  </div>
+ </section>`;
 }
 
-function standaloneEquipment() {
-  return `<section class="story-section tf-section tf-standalone" id="standalone-equipment" data-page-progress-label="Самостоятельные узлы"><div class="tf-container">${heading('08','САМОСТОЯТЕЛЬНЫЕ УЗЛЫ','Узлы ЭРА — самостоятельные технологические решения.','standalone-title','Многие узлы оборудования могут использоваться как отдельные агрегаты для решения конкретных задач обработки полимерных и других материалов. В зависимости от производственной задачи оборудование внедряется самостоятельно, в существующее производство или в составе комплексной технологической линии.')}<div class="tf-equipment-grid">${content.equipment.map(item=>`<figure>${photo('catalogue/equipment/'+item.slug+'.webp',item.title+' — '+item.function,1448,1086)}<figcaption><h3>${escape(item.title)}</h3><p>${escape(item.function)}</p></figcaption></figure>`).join('')}</div><p class="tf-caption">Раскрытие, измельчение, разделение, распушение, обезвоживание и накопление — специализированные функции. Возможность работы с неполимерными материалами определяется свойствами сырья, конструкцией узла и согласованными режимами.</p><a class="button" href="/catalog/equipment">Перейти в каталог узлов ${arrow}</a></div></section>`;
+function route(){
+ return `<section class="tf-section tf-route-section" id="solution" data-page-progress-label="Карта технологии">
+  <div class="tf-container">
+   ${heading('solution-title','Не одна операция. Последовательная технология.',{lead:'Сначала отделяем основную массу включений без воды. Затем отмываем стойкие остатки, обезвоживаем материал и при необходимости гранулируем его.'})}
+   <div class="tf-route-ends"><span>Загрязнённое сырьё</span>${stageArrow}<span>Новые полимерные изделия</span></div>
+   <ol class="tf-process-route">
+    ${content.stages.map(stage=>`<li>
+     <a href="#${stage.id}"><span class="tf-stage-number">${stage.number}</span><h3>${escape(stage.title)}</h3>${stageArrow}</a>
+     <p>${escape(stage.text)}</p><p class="tf-stage-result">${escape(stage.result)}</p>
+    </li>`).join('')}
+   </ol>
+   <p class="tf-caption">При прямой подаче плёнку перед мойкой можно не прессовать. Маршрут гранулирования может обходить капсуляцию.</p>
+  </div>
+ </section>`;
 }
 
-function nextSteps() {
-  return `<section class="story-section tf-section tf-next" id="technology-next" data-page-progress-label="Оборудование и ваш проект"><div class="tf-container"><div class="tf-next-heading era-indigo-surface">${heading('09','ОТ ТЕХНОЛОГИИ К РЕШЕНИЮ','Изучите линии и узлы подробнее.','detail-title','Познакомьтесь с составом оборудования, принципом работы узлов и вариантами технологических комплектаций для разных производственных задач.')}<div class="tf-next-actions"><a class="button tf-gold-button" href="/catalog/lines">Линии и комплексы ${arrow}</a><a class="button secondary" href="/catalog/equipment">Отдельные узлы ${arrow}</a></div><a class="tf-compare-link" href="/#solution">Сравнить варианты запуска ${arrow}</a></div><details class="tf-details tf-project-details"><summary>Исходные данные и техническая подготовка проекта</summary><section class="tf-project-preparation" id="about-era" aria-labelledby="launch-title"><h3 id="launch-title">Что нужно для подбора линии</h3><p>Покажите ваше сырьё — обсудим последовательность подготовки, подходящую комплектацию и запуск в согласованном объёме.</p>${list(technicalInputs)}<dl class="tf-project-parameters">${projectParameters.map(([title,text])=>`<div><dt>${escape(title)}</dt><dd>${escape(text)}</dd></div>`).join('')}</dl><figure class="tf-preparation-photo">${photo('presentation/manufacture-wide.webp','Общий вид оборудования на стадии изготовления',1440,482)}<figcaption>Изготовление оборудования</figcaption></figure><div class="tf-resources"><a class="text-link" href="/#about-era">Как проходит поставка и сопровождение ${arrow}</a><a class="text-link" href="/media">Фото оборудования ${arrow}</a></div></section></details>${projectContactStory()}</div></section>`;
+function lineRender(line,caption,id){
+ const {file,smallFile}=lineCoverFiles(line);
+ return `<figure class="tf-line-render">
+  ${photo({file,small:smallFile,alt:line.cardImageAlt||line.title},{sizes:'(max-width:899px) calc(100vw - 40px), 56vw'})}
+  <figcaption id="${id}">${escape(caption)}</figcaption>
+ </figure>`;
 }
 
-export function presentationTechnology() {
-  return `<div class="story technology-story tf-page" data-technology-final>${hero()}${rawMaterials()}${route()}${presentationStages.map(processStage).join('')}${outputsAndQuality()}${applications()}${standaloneEquipment()}${nextSteps()}</div>`;
+function operations(items,label){
+ return `<ol class="tf-operations" aria-label="${label}">${items.map(item=>`<li>${escape(item)}</li>`).join('')}</ol>`;
+}
+
+function engineeringFeature({slug,label,title,lead,body,link}){
+ const node=findNode(slug);
+ return `<article class="tf-engineering-feature">
+  <figure>${photo(equipmentImage(node),{sizes:'(max-width:899px) calc(100vw - 40px), 46vw'})}</figure>
+  <div>
+   <p class="eyebrow">${escape(label)}</p><h3>${escape(title)}</h3><p>${escape(lead)}</p>
+   ${body}<a class="text-link" href="${node.path}">${escape(link)} ${arrow}</a>
+  </div>
+ </article>`;
+}
+
+function dryStage(){
+ const rotor=engineeringFeature({
+  slug:'rotornyy-raspushitel',label:'КЛЮЧЕВОЙ УЗЕЛ СУХОЙ ОЧИСТКИ',title:'Роторный распушитель',
+  lead:'Раскрывает завязанные пакеты и слипшиеся слои, высвобождает включения и отделяет их в несколько ступеней.',
+  body:'<dl class="tf-rotor-functions"><div><dt>Барабан и внутренний ротор</dt><dd>Раскрытие и просев</dd></div><div><dt>Дисковая ступень</dt><dd>Отделение прилипших частиц</dd></div><div><dt>Воздушный отбор</dt><dd>Выделение лёгкой плёночной фракции</dd></div></dl>',
+  link:'Как устроен роторный распушитель',
+ });
+ return `<section class="tf-stage" id="dry-separation" data-page-progress-label="Сухая сепарация">
+  <div class="tf-section tf-dark era-indigo-surface">
+   <div class="tf-container">
+    <div class="tf-stage-lead">
+     ${heading('dry-separation-title','Максимум очистки. Без использования воды.',{kicker:'01 / СУХАЯ СЕПАРАЦИЯ',lead:'Плёнку сначала раскрывают. Так включения внутри пакетов и слипшихся слоёв становятся доступны для отделения. Сухая очистка убирает основную массу свободных минеральных, органических и объёмных включений до контакта с моющей средой.'})}
+     ${lineRender(dryExample,'Пример комплектации с сортировкой и прессованием','tech-line-02-title')}
+    </div>
+    <div class="tf-line-links">
+     <p>Три комплектации одной технологии под разные производственные задачи.</p>
+     <div>${dryLines.map(line=>`<a class="text-link" href="${line.path}" data-technology-line="${line.slug}">Сепарация ${line.number} ${arrow}</a>`).join('')}
+      <a class="text-link" href="/documents/${overview.document.file}" download="${escape(overview.document.downloadName)}">Визитка 02 · PDF <span aria-hidden="true">↓</span></a></div>
+    </div>
+    ${operations(['Предварительное измельчение','Распушение и высвобождение включений','Баллистическая сепарация','Роторная очистка','Накопление и выдача'],'Операции сухой сепарации')}
+    <p class="tf-caption">Порядок и дополнительные ступени зависят от комплектации. В базовом исполнении материал идёт общим потоком, в Сепарации 02 предусмотрены отбор фракций и отдельный маршрут основного микса.</p>
+    ${rotor}
+    <p class="tf-stage-note">Отделение включений до мойки снижает нагрузку на ножевые узлы и водный контур. Для Сепарации 02 пример составляет 1 500 кг/ч входной смеси и ориентир 750 кг/ч при засоре около 50%. Паспортная подача базового распушителя — 600–700 кг/ч. Фактический выпуск подтверждают на сырье с учётом комплектации.</p>
+   </div>
+  </div>
+  <div class="tf-dry-results"><div class="tf-container tf-dry-results-grid">
+   <div><h3>Что меняется после сухой очистки</h3><p>Примеры материала до и после стадии. Фотографии показывают разные образцы.</p></div>
+   <figure>${photo({file:'lines/separatsiya-01-mini/before.webp',small:'lines/separatsiya-01-mini/before-thumb.webp',alt:'Пример плёночных отходов до сухой сепарации'})}<figcaption>До сепарации</figcaption></figure>
+   <figure>${photo({file:'lines/separatsiya-01-mini/after-close.webp',small:'lines/separatsiya-01-mini/after-close-thumb.webp',alt:'Образец очищенной плёнки после сухой сепарации'})}<figcaption>После сухой очистки</figcaption></figure>
+  </div></div>
+ </section>`;
+}
+
+function washStage(){
+ const flotator=engineeringFeature({
+  slug:'plenochnyy-flotator',label:'ПЛЁНОЧНЫЙ ФЛОТАТОР',title:'Тонкослойная флотация плёнки',
+  lead:'Мойка, флотация и предварительный отжим объединены в одном узле. Линейный поток переносит всплывающую плёнку тонким слоем, а тонущие включения оседают в нижней спокойной зоне.',
+  body:'<p>В зоне флотации поток идёт без лопаточных валов. Горячая среда и трение плёнки о плёнку помогают удалить прилипшие примеси.</p><dl class="tf-flotator-metrics"><div><dt>до +95 °C</dt><dd>паспортный режим</dd></div><div><dt>до 40 мм</dt><dd>слой плёнки</dd></div><div><dt>240–250 м³/ч</dt><dd>внутренний циркуляционный поток флотатора</dd></div></dl><p class="tf-caption">Режим подбирают на партии. Подачу свежей воды рассчитывают отдельно по водному балансу.</p>',
+  link:'Как устроен плёночный флотатор',
+ });
+ return `<section class="tf-stage" id="hot-washing" data-page-progress-label="Горячая мойка">
+  <div class="tf-section tf-dark era-indigo-surface">
+   <div class="tf-container">
+    <div class="tf-stage-lead">
+     ${heading('hot-washing-title','Глубокая очистка начинается после сухой сепарации.',{kicker:'02 / ГОРЯЧАЯ МОЙКА',lead:'После сухой очистки остаются загрязнения на поверхности и в складках плёнки. Горячая моющая среда и механическое трение помогают отделить масла, жиры, клей и этикетки.'})}
+     <div>${lineRender(washLine,'Проектная визуализация линии горячей мойки','tech-hot-wash-title')}<a class="text-link tf-wash-link" href="${washLine.path}" data-technology-line="${washLine.slug}">Изучить линию горячей мойки ${arrow}</a></div>
+    </div>
+    ${operations(['Подготовка плёнки и защита оборудования','Мокрое измельчение','Горячая фрикционная мойка и флотация','Межступенчатый отжим и ополаскивание','Механическое обезвоживание и накопление','Выбранный товарный выход'],'Операции горячей мойки')}
+    <p class="tf-caption">Две ветки мокрого измельчения работают поочерёдно. Первый флотатор выполняет горячую мойку, второй — ополаскивание. Три центрифуги работают последовательно на маршруте обработки.</p>
+    ${flotator}
+   </div>
+  </div>
+  <div class="tf-wash-support">
+   <div class="tf-container tf-wash-support-grid">
+    <div class="tf-water">
+     <h3>Водооборот</h3>
+     <ol aria-label="Контур возврата рабочей жидкости"><li>Рабочая жидкость</li><li>Мойка</li><li>Сбор стоков</li><li>Очистка</li><li>Возврат жидкости</li></ol>
+     <dl class="tf-water-branches"><div><dt>Подпитка → контур</dt><dd>Объём по водному балансу.</dd></div><div><dt>Чистая вода → ополаскивание</dt><dd>Отдельная подача.</dd></div><div><dt>Очистка → осадок и примеси</dt><dd>Вывод из контура.</dd></div></dl>
+    </div>
+    <div class="tf-scale">
+     <h3>Масштабирование</h3>
+     <p>На входе мойки — до <strong>1,5 т/ч</strong> подготовленной плёнки. Номинал одного гранулятора — <strong>750 кг/ч</strong>. В расширенной конфигурации с двумя линиями сепарации и одной мойкой два гранулятора дают суммарный номинал до <strong>1,5 т/ч гранулы</strong> при достаточной подаче.</p>
+     <p class="tf-caption">Это проектные показатели отдельных стадий. Материальный баланс подтверждают на партии.</p>
+     ${washingConfigurations.map(option=>`<p class="tf-washing-option" data-washing-configuration="${option.id}">${escape(option.text)}</p>`).join('')}
+    </div>
+   </div>
+  </div>
+ </section>`;
+}
+
+function granulation(){
+ const granule={file:'presentation/granules.webp',alt:'Образец полиэтиленовой гранулы'};
+ return `<section class="tf-section tf-granulation-section" id="granulation" data-page-progress-label="Гранулирование">
+  <div class="tf-container tf-granulation">
+   <div>
+    ${heading('granulation-title','Качество полимера формируется до гранулятора.',{kicker:'03 / ГРАНУЛИРОВАНИЕ',lead:'Гранулятор превращает подготовленный полимер в товарную гранулу. Двухстадийная экструзия, фильтрация расплава и дегазация снижают количество остаточных включений и летучих компонентов. Основную очистку выполняют сухая сепарация и горячая мойка.'})}
+    <p class="tf-caption">Для интеграции собственного гранулятора проверяют влажность, фракцию, состав и производительность.</p>
+    <a class="text-link" href="${washLine.path}#quality">Гранулятор в составе линии мойки ${arrow}</a>
+   </div>
+   <figure class="tf-granulation-flow">
+    <div>${photo(mediaImage(hotWashMedia['raw-film-01']),{sizes:'(max-width:899px) 43vw, 270px'})}<span>Очищенная плёночная фракция</span></div>
+    ${stageArrow}
+    <div>${photo(granule)}<span>Полиэтиленовая гранула</span></div>
+    <figcaption>Подготовка плёнки → экструзия, фильтрация и дегазация → гранула</figcaption>
+   </figure>
+  </div>
+ </section>`;
+}
+
+function products(){
+ return `<section class="tf-section tf-products-section" id="products" data-page-progress-label="Товарная продукция">
+  <div class="tf-container">
+   ${heading('output-title','Один технологический цикл. Разные товарные продукты.',{lead:'Сухая стадия даёт очищенную плёнку. После глубокой очистки доступны отмытая плёнка, капсулят или гранула — в зависимости от выбранного маршрута.'})}
+   <div class="tf-products">
+    ${content.outputs.map(item=>`<article data-technology-output="${item.id}">
+      <figure>${photo(mediaImage(hotWashMedia[item.key]))}</figure>
+      <div><h3>${escape(item.title)}</h3><p>${escape(item.text)}</p></div>
+    </article>`).join('')}
+   </div>
+   <p class="tf-caption">Примеры трёх товарных форм из ТО горячей мойки, стр. 15. На фотографиях разные образцы материала.</p>
+  </div>
+ </section>`;
+}
+
+function quality(){
+ const q=content.quality;
+ return `<section class="tf-section tf-dark era-indigo-surface tf-quality" id="granule-quality" data-page-progress-label="Качество">
+  <div class="tf-container">
+   ${heading('granule-quality-title','Чистота, которая определяет возможности материала.',{lead:'Последовательная очистка позволяет приблизиться к характеристикам первичного сырья по отдельным контролируемым параметрам.'})}
+   <dl class="tf-quality-metrics">
+    <div><dt>${q.inclusions} <small>${q.inclusionsUnit}</small></dt><dd>Остаточные включения в плёнке после сухой сепарации и горячей мойки</dd><dd class="tf-caption">${q.mass} · ${q.percent}</dd></div>
+    <div><dt>${q.mfr} <small>${q.mfrUnit}</small></dt><dd>Целевой ПТР гранулы ПВД для плёнок и пакетов</dd><dd class="tf-caption">${q.conditions}</dd></div>
+    <div><dt>${q.washingLoss}</dt><dd>Ориентир потерь плёнки при мойке, от массы плёнки</dd></div>
+   </dl>
+   <p class="tf-caption tf-quality-note">${escape(q.note)}</p>
+   ${qualityVisual()}
+   ${disclosure('Почему появляются дефекты и как мы их предотвращаем',`
+     <p>Микровключение в расплаве ПЭ может проявиться точкой или локальным дефектом новой плёнки. Сухая очистка, горячая мойка и фильтрация расплава уменьшают риск. Результат проверяют на конкретном сырье и при пробной переработке.</p>
+     <p>PS и PVC несовместимы с рассматриваемыми потоками гибкого ПЭ. Вспененный полистирол может остаться отдельной фазой в расплаве. Характер дефекта зависит от примеси, концентрации, дисперсии и режима. Материал этикетки может содержать PVC. Моющуюся способность её клея оценивают отдельно.</p>
+     <p>Для плёночного применения согласуют ПТР при заданной температуре и нагрузке, влажность, включения, цвет и запах. При необходимости проводят пробный выдув.</p>`)}
+   ${disclosure('Методики и источники',`<ul class="tf-sources">${content.sources.map(source=>`<li><a href="${escape(source.url)}" target="_blank" rel="noopener noreferrer">${escape(source.title)} ${arrow}</a></li>`).join('')}</ul>`)}
+  </div>
+ </section>`;
+}
+
+function applications(){
+ const grid=group=>`<div class="tf-applications-grid">
+  ${content.applications.filter(item=>item.group===group).map(item=>`<article data-technology-application="${item.id}">
+   <figure>${photo({file:`technology/applications/${item.id}.webp`,small:`technology/applications/${item.id}-600.webp`,alt:item.alt})}</figure>
+   <div><h3>${escape(item.title)}</h3><p>${escape(item.text)}</p></div>
+  </article>`).join('')}
+ </div>`;
+ return `<section class="tf-section tf-applications" id="applications" data-page-progress-label="Применение">
+  <div class="tf-container">
+   ${heading('applications-title','Из вторичного полимера — в новую продукцию.',{lead:'Изделие выбирают по марке, составу и свойствам партии. Рецептуру проверяют в условиях производства.'})}
+   ${grid('polymer')}
+   <p class="tf-caption">Иллюстрации возможных направлений применения.</p>
+   <div class="tf-cycle">Очистить. Переработать. Использовать снова.</div>
+   ${disclosure('Альтернативные направления для подходящих фракций',`${grid('alternative')}<p>Это самостоятельные маршруты на специализированных установках. Применение зависит от состава фракции и требований проекта.</p>`)}
+  </div>
+ </section>`;
+}
+
+function control(){
+ return `<section class="tf-section tf-dark era-indigo-surface tf-control" id="control-story" data-page-progress-label="Управление КАИР">
+  <div class="tf-container tf-control-grid">
+   <div>
+    ${heading('control-title','Оборудование связано. Процесс под контролем.',{kicker:'УПРАВЛЕНИЕ КАИР',lead:'Система КАИР связывает технологические узлы и показывает состояние линии, настройки и сигналы в одном интерфейсе.'})}
+    <ul class="tf-control-functions">
+     <li>Согласование подачи и работы узлов</li><li>Память режимов под разное сырьё</li>
+     <li>Контроль состояния и защитные алгоритмы</li><li>Удалённый мониторинг в предусмотренном исполнении</li>
+    </ul>
+    <a class="text-link" href="/automation">Возможности КАИР ${arrow}</a>
+   </div>
+   ${kairMonitor(kairSlides,{...kairPresentation,autoplay:false})}
+  </div>
+ </section>`;
+}
+
+function standaloneEquipment(){
+ return `<div class="tf-standalone" id="standalone-equipment" aria-labelledby="standalone-title">
+  ${heading('standalone-title','Отдельные инженерные решения',{lead:'Узлы можно встроить в действующее производство или подобрать в составе новой линии.'})}
+  <div class="tf-equipment-grid">${content.equipment.map(item=>{
+   const node=findNode(item.slug);
+   return `<a href="${node.path}"><figure>${photo(equipmentImage(node),{sizes:'(max-width:599px) 43vw, 286px'})}</figure><div><h3>${escape(node.title)} ${arrow}</h3><p>${escape(item.function)}</p></div></a>`;
+  }).join('')}</div>
+  <a class="text-link" href="/catalog/equipment">Перейти в каталог узлов ${arrow}</a>
+ </div>`;
+}
+
+function nextSteps(){
+ const topic='Технология переработки плёночного сырья';
+ return `<section class="tf-section tf-next" id="technology-next" data-page-progress-label="От технологии к проекту">
+  <div class="tf-container">
+   ${standaloneEquipment()}
+   <div class="tf-next-panel tf-dark era-indigo-surface" id="detail-title">
+    <div id="discuss">
+     ${heading('discuss-title','Покажите ваше сырьё — подберём технологическое решение.',{lead:'Расскажите, с каким материалом вы работаете, какой объём перерабатываете и какой продукт хотите получать. Подберём последовательность операций, оборудование и подходящую комплектацию.'})}
+     <a class="button tf-gold-button" href="${projectRequestHref(topic)}">Обсудить технологию под ваше сырьё ${arrow}</a>
+    </div>
+    <details class="tf-details" id="about-era" data-keep-open><summary id="launch-title">Что понадобится для подбора</summary><div>
+     <ul>${technicalInputs.map(item=>`<li>${escape(item)}</li>`).join('')}<li>Фотографии, видео или образец материала</li></ul>
+     <a href="/#about-era">Как проходит поставка и сопровождение ${arrow}</a>
+    </div></details>
+    <nav class="tf-next-links" aria-label="Другие разделы проекта">
+     <a href="/catalog/lines">Все линии и комплексы ${arrow}</a><a href="/catalog/equipment">Отдельные узлы ${arrow}</a><a href="/economics">Экономика проекта ${arrow}</a>
+    </nav>
+   </div>
+  </div>
+ </section>`;
+}
+
+export function presentationTechnology(){
+ return `<div class="story technology-story tf-page" data-technology-final>
+  ${hero()}${outline()}${rawMaterials()}${contaminants()}${route()}${dryStage()}${washStage()}
+  ${granulation()}${products()}${quality()}${applications()}${control()}${nextSteps()}
+ </div>`;
 }

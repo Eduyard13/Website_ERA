@@ -104,8 +104,9 @@ test('Библиотека содержит три типа документов
  assert.ok(selected.some(m=>m.kind==='photo')&&selected.some(m=>m.kind==='scheme')&&selected.some(m=>m.kind==='visualization'));
  assert.ok(!JSON.stringify(gallery).includes('undefined')&&!selected.some(m=>m.file.endsWith('.pdf')));
 });
-test('Все прежние страницы вне каталога, библиотеки и медиатеки сохраняют утверждённый HTML',async()=>{
+test('Страницы вне обновлённых разделов сохраняют утверждённый HTML',async()=>{
  const baseline=JSON.parse(await readFile('test/fixtures/separation-03-preserved.json'));
- const protectedPages=Object.entries(basePath?baseline.pagesBase:baseline.pagesRoot).filter(([path])=>!lines.some(line=>line.enabled&&line.path===path));
+ const changedPages=new Set(['/technology',...lines.filter(line=>line.enabled).map(line=>line.path)]);
+ const protectedPages=Object.entries(basePath?baseline.pagesBase:baseline.pagesRoot).filter(([path])=>!changedPages.has(path));
  for(const [path,sha] of protectedPages)assert.equal(hash(render(path).replaceAll(release,'RELEASE')),sha,path);
 });
