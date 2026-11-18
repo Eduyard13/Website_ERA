@@ -94,11 +94,11 @@ with sync_playwright() as p:
   page.locator('[data-context-back]').click();page.wait_for_selector('[data-catalog-ready]');expect(page.locator('[data-line]:visible')).to_have_count(1)
   assert parse_qs(urlparse(page.url).query)['group']==['Мойка']
  load('/catalog/lines/');cards=page.locator('.line-card--complete')
- expect(cards).to_have_count(3)
+ expect(cards).to_have_count(4)
  a=page.locator('[data-line-id=separatsiya-02] .line-card-cover').bounding_box();c=page.locator('[data-line-id=moyka-plenki] .line-card-cover').bounding_box()
  assert abs(a['width']-c['width'])<1 and abs(a['height']-c['height'])<1 and abs(c['width']/c['height']-1.5)<.01
- assert page.locator('[data-line-id=separatsiya-03]').bounding_box()['height']<page.locator('[data-line-id=moyka-plenki]').bounding_box()['height']/2
- expect(page.locator('[data-line-id=separatsiya-03]')).to_have_js_property('tagName','ARTICLE')
+ expect(page.locator('[data-line-id=separatsiya-03]')).to_have_js_property('tagName','A')
+ expect(page.locator('[data-line-id=separatsiya-03]')).to_have_attribute('href',urlparse(base).path+'/catalog/lines/separatsiya-03')
  load('/technology/#hot-washing');link=page.locator('[data-technology-line=moyka-plenki]');expect(link).to_be_visible();link.click();page.wait_for_selector('[data-hot-wash-line]')
  page.locator('#photos [data-photo-gallery]').click();page.wait_for_selector('[data-gallery-ready=true]')
  page.wait_for_function('document.querySelector("[name=product]").value.endsWith("/catalog/lines/moyka-plenki")')

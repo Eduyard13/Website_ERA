@@ -7,8 +7,8 @@ import {selectGalleryItems,findGalleryItem,thumbnailWindow,durationLabel} from '
 import {renderGallery} from '../scripts/gallery.mjs';
 const data=buildGalleryData();
 
-test('Шоурум сохраняет исходные IDs и файлы, 12 узлов и три опубликованные линии',()=>{
- assert.equal(data.albums.filter(a=>a.collection==='nodes').length,12);assert.equal(data.albums.filter(a=>a.collection==='lines').length,3);
+test('Шоурум сохраняет исходные IDs и файлы, 12 узлов и четыре опубликованные линии',()=>{
+ assert.equal(data.albums.filter(a=>a.collection==='nodes').length,12);assert.equal(data.albums.filter(a=>a.collection==='lines').length,4);
  for(const node of nodes)assert.ok(data.albums.some(a=>a.id===node.slug));
  for(const line of lines.filter(l=>!l.enabled))assert.ok(!data.albums.some(a=>a.id===line.slug));
  for(const original of media){const m=findGalleryItem(data.items,original.id);assert.ok(m,original.id);assert.equal(m.file,original.file);}

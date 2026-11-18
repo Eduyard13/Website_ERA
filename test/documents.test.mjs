@@ -62,7 +62,7 @@ test('Все четыре проекции имеют происхождение
 test('Единая библиотека регистрирует все оригинальные PDF без дубликатов и с проверенными обложками',async()=>{
  const result=await validateDocumentLibrary();assert.equal(result.publicCount,publicLibraryDocuments.length);assert.ok(result.publicCount>=27);assert.deepEqual(result.unregistered,[]);
  assert.equal(new Set(publicLibraryDocuments.map(d=>d.file)).size,publicLibraryDocuments.length);assert.equal(new Set(publicLibraryDocuments.filter(d=>d.objectType==='node').map(d=>d.objectSlug)).size,12);
- assert.equal(new Set(publicLibraryDocuments.filter(d=>d.objectType==='line').map(d=>d.objectSlug)).size,3);
+ assert.equal(new Set(publicLibraryDocuments.filter(d=>d.objectType==='line').map(d=>d.objectSlug)).size,4);
  assert.ok(publicLibraryDocuments.filter(d=>d.category==='technical').length>=14);assert.ok(publicLibraryDocuments.filter(d=>d.category==='brochures').length>=13);
  for(const d of publicLibraryDocuments){assert.equal(covers[d.id].sourceSha256,d.sha256);assert.equal(covers[d.id].page,1);assert.ok(Math.max(d.coverWidth,d.coverHeight)<=840);}
 });
@@ -76,7 +76,7 @@ test('Пять маршрутов используют общий renderer, на
  }
  const main=render('/documents');assert.ok(main.includes('<h1>Инженерная библиотека ЭРА.</h1>'));
  assert.equal((main.match(/data-library-document="/g)||[]).length,documentLibrary.filter(d=>d.status==='published').length);assert.equal((main.match(/data-pdf-open="/g)||[]).length,publicLibraryDocuments.length);
- assert.ok(main.includes(publicLibraryDocuments.length+' документов'));assert.ok(main.includes('12 узлов'));assert.ok(main.includes('3 производственные линии'));
+ assert.ok(main.includes(publicLibraryDocuments.length+' документов'));assert.ok(main.includes('12 узлов'));assert.ok(main.includes('4 производственные линии'));
  for(const d of publicLibraryDocuments){assert.ok(main.includes(`href="${basePath}/documents/${d.file}"`));assert.ok(main.includes(`src="${basePath}/assets/${d.cover}"`));assert.ok(main.includes(`download="${d.downloadName}"`));}
  assert.ok(!render('/economics').includes('/document-library.js?'));assert.ok(!render('/catalog/equipment/ballisticheskiy-separator').includes('/document-library.js?'));
  for(const path of ['vendor/pdfjs/pdf.mjs','vendor/pdfjs/pdf.worker.mjs','vendor/fflate.js'])assert.ok((await readFile('dist/'+path)).length>1000);

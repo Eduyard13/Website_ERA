@@ -132,7 +132,7 @@ test('Данные карточки различают сырьё и расчё�
 test('Реестр содержит 12 уникальных узлов, линии расширяются через данные, медиа имеют реальные файлы',async()=>{
  const {nodes,lines,media}=await import('../content/catalog.mjs');
  assert.equal(nodes.length,12);assert.equal(new Set(nodes.map(n=>n.path)).size,12);
- assert.equal(lines.filter(l=>l.enabled).length,3);
+ assert.equal(lines.filter(l=>l.enabled).length,4);
  assert.equal(lines.filter(l=>l.group==='Сепарация').length,3);
  assert.equal(lines.filter(l=>l.group==='Мойка').length,1);
  assert.equal(nodes.filter(n=>n.status==='source-checked').length,12);
@@ -141,26 +141,24 @@ test('Реестр содержит 12 уникальных узлов, лини
  assert.ok(html.includes('data-gallery-item="predvaritelnyy-izmelchitel-photo-02"'));
  assert.ok(html.includes(`value="${basePath}${product}"`));
 });
-test('В каталоге четыре линии по порядку; открываются две сепарации и горячая мойка',async()=>{
+test('В каталоге четыре линии по порядку; открываются три сепарации и горячая мойка',async()=>{
  const {lines}=await import('../content/catalog.mjs');
  const {filmSeparationMedia}=await import('../content/film-separation.mjs');
  const html=await readFile('dist/catalog/lines/index.html','utf8');
  const cards=[...html.matchAll(/<(a|article)\b([^>]*\bdata-line\b[^>]*)>([\s\S]*?)<\/\1>/g)];
- assert.deepEqual(cards.map(([,tag])=>tag),['a','a','article','a']);
+ assert.deepEqual(cards.map(([,tag])=>tag),['a','a','a','a']);
  assert.deepEqual(cards.map(([,tag,attrs])=>/data-line-id="([^"]+)"/.exec(attrs)[1]),['separatsiya-01','separatsiya-02','separatsiya-03','moyka-plenki']);
  assert.ok(!html.includes('name="optional"'));
  assert.ok(!html.includes('data-optional='));
  assert.match(cards[1][2],new RegExp(`href="${basePath}/catalog/lines/separatsiya-02"`));
  assert.match(cards[1][3],/СЕПАРАЦИЯ 02 \/ ГОТОВАЯ ЛИНИЯ/);
  assert.equal([...cards[1][3].matchAll(/<dt>/g)].length,6);
- assert.ok(cards[2][3].includes('Линия сепарации и сушки плёнок и пакетов'));
- assert.ok(cards[2][3].includes('С сортировкой плёнок по видам'));
+ assert.ok(cards[2][3].includes('Линия сухой сепарации и сушки плёнок и пакетов'));
+ assert.ok(cards[2][3].includes('Расширенная комплектация с роторной сушкой, второй баллистикой и раздельным накоплением'));
  assert.ok(cards[3][3].includes('Линия горячей мойки плёнок и пакетов'));
- for(const card of [cards[2]]){
-  assert.ok(!/\b(?:href|tabindex|role)=/.test(card[2]));
-  assert.ok(!/<(?:a|button|input|select)\b/.test(card[3]));
-  assert.ok(card[3].includes('В разработке'));
- }
+ assert.match(cards[2][2],new RegExp(`href="${basePath}/catalog/lines/separatsiya-03"`));
+ assert.equal([...cards[2][3].matchAll(/<dt>/g)].length,6);
+ assert.ok(!cards[2][3].includes('В разработке'));
  const ready=lines.find(l=>l.slug==='separatsiya-02');
  assert.equal(ready.slug,'separatsiya-02');assert.equal(ready.status,'source-checked');
  const page=await readFile('dist'+ready.path+'/index.html','utf8');
@@ -264,7 +262,7 @@ test('Фото распределены по 11 узлам, а каталог и
  }
  const gallery=await readFile('dist/media/index.html','utf8');
  assert.ok(gallery.includes('data-default-type="all"'));
- assert.equal([...gallery.matchAll(/data-gallery-album-card="/g)].length,15);
+ assert.equal([...gallery.matchAll(/data-gallery-album-card="/g)].length,16);
  assert.ok(gallery.includes(`src="${basePath}/assets/photos/predvaritelnyy-izmelchitel/02-thumb.webp"`));
 });
 test('Краткие параметры содержат мощность, а схемы имеют свои легенды',async()=>{
@@ -570,7 +568,7 @@ test('Общий каталог предлагает две ветки, а ст�
  const equipment=await readFile('dist/catalog/equipment/index.html','utf8');
  assert.ok(equipment.includes('id="catalog-filters"'));
  assert.equal([...equipment.matchAll(/data-node data-title=/g)].length,nodes.length);
- assert.equal(lines.filter(l=>l.enabled&&l.group==='Сепарация').length,2);
+ assert.equal(lines.filter(l=>l.enabled&&l.group==='Сепарация').length,3);
  assert.equal(lines.filter(l=>l.enabled&&l.group==='Мойка').length,1);
  const home=await readFile('dist/index.html','utf8');
  assert.ok(home.includes('id="about-era"'));assert.ok(home.includes('Начните с нужных узлов.'));

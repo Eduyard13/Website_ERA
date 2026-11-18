@@ -5,6 +5,7 @@ import {renderGallery} from './gallery.mjs';
 import {renderEquipment,renderDocuments} from './equipment.mjs';
 import {renderFilmSeparation} from './line.mjs';
 import {renderHotFilmWashing} from './hot-film-washing.mjs';
+import {renderSeparationDrying} from './separation-drying.mjs';
 import {renderMiniFilmSeparation} from './mini-line.mjs';
 import {presentationTechnology,presentationAutomation} from './home.mjs';
 import {documentCategories} from '../content/document-manifest.mjs';
@@ -35,6 +36,7 @@ export function revisedPage(path){
  if(path==='/media')return renderGallery();
  const line=lines.find(l=>l.enabled&&l.path===path);
  if(line?.slug==='moyka-plenki')return renderHotFilmWashing(line);
+ if(line?.slug==='separatsiya-03')return renderSeparationDrying(line);
  if(line?.slug==='separatsiya-01')return renderMiniFilmSeparation(line);
  if(line?.slug==='separatsiya-02')return renderFilmSeparation(line);
  if(line)return `<div class="breadcrumbs"><a href="/">Главная</a> / <a href="/catalog/lines">Линии</a> / ${line.title}</div>`+intro(line.group+' / КОМПЛЕКТАЦИЯ',line.title,'Подберём последовательность операций и состав оборудования под ваше сырьё.')+`<section class="section"><div class="three-cols"><div><h3>Сырьё и результат</h3><p>Опишите материал, характер загрязнений и нужный конечный продукт.</p></div><div><h3>Состав и схема</h3><p>Выберем узлы подготовки, очистки и дальнейшей переработки для вашей задачи.</p></div><div><h3>Размещение</h3><p>При подборе учтём площадку, доступные ресурсы и доступ для обслуживания.</p></div></div><div class="actions">${link('Обсудить комплектацию','mailto:edkom.office@mail.ru?subject='+encodeURIComponent('Запрос ЭРА: '+line.title))}</div></section>`;

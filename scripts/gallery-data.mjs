@@ -4,6 +4,7 @@ import {equipmentVideos} from '../content/equipment-videos.mjs';
 import {filmSeparationMedia} from '../content/film-separation.mjs';
 import {miniFilmSeparationMedia} from '../content/mini-film-separation.mjs';
 import {hotWashGalleryMedia} from '../content/hot-film-washing.mjs';
+import {separation03GalleryMedia} from '../content/separation-03.mjs';
 import {galleryCollections,galleryOverrides,galleryAdditionalMedia,galleryProjectSlots} from '../content/gallery-collections.mjs';
 import {projectMedia} from './project-media.mjs';
 import {imageSize} from './image-size.mjs';
@@ -35,7 +36,7 @@ function homepageRecords(){
 export function buildGalleryData({baseMedia=media,additional=galleryAdditionalMedia,fileExists=exists}={}){
  const byFile=new Map(),byId=new Map(),missing=[];
  const enabled=lines.filter(line=>line.enabled);
- const sourceLines=[...Object.values(miniFilmSeparationMedia),...Object.values(filmSeparationMedia),...hotWashGalleryMedia].filter(m=>enabled.some(l=>l.path===m.product));
+ const sourceLines=[...Object.values(miniFilmSeparationMedia),...Object.values(filmSeparationMedia),...hotWashGalleryMedia,...separation03GalleryMedia].filter(m=>enabled.some(l=>l.path===m.product));
  const videoMetadata=new Map(equipmentVideos.filter(v=>v.ready).map(v=>[v.file,v]));
  const covers=enabled.filter(l=>l.cardFile).map(l=>({id:l.slug+'-catalog-cover',type:'visualization',file:l.cardFile,thumbnail:l.cardSmallFile,title:l.cardImageAlt||'Компоновка линии '+l.number,product:l.path,productTitle:l.slug==='moyka-plenki'?l.cardTitle:'Сепарация '+l.number,topic:'Линия целиком',source:'Подготовленная визуализация ЭРА · каталог линий',coverPriority:0}));
  const sources=[...baseMedia,...homepageRecords(),...sourceLines,...covers,...additional];

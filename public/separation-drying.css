@@ -1,0 +1,29 @@
+/* Separation 03 uses the existing full-line template and original PDF artwork. */
+.film-line--drying .sd-route{color:var(--era-gold-dark);font-size:13px;line-height:1.65}
+.film-line--drying .sd-specification{min-width:680px;width:100%}
+.film-line--drying .sd-specification td{vertical-align:top}
+.film-line--drying .sd-specification th[scope=row]{min-width:170px}
+.film-line--drying .sd-specification button{min-height:44px;min-width:48px;padding:8px;color:var(--era-blue);background:var(--era-beige);border:1px solid var(--line);border-radius:4px;white-space:nowrap;cursor:pointer}
+.film-line--drying .sd-specification button:focus-visible{outline:2px solid var(--era-gold-dark);outline-offset:3px}
+.film-line--drying .sd-specification .line-note{font-size:12px}
+.film-line--drying .sd-key-units{display:grid;gap:28px}
+.film-line--drying .sd-key-units>article{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);gap:28px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:28px}
+.film-line--drying .sd-key-units>article:last-child{border-bottom:0;padding-bottom:0}
+.film-line--drying .sd-key-units h3{font-size:24px;line-height:1.3}
+.film-line--drying .sd-key-units strong{color:var(--era-gold-dark)}
+.film-line--drying .sd-key-units .media-open{display:block;aspect-ratio:4/3}
+.film-line--drying .sd-key-units img{width:100%;height:100%;object-fit:contain}
+.film-line--drying .sd-dimension-panel{height:100%}
+.film-line--drying .line-dimensions-stage .line-image{border:0}
+.film-line--drying .sd-product-shipping{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;align-items:center;margin-top:36px}
+.film-line--drying .line-document-grid{grid-template-columns:minmax(0,1fr);max-width:980px}
+.film-line--drying #raw-materials .line-raw-grid .line-image{aspect-ratio:auto}
+.film-line--drying #raw-materials .line-raw-grid .media-open{aspect-ratio:16/9;display:block}
+.film-line--drying #raw-materials .line-raw-grid img{width:100%;height:100%;object-fit:contain}
+.film-line--drying #line03-construction .guide-end{display:none}
+.film-line--drying #line03-construction .diagram-pin span{background:transparent;border-color:transparent;color:transparent;box-shadow:none}
+.film-line--drying #line03-construction .diagram-pin:is(:hover,[aria-pressed=true]) span{background:transparent;color:transparent;border-color:var(--era-gold);box-shadow:0 0 0 3px #c6a43b55}
+@media(max-width:800px){
+ .film-line--drying .sd-key-units>article,.film-line--drying .sd-product-shipping{grid-template-columns:minmax(0,1fr)}
+ .film-line--drying .sd-key-units .line-image{max-width:600px;width:100%}
+}

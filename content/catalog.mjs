@@ -12,6 +12,7 @@ import {equipmentVideos} from './equipment-videos.mjs';
 import {filmSeparation} from './film-separation.mjs';
 import {miniFilmSeparation} from './mini-film-separation.mjs';
 import {hotFilmWashing} from './hot-film-washing.mjs';
+import {separation03} from './separation-03.mjs';
 export const categories=['Подготовка и подача','Сухая сепарация и очистка','Измельчение и мойка','Обезвоживание','Очистка рабочей жидкости','Фасовка'];
 const rows=[
  ['predvaritelnyy-izmelchitel','Предварительный измельчитель',0,'Растюковка, разрыв и крупное измельчение перед дальнейшей переработкой.'],
@@ -47,9 +48,9 @@ export const nodes=rows.map(([slug,title,category])=>{
 export const lines=[
  {slug:'separatsiya-01',number:'01',title:'Сепарация 01',group:'Сепарация',enabled:true},
  {slug:'separatsiya-02',number:'02',title:'Сепарация 02',group:'Сепарация',enabled:true},
- {slug:'separatsiya-03',number:'03',title:'Линия сепарации и сушки плёнок и пакетов',cardDescription:'С сортировкой плёнок по видам',group:'Сепарация',enabled:false},
+ {slug:'separatsiya-03',number:'03',title:'Линия сухой сепарации и сушки плёнок и пакетов',group:'Сепарация',enabled:true},
  {slug:'moyka-plenki',title:'Линия горячей мойки плёнок и пакетов',group:'Мойка',enabled:true}
-].map(l=>({...l,path:'/catalog/lines/'+l.slug,status:'draft',equipment:[],optionalEquipment:[],documents:[],...(l.slug==='separatsiya-02'?filmSeparation:l.slug==='separatsiya-01'?miniFilmSeparation:l.slug==='moyka-plenki'?hotFilmWashing:{})}));
+].map(l=>({...l,path:'/catalog/lines/'+l.slug,status:'draft',equipment:[],optionalEquipment:[],documents:[],...(l.slug==='separatsiya-02'?filmSeparation:l.slug==='separatsiya-01'?miniFilmSeparation:l.slug==='moyka-plenki'?hotFilmWashing:l.slug==='separatsiya-03'?separation03:{})}));
 const equipmentMedia=[
  {id:'assembly',title:'Сборка узла со стороны привода',type:'photo',topic:'Сборка',file:'assembly.webp'},
  {id:'mechanism',title:'Сборка механизма подвижной щеки',type:'photo',topic:'Сборка',file:'mechanism.webp'},

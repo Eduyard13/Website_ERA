@@ -1,0 +1,785 @@
+{
+  "source": {
+    "file": "lines/separatsiya-03/layout-numbered.webp",
+    "width": 1452,
+    "height": 830,
+    "page": 6,
+    "sha256": "95703914343c25c6a9c5ae2af3edcd4c97172ed159726c0985728363b32c1de5"
+  },
+  "method": "Source circles detected by their original navy/gold fill and manually checked against figure 2. Transparent hit areas preserve printed numbers and leaders.",
+  "positions": [
+    {
+      "number": 1,
+      "instances": [
+        {
+          "id": "1-1",
+          "badge": [
+            813.0,
+            72.0
+          ],
+          "sourceBBox": [
+            793,
+            52,
+            833,
+            92
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "instances": [
+        {
+          "id": "2-1",
+          "badge": [
+            919.0,
+            126.0
+          ],
+          "sourceBBox": [
+            899,
+            106,
+            939,
+            146
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "instances": [
+        {
+          "id": "3-1",
+          "badge": [
+            996.0,
+            174.0
+          ],
+          "sourceBBox": [
+            976,
+            154,
+            1016,
+            194
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "instances": [
+        {
+          "id": "4-1",
+          "badge": [
+            1093.0,
+            233.0
+          ],
+          "sourceBBox": [
+            1073,
+            213,
+            1113,
+            253
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "instances": [
+        {
+          "id": "5-1",
+          "badge": [
+            1190.0,
+            291.0
+          ],
+          "sourceBBox": [
+            1170,
+            271,
+            1210,
+            311
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "instances": [
+        {
+          "id": "6-1",
+          "badge": [
+            1294.0,
+            357.0
+          ],
+          "sourceBBox": [
+            1274,
+            337,
+            1314,
+            377
+          ],
+          "instanceLabel": "Первая баллистическая ступень"
+        },
+        {
+          "id": "6-2",
+          "badge": [
+            720.0,
+            651.0
+          ],
+          "sourceBBox": [
+            700,
+            631,
+            740,
+            671
+          ],
+          "instanceLabel": "Вторая баллистическая ступень"
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "instances": [
+        {
+          "id": "7-1",
+          "badge": [
+            1401.0,
+            428.0
+          ],
+          "sourceBBox": [
+            1381,
+            408,
+            1421,
+            448
+          ],
+          "instanceLabel": "Первая баллистическая ступень"
+        },
+        {
+          "id": "7-2",
+          "badge": [
+            635.0,
+            592.0
+          ],
+          "sourceBBox": [
+            615,
+            572,
+            655,
+            612
+          ],
+          "instanceLabel": "Вторая баллистическая ступень"
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "instances": [
+        {
+          "id": "8-1",
+          "badge": [
+            1415.0,
+            622.0
+          ],
+          "sourceBBox": [
+            1395,
+            602,
+            1435,
+            642
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "instances": [
+        {
+          "id": "9-1",
+          "badge": [
+            1347.0,
+            662.0
+          ],
+          "sourceBBox": [
+            1327,
+            642,
+            1367,
+            682
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "instances": [
+        {
+          "id": "10-1",
+          "badge": [
+            1289.0,
+            701.0
+          ],
+          "sourceBBox": [
+            1269,
+            681,
+            1309,
+            721
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "instances": [
+        {
+          "id": "11-1",
+          "badge": [
+            800.0,
+            702.0
+          ],
+          "sourceBBox": [
+            780,
+            682,
+            820,
+            722
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "instances": [
+        {
+          "id": "12-1",
+          "badge": [
+            563.0,
+            544.0
+          ],
+          "sourceBBox": [
+            543,
+            524,
+            583,
+            564
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "instances": [
+        {
+          "id": "13-1",
+          "badge": [
+            853.0,
+            357.0
+          ],
+          "sourceBBox": [
+            833,
+            337,
+            873,
+            377
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "instances": [
+        {
+          "id": "14-1",
+          "badge": [
+            809.0,
+            326.0
+          ],
+          "sourceBBox": [
+            789,
+            306,
+            829,
+            346
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "instances": [
+        {
+          "id": "15-1",
+          "badge": [
+            541.0,
+            118.0
+          ],
+          "sourceBBox": [
+            521,
+            98,
+            561,
+            138
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 16,
+      "instances": [
+        {
+          "id": "16-1",
+          "badge": [
+            495.0,
+            90.0
+          ],
+          "sourceBBox": [
+            475,
+            70,
+            515,
+            110
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "instances": [
+        {
+          "id": "17-1",
+          "badge": [
+            411.0,
+            494.0
+          ],
+          "sourceBBox": [
+            391,
+            474,
+            431,
+            514
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 18,
+      "instances": [
+        {
+          "id": "18-1",
+          "badge": [
+            685.0,
+            233.0
+          ],
+          "sourceBBox": [
+            665,
+            213,
+            705,
+            253
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 19,
+      "instances": [
+        {
+          "id": "19-1",
+          "badge": [
+            386.0,
+            33.0
+          ],
+          "sourceBBox": [
+            366,
+            13,
+            406,
+            53
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 20,
+      "instances": [
+        {
+          "id": "20-1",
+          "badge": [
+            293.0,
+            212.0
+          ],
+          "sourceBBox": [
+            273,
+            192,
+            313,
+            232
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 21,
+      "instances": [
+        {
+          "id": "21-1",
+          "badge": [
+            307.0,
+            428.0
+          ],
+          "sourceBBox": [
+            287,
+            408,
+            327,
+            448
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 22,
+      "instances": [
+        {
+          "id": "22-1",
+          "badge": [
+            249.0,
+            393.0
+          ],
+          "sourceBBox": [
+            229,
+            373,
+            269,
+            413
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 23,
+      "instances": [
+        {
+          "id": "23-1",
+          "badge": [
+            200.0,
+            246.0
+          ],
+          "sourceBBox": [
+            180,
+            226,
+            220,
+            266
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 24,
+      "instances": [
+        {
+          "id": "24-1",
+          "badge": [
+            137.0,
+            263.0
+          ],
+          "sourceBBox": [
+            117,
+            243,
+            157,
+            283
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 25,
+      "instances": [
+        {
+          "id": "25-1",
+          "badge": [
+            1119.0,
+            478.0
+          ],
+          "sourceBBox": [
+            1099,
+            458,
+            1139,
+            498
+          ],
+          "instanceLabel": "Первая баллистическая ступень"
+        },
+        {
+          "id": "25-2",
+          "badge": [
+            976.0,
+            448.0
+          ],
+          "sourceBBox": [
+            956,
+            428,
+            996,
+            468
+          ],
+          "instanceLabel": "Вторая баллистическая ступень"
+        }
+      ]
+    },
+    {
+      "number": 26,
+      "instances": [
+        {
+          "id": "26-1",
+          "badge": [
+            1059.0,
+            447.0
+          ],
+          "sourceBBox": [
+            1039,
+            427,
+            1079,
+            467
+          ],
+          "instanceLabel": "Первая баллистическая ступень"
+        },
+        {
+          "id": "26-2",
+          "badge": [
+            919.0,
+            403.0
+          ],
+          "sourceBBox": [
+            899,
+            383,
+            939,
+            423
+          ],
+          "instanceLabel": "Вторая баллистическая ступень"
+        }
+      ]
+    },
+    {
+      "number": 27,
+      "instances": [
+        {
+          "id": "27-1",
+          "badge": [
+            1119.0,
+            795.0
+          ],
+          "sourceBBox": [
+            1099,
+            775,
+            1139,
+            815
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 28,
+      "instances": [
+        {
+          "id": "28-1",
+          "badge": [
+            1242.0,
+            728.0
+          ],
+          "sourceBBox": [
+            1222,
+            708,
+            1262,
+            748
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 29,
+      "instances": [
+        {
+          "id": "29-1",
+          "badge": [
+            1045.0,
+            502.0
+          ],
+          "sourceBBox": [
+            1025,
+            482,
+            1065,
+            522
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 30,
+      "instances": [
+        {
+          "id": "30-1",
+          "badge": [
+            636.0,
+            196.0
+          ],
+          "sourceBBox": [
+            616,
+            176,
+            656,
+            216
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 31,
+      "instances": [
+        {
+          "id": "31-1",
+          "badge": [
+            443.0,
+            61.0
+          ],
+          "sourceBBox": [
+            423,
+            41,
+            463,
+            81
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 32,
+      "instances": [
+        {
+          "id": "32-1",
+          "badge": [
+            302.0,
+            33.0
+          ],
+          "sourceBBox": [
+            282,
+            13,
+            322,
+            53
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 33,
+      "instances": [
+        {
+          "id": "33-1",
+          "badge": [
+            208.0,
+            33.0
+          ],
+          "sourceBBox": [
+            188,
+            13,
+            228,
+            53
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 34,
+      "instances": [
+        {
+          "id": "34-1",
+          "badge": [
+            1189.0,
+            762.0
+          ],
+          "sourceBBox": [
+            1169,
+            742,
+            1209,
+            782
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 35,
+      "instances": [
+        {
+          "id": "35-1",
+          "badge": [
+            583.0,
+            151.0
+          ],
+          "sourceBBox": [
+            563,
+            131,
+            603,
+            171
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 36,
+      "instances": [
+        {
+          "id": "36-1",
+          "badge": [
+            761.0,
+            233.0
+          ],
+          "sourceBBox": [
+            741,
+            213,
+            781,
+            253
+          ],
+          "instanceLabel": ""
+        }
+      ]
+    },
+    {
+      "number": 37,
+      "instances": [
+        {
+          "id": "37-1",
+          "badge": [
+            747.5,
+            34.0
+          ],
+          "sourceBBox": [
+            728,
+            14,
+            767,
+            54
+          ],
+          "instanceLabel": "Подача сырья"
+        },
+        {
+          "id": "37-2",
+          "badge": [
+            62.0,
+            290.0
+          ],
+          "sourceBBox": [
+            42,
+            270,
+            82,
+            310
+          ],
+          "instanceLabel": "Выдача тюков и тары"
+        }
+      ]
+    }
+  ]
+}

@@ -16,10 +16,10 @@ import {imageSize} from '../scripts/image-size.mjs';
 const hash=value=>createHash('sha256').update(value).digest('hex');
 const line=lines.find(l=>l.slug==='moyka-plenki');
 const release=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8')).version;
-test('Горячая мойка публикуется третьей линией, Сепарация 03 остаётся черновиком',()=>{
+test('Горячая мойка сохраняет показатели после публикации Сепарации 03',()=>{
  assert.ok(line.enabled);assert.equal(line.status,'source-checked');assert.equal(line.group,'Мойка');assert.equal(line.number,undefined);
  assert.ok(routes.includes('/catalog/lines/moyka-plenki'));
- assert.equal(lines.filter(l=>l.enabled).length,3);assert.equal(lines.find(l=>l.slug==='separatsiya-03').enabled,false);
+ assert.equal(lines.filter(l=>l.enabled).length,4);assert.equal(lines.find(l=>l.slug==='separatsiya-03').enabled,true);
  assert.equal(hotFilmWashing.cardMetrics.length,6);
  assert.deepEqual(hotFilmWashing.cardMetrics.map(m=>[m.label,m.value,m.unit]),[
   ['Входной поток','1 500','кг/ч'],['Выпуск гранулы','750','кг/ч'],['Установленная мощность','1 271,70','кВт'],
@@ -45,7 +45,7 @@ test('Все 44 WebP, размеры, исходный PDF и единствен
  const pdf=await readFile('public/documents/'+hotWashDocument.file);
  assert.equal(pdf.length,4430978);assert.equal(hash(pdf),'5648714c2f667ddb9d2168803aac50faf927fedbecb5147deebb57b0186a704a');assert.equal(hotWashDocument.pages,22);
  const docs=publicLibraryDocuments.filter(d=>d.objectSlug==='moyka-plenki');assert.equal(docs.length,1);assert.equal(docs[0].category,'technical');
- assert.equal(publicLibraryDocuments.length,29);
+ assert.equal(publicLibraryDocuments.length,30);
  assert.equal(hash(await readFile('public/assets/'+manifest.documentCover.file)),manifest.documentCover.sha256);
  assert.equal(manifest.documentCover.sourceSha256,hotWashDocument.sha256);
 });
@@ -106,7 +106,7 @@ test('Новая страница использует общий fit-монит
 });
 test('Медиатека объединяет повторно используемые фотографии, считает материалы и выделяет новую линию',()=>{
  const gallery=buildGalleryData(),items=selectGalleryItems(gallery.items,{album:'moyka-plenki'});
- assert.equal(items.length,22);assert.equal(gallery.albums.filter(a=>a.collection==='lines').length,3);
+ assert.equal(items.length,22);assert.equal(gallery.albums.filter(a=>a.collection==='lines').length,4);
  assert.equal(new Set(gallery.items.map(i=>i.file)).size,gallery.items.length);
  for(const m of Object.values(hotWashMedia))assert.ok(m.page===null||m.page>=1&&m.page<=22);
  for(const id of ['moyka-plenki-centrifuge','moyka-plenki-flotator','moyka-plenki-raw-film-02','moyka-plenki-kair-overview','moyka-plenki-kair-parameters']){

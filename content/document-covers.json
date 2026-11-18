@@ -230,5 +230,13 @@
     "sha256": "64db5d26f943950e7f3e9f082d141970d12f94c70ddfc6e10b0041b3f1f0d4db",
     "sourceSha256": "5648714c2f667ddb9d2168803aac50faf927fedbecb5147deebb57b0186a704a",
     "page": 1
+  },
+  "separatsiya-03-technical": {
+    "width": 594,
+    "height": 840,
+    "bytes": 53464,
+    "sha256": "fb44cc8869eccfd96c5703949786092ec6e5d754a04f1f5c97c5daef86a63668",
+    "sourceSha256": "2b399241ee41e5a792d87ab051f1d764f65faa1071b27bc1950a75024a5b52f6",
+    "page": 1
   }
 }
