@@ -69,7 +69,7 @@ try{
   await command('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:width<768});
   await load();
   await evaluate(`Promise.all([...document.querySelectorAll('[data-technology-final] img[src]')].map(i=>{i.loading='eager';return i.decode().catch(()=>{});} ))`);
-  const s=await snapshot();assert.deepEqual(s.sections,expected);assert.equal(s.h1,1);assert.equal(s.rail,10);assert.equal(s.feedstock,9);assert.equal(s.rows,9);assert.equal(s.visibleRows,9);assert.equal(s.outputs,3);assert.equal(s.applications,5);assert.equal(s.line,1);assert.equal(s.washing,2);assert.equal(s.granulationLinks,0);assert.ok(!s.overflow,'Layout '+width);assert.deepEqual(s.broken,[]);
+  const s=await snapshot();assert.deepEqual(s.sections,expected);assert.equal(s.h1,1);assert.equal(s.rail,10);assert.equal(s.feedstock,9);assert.equal(s.rows,9);assert.equal(s.visibleRows,9);assert.equal(s.outputs,3);assert.equal(s.applications,5);assert.equal(s.line,2);assert.equal(s.washing,2);assert.equal(s.granulationLinks,0);assert.ok(!s.overflow,'Layout '+width);assert.deepEqual(s.broken,[]);
   for(const value of ['0,8–1,2','190 °C / 2,16 кг','30–70','ppm','30–70 г/т','0,003–0,007%'])assert.ok(s.quality.includes(value),value);
   await load('#material-balance');
   await wait(`document.querySelector('#material-balance').getClientRects().length>0`);

@@ -150,7 +150,7 @@
 @media(prefers-reduced-motion:reduce){:is(.film-line--full,.mini-line) .line-unit-card,:is(.film-line--full,.mini-line) .line-unit-card::after{transition:none}}
 
 /* Source-derived transparent models and full vector leaders: these two blocks only. */
-:is(#line01-construction,#line02-construction) .diagram-canvas {
+:is(#line01-construction,#line02-construction,#hotwash-construction) .diagram-canvas {
  background-color: #e4e9ed;
  background-image:
   linear-gradient(#263c5110 1px, transparent 1px),
@@ -160,31 +160,31 @@
  border-color: #aebac4;
  box-shadow: inset 0 0 36px #243b5011;
 }
-:is(#line01-construction,#line02-construction) .diagram-projection{container-type:inline-size}
-:is(#line01-construction,#line02-construction) .diagram-pin{width:min(44px,3.4%);height:auto;aspect-ratio:1;min-width:0;min-height:0}
-:is(#line01-construction,#line02-construction) .diagram-pin span{width:100%;max-width:32px;height:auto;aspect-ratio:1;font-size:clamp(5.5px,1cqw,12px);line-height:1}
-:is(#line01-construction,#line02-construction) .diagram-part-region{pointer-events:none}
-:is(#line01-construction,#line02-construction) .guide-line{stroke:#5f6f80;stroke-width:.75;opacity:.7;fill:none;vector-effect:non-scaling-stroke;pointer-events:none}
-:is(#line01-construction,#line02-construction) .guide-end{fill:#7b8794;opacity:.8;pointer-events:none}
-:is(#line01-construction,#line02-construction) .guide-hit{stroke:transparent;stroke-width:9;fill:none;vector-effect:non-scaling-stroke;pointer-events:stroke;cursor:pointer}
-:is(#line01-construction,#line02-construction) [data-active=true] .guide-line{stroke:var(--era-gold-dark);stroke-width:1.85;opacity:1}
-:is(#line01-construction,#line02-construction) [data-active=true] .guide-end{fill:var(--era-gold-dark);opacity:1}
-:is(#line01-construction,#line02-construction) .line-callout-tooltip{position:fixed;z-index:100;display:block;max-width:calc(100vw - 16px);padding:12px 14px;border:1px solid #c6a43b99;border-radius:6px;background:var(--era-blue);color:var(--era-cream);box-shadow:0 8px 24px #10132e24;pointer-events:auto;text-align:left;overflow-wrap:break-word}
-:is(#line01-construction,#line02-construction) .line-details-copy {
+:is(#line01-construction,#line02-construction,#hotwash-construction) .diagram-projection{container-type:inline-size}
+:is(#line01-construction,#line02-construction,#hotwash-construction) .diagram-pin{width:min(44px,3.4%);height:auto;aspect-ratio:1;min-width:0;min-height:0}
+:is(#line01-construction,#line02-construction,#hotwash-construction) .diagram-pin span{width:100%;max-width:32px;height:auto;aspect-ratio:1;font-size:clamp(5.5px,1cqw,12px);line-height:1}
+:is(#line01-construction,#line02-construction,#hotwash-construction) .diagram-part-region{pointer-events:none}
+:is(#line01-construction,#line02-construction,#hotwash-construction) .guide-line{stroke:#5f6f80;stroke-width:.75;opacity:.7;fill:none;vector-effect:non-scaling-stroke;pointer-events:none}
+:is(#line01-construction,#line02-construction,#hotwash-construction) .guide-end{fill:#7b8794;opacity:.8;pointer-events:none}
+:is(#line01-construction,#line02-construction,#hotwash-construction) .guide-hit{stroke:transparent;stroke-width:9;fill:none;vector-effect:non-scaling-stroke;pointer-events:stroke;cursor:pointer}
+:is(#line01-construction,#line02-construction,#hotwash-construction) [data-active=true] .guide-line{stroke:var(--era-gold-dark);stroke-width:1.85;opacity:1}
+:is(#line01-construction,#line02-construction,#hotwash-construction) [data-active=true] .guide-end{fill:var(--era-gold-dark);opacity:1}
+:is(#line01-construction,#line02-construction,#hotwash-construction) .line-callout-tooltip{position:fixed;z-index:100;display:block;max-width:calc(100vw - 16px);padding:12px 14px;border:1px solid #c6a43b99;border-radius:6px;background:var(--era-blue);color:var(--era-cream);box-shadow:0 8px 24px #10132e24;pointer-events:auto;text-align:left;overflow-wrap:break-word}
+:is(#line01-construction,#line02-construction,#hotwash-construction) .line-details-copy {
  position: relative;
 }
-:is(#line01-construction,#line02-construction) .line-callout-tooltip[data-placement="dock"] {
+:is(#line01-construction,#line02-construction,#hotwash-construction) .line-callout-tooltip[data-placement="dock"] {
  position: absolute;
  inset: 0 auto auto 0;
  width: min(330px, 100%);
  max-width: 100%;
  box-shadow: none;
 }
-:is(#line01-construction,#line02-construction) .line-details-copy:has(> .line-callout-tooltip[data-placement="dock"]:not([hidden])) > p {
+:is(#line01-construction,#line02-construction,#hotwash-construction) .line-details-copy:has(> .line-callout-tooltip[data-placement="dock"]:not([hidden])) > p {
  visibility: hidden;
 }
-:is(#line01-construction,#line02-construction) .line-callout-tooltip>strong{display:block;color:#f2df9c;font-size:14px;font-weight:500;line-height:1.4}
-.film-line :is(#line01-construction,#line02-construction) .line-callout-tooltip>p{font-size:13px;line-height:1.55;color:var(--era-cream);margin:6px 0 0;max-width:none}
+:is(#line01-construction,#line02-construction,#hotwash-construction) .line-callout-tooltip>strong{display:block;color:#f2df9c;font-size:14px;font-weight:500;line-height:1.4}
+.film-line :is(#line01-construction,#line02-construction,#hotwash-construction) .line-callout-tooltip>p{font-size:13px;line-height:1.55;color:var(--era-cream);margin:6px 0 0;max-width:none}
 
 /* Mini-line source dimensions and source-sheet viewport, with the same finish. */
 .mini-line [data-hero-finish="titanium-gallery-mini"] .media-open{aspect-ratio:1500/1010}

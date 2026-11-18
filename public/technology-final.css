@@ -245,3 +245,17 @@
 .tf-preparation-photo figcaption{margin-top:12px}
 @media(min-width:1200px){.tf-applications-alternative>article{display:grid;grid-template-columns:.9fr 1.1fr;align-items:center}}
 @media(max-width:767px){.tf-project-parameters,.tf-project-preparation>ul{grid-template-columns:1fr}.tf-project-preparation>ul{gap:12px}.tf-compare-link{font-size:13px}}
+
+#hot-washing .tf-hot-wash-card{display:grid;grid-template-columns:160px minmax(0,1fr);gap:20px;border:1px solid var(--era-border);border-radius:6px;padding:18px;margin-top:20px;background:var(--era-cream);min-width:0}
+#hot-washing .tf-hot-wash-image{align-self:start;min-width:0;aspect-ratio:3/2;background:var(--era-deep)}
+#hot-washing .tf-hot-wash-image img{width:100%;height:100%;object-fit:contain;transform:none}
+#hot-washing .tf-hot-wash-card .eyebrow{font-size:10px;margin:0 0 10px}
+#hot-washing .tf-hot-wash-card h3{font-size:23px;line-height:1.25;margin:0 0 16px}
+#hot-washing .tf-hot-wash-card dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:0 0 16px}
+#hot-washing .tf-hot-wash-card dl>div{min-width:0;border-top:1px solid var(--era-border);padding-top:10px}
+#hot-washing .tf-hot-wash-card dt{font-size:11px;line-height:1.5;color:var(--muted)}
+#hot-washing .tf-hot-wash-card dd{font-size:22px;line-height:1.3;margin:5px 0}
+#hot-washing .tf-hot-wash-card dd small{font-size:12px;white-space:nowrap}
+#hot-washing .tf-hot-wash-card dl p{font-size:11px;line-height:1.5;margin:0}
+#hot-washing .tf-hot-wash-card:focus-visible{outline:2px solid var(--era-gold-dark);outline-offset:4px}
+@media(max-width:599px){#hot-washing .tf-hot-wash-card{grid-template-columns:minmax(0,1fr);padding:14px;gap:16px}#hot-washing .tf-hot-wash-image{max-width:260px}#hot-washing .tf-hot-wash-card h3{font-size:21px}}

@@ -222,5 +222,13 @@
     "sha256": "43c916862d35113477f826c98d0374e195cda103863c5c647f58c6ba5a529f87",
     "sourceSha256": "8557bce36e8963146ec9fd33d11295c4483e2e4d4106f19ae41e7c50c39f98d0",
     "page": 1
+  },
+  "moyka-plenki-technical": {
+    "width": 594,
+    "height": 840,
+    "bytes": 47012,
+    "sha256": "64db5d26f943950e7f3e9f082d141970d12f94c70ddfc6e10b0041b3f1f0d4db",
+    "sourceSha256": "5648714c2f667ddb9d2168803aac50faf927fedbecb5147deebb57b0186a704a",
+    "page": 1
   }
 }

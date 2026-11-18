@@ -218,6 +218,8 @@ jobs:
             test/technology-final-public.mjs
             test/contacts-public.mjs
             test/catalog-public.mjs
+            test/hot-wash-public.mjs
+            docs/moyka-plenki-assets.json
             test/fixtures/catalog-preserved.json
           sparse-checkout-cone-mode: false
       - uses: actions/setup-node@v4
@@ -249,3 +251,7 @@ jobs:
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
         run: node test/catalog-public.mjs
+      - name: Verify published hot-wash line in Chrome
+        env:
+          ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: node test/hot-wash-public.mjs

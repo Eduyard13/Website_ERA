@@ -1,0 +1,52 @@
+/* Hot-wash additions use the existing film-line presentation and stay on this route. */
+.film-line--hot-wash .hw-raw-photos{max-width:800px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-bottom:28px;max-width:760px}
+.film-line--hot-wash .hw-raw-photos .media-open{height:220px;aspect-ratio:auto;background:var(--era-white)}
+.film-line--hot-wash .hw-raw-photos img{object-fit:contain;width:100%;height:100%}
+.film-line--hot-wash .hw-raw-table{min-width:660px}
+.film-line--hot-wash .hw-raw-table th,.film-line--hot-wash .hw-raw-table td{width:auto;vertical-align:top}
+.film-line--hot-wash .hw-material-route{color:var(--era-gold-dark);font-size:14px;line-height:1.6;overflow-wrap:anywhere}
+.film-line--hot-wash .hw-stages h3{min-height:2.5em}
+.film-line--hot-wash .hw-water{margin-top:38px;border-top:1px solid var(--line);padding-top:28px}
+.film-line--hot-wash .hw-water>h3{font-size:27px;line-height:1.25}
+.film-line--hot-wash .hw-water-grid,.film-line--hot-wash .hw-placement-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.film-line--hot-wash .hw-water-grid article{padding:22px;border:1px solid var(--line);background:var(--era-beige)}
+.film-line--hot-wash .hw-water-grid .eyebrow{font-size:11px;margin-bottom:12px}
+.film-line--hot-wash .hw-water-grid p{font-size:15px;margin:0}
+.film-line--hot-wash .hw-water-clean{border-color:var(--era-blue);background:var(--era-white)}
+.film-line--hot-wash .hw-specification{min-width:760px;margin-top:0;font-size:14px}
+.film-line--hot-wash .hw-specification th,.film-line--hot-wash .hw-specification td{width:auto;vertical-align:top;line-height:1.65;padding:14px}
+.film-line--hot-wash .hw-specification th:first-child{width:140px}
+.film-line--hot-wash .hw-specification td:nth-child(2){width:28%}
+.film-line--hot-wash .hw-specification td:nth-child(3){width:50px}
+.film-line--hot-wash .hw-specification .hw-spec-group th{background:var(--era-blue);color:var(--era-on-dark)}
+.film-line--hot-wash .hw-specification button{min-height:44px;padding:8px;border:1px solid var(--line);border-radius:3px;font-size:13px;background:var(--era-white);color:var(--era-blue)}
+.film-line--hot-wash .hw-specification .text-link{font-size:12px;min-height:44px;padding-block:8px}
+.film-line--hot-wash .hw-specification small{color:var(--muted)}
+.film-line--hot-wash .hw-product-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.film-line--hot-wash .hw-product-grid article{min-width:0;border-top:1px solid var(--line);padding-top:20px}
+.film-line--hot-wash .hw-product-grid h3{font-size:25px;line-height:1.25;margin-top:22px}
+.film-line--hot-wash .hw-product-grid p{font-size:15px}
+.film-line--hot-wash .hw-product-grid .media-open{aspect-ratio:1.52;background:var(--era-white)}
+.film-line--hot-wash .hw-product-grid img{width:100%;height:100%;object-fit:contain}
+.film-line--hot-wash .hw-quality-metrics{margin-top:32px}
+.film-line--hot-wash .hw-quality-metrics dl{grid-template-columns:repeat(3,minmax(0,1fr))}
+.film-line--hot-wash .hw-quality-metrics dd{font-size:clamp(28px,3vw,42px);white-space:normal}
+.film-line--hot-wash .line-dimensions-stage .line-image{height:100%;border:0}
+.film-line--hot-wash .line-dimensions-stage .media-open{height:520px;aspect-ratio:auto}
+.film-line--hot-wash .line-dimensions-stage img{width:100%;height:100%;object-fit:contain}
+.film-line--hot-wash .hw-placement-grid{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:30px}
+.film-line--hot-wash .hw-placement-grid article{border-top:1px solid var(--line);padding-top:20px}
+.film-line--hot-wash .hw-placement-grid h3{font-size:22px;line-height:1.3}
+.film-line--hot-wash .hw-placement-grid p{font-size:15px}
+.film-line--hot-wash .line-document-grid{grid-template-columns:minmax(0,1fr);max-width:760px}
+.film-line--hot-wash .line-monitor .diagram-pin{width:min(36px,2.6%)}
+.film-line--hot-wash .line-monitor .diagram-pin span{max-width:none}
+@media(max-width:1023px){.film-line--hot-wash .hw-product-grid{gap:18px}.film-line--hot-wash .hw-product-grid h3{font-size:22px}.film-line--hot-wash .hw-quality-metrics dd{font-size:30px}}
+@media(max-width:767px){
+ .film-line--hot-wash .hw-raw-photos{max-width:800px;gap:12px}.film-line--hot-wash .hw-raw-photos .media-open{height:180px}
+ .film-line--hot-wash .hw-water-grid,.film-line--hot-wash .hw-product-grid,.film-line--hot-wash .hw-placement-grid{grid-template-columns:minmax(0,1fr)}
+ .film-line--hot-wash .hw-water-grid article{padding:18px}.film-line--hot-wash .hw-water>h3{font-size:24px}
+ .film-line--hot-wash .hw-stages h3{min-height:0}.film-line--hot-wash .hw-quality-metrics dl{grid-template-columns:minmax(0,1fr)}
+ .film-line--hot-wash .hw-quality-metrics dl>div{padding:18px 0;border-left:0;border-top:1px solid var(--line)}
+ .film-line--hot-wash .line-dimensions-stage .media-open{height:300px}
+}

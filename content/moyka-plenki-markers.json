@@ -1,0 +1,1496 @@
+{
+  "source": {
+    "file": "lines/moyka-plenki/layout-numbered.webp",
+    "width": 2053,
+    "height": 1305,
+    "sha256": "71a81e3c7fa3e45a9c4bfa96d9b71639e534853f466e06eae591bd79e5bf290b",
+    "page": 5,
+    "method": "Original source badge centres, checked at 2x in a browser. Object regions are auxiliary engineering hit areas. No image pixels modified. Positions 31/32 retain confirmed source badges without an unverified machine outline."
+  },
+  "positions": [
+    {
+      "number": 1,
+      "instances": [
+        {
+          "id": "01-1",
+          "badge": [
+            1773,
+            626
+          ],
+          "target": [
+            1280,
+            548
+          ],
+          "region": [
+            [
+              1230,
+              480
+            ],
+            [
+              1340,
+              480
+            ],
+            [
+              1340,
+              625
+            ],
+            [
+              1230,
+              625
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "instances": [
+        {
+          "id": "02-1",
+          "badge": [
+            1700,
+            670
+          ],
+          "target": [
+            1190,
+            598
+          ],
+          "region": [
+            [
+              1105,
+              559
+            ],
+            [
+              1315,
+              559
+            ],
+            [
+              1315,
+              648
+            ],
+            [
+              1105,
+              648
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "instances": [
+        {
+          "id": "03-1",
+          "badge": [
+            1633,
+            710
+          ],
+          "target": [
+            1140,
+            685
+          ],
+          "region": [
+            [
+              1030,
+              610
+            ],
+            [
+              1255,
+              610
+            ],
+            [
+              1255,
+              775
+            ],
+            [
+              1030,
+              775
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "instances": [
+        {
+          "id": "04-1",
+          "badge": [
+            1564,
+            751
+          ],
+          "target": [
+            1070,
+            826
+          ],
+          "region": [
+            [
+              987,
+              783
+            ],
+            [
+              1112,
+              783
+            ],
+            [
+              1112,
+              877
+            ],
+            [
+              987,
+              877
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "instances": [
+        {
+          "id": "05-1",
+          "badge": [
+            1497,
+            791
+          ],
+          "target": [
+            1047,
+            715
+          ],
+          "region": [
+            [
+              1010,
+              678
+            ],
+            [
+              1118,
+              678
+            ],
+            [
+              1118,
+              754
+            ],
+            [
+              1010,
+              754
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "instances": [
+        {
+          "id": "06-1",
+          "badge": [
+            1436,
+            828
+          ],
+          "target": [
+            1100,
+            771
+          ],
+          "region": [
+            [
+              1040,
+              742
+            ],
+            [
+              1151,
+              742
+            ],
+            [
+              1151,
+              814
+            ],
+            [
+              1040,
+              814
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "instances": [
+        {
+          "id": "07-1",
+          "badge": [
+            1377,
+            864
+          ],
+          "target": [
+            1020,
+            841
+          ],
+          "region": [
+            [
+              980,
+              810
+            ],
+            [
+              1095,
+              810
+            ],
+            [
+              1095,
+              878
+            ],
+            [
+              980,
+              878
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "instances": [
+        {
+          "id": "08-1",
+          "badge": [
+            1315,
+            901
+          ],
+          "target": [
+            900,
+            839
+          ],
+          "region": [
+            [
+              856,
+              817
+            ],
+            [
+              990,
+              817
+            ],
+            [
+              990,
+              886
+            ],
+            [
+              856,
+              886
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "instances": [
+        {
+          "id": "09-1",
+          "badge": [
+            557,
+            486
+          ],
+          "target": [
+            856,
+            548
+          ],
+          "region": [
+            [
+              823,
+              509
+            ],
+            [
+              904,
+              509
+            ],
+            [
+              904,
+              573
+            ],
+            [
+              823,
+              573
+            ]
+          ],
+          "instanceLabel": "Фасовка капсулята",
+          "mode": "source-object"
+        },
+        {
+          "id": "09-2",
+          "badge": [
+            1621,
+            179
+          ],
+          "target": [
+            1425,
+            177
+          ],
+          "region": [
+            [
+              1390,
+              141
+            ],
+            [
+              1488,
+              141
+            ],
+            [
+              1488,
+              219
+            ],
+            [
+              1390,
+              219
+            ]
+          ],
+          "instanceLabel": "Фасовка гранулы",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "instances": [
+        {
+          "id": "10-1",
+          "badge": [
+            900,
+            292
+          ],
+          "target": [
+            943,
+            410
+          ],
+          "region": [
+            [
+              902,
+              372
+            ],
+            [
+              988,
+              372
+            ],
+            [
+              988,
+              470
+            ],
+            [
+              902,
+              470
+            ]
+          ],
+          "instanceLabel": "10Б · после мойки",
+          "mode": "source-object"
+        },
+        {
+          "id": "10-2",
+          "badge": [
+            1256,
+            936
+          ],
+          "target": [
+            954,
+            859
+          ],
+          "region": [
+            [
+              902,
+              817
+            ],
+            [
+              996,
+              817
+            ],
+            [
+              996,
+              927
+            ],
+            [
+              902,
+              927
+            ]
+          ],
+          "instanceLabel": "10А · до мойки",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "instances": [
+        {
+          "id": "11-1",
+          "badge": [
+            1206,
+            966
+          ],
+          "target": [
+            964,
+            922
+          ],
+          "region": [
+            [
+              910,
+              886
+            ],
+            [
+              1018,
+              886
+            ],
+            [
+              1018,
+              967
+            ],
+            [
+              910,
+              967
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "instances": [
+        {
+          "id": "12-1",
+          "badge": [
+            1093,
+            1033
+          ],
+          "target": [
+            984,
+            888
+          ],
+          "region": [
+            [
+              891,
+              844
+            ],
+            [
+              1095,
+              844
+            ],
+            [
+              1095,
+              933
+            ],
+            [
+              891,
+              933
+            ]
+          ],
+          "instanceLabel": "Общая выноска двух веток",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "instances": [
+        {
+          "id": "13-1",
+          "badge": [
+            1032,
+            1068
+          ],
+          "target": [
+            844,
+            952
+          ],
+          "region": [
+            [
+              785,
+              903
+            ],
+            [
+              949,
+              903
+            ],
+            [
+              949,
+              1011
+            ],
+            [
+              785,
+              1011
+            ]
+          ],
+          "instanceLabel": "Общая выноска двух измельчителей",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "instances": [
+        {
+          "id": "14-1",
+          "badge": [
+            977,
+            1101
+          ],
+          "target": [
+            897,
+            979
+          ],
+          "region": [
+            [
+              842,
+              948
+            ],
+            [
+              958,
+              948
+            ],
+            [
+              958,
+              1008
+            ],
+            [
+              842,
+              1008
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "instances": [
+        {
+          "id": "15-1",
+          "badge": [
+            850,
+            1180
+          ],
+          "target": [
+            844,
+            894
+          ],
+          "region": [
+            [
+              755,
+              833
+            ],
+            [
+              906,
+              833
+            ],
+            [
+              906,
+              1008
+            ],
+            [
+              755,
+              1008
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 16,
+      "instances": [
+        {
+          "id": "16-1",
+          "badge": [
+            498,
+            521
+          ],
+          "target": [
+            851,
+            644
+          ],
+          "region": [
+            [
+              798,
+              604
+            ],
+            [
+              906,
+              604
+            ],
+            [
+              906,
+              689
+            ],
+            [
+              798,
+              689
+            ]
+          ],
+          "instanceLabel": "16В · финальный отжим",
+          "mode": "source-object"
+        },
+        {
+          "id": "16-2",
+          "badge": [
+            400,
+            1114
+          ],
+          "target": [
+            727,
+            871
+          ],
+          "region": [
+            [
+              675,
+              822
+            ],
+            [
+              792,
+              822
+            ],
+            [
+              792,
+              935
+            ],
+            [
+              675,
+              935
+            ]
+          ],
+          "instanceLabel": "16Б · межступенчатый отжим",
+          "mode": "source-object"
+        },
+        {
+          "id": "16-3",
+          "badge": [
+            788,
+            1217
+          ],
+          "target": [
+            825,
+            1004
+          ],
+          "region": [
+            [
+              777,
+              970
+            ],
+            [
+              879,
+              970
+            ],
+            [
+              879,
+              1046
+            ],
+            [
+              777,
+              1046
+            ]
+          ],
+          "instanceLabel": "16А · первичный отжим",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "instances": [
+        {
+          "id": "17-1",
+          "badge": [
+            335,
+            1076
+          ],
+          "target": [
+            846,
+            607
+          ],
+          "region": [
+            [
+              761,
+              544
+            ],
+            [
+              910,
+              544
+            ],
+            [
+              910,
+              701
+            ],
+            [
+              761,
+              701
+            ]
+          ],
+          "instanceLabel": "17Б · к ополаскиванию",
+          "mode": "source-object"
+        },
+        {
+          "id": "17-2",
+          "badge": [
+            608,
+            1222
+          ],
+          "target": [
+            736,
+            1000
+          ],
+          "region": [
+            [
+              633,
+              959
+            ],
+            [
+              832,
+              959
+            ],
+            [
+              832,
+              1045
+            ],
+            [
+              633,
+              1045
+            ]
+          ],
+          "instanceLabel": "17А · к горячей мойке",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 18,
+      "instances": [
+        {
+          "id": "18-1",
+          "badge": [
+            351,
+            602
+          ],
+          "target": [
+            773,
+            754
+          ],
+          "region": [
+            [
+              682,
+              685
+            ],
+            [
+              888,
+              685
+            ],
+            [
+              888,
+              846
+            ],
+            [
+              682,
+              846
+            ]
+          ],
+          "instanceLabel": "18Б · ополаскивание",
+          "mode": "source-object"
+        },
+        {
+          "id": "18-2",
+          "badge": [
+            532,
+            1186
+          ],
+          "target": [
+            653,
+            1025
+          ],
+          "region": [
+            [
+              531,
+              957
+            ],
+            [
+              761,
+              957
+            ],
+            [
+              761,
+              1120
+            ],
+            [
+              531,
+              1120
+            ]
+          ],
+          "instanceLabel": "18А · горячая мойка",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 19,
+      "instances": [
+        {
+          "id": "19-1",
+          "badge": [
+            433,
+            560
+          ],
+          "target": [
+            820,
+            696
+          ],
+          "region": [
+            [
+              742,
+              626
+            ],
+            [
+              880,
+              626
+            ],
+            [
+              880,
+              753
+            ],
+            [
+              742,
+              753
+            ]
+          ],
+          "instanceLabel": "19Б · после ополаскивания",
+          "mode": "source-object"
+        },
+        {
+          "id": "19-2",
+          "badge": [
+            463,
+            1150
+          ],
+          "target": [
+            758,
+            919
+          ],
+          "region": [
+            [
+              666,
+              864
+            ],
+            [
+              849,
+              864
+            ],
+            [
+              849,
+              979
+            ],
+            [
+              666,
+              979
+            ]
+          ],
+          "instanceLabel": "19А · после горячей мойки",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 20,
+      "instances": [
+        {
+          "id": "20-1",
+          "badge": [
+            837,
+            330
+          ],
+          "target": [
+            910,
+            489
+          ],
+          "region": [
+            [
+              831,
+              443
+            ],
+            [
+              992,
+              443
+            ],
+            [
+              992,
+              592
+            ],
+            [
+              831,
+              592
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 21,
+      "instances": [
+        {
+          "id": "21-1",
+          "badge": [
+            955,
+            255
+          ],
+          "target": [
+            998,
+            391
+          ],
+          "region": [
+            [
+              939,
+              358
+            ],
+            [
+              1058,
+              358
+            ],
+            [
+              1058,
+              422
+            ],
+            [
+              939,
+              422
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 22,
+      "instances": [
+        {
+          "id": "22-1",
+          "badge": [
+            1066,
+            191
+          ],
+          "target": [
+            1078,
+            377
+          ],
+          "region": [
+            [
+              1000,
+              328
+            ],
+            [
+              1158,
+              328
+            ],
+            [
+              1158,
+              431
+            ],
+            [
+              1000,
+              431
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 23,
+      "instances": [
+        {
+          "id": "23-1",
+          "badge": [
+            1010,
+            224
+          ],
+          "target": [
+            1014,
+            447
+          ],
+          "region": [
+            [
+              961,
+              403
+            ],
+            [
+              1086,
+              403
+            ],
+            [
+              1086,
+              493
+            ],
+            [
+              961,
+              493
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 24,
+      "instances": [
+        {
+          "id": "24-1",
+          "badge": [
+            1176,
+            121
+          ],
+          "target": [
+            1187,
+            451
+          ],
+          "region": [
+            [
+              1142,
+              407
+            ],
+            [
+              1244,
+              407
+            ],
+            [
+              1244,
+              492
+            ],
+            [
+              1142,
+              492
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 25,
+      "instances": [
+        {
+          "id": "25-1",
+          "badge": [
+            1246,
+            80
+          ],
+          "target": [
+            1297,
+            393
+          ],
+          "region": [
+            [
+              1257,
+              352
+            ],
+            [
+              1376,
+              352
+            ],
+            [
+              1376,
+              437
+            ],
+            [
+              1257,
+              437
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 26,
+      "instances": [
+        {
+          "id": "26-1",
+          "badge": [
+            770,
+            368
+          ],
+          "target": [
+            916,
+            450
+          ],
+          "region": [
+            [
+              866,
+              406
+            ],
+            [
+              972,
+              406
+            ],
+            [
+              972,
+              499
+            ],
+            [
+              866,
+              499
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 27,
+      "instances": [
+        {
+          "id": "27-1",
+          "badge": [
+            690,
+            416
+          ],
+          "target": [
+            866,
+            510
+          ],
+          "region": [
+            [
+              820,
+              475
+            ],
+            [
+              926,
+              475
+            ],
+            [
+              926,
+              551
+            ],
+            [
+              820,
+              551
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 28,
+      "instances": [
+        {
+          "id": "28-1",
+          "badge": [
+            1121,
+            156
+          ],
+          "target": [
+            1190,
+            276
+          ],
+          "region": [
+            [
+              1091,
+              171
+            ],
+            [
+              1308,
+              171
+            ],
+            [
+              1308,
+              363
+            ],
+            [
+              1091,
+              363
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 29,
+      "instances": [
+        {
+          "id": "29-1",
+          "badge": [
+            1429,
+            69
+          ],
+          "target": [
+            1396,
+            150
+          ],
+          "region": [
+            [
+              1305,
+              84
+            ],
+            [
+              1488,
+              84
+            ],
+            [
+              1488,
+              219
+            ],
+            [
+              1305,
+              219
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 30,
+      "instances": [
+        {
+          "id": "30-1",
+          "badge": [
+            276,
+            1036
+          ],
+          "target": [
+            494,
+            865
+          ],
+          "region": [
+            [
+              465,
+              783
+            ],
+            [
+              535,
+              783
+            ],
+            [
+              535,
+              951
+            ],
+            [
+              465,
+              951
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 31,
+      "instances": [
+        {
+          "id": "31-1",
+          "badge": [
+            917,
+            1138
+          ],
+          "target": null,
+          "region": [],
+          "instanceLabel": "Исходный номер гидроциклона",
+          "mode": "source-label-only"
+        }
+      ]
+    },
+    {
+      "number": 32,
+      "instances": [
+        {
+          "id": "32-1",
+          "badge": [
+            1149,
+            1000
+          ],
+          "target": null,
+          "region": [],
+          "instanceLabel": "32А · исходная выноска дозатора",
+          "mode": "source-label-only"
+        },
+        {
+          "id": "32-2",
+          "badge": [
+            707,
+            1266
+          ],
+          "target": null,
+          "region": [],
+          "instanceLabel": "32Б · исходная выноска дозатора",
+          "mode": "source-label-only"
+        }
+      ]
+    },
+    {
+      "number": 33,
+      "instances": [
+        {
+          "id": "33-1",
+          "badge": [
+            163,
+            713
+          ],
+          "target": [
+            321,
+            836
+          ],
+          "region": [
+            [
+              224,
+              751
+            ],
+            [
+              451,
+              751
+            ],
+            [
+              451,
+              919
+            ],
+            [
+              224,
+              919
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 34,
+      "instances": [
+        {
+          "id": "34-1",
+          "badge": [
+            167,
+            958
+          ],
+          "target": [
+            281,
+            941
+          ],
+          "region": [
+            [
+              244,
+              908
+            ],
+            [
+              323,
+              908
+            ],
+            [
+              323,
+              985
+            ],
+            [
+              244,
+              985
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 35,
+      "instances": [
+        {
+          "id": "35-1",
+          "badge": [
+            278,
+            650
+          ],
+          "target": [
+            677,
+            837
+          ],
+          "region": [
+            [
+              641,
+              791
+            ],
+            [
+              719,
+              791
+            ],
+            [
+              719,
+              878
+            ],
+            [
+              641,
+              878
+            ]
+          ],
+          "instanceLabel": "Общая выноска трёх шкафов",
+          "mode": "source-object"
+        }
+      ]
+    },
+    {
+      "number": 36,
+      "instances": [
+        {
+          "id": "36-1",
+          "badge": [
+            1843,
+            583
+          ],
+          "target": [
+            1404,
+            521
+          ],
+          "region": [
+            [
+              1351,
+              471
+            ],
+            [
+              1456,
+              471
+            ],
+            [
+              1456,
+              575
+            ],
+            [
+              1351,
+              575
+            ]
+          ],
+          "instanceLabel": "",
+          "mode": "source-object"
+        }
+      ]
+    }
+  ]
+}

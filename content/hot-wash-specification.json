@@ -1,0 +1,335 @@
+[
+  {
+    "position": 1,
+    "name": "Предварительный измельчитель",
+    "quantity": 1,
+    "characteristic": "Ротор Ø 900 × 2 200 мм; момент 12 000 Н·м",
+    "purpose": "Раскрывает тюки, выравнивает подачу",
+    "catalogSlug": "predvaritelnyy-izmelchitel",
+    "sourcePage": 6
+  },
+  {
+    "position": 2,
+    "name": "Ленточный транспортёр",
+    "quantity": 1,
+    "characteristic": "10,00 × 1,50 м (15,00 м²)",
+    "purpose": "Подача на сепаратор",
+    "catalogSlug": "",
+    "sourcePage": 6
+  },
+  {
+    "position": 3,
+    "name": "Баллистический сепаратор",
+    "quantity": 1,
+    "characteristic": "60 м³/ч по объёму",
+    "purpose": "Защитное отделение свободных включений",
+    "catalogSlug": "ballisticheskiy-separator",
+    "sourcePage": 6
+  },
+  {
+    "position": 4,
+    "name": "Ленточный транспортёр",
+    "quantity": 1,
+    "characteristic": "6,90 × 0,50 м (3,45 м²)",
+    "purpose": "Подача плёнки в бункер 10А",
+    "catalogSlug": "",
+    "sourcePage": 6
+  },
+  {
+    "position": 5,
+    "name": "Ленточный транспортёр",
+    "quantity": 1,
+    "characteristic": "7,50 × 0,50 м (3,75 м²)",
+    "purpose": "Отвод включений",
+    "catalogSlug": "",
+    "sourcePage": 6
+  },
+  {
+    "position": 6,
+    "name": "Ленточный транспортёр",
+    "quantity": 1,
+    "characteristic": "9,78 × 0,50 м (4,89 м²)",
+    "purpose": "Отвод включений",
+    "catalogSlug": "",
+    "sourcePage": 6
+  },
+  {
+    "position": 7,
+    "name": "Ленточный транспортёр",
+    "quantity": 1,
+    "characteristic": "5,14 × 0,50 м (2,57 м²)",
+    "purpose": "Сбор включений",
+    "catalogSlug": "",
+    "sourcePage": 6
+  },
+  {
+    "position": 8,
+    "name": "Ленточный транспортёр",
+    "quantity": 1,
+    "characteristic": "5,94 × 0,50 м (2,97 м²)",
+    "purpose": "Выгрузка включений в биг-бэг",
+    "catalogSlug": "",
+    "sourcePage": 6
+  },
+  {
+    "position": 9,
+    "name": "Рама-наполнитель биг-бэгов",
+    "quantity": 3,
+    "characteristic": "До 20 мешков/ч по спецификации",
+    "purpose": "Отдельные рамы для включений, капсулята и гранулы",
+    "catalogSlug": "rama-napolnitel",
+    "sourcePage": 6
+  },
+  {
+    "position": 10,
+    "name": "Бункер-накопитель",
+    "quantity": 2,
+    "characteristic": "4,7 м³ каждый",
+    "purpose": "10А до мойки; 10Б после мойки, буфер и дозированная выдача",
+    "catalogSlug": "bunker-nakopitel",
+    "sourcePage": 6
+  },
+  {
+    "position": 11,
+    "name": "Ленточный транспортёр, реверсивный",
+    "quantity": 1,
+    "characteristic": "9,04 × 0,80 м (7,23 м²)",
+    "purpose": "Выбор ветки измельчения; дозирование порошка",
+    "catalogSlug": "",
+    "sourcePage": 6
+  },
+  {
+    "position": 12,
+    "name": "Ленточный транспортёр",
+    "quantity": 2,
+    "characteristic": "7,80 × 0,70 м (5,46 м²)",
+    "purpose": "Подача на соответствующий измельчитель 13А или 13Б",
+    "catalogSlug": "",
+    "sourcePage": 6
+  },
+  {
+    "position": 13,
+    "name": "Вертикально-роторный измельчитель",
+    "quantity": 2,
+    "characteristic": "Ротор Ø 530 × 920 мм",
+    "purpose": "Измельчение в рабочей жидкости, ветки работают поочерёдно",
+    "catalogSlug": "vertikalno-rotornyy-izmelchitel",
+    "sourcePage": 6
+  },
+  {
+    "position": 14,
+    "name": "Горизонтальный шнек, реверсивный",
+    "quantity": 1,
+    "characteristic": "Ø 400 × 3 810 мм; геометрический объём 0,479 м³",
+    "purpose": "Принимает материал из активной ветки и подаёт в шнек 15",
+    "catalogSlug": "",
+    "sourcePage": 6
+  },
+  {
+    "position": 15,
+    "name": "Подающий шнек с отжимом",
+    "quantity": 1,
+    "characteristic": "Ø 530 × 6 283 мм; геометрический объём 1,385 м³",
+    "purpose": "Отделяет часть жидкости и подаёт в центрифугу 16А",
+    "catalogSlug": "",
+    "sourcePage": 6
+  },
+  {
+    "position": 16,
+    "name": "Роторная центрифуга",
+    "quantity": 3,
+    "characteristic": "1 000 кг/ч по плёнке для отдельного узла",
+    "purpose": "16А — первичный отжим, 16Б — после горячей мойки, 16В — после ополаскивания; последовательно",
+    "catalogSlug": "rotornaya-tsentrifuga",
+    "sourcePage": 6
+  },
+  {
+    "position": 17,
+    "name": "Подающий шнек с отжимом",
+    "quantity": 2,
+    "characteristic": "Ø 530 × 9 500 мм; геометрический объём 2,096 м³",
+    "purpose": "17А подаёт в флотатор 18А; 17Б — в флотатор 18Б",
+    "catalogSlug": "",
+    "sourcePage": 6
+  },
+  {
+    "position": 18,
+    "name": "Плёночный флотатор",
+    "quantity": 2,
+    "characteristic": "700–1 200 кг/ч для отдельного узла",
+    "purpose": "18А — горячая фрикционная мойка и флотация; 18Б — ополаскивание чистой водой",
+    "catalogSlug": "plenochnyy-flotator",
+    "sourcePage": 6
+  },
+  {
+    "position": 19,
+    "name": "Подающий шнек с отжимом",
+    "quantity": 2,
+    "characteristic": "Ø 530 × 6 283 мм; геометрический объём 1,385 м³",
+    "purpose": "Подача из флотаторов к центрифугам 16Б и 16В, предварительный отжим",
+    "catalogSlug": "",
+    "sourcePage": 6
+  },
+  {
+    "position": 20,
+    "name": "Ленточный транспортёр",
+    "quantity": 1,
+    "characteristic": "9,42 × 0,50 м (4,71 м²)",
+    "purpose": "Подача чистой плёнки в 10Б",
+    "catalogSlug": "",
+    "sourcePage": 7
+  },
+  {
+    "position": 21,
+    "name": "Ленточный транспортёр, реверсивный",
+    "quantity": 1,
+    "characteristic": "5,90 × 0,80 м (4,72 м²)",
+    "purpose": "Выгрузка из буфера",
+    "catalogSlug": "",
+    "sourcePage": 7
+  },
+  {
+    "position": 22,
+    "name": "Ленточный транспортёр, реверсивный",
+    "quantity": 1,
+    "characteristic": "5,84 × 0,80 м (4,67 м²)",
+    "purpose": "Выбор пресса 24 или подачи к 23",
+    "catalogSlug": "",
+    "sourcePage": 7
+  },
+  {
+    "position": 23,
+    "name": "Ленточный транспортёр, реверсивный",
+    "quantity": 1,
+    "characteristic": "7,00 × 0,80 м (5,60 м²)",
+    "purpose": "Выбор капсуляции или грануляции",
+    "catalogSlug": "",
+    "sourcePage": 7
+  },
+  {
+    "position": 24,
+    "name": "Горизонтальный автоматический пресс",
+    "quantity": 1,
+    "characteristic": "Тюк около 700 кг; автоматическая увязка стропами",
+    "purpose": "Формирует товарный тюк чистой плёнки",
+    "catalogSlug": "",
+    "sourcePage": 7
+  },
+  {
+    "position": 25,
+    "name": "Двухпоточный рольганг",
+    "quantity": 1,
+    "characteristic": "Четыре секции с электроприводами",
+    "purpose": "Выдача тюков",
+    "catalogSlug": "",
+    "sourcePage": 7
+  },
+  {
+    "position": 26,
+    "name": "Винтовой пресс-капсулятор",
+    "quantity": 1,
+    "characteristic": "Механическое обезвоживание и термомеханическое уплотнение",
+    "purpose": "Формирует капсулят",
+    "catalogSlug": "kapsulyator",
+    "sourcePage": 7
+  },
+  {
+    "position": 27,
+    "name": "Ленточный транспортёр",
+    "quantity": 1,
+    "characteristic": "5,94 × 0,50 м (2,97 м²)",
+    "purpose": "Выдача капсулята в биг-бэг",
+    "catalogSlug": "",
+    "sourcePage": 7
+  },
+  {
+    "position": 28,
+    "name": "Двухстадийная линия грануляции",
+    "quantity": 1,
+    "characteristic": "Номинальная производительность 750 кг/ч",
+    "purpose": "Экструзия, фильтрация расплава и двузонная дегазация для выпуска гранулы",
+    "catalogSlug": "",
+    "sourcePage": 7
+  },
+  {
+    "position": 29,
+    "name": "Ленточный транспортёр",
+    "quantity": 1,
+    "characteristic": "5,80 × 0,50 м (2,90 м²)",
+    "purpose": "Выдача гранулы в биг-бэг",
+    "catalogSlug": "",
+    "sourcePage": 7
+  },
+  {
+    "position": 30,
+    "name": "Водонапорный резервуар",
+    "quantity": 1,
+    "characteristic": "20 м³",
+    "purpose": "Подача чистой воды, подпитка и поддержание уровня",
+    "catalogSlug": "",
+    "sourcePage": 7
+  },
+  {
+    "position": 31,
+    "name": "Гидроциклон",
+    "quantity": 1,
+    "characteristic": "Отделение включений в контуре возврата рабочей жидкости",
+    "purpose": "Возврат очищаемой жидкости в мокрое измельчение",
+    "catalogSlug": "",
+    "sourcePage": 7
+  },
+  {
+    "position": 32,
+    "name": "Дозатор моющих реагентов",
+    "quantity": 2,
+    "characteristic": "Раздельная подача моющего порошка и каустической соды",
+    "purpose": "32А — порошок на ленте 11; 32Б — щелочной реагент на выгрузке 16А",
+    "catalogSlug": "",
+    "sourcePage": 7
+  },
+  {
+    "position": 33,
+    "name": "Комплекс очистки стоков",
+    "quantity": 1,
+    "characteristic": "Проектная производительность 25 м³/ч; ёмкость 4 м³",
+    "purpose": "Отделяет включения из загрязнённой рабочей жидкости",
+    "catalogSlug": "ochistka-stokov",
+    "sourcePage": 7
+  },
+  {
+    "position": 34,
+    "name": "Бак очищенных стоков",
+    "quantity": 1,
+    "characteristic": "20 м³",
+    "purpose": "Доотделение плавающих частиц и возврат воды в 18А",
+    "catalogSlug": "",
+    "sourcePage": 7
+  },
+  {
+    "position": 35,
+    "name": "Шкаф управления",
+    "quantity": 3,
+    "characteristic": "Система «КАИР» на базе компонентов Siemens",
+    "purpose": "Управление приводами, контуром мойки и выбранным маршрутом",
+    "catalogSlug": "",
+    "sourcePage": 7
+  },
+  {
+    "position": 36,
+    "name": "Вилочный погрузчик",
+    "quantity": 1,
+    "characteristic": "Транспортировка тюков и биг-бэгов",
+    "purpose": "Подача сырья и перемещение готовой продукции; проектная позиция",
+    "catalogSlug": "",
+    "sourcePage": 7
+  },
+  {
+    "position": 37,
+    "name": "Помещение цеха",
+    "quantity": 1,
+    "characteristic": "2 244 м²; высота по перечню 9 м",
+    "purpose": "Проектная позиция размещения; не отдельный узел поставки",
+    "catalogSlug": "",
+    "sourcePage": 7
+  }
+]

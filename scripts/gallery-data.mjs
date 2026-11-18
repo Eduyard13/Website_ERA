@@ -3,6 +3,7 @@ import {nodes,lines,media} from '../content/catalog.mjs';
 import {equipmentVideos} from '../content/equipment-videos.mjs';
 import {filmSeparationMedia} from '../content/film-separation.mjs';
 import {miniFilmSeparationMedia} from '../content/mini-film-separation.mjs';
+import {hotWashGalleryMedia} from '../content/hot-film-washing.mjs';
 import {galleryCollections,galleryOverrides,galleryAdditionalMedia,galleryProjectSlots} from '../content/gallery-collections.mjs';
 import {projectMedia} from './project-media.mjs';
 import {imageSize} from './image-size.mjs';
@@ -34,9 +35,9 @@ function homepageRecords(){
 export function buildGalleryData({baseMedia=media,additional=galleryAdditionalMedia,fileExists=exists}={}){
  const byFile=new Map(),byId=new Map(),missing=[];
  const enabled=lines.filter(line=>line.enabled);
- const sourceLines=[...Object.values(miniFilmSeparationMedia),...Object.values(filmSeparationMedia)].filter(m=>enabled.some(l=>l.path===m.product));
+ const sourceLines=[...Object.values(miniFilmSeparationMedia),...Object.values(filmSeparationMedia),...hotWashGalleryMedia].filter(m=>enabled.some(l=>l.path===m.product));
  const videoMetadata=new Map(equipmentVideos.filter(v=>v.ready).map(v=>[v.file,v]));
- const covers=enabled.filter(l=>l.cardFile).map(l=>({id:l.slug+'-catalog-cover',type:'visualization',file:l.cardFile,thumbnail:l.cardSmallFile,title:l.cardImageAlt||'Компоновка линии '+l.number,product:l.path,productTitle:'Сепарация '+l.number,topic:'Линия целиком',source:'Подготовленная визуализация ЭРА · каталог линий',coverPriority:0}));
+ const covers=enabled.filter(l=>l.cardFile).map(l=>({id:l.slug+'-catalog-cover',type:'visualization',file:l.cardFile,thumbnail:l.cardSmallFile,title:l.cardImageAlt||'Компоновка линии '+l.number,product:l.path,productTitle:l.slug==='moyka-plenki'?l.cardTitle:'Сепарация '+l.number,topic:'Линия целиком',source:'Подготовленная визуализация ЭРА · каталог линий',coverPriority:0}));
  const sources=[...baseMedia,...homepageRecords(),...sourceLines,...covers,...additional];
  sources.forEach((source,index)=>{
   const m={...source,...galleryOverrides[source.id]},kind=m.kind||m.type;
@@ -72,7 +73,7 @@ export function buildGalleryData({baseMedia=media,additional=galleryAdditionalMe
   });
  });
  const items=[...byFile.values()].sort((a,b)=>a.sortOrder-b.sortOrder||a.id.localeCompare(b.id));
- const albums=[...nodes.map(n=>({id:n.slug,title:n.title,path:n.path,description:n.description,collection:'nodes'})),...enabled.map(l=>({id:l.slug,title:'Сепарация '+l.number,path:l.path,description:l.cardDescription||l.description,collection:'lines'}))].map(album=>{
+ const albums=[...nodes.map(n=>({id:n.slug,title:n.title,path:n.path,description:n.description,collection:'nodes'})),...enabled.map(l=>({id:l.slug,title:l.slug==='moyka-plenki'?l.cardTitle:'Сепарация '+l.number,path:l.path,description:l.cardDescription||l.description,collection:'lines'}))].map(album=>{
   const records=items.filter(m=>m.albumIds.includes(album.id));
   const cover=[...records].sort((a,b)=>a.coverPriority-b.coverPriority||Number(a.kind!=='photo')-Number(b.kind!=='photo')||a.sortOrder-b.sortOrder)[0];
   return {...album,ids:records.map(m=>m.id),coverId:cover?.id,counts:galleryCounts(records)};

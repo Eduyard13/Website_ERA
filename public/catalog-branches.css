@@ -27,7 +27,7 @@
 .catalog-branch-filters--lines.catalog-branch-filters{flex-direction:row;align-items:center;flex-wrap:wrap;gap:12px}
 .catalog-branch-nav :where(a,button):focus-visible,.catalog-branch-filters :where(button,input,select):focus-visible,.catalog-comparison :where(summary,a,[tabindex]):focus-visible{outline:2px solid var(--era-gold-dark);outline-offset:3px}
 .catalog-branch .filter-result{font-size:13px;margin:18px 0}
-.catalog-branch .line-card.line-card--draft{min-height:0;background:var(--era-beige);border-color:var(--line)}
+.catalog-branch .line-card.line-card--draft{min-height:0;background:var(--era-beige);border-color:var(--line);align-self:start}
 .catalog-branch .line-card-draft-content{padding:22px 24px}
 .catalog-branch .line-card-draft-content>h3{font-size:24px}
 .catalog-branch .line-card-draft-content>.line-card-subtitle{font-size:15px}

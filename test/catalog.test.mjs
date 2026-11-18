@@ -12,9 +12,11 @@ import {basePath,render} from '../scripts/build.mjs';
 const digest=value=>createHash('sha256').update(value).digest('hex');
 test('Каталог сохраняет реестр, все 12 полных карточек, две готовые линии и 14 детальных страниц',async()=>{
  const original=JSON.parse(await readFile(new URL('./fixtures/catalog-preserved.json',import.meta.url)));
- assert.equal(digest(JSON.stringify({nodes,lines})),original.registry);
+ const {originalDraft}=JSON.parse(await readFile(new URL('./fixtures/hot-wash-preserved.json',import.meta.url)));
+ const legacyLines=lines.map(line=>line.slug==='moyka-plenki'?originalDraft:line);
+ assert.equal(digest(JSON.stringify({nodes,lines:legacyLines})),original.registry);
  assert.deepEqual(nodes.map(node=>({slug:node.slug,sha256:digest(nodeCard(node))})),original.nodeCards);
- const ready=revisedPage('/catalog/lines').match(/<a class="line-card[\s\S]*?<\/a>/g);
+ const ready=revisedPage('/catalog/lines').match(/<a class="line-card[\s\S]*?<\/a>/g).filter(html=>!html.includes('data-line-id="moyka-plenki"'));
  assert.deepEqual(ready.map(html=>({slug:html.match(/data-line-id="([^"]+)"/)[1],sha256:digest(html)})),original.readyCards);
  for(const [path,sha] of Object.entries(original.details))assert.equal(digest(revisedPage(path)),sha,path);
  for(const [path,sha] of Object.entries(original.assets))assert.equal(digest(await readFile('public/'+path)),sha,path);
@@ -60,7 +62,7 @@ test('Фильтры строятся из реестра, быстрые кно
  assert.ok(lf.includes('data-quick-filter="group" hidden'));
  assert.ok(eq.includes('name="q" placeholder="Название или назначение" disabled'));
  assert.deepEqual([...html.matchAll(/data-line-id="([^"]+)"/g)].map(m=>m[1]),lines.map(l=>l.slug));
- assert.equal((html.match(/<article class="line-card/g)||[]).length,2);
+ assert.equal((html.match(/<article class="line-card/g)||[]).length,1);
  for(const line of lines.filter(l=>!l.enabled))assert.ok(!html.includes(`href="${line.path}"`));
  assert.ok(html.includes('Технологические решения.'));
 });

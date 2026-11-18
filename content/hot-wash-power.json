@@ -1,0 +1,57 @@
+[
+  {
+    "group": "Предварительное измельчение и сепарация",
+    "installed_kW": 72.0,
+    "calculated_kW": 50.4
+  },
+  {
+    "group": "Ленточные транспортёры",
+    "installed_kW": 46.1,
+    "calculated_kW": 32.27
+  },
+  {
+    "group": "Бункеры-накопители (2 шт.)",
+    "installed_kW": 52.0,
+    "calculated_kW": 36.4
+  },
+  {
+    "group": "Вертикально-роторные измельчители (2 шт.)",
+    "installed_kW": 110.0,
+    "calculated_kW": 77.0
+  },
+  {
+    "group": "Шнековые транспортёры",
+    "installed_kW": 92.5,
+    "calculated_kW": 64.75
+  },
+  {
+    "group": "Роторные центрифуги (3 шт.)",
+    "installed_kW": 66.0,
+    "calculated_kW": 46.2
+  },
+  {
+    "group": "Плёночные флотаторы (2 шт.)",
+    "installed_kW": 386.0,
+    "calculated_kW": 270.2
+  },
+  {
+    "group": "Водооборот и дозирование",
+    "installed_kW": 18.6,
+    "calculated_kW": 13.02
+  },
+  {
+    "group": "Тюкование и фасовка",
+    "installed_kW": 28.5,
+    "calculated_kW": 19.95
+  },
+  {
+    "group": "Пресс-капсулятор",
+    "installed_kW": 150.0,
+    "calculated_kW": 105.0
+  },
+  {
+    "group": "Двухстадийная линия грануляции",
+    "installed_kW": 250.0,
+    "calculated_kW": 175.0
+  }
+]

@@ -76,7 +76,8 @@ with sync_playwright() as p:
  for value in ['225 кВт','402,67 кВт','157,5 кВт','281,87 кВт','5 × 4,7 м³','Дополнительная опция, по согласованию']:
   expect(page.locator('.catalog-comparison')).to_contain_text(value)
  button('Мойка').click();count('line',1);pressed('Мойка');expect(page.locator('.catalog-comparison')).to_be_hidden()
- expect(page.locator('[data-line]:visible')).to_have_js_property('tagName','ARTICLE')
+ expect(page.locator('[data-line]:visible')).to_have_js_property('tagName','A')
+ assert page.locator('[data-line]:visible').get_attribute('href').endswith('/moyka-plenki')
  button('Все линии').click();count('line',4);assert page.locator('.catalog-comparison').evaluate('(e)=>e.open')
  assert 'group' not in query()
  for group,n in [('Сепарация',3),('Мойка',1)]:
