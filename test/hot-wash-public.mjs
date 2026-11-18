@@ -17,7 +17,7 @@ assert.equal(document.pages,22);assert.equal(document.bytes,4430978);assert.equa
 const pdf=await fetch(base+'/documents/'+document.file,{cache:'no-store'});assert.equal(pdf.status,200);assert.equal(pdf.headers.get('content-type'),'application/pdf');
 const bytes=Buffer.from(await pdf.arrayBuffer());assert.equal(bytes.length,document.bytes);assert.equal(createHash('sha256').update(bytes).digest('hex'),document.sha256);
 const manifest=JSON.parse(await readFile(new URL('../docs/moyka-plenki-assets.json',import.meta.url),'utf8'));
-for(const asset of manifest.assets)for(const [file,sha] of [[asset.file,asset.sha256],[asset.smallFile,asset.smallSha256]]){
+for(const asset of [...manifest.assets,...(manifest.catalogCardUpdate?.assets||[])])for(const [file,sha] of [[asset.file,asset.sha256],[asset.smallFile,asset.smallSha256]]){
  const r=await fetch(base+'/assets/'+file,{cache:'no-store'});assert.equal(r.status,200,file);assert.equal(r.headers.get('content-type'),'image/webp');
  assert.equal(createHash('sha256').update(Buffer.from(await r.arrayBuffer())).digest('hex'),sha,file);
 }
@@ -94,7 +94,7 @@ try{
  await load('/technology/');await wait(`!!document.querySelector('[data-technology-line="moyka-plenki"]')`);
  assert.ok(await evaluate(`document.querySelector('[data-technology-line="moyka-plenki"]').href.endsWith('/catalog/lines/moyka-plenki')`));
  assert.deepEqual(errors,[],'Published hot-wash console errors');
- console.log(`::notice title=Published hot wash verified::Release ${version}, 37 source positions, 36 monitor selections and 44 printed badges, 7 widths, 44 original WebP SHA-256 checks, original 22-page PDF (4430978 bytes and SHA-256), live PDF viewer, specification, dimensions, technology link and wash-filter Back passed. ${url}`);
+ console.log(`::notice title=Published hot wash verified::Release ${version}, 37 source positions, 36 monitor selections and 44 printed badges, 7 widths, ${2*(manifest.assets.length+(manifest.catalogCardUpdate?.assets.length||0))} WebP SHA-256 checks, original 22-page PDF (4430978 bytes and SHA-256), live PDF viewer, specification, dimensions, technology link and wash-filter Back passed. ${url}`);
 }finally{
  socket?.close();chrome.kill('SIGTERM');await delay(250);await rm(profile,{recursive:true,force:true});
 }

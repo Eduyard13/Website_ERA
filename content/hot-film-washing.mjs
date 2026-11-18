@@ -17,6 +17,7 @@ export const hotFilmWashing={
  cardTitle:'Линия горячей мойки плёнок и пакетов',cardDescription:'Глубокая очистка после сухой сепарации',
  cardFeature:'Три вида готовой продукции',cardEyebrow:'ГОРЯЧАЯ МОЙКА / ГОТОВАЯ ЛИНИЯ',
  cardFile:'lines/moyka-plenki/catalog-cover-navy.webp',cardSmallFile:'lines/moyka-plenki/catalog-cover-navy-768.webp',
+ catalogCardFile:'lines/moyka-plenki/catalog-cover-detailed.webp',catalogCardSmallFile:'lines/moyka-plenki/catalog-cover-detailed-768.webp',
  cardImageAlt:'Проектная компоновка линии горячей мойки плёнок и пакетов ЭРА',
  cardMetrics:[
   {value:'1 500',unit:'кг/ч',label:'Входной поток',note:'До 1,5 т/ч подготовленной плёнки · ТО, стр. 2, 16'},

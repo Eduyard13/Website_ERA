@@ -15,6 +15,7 @@ import {imageSize} from '../scripts/image-size.mjs';
 
 const hash=value=>createHash('sha256').update(value).digest('hex');
 const line=lines.find(l=>l.slug==='moyka-plenki');
+const release=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8')).version;
 test('Горячая мойка публикуется третьей линией, Сепарация 03 остаётся черновиком',()=>{
  assert.ok(line.enabled);assert.equal(line.status,'source-checked');assert.equal(line.group,'Мойка');assert.equal(line.number,undefined);
  assert.ok(routes.includes('/catalog/lines/moyka-plenki'));
@@ -27,14 +28,14 @@ test('Горячая мойка публикуется третьей линие
  assert.ok(hotFilmWashing.cardMetrics.every(m=>m.note));
  const card=revisedPage('/catalog/lines').match(/<a class="line-card[^>]*data-line-id="moyka-plenki"[\s\S]*?<\/a>/)[0];
  assert.ok(card.includes('ГОРЯЧАЯ МОЙКА / ГОТОВАЯ ЛИНИЯ'));
- assert.ok(card.includes('catalog-cover-navy.webp')&&card.includes('catalog-cover-navy-768.webp 768w'));
+ assert.ok(card.includes('catalog-cover-detailed.webp')&&card.includes('catalog-cover-detailed-768.webp 768w'));
  assert.equal((card.match(/<dt>/g)||[]).length,6);assert.ok(!card.includes('В разработке'));
 });
 test('Все 44 WebP, размеры, исходный PDF и единственная обложка сохраняют происхождение',async()=>{
  const manifest=JSON.parse(await readFile('docs/moyka-plenki-assets.json','utf8'));
  assert.equal(manifest.assets.length,22);
  assert.equal(manifest.sourceCover.sha256,'2a2cbf49b57a105ac3009995964c1dd50d4e92c0d42299a313c52a0fc0705b61');
- for(const asset of manifest.assets){
+ for(const asset of [...manifest.assets,...(manifest.catalogCardUpdate?.assets||[])]){
   for(const [file,sha,width,height] of [[asset.file,asset.sha256,asset.width,asset.height],[asset.smallFile,asset.smallSha256,asset.smallWidth,asset.smallHeight]]){
    assert.equal(hash(await readFile('public/assets/'+file)),sha,file);
    assert.deepEqual(imageSize('public/assets/'+file),{width,height},file);
@@ -121,8 +122,8 @@ test('Остальные страницы, исходные две линии и
  const original=JSON.parse(await readFile('test/fixtures/hot-wash-preserved.json','utf8'));
  assert.equal(hash(lineComparison()),original.comparison);
  for(const {path,sha256} of original.oldLinePages)assert.equal(hash(revisedPage(path)),sha256,path);
- for(const [path,sha256] of Object.entries(basePath?original.unchangedPagesBase:original.unchangedPages))assert.equal(hash(render(path).replaceAll('0.39.6','RELEASE')),sha256,path);
- const tech=render('/technology').replace(/<a class="tf-hot-wash-card"[\s\S]*?<\/a>/,'<a data-wash-route></a>').replaceAll('0.39.6','RELEASE');
+ for(const [path,sha256] of Object.entries(basePath?original.unchangedPagesBase:original.unchangedPages))assert.equal(hash(render(path).replaceAll(release,'RELEASE')),sha256,path);
+ const tech=render('/technology').replace(/<a class="tf-hot-wash-card"[\s\S]*?<\/a>/,'<a data-wash-route></a>').replaceAll(release,'RELEASE');
  assert.equal(hash(tech),basePath?original.technologyOutsideWashCardBase:original.technologyOutsideWashCard);
  const html=render('/technology');assert.ok(html.includes(`href="${basePath}/catalog/lines/moyka-plenki"`));
  assert.ok(html.includes('data-washing-configuration="')&&!html.includes('tf-wash-pending'));

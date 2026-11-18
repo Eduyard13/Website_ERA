@@ -366,5 +366,31 @@
     "note": "Only the printed badges are traced for 31/32; no unverified equipment contour or endpoint is drawn. Shared 9/12/13/35 callouts do not invent additional equipment instances.",
     "markersSha256": "9668a38ed5d746a59d84411b1a4b10b8f17ea09d9075c128a752e8b37b454dfc",
     "occupancySha256": "bd27d4ede39b6aa44d258384497445d95147d8cc9f6e698f6c6e3696fe392e6a"
+  },
+  "catalogCardUpdate": {
+    "source": {
+      "fileName": "ERA_Hot_Wash_Catalog_Cover (1).png",
+      "width": 3072,
+      "height": 2048,
+      "bytes": 5060494,
+      "sha256": "6dad4fed41b40a61031e96b40747ff58372044da6de4b3cc1ec61571712e1bd9"
+    },
+    "scope": "Catalog hot-wash card only",
+    "method": "Whole owner PNG resized proportionally with Lanczos; lossless WebP encoding, no cropping or illustration changes.",
+    "assets": [
+      {
+        "id": "catalog-card-detailed",
+        "file": "lines/moyka-plenki/catalog-cover-detailed.webp",
+        "width": 1536,
+        "height": 1024,
+        "sha256": "93ee722f324e163ab3cb5eac4df3546083393e0a9e7a080a3e7ff462769a6a80",
+        "bytes": 1430766,
+        "smallFile": "lines/moyka-plenki/catalog-cover-detailed-768.webp",
+        "smallWidth": 768,
+        "smallHeight": 512,
+        "smallSha256": "ee2d4581262c6cdf37b817d500abbd482ccc6e2813126220e2c4b02306e11ebf",
+        "smallBytes": 386928
+      }
+    ]
   }
 }
