@@ -1,5 +1,8 @@
 import {categories,lines,nodes} from '../content/catalog.mjs';
 import {lineMetrics} from '../content/film-separation.mjs';
+import {separation03Specification,separation03Staff} from '../content/separation-03.mjs';
+import {dryFilmOutputLabels,formatLineNumber,lineMetric,linePowerTotals} from '../content/line-engineering.mjs';
+import {linePlacement} from '../content/line-placement.mjs';
 
 const escape=value=>String(value).replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;').replaceAll('>','&gt;');
 const branches=[['lines','Линии и комплексы','/catalog/lines'],['equipment','Отдельные узлы','/catalog/equipment']];
@@ -16,33 +19,51 @@ export function lineFilters(){
  return `<form class="filters catalog-branch-filters catalog-branch-filters--lines" id="line-filters"><label data-native-filter="group">Направление<select name="group" disabled><option value="">Все линии</option>${groups.map(value=>`<option>${escape(value)}</option>`).join('')}</select></label>${quickFilters('group','Направление линии','Все линии',groups)}<button type="button" data-line-reset disabled>Сбросить</button></form>`;
 }
 
-// Match source labels and units explicitly: registry order is not a data contract.
+const comparisonLines=[
+ {slug:'separatsiya-01',label:'Базовая',stages:1,sorting:'Дополнительная опция, по согласованию',bunkers:'Не входят в базовую комплектацию',press:'Не входит в базовую комплектацию'},
+ {slug:'separatsiya-02',label:'С сортировкой',stages:1,sorting:'Есть, в закрытом боксе',press:'Есть'},
+ {slug:'separatsiya-03',label:'С сушкой',stages:2,sorting:'Есть, в закрытом ангаре',press:'Есть',dryer:true},
+];
+
 export function lineComparison(source=lines){
- const slugs=['separatsiya-01','separatsiya-02'];
- const selected=slugs.map(slug=>{
-  const line=source.find(item=>item.slug===slug&&item.enabled&&item.status==='source-checked');
-  if(!line)throw new Error(`Missing approved comparison line: ${slug}`);
-  return line;
+ const selected=comparisonLines.map(configuration=>{
+  const line=source.find(item=>item.slug===configuration.slug&&item.enabled&&item.status==='source-checked');
+  if(!line)throw new Error(`Missing approved comparison line: ${configuration.slug}`);
+  return {line,configuration};
  });
- const metric=(line,labels,unit)=>{
-  const found=line.cardMetrics.filter(item=>labels.includes(item.label)&&item.unit===unit);
-  if(found.length!==1)throw new Error(`Comparison metric mismatch: ${line.slug} / ${labels.join(', ')} / ${unit}`);
-  return `${found[0].value} ${found[0].unit}`;
- };
- const numericRow=(label,labels,unit)=>[label,...selected.map(line=>metric(line,labels,unit))];
- const storage=lineMetrics.find(([,unit,label])=>unit==='м³'&&label==='Раздельные бункеры с пылеудалением');
- if(!storage)throw new Error('Missing approved separate storage capacity');
+ const metric=(line,labels,unit)=>lineMetric(line,labels,unit).value;
+ const row=(label,value)=>[label,...selected.map(({line,configuration})=>value(line,configuration))];
+ const bunker02=lineMetrics.find(([,unit,label])=>unit==='м³'&&label==='Раздельные бункеры с пылеудалением');
+ const bunker03=separation03Specification.find(item=>item.position===17);
  const rows=[
-  ['Назначение','Сухая очистка, общий цветной плёночный микс','Сухая очистка, раздельная сортировка и товарные партии'],
-  numericRow('Входной поток с загрязнениями',['Входной поток'],'кг/ч'),
-  numericRow('Расчётный выход очищенной плёнки при засоре около 50%',['Очищенная плёнка','Готовая плёнка'],'кг/ч'),
-  numericRow('Установленная мощность',['Установленная мощность'],'кВт'),
-  numericRow('Расчётная потребляемая мощность (70% установленной)',['Потребляемая мощность'],'кВт'),
-  ['Сортировка по видам','Дополнительная опция, по согласованию','Предусмотрена, закрытый сортировочный бокс'],
-  ['Раздельные накопительные бункеры','Не входят в базовую комплектацию',`${storage[0]} ${storage[1]}`],
-  ['Автоматическое прессование','Не входит в базовую комплектацию','Предусмотрено'],
+  row('Входной поток, кг/ч',line=>metric(line,['Входной поток'],'кг/ч')),
+  row('Расчётный выход очищенной плёнки, кг/ч',(line)=>metric(line,dryFilmOutputLabels,'кг/ч')+(line.number==='01'?'*':'')),
+  row('Установленная мощность',line=>formatLineNumber(linePowerTotals(line.slug).installed)+' кВт'),
+  row('Расчётная потребляемая мощность',line=>formatLineNumber(linePowerTotals(line.slug).calculated)+' кВт'),
+  row('Баллистические ступени',(line,configuration)=>configuration.stages),
+  row('Роторная сушка',(line,configuration)=>configuration.dryer?'Есть':'Нет'),
+  row('Влажность плёнки после сушилки',(line,configuration)=>configuration.dryer?'До '+metric(line,['Остаточная влажность после сушки'],'%').replace(/^до /,'')+'%':'—'),
+  row('Раздельная сортировка',(line,configuration)=>configuration.sorting),
+  row('Раздельные бункеры',(line,configuration)=>configuration.bunkers||(configuration.dryer?`${bunker03.quantity} × ${bunker03.parameter.replace(' каждый','')}`:`${bunker02[0]} ${bunker02[1]}`)),
+  row('Автоматический пресс',(line,configuration)=>configuration.press),
+  row('Основной персонал, чел./смена',(line,configuration)=>configuration.dryer?separation03Staff.primary:metric(line,['Рабочий персонал','Основной персонал'],'чел./смена')),
+  row('Сортировщики, чел./смена',(line,configuration)=>line.number==='01'?'По опции':(configuration.dryer?separation03Staff.sorters:metric(line,['Сортировщики'],'чел.'))+' дополнительно'),
+  row('Габариты в плане, м',line=>{const {length,width}=linePlacement[line.slug];return `${formatLineNumber(length)} × ${formatLineNumber(width)}`;}),
  ];
- return `<details class="catalog-comparison" data-line-comparison data-keep-open><summary>Сравнить комплектации</summary><div class="catalog-comparison-content"><p class="catalog-comparison-hint" id="catalog-comparison-hint">На узком экране таблицу можно прокрутить по горизонтали.</p><div class="catalog-comparison-scroll" role="region" aria-label="Сравнение линий" aria-describedby="catalog-comparison-hint" tabindex="0"><table><caption>Сравнение базовых комплектаций сухой сепарации</caption><thead><tr><th scope="col">Параметр</th><th scope="col">Сепарация 01 · мини-комплектация</th><th scope="col">Сепарация 02 · с сортировкой и прессованием</th></tr></thead><tbody>${rows.map(([label,...values])=>`<tr><th scope="row">${escape(label)}</th>${values.map(value=>`<td>${escape(value)}</td>`).join('')}</tr>`).join('')}</tbody></table></div><p class="catalog-comparison-note">Показатели выпуска приведены для расчётного режима при засорённости около 50%. Фактическая производительность и комплектация определяются свойствами сырья и согласованными условиями работы. Потребляемая мощность — расчётный ориентир, 70% от установленной.</p><div class="catalog-comparison-links">${selected.map(line=>`<a class="text-link" href="${line.path}">Подробнее о Сепарации ${line.number} <span aria-hidden="true">↗</span></a>`).join('')}</div></div></details>`;
+ return `<details class="catalog-comparison" data-line-comparison data-keep-open>
+  <summary>Сравнить комплектации</summary>
+  <div class="catalog-comparison-content">
+   <div class="catalog-comparison-scroll" role="region" aria-label="Сравнение линий">
+    <table role="table">
+     <caption>Три комплектации сухой сепарации</caption>
+     <thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">Параметр</th>${selected.map(({line,configuration})=>`<th role="columnheader" scope="col" data-comparison-line="${line.slug}"><span>Сепарация ${line.number}</span><small>${configuration.label}</small></th>`).join('')}</tr></thead>
+     <tbody role="rowgroup">${rows.map(([label,...values])=>`<tr role="row"><th role="rowheader" scope="row">${escape(label)}</th>${values.map(value=>`<td role="cell">${escape(value)}</td>`).join('')}</tr>`).join('')}</tbody>
+    </table>
+   </div>
+   <p class="catalog-comparison-note">Выпуск рассчитан при засорённости около 50%. *Для Сепарации 01 это ориентир выбранного исполнения: паспортная подача базового распушителя 600–700 кг/ч. Режимы подтверждают на сырье. Расчётная мощность — 70% установленной.</p>
+   <div class="catalog-comparison-links">${selected.map(({line})=>`<a class="text-link" href="${line.path}">Подробнее о Сепарации ${line.number} <span aria-hidden="true">↗</span></a>`).join('')}</div>
+  </div>
+ </details>`;
 }
 
 export const catalogNoScript='<noscript><p class="catalog-no-script">Для интерактивных фильтров включите JavaScript. Сейчас доступны все карточки и ссылки на подробные страницы.</p></noscript>';

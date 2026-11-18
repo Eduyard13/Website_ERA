@@ -1,19 +1,22 @@
 import {nodes} from '../content/catalog.mjs';
-import {filmSeparationMedia as pictures,lineMetrics,lineRawMaterials,lineStages,lineUnits,linePositions,lineSpecs,linePower,lineQuality} from '../content/film-separation.mjs';
+import {filmSeparationMedia as pictures,lineMetrics,lineRawMaterials,lineStages,lineUnits,linePositions,lineSpecs,lineQuality} from '../content/film-separation.mjs';
 import {mediaAttributes} from './media.mjs';
-import {libraryDocumentCard,pdfViewerDialog} from './documents.mjs';
-import {publicLibraryDocuments} from '../content/document-library.mjs';
+import {pdfViewerDialog} from './documents.mjs';
+import {lineDocuments,lineDocumentCards,lineHeroImage} from './line-page-media.mjs';
+import {linePower,dryLineProduction} from './line-power.mjs';
 import {lineDimensions} from './line-dimensions.mjs';
 import {interactiveLineDiagram} from './line-diagram.mjs';
 import {fullLineDiagram} from '../content/line-diagrams.mjs';
-import {lineHeroPresentation} from '../content/separatsiya-02-presentation.mjs';
 import {equipmentCardImages} from '../content/equipment-card-images.mjs';
+import {imageSize} from './image-size.mjs';
 
 const escape=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const button=(text,href,secondary=false)=>`<a class="button ${secondary?'secondary':''}" href="${href}">${text}<span aria-hidden="true">↗</span></a>`;
-function picture(key,{label,caption,hero=false,full=false}={}){
- const m=hero?{...pictures[key],...lineHeroPresentation}:pictures[key];
- return `<figure class="line-image line-image--${m.type}${hero?' line-image--hero':''}"${hero?' data-hero-finish="titanium-gallery"':''} ${mediaAttributes(m)}><a class="media-open" href="/assets/${m.file}" aria-label="Увеличить: ${escape(m.title)}"><img src="/assets/${hero||full?m.file:m.thumbnail}" alt="${escape(m.title)}"${hero?` srcset="/assets/${m.smallFile} 768w, /assets/${m.file} ${m.width}w" sizes="(min-width:801px) 52vw, calc(100vw - 40px)" width="${m.width}" height="${m.height}" fetchpriority="high"`:' loading="lazy" decoding="async"'}>${label?`<span class="line-image-label">${label}</span>`:''}<span class="line-image-zoom" aria-hidden="true">⤢</span></a><figcaption>${caption||m.title}<span>Техническое описание · стр. ${m.page}</span></figcaption></figure>`;
+function picture(key,{label,caption,full=false}={}){
+ const m=pictures[key];
+ const file=full?m.file:m.thumbnail;
+ const {width,height}=imageSize(new URL('../public/assets/'+file,import.meta.url));
+ return `<figure class="line-image line-image--${m.type}" ${mediaAttributes(m)}><a class="media-open" href="/assets/${m.file}" aria-label="Увеличить: ${escape(m.title)}"><img src="/assets/${file}" width="${width}" height="${height}" alt="${escape(m.title)}" loading="lazy" decoding="async">${label?`<span class="line-image-label">${label}</span>`:''}<span class="line-image-zoom" aria-hidden="true">⤢</span></a><figcaption>${caption||m.title}<span>Техническое описание · стр. ${m.page}</span></figcaption></figure>`;
 }
 const rows=items=>items.map(([label,value])=>`<tr><th scope="row">${escape(label)}</th><td>${escape(value)}</td></tr>`).join('');
 function unitCard([position,title,text,value,slug,key]){
@@ -24,14 +27,14 @@ function unitCard([position,title,text,value,slug,key]){
 
 export function renderFilmSeparation(line){
  const email='mailto:edkom.office@mail.ru?subject='+encodeURIComponent(`Запрос ЭРА: ${line.title} — линия сухой сепарации плёнок`);
- const documents=publicLibraryDocuments.filter(d=>d.objectType==='line'&&d.objectSlug===line.slug&&['technical','drawings'].includes(d.category));
+ const documents=lineDocuments(line);
  const staffing=line.cardMetrics.filter(m=>['Основной персонал','Сортировщики'].includes(m.label)).map(m=>[m.label,`${m.value} ${m.unit} · ${m.note}`]);
  const drawing=documents.find(d=>d.id==='separatsiya-02-dimensions-a0');
  return `<div class="film-line film-line--full">
 
  <section class="section line-hero">
   <div class="line-hero-copy"><p class="eyebrow">${escape(line.title.toLocaleUpperCase('ru'))} / ГОТОВАЯ ЛИНИЯ ЭРА</p><h1>Линия сухой сепарации плёнок и пакетов</h1><p class="line-slogan">Из загрязнённой плёнки —<br>в товарные партии.</p><p class="line-lead">Раскрытие пакетов, многоступенчатая очистка, ручной отбор и прессование. Подготовленная плёнка для продажи переработчикам или дальнейшей мойки.</p><div class="actions">${button('Обсудить линию',email)}${button('Схема и состав','#composition',true)}</div><a class="text-link line-document-shortcut" href="#documents">Техническое описание · PDF, 32 страницы ↓</a></div>
-  <div class="line-hero-visual">${picture('hero',{hero:true,caption:'Представленная комплектация: подготовка, сортировка, очистка и выдача тюков'})}<div class="line-hero-tags"><span>Сухая очистка</span><span>5 раздельных потоков</span><span>Автоматическая увязка</span></div></div>
+  <div class="line-hero-visual">${lineHeroImage(line)}<div class="line-hero-tags"><span>Сухая очистка</span><span>5 раздельных потоков</span><span>Автоматическая увязка</span></div></div>
   <div class="line-metrics"><dl>${lineMetrics.map(([value,unit,label])=>`<div><dt>${label}</dt><dd>${value}<small>${unit}</small></dd></div>`).join('')}</dl><p>750 кг/ч — рабочий ориентир при среднем засоре около 50%. Фактический выпуск зависит от состава сырья, влажности и режима. ТО, стр. 2, 21–23.</p></div>
  </section>
  <nav class="anchor-nav line-anchor-nav" aria-label="Разделы линии"><a href="#purpose">Назначение</a><a href="#raw-materials">Сырьё</a><a href="#specs">Характеристики</a><a href="#process">Процесс</a><a href="#composition">Схема линии</a><a href="#quality">Продукт</a><a href="#placement">Габариты</a><a href="#kair">КАИР</a><a href="#photos">Фото</a><a href="#documents">Документы</a><a href="#equipment">Состав узлов</a></nav>
@@ -47,7 +50,8 @@ export function renderFilmSeparation(line){
 
  <section class="section" id="specs"><div class="line-section-heading"><div><p class="eyebrow">02 / ПРОИЗВОДИТЕЛЬНОСТЬ И РЕСУРСЫ</p><h2>Параметры<br>представленной комплектации.</h2></div><p>Входной поток учитывает плёнку вместе с загрязнениями. Выпуск очищенного продукта и энергозатраты приведены для принятого в ТО рабочего режима.</p></div>
   <div class="line-specs-layout"><div class="table-wrap"><table class="line-spec-table"><caption>Основные показатели линии · ТО, стр. 2, 4, 21–25</caption><tbody>${rows([...lineSpecs,...staffing])}</tbody></table></div><aside class="line-output-panel era-indigo-surface"><p class="eyebrow">РАБОТА 24/7</p><h3>Выпуск очищенной плёнки</h3><dl><div><dt>За сутки / 24 часа</dt><dd>18 <small>т</small></dd></div><div><dt>За месяц / 30 суток</dt><dd>540 <small>т</small></dd></div><div><dt>За год / 365 суток</dt><dd>6 570 <small>т</small></dd></div></dl><p>Расчёт при 750 кг/ч и непрерывной работе, без вычета остановок. Фактический выпуск зависит от сырья, доступности оборудования и организации смен.</p></aside></div>
-  <details class="line-more"><summary>Мощность по группам оборудования</summary><div><div class="table-wrap"><table class="line-power-table"><caption>Средняя потребляемая мощность — 70% от установленной · ТО, стр. 23</caption><thead><tr><th scope="col">Группа</th><th scope="col">Установленная, кВт</th><th scope="col">Потребляемая, кВт</th></tr></thead><tbody>${linePower.map(([title,installed,average])=>`<tr><th scope="row">${title}</th><td>${installed}</td><td>${average}</td></tr>`).join('')}</tbody><tfoot><tr><th scope="row">Итого</th><td>402,67</td><td>281,87</td></tr></tfoot></table></div><p class="line-note">Пневмотранспорт учтён один раз в мощности пяти бункеров: по 25,5 кВт каждый. Самостоятельные нагрузки вентиляции, освещения и инфраструктуры, пусковые режимы и резерв учитываются в проекте электроснабжения.</p></div></details>
+  ${linePower(line,{note:'Пневмотранспорт учтён один раз в мощности пяти бункеров: по 25,5 кВт на единицу. Пусковые режимы, вентиляцию и инфраструктуру учитывают в проекте электроснабжения.'})}
+  ${dryLineProduction(line)}
  </section>
 
  <section class="section" id="process"><div class="line-section-heading"><div><p class="eyebrow">03 / ДВИЖЕНИЕ МАТЕРИАЛА</p><h2>Шесть операций.<br>Связанная технология.</h2></div><p>Сначала плёнка освобождается от основной массы включений. Затем потоки разделяются, очищаются и накапливаются для поочерёдного прессования.</p></div>
@@ -79,7 +83,7 @@ export function renderFilmSeparation(line){
 
  <section class="section line-soft" id="photos"><div class="line-section-heading"><div><p class="eyebrow">08 / ОБОРУДОВАНИЕ В РАБОТЕ</p><h2>Реальные площадки.<br>Масштаб и детали.</h2></div><p>Материалы из технического описания: сборка и испытания в Китае, размещение и работа с плёночным сырьём в Нидерландах. Нажмите на изображение, чтобы увеличить.</p></div><div class="line-photo-grid">${['china-assembly','china-ballistic','china-air-separation','netherlands-line','netherlands-rotor','netherlands-feed'].map(key=>picture(key,{label:pictures[key].topic})).join('')}</div><p class="line-note">На производственной съёмке отсутствует сортировочная площадка, предусмотренная в полной комплектации. ТО, стр. 28–29.</p></section>
 
- <section class="section line-documents" id="documents"><div class="line-section-heading"><div><p class="eyebrow">09 / ТЕХНИЧЕСКАЯ ДОКУМЕНТАЦИЯ</p><h2>От состава линии<br>до габаритов в цехе.</h2></div><p>Техническое описание: схемы, позиции, параметры, расчёты и управление — оригинал от 2 ноября 2026 года. Отдельный исходный лист A0: три проекции и размеры показанной компоновки.</p></div><div class="line-document-grid">${documents.map(d=>libraryDocumentCard(d,{related:false})).join('')}</div><a class="text-link" href="/documents/?objectType=line&amp;product=separatsiya-02">Все документы линии в библиотеке ↗</a></section>
+ <section class="section line-documents" id="documents"><div class="line-section-heading"><div><p class="eyebrow">09 / ТЕХНИЧЕСКАЯ ДОКУМЕНТАЦИЯ</p><h2>От состава линии<br>до габаритов в цехе.</h2></div><p>Брошюра комплекса, техническое описание от 2 ноября 2026 года и исходный габаритный лист A0 с проекциями и размерами.</p></div>${lineDocumentCards(documents)}<a class="text-link" href="/documents/?objectType=line&amp;product=separatsiya-02">Все документы линии в библиотеке ↗</a></section>
  <section class="section line-soft" id="equipment"><div class="line-section-heading"><div><p class="eyebrow">10 / ОБОРУДОВАНИЕ В СОСТАВЕ ЛИНИИ</p><h2>Изучите каждый узел.</h2></div><p>Назначение, рабочие показатели и прямые переходы на страницы машин представленной комплектации.</p></div>
   <div class="line-unit-grid">${lineUnits.map(unitCard).join('')}</div>
   <aside class="line-option"><div><p class="eyebrow">ДОПОЛНИТЕЛЬНЫЙ МОДУЛЬ</p><h3>Предварительный распушитель</h3><p>Устанавливается между измельчителем и баллистикой. Разрыхляет комки и разделяет слои, улучшая освобождение включений и сохранение полезной плёнки.</p></div><div><strong>37 кВт</strong><p>Учитываются дополнительно к 402,67 кВт представленной комплектации.</p><a class="text-link" href="/catalog/equipment/predvaritelnyy-raspushitel">Подробнее об узле ↗</a></div></aside>

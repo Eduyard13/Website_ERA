@@ -1,0 +1,1119 @@
+{
+  "schema": 1,
+  "units": "kW",
+  "lines": {
+    "separatsiya-01": {
+      "installed_kw": 225.0,
+      "calculated_kw": 157.5,
+      "load_factor": 0.7,
+      "groups": {
+        "equipment": {
+          "quantity": 7,
+          "installed_kw": 211.0,
+          "calculated_kw": 147.7
+        },
+        "belt": {
+          "quantity": 6,
+          "installed_kw": 14.0,
+          "calculated_kw": 9.8
+        }
+      },
+      "periods": [
+        {
+          "hours": 1,
+          "kwh": 157.5
+        },
+        {
+          "hours": 24,
+          "kwh": 3780.0
+        },
+        {
+          "hours": 720,
+          "kwh": 113400.0
+        },
+        {
+          "hours": 8760,
+          "kwh": 1379700.0
+        }
+      ],
+      "rows": [
+        {
+          "position": 1,
+          "name": "Растюковщик-измельчитель",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 47.2,
+          "installed_total_kw": 47.2,
+          "calculated_unit_kw": 33.04,
+          "calculated_total_kw": 33.04
+        },
+        {
+          "position": 2,
+          "name": "Конвейер подачи · 9 000 × 800 мм",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 2.2,
+          "installed_total_kw": 2.2,
+          "calculated_unit_kw": 1.54,
+          "calculated_total_kw": 1.54
+        },
+        {
+          "position": 3,
+          "name": "Баллистический сепаратор",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 24.9,
+          "installed_total_kw": 24.9,
+          "calculated_unit_kw": 17.43,
+          "calculated_total_kw": 17.43
+        },
+        {
+          "position": 4,
+          "name": "Улавливающая рамка",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": null,
+          "installed_total_kw": null,
+          "calculated_unit_kw": null,
+          "calculated_total_kw": null
+        },
+        {
+          "position": 5,
+          "name": "Сортировочный конвейер · 10 500 × 1 000 мм",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 3.0,
+          "installed_total_kw": 3.0,
+          "calculated_unit_kw": 2.1,
+          "calculated_total_kw": 2.1
+        },
+        {
+          "position": 6,
+          "name": "Роторный распушитель",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 123.9,
+          "installed_total_kw": 123.9,
+          "calculated_unit_kw": 86.73,
+          "calculated_total_kw": 86.73
+        },
+        {
+          "position": 7,
+          "name": "Отводящий конвейер распушителя · 4 200 × 600 мм",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 2.2,
+          "installed_total_kw": 2.2,
+          "calculated_unit_kw": 1.54,
+          "calculated_total_kw": 1.54
+        },
+        {
+          "position": 8,
+          "name": "Конвейер мелких включений · 5 500 × 600 мм",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 2.2,
+          "installed_total_kw": 2.2,
+          "calculated_unit_kw": 1.54,
+          "calculated_total_kw": 1.54
+        },
+        {
+          "position": 9,
+          "name": "Конвейер крупных включений · 5 500 × 600 мм",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 2.2,
+          "installed_total_kw": 2.2,
+          "calculated_unit_kw": 1.54,
+          "calculated_total_kw": 1.54
+        },
+        {
+          "position": 10,
+          "name": "Сборный конвейер · 7 500 × 600 мм",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 2.2,
+          "installed_total_kw": 2.2,
+          "calculated_unit_kw": 1.54,
+          "calculated_total_kw": 1.54
+        },
+        {
+          "position": 11,
+          "name": "Рама для биг-бэга",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": null,
+          "installed_total_kw": null,
+          "calculated_unit_kw": null,
+          "calculated_total_kw": null
+        },
+        {
+          "position": 12,
+          "name": "Система пылеулавливания",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 15.0,
+          "installed_total_kw": 15.0,
+          "calculated_unit_kw": 10.5,
+          "calculated_total_kw": 10.5
+        },
+        {
+          "position": 13,
+          "name": "Шкаф управления и контроля",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": null,
+          "installed_total_kw": null,
+          "calculated_unit_kw": null,
+          "calculated_total_kw": null
+        }
+      ]
+    },
+    "separatsiya-02": {
+      "installed_kw": 402.67,
+      "calculated_kw": 281.87,
+      "load_factor": 0.7,
+      "groups": {
+        "equipment": {
+          "quantity": 12,
+          "installed_kw": 356.17,
+          "calculated_kw": 249.32
+        },
+        "belt": {
+          "quantity": 13,
+          "installed_kw": 46.5,
+          "calculated_kw": 32.55
+        }
+      },
+      "periods": [
+        {
+          "hours": 1,
+          "kwh": 281.87
+        },
+        {
+          "hours": 24,
+          "kwh": 6764.88
+        },
+        {
+          "hours": 720,
+          "kwh": 202946.4
+        },
+        {
+          "hours": 8760,
+          "kwh": 2469181.2
+        }
+      ],
+      "rows": [
+        {
+          "position": 1,
+          "name": "Предварительный измельчитель",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 47.2,
+          "installed_total_kw": 47.2,
+          "calculated_unit_kw": 33.04,
+          "calculated_total_kw": 33.04
+        },
+        {
+          "position": 2,
+          "name": "Ленточный транспортёр L9,77 x W0,8 = 7,82 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 5.5,
+          "installed_total_kw": 5.5,
+          "calculated_unit_kw": 3.85,
+          "calculated_total_kw": 3.85
+        },
+        {
+          "position": 3,
+          "name": "Ленточный транспортёр L8,06 x W0,8 = 6,45 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 5.5,
+          "installed_total_kw": 5.5,
+          "calculated_unit_kw": 3.85,
+          "calculated_total_kw": 3.85
+        },
+        {
+          "position": 4,
+          "name": "Сепаратор баллистический",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 24.9,
+          "installed_total_kw": 24.9,
+          "calculated_unit_kw": 17.43,
+          "calculated_total_kw": 17.43
+        },
+        {
+          "position": 5,
+          "name": "Ленточный транспортёр L6,4 x W0,8 = 5,12 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 3.5,
+          "installed_total_kw": 3.5,
+          "calculated_unit_kw": 2.45,
+          "calculated_total_kw": 2.45
+        },
+        {
+          "position": 6,
+          "name": "Ленточный транспортёр L2,27 x W0,5 = 1,14 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 1.5,
+          "installed_total_kw": 1.5,
+          "calculated_unit_kw": 1.05,
+          "calculated_total_kw": 1.05
+        },
+        {
+          "position": 7,
+          "name": "Ленточный транспортёр L3,03 x W0,5 = 1,52 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 1.5,
+          "installed_total_kw": 1.5,
+          "calculated_unit_kw": 1.05,
+          "calculated_total_kw": 1.05
+        },
+        {
+          "position": 8,
+          "name": "Площадка сортировки плёнок",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 5.0,
+          "installed_total_kw": 5.0,
+          "calculated_unit_kw": 3.5,
+          "calculated_total_kw": 3.5
+        },
+        {
+          "position": 9,
+          "name": "Ленточный транспортёр L8,56 x W1,2 = 10,27 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 7.5,
+          "installed_total_kw": 7.5,
+          "calculated_unit_kw": 5.25,
+          "calculated_total_kw": 5.25
+        },
+        {
+          "position": 11,
+          "name": "Ленточный транспортёр L4,15 x W0,5 = 2,08 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 1.1,
+          "installed_total_kw": 1.1,
+          "calculated_unit_kw": 0.77,
+          "calculated_total_kw": 0.77
+        },
+        {
+          "position": 12,
+          "name": "Ленточный транспортёр L4,3 x W0,8 = 3,44 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 2.2,
+          "installed_total_kw": 2.2,
+          "calculated_unit_kw": 1.54,
+          "calculated_total_kw": 1.54
+        },
+        {
+          "position": 13,
+          "name": "Роторный Распушитель",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 123.9,
+          "installed_total_kw": 123.9,
+          "calculated_unit_kw": 86.73,
+          "calculated_total_kw": 86.73
+        },
+        {
+          "position": 16,
+          "name": "Ленточный транспортёр L3,52 x W0,5 = 1,76 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 1.5,
+          "installed_total_kw": 1.5,
+          "calculated_unit_kw": 1.05,
+          "calculated_total_kw": 1.05
+        },
+        {
+          "position": 17,
+          "name": "Ленточный транспортёр L16,1 x W0,5 = 8,05 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 5.5,
+          "installed_total_kw": 5.5,
+          "calculated_unit_kw": 3.85,
+          "calculated_total_kw": 3.85
+        },
+        {
+          "position": 18,
+          "name": "Ленточный транспортёр L5,3 x W0,5 = 2,65 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 2.2,
+          "installed_total_kw": 2.2,
+          "calculated_unit_kw": 1.54,
+          "calculated_total_kw": 1.54
+        },
+        {
+          "position": 19,
+          "name": "Рама - наполнитель для биг-бэгов",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 0.37,
+          "installed_total_kw": 0.37,
+          "calculated_unit_kw": 0.26,
+          "calculated_total_kw": 0.26
+        },
+        {
+          "position": 20,
+          "name": "Бункер-накопитель",
+          "quantity": 5,
+          "group": "equipment",
+          "installed_unit_kw": 25.5,
+          "installed_total_kw": 127.5,
+          "calculated_unit_kw": 17.85,
+          "calculated_total_kw": 89.25
+        },
+        {
+          "position": 22,
+          "name": "Ленточный транспортёр L8,26 x W0,8 = 6,61 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 5.5,
+          "installed_total_kw": 5.5,
+          "calculated_unit_kw": 3.85,
+          "calculated_total_kw": 3.85
+        },
+        {
+          "position": 23,
+          "name": "Ленточный транспортёр L5,64 x W0,8 = 4,51 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 3.5,
+          "installed_total_kw": 3.5,
+          "calculated_unit_kw": 2.45,
+          "calculated_total_kw": 2.45
+        },
+        {
+          "position": 24,
+          "name": "Автоматический пресс",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 27.0,
+          "installed_total_kw": 27.0,
+          "calculated_unit_kw": 18.9,
+          "calculated_total_kw": 18.9
+        },
+        {
+          "position": 25,
+          "name": "Рольганг двух поточный",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 0.3,
+          "installed_total_kw": 0.3,
+          "calculated_unit_kw": 0.21,
+          "calculated_total_kw": 0.21
+        }
+      ]
+    },
+    "separatsiya-03": {
+      "installed_kw": 639.77,
+      "calculated_kw": 447.84,
+      "load_factor": 0.7,
+      "groups": {
+        "equipment": {
+          "quantity": 15,
+          "installed_kw": 497.07,
+          "calculated_kw": 347.95
+        },
+        "belt": {
+          "quantity": 28,
+          "installed_kw": 142.7,
+          "calculated_kw": 99.89
+        }
+      },
+      "periods": [
+        {
+          "hours": 1,
+          "kwh": 447.84
+        },
+        {
+          "hours": 24,
+          "kwh": 10748.16
+        },
+        {
+          "hours": 720,
+          "kwh": 322444.8
+        },
+        {
+          "hours": 8760,
+          "kwh": 3923078.4
+        }
+      ],
+      "rows": [
+        {
+          "position": 1,
+          "name": "Ленточный транспортёр L7,55 x W1 = 7,55 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 5.5,
+          "installed_total_kw": 5.5,
+          "calculated_unit_kw": 3.85,
+          "calculated_total_kw": 3.85
+        },
+        {
+          "position": 2,
+          "name": "Предварительный измельчитель",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 47.2,
+          "installed_total_kw": 47.2,
+          "calculated_unit_kw": 33.04,
+          "calculated_total_kw": 33.04
+        },
+        {
+          "position": 3,
+          "name": "Ленточный транспортёр L10,18 x W1 = 10,18 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 7.5,
+          "installed_total_kw": 7.5,
+          "calculated_unit_kw": 5.25,
+          "calculated_total_kw": 5.25
+        },
+        {
+          "position": 4,
+          "name": "Распушитель Предварительный",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 37.0,
+          "installed_total_kw": 37.0,
+          "calculated_unit_kw": 25.9,
+          "calculated_total_kw": 25.9
+        },
+        {
+          "position": 5,
+          "name": "Ленточный транспортёр L9,8 x W0,8 = 7,84 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 5.5,
+          "installed_total_kw": 5.5,
+          "calculated_unit_kw": 3.85,
+          "calculated_total_kw": 3.85
+        },
+        {
+          "position": 6,
+          "name": "Ленточный транспортёр L8,06 x W0,8 = 6,45 м2",
+          "quantity": 2,
+          "group": "belt",
+          "installed_unit_kw": 5.5,
+          "installed_total_kw": 11.0,
+          "calculated_unit_kw": 3.85,
+          "calculated_total_kw": 7.7
+        },
+        {
+          "position": 7,
+          "name": "Баллистический Сепаратор",
+          "quantity": 2,
+          "group": "equipment",
+          "installed_unit_kw": 24.9,
+          "installed_total_kw": 49.8,
+          "calculated_unit_kw": 17.43,
+          "calculated_total_kw": 34.86
+        },
+        {
+          "position": 8,
+          "name": "Ленточный транспортёр L5,36 x W0,8 = 4,29 м2",
+          "quantity": 2,
+          "group": "belt",
+          "installed_unit_kw": 3.5,
+          "installed_total_kw": 7.0,
+          "calculated_unit_kw": 2.45,
+          "calculated_total_kw": 4.9
+        },
+        {
+          "position": 9,
+          "name": "Ленточный транспортёр L7,34 x W0,8 = 5,87 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 5.5,
+          "installed_total_kw": 5.5,
+          "calculated_unit_kw": 3.85,
+          "calculated_total_kw": 3.85
+        },
+        {
+          "position": 10,
+          "name": "Роторная Сушильная Установка",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 79.0,
+          "installed_total_kw": 79.0,
+          "calculated_unit_kw": 55.3,
+          "calculated_total_kw": 55.3
+        },
+        {
+          "position": 11,
+          "name": "Ленточный транспортёр L10,01 x W0,8 = 8,01 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 5.5,
+          "installed_total_kw": 5.5,
+          "calculated_unit_kw": 3.85,
+          "calculated_total_kw": 3.85
+        },
+        {
+          "position": 12,
+          "name": "Ленточный транспортёр L6,4 x W0,8 = 5,12 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 5.5,
+          "installed_total_kw": 5.5,
+          "calculated_unit_kw": 3.85,
+          "calculated_total_kw": 3.85
+        },
+        {
+          "position": 13,
+          "name": "Площадка сортировки плёнок",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 5.0,
+          "installed_total_kw": 5.0,
+          "calculated_unit_kw": 3.5,
+          "calculated_total_kw": 3.5
+        },
+        {
+          "position": 14,
+          "name": "Ленточный транспортёр L13,16 x W1,2 = 15,79 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 7.5,
+          "installed_total_kw": 7.5,
+          "calculated_unit_kw": 5.25,
+          "calculated_total_kw": 5.25
+        },
+        {
+          "position": 15,
+          "name": "Ленточный транспортёр L5,72 x W0,8 = 4,58 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 3.5,
+          "installed_total_kw": 3.5,
+          "calculated_unit_kw": 2.45,
+          "calculated_total_kw": 2.45
+        },
+        {
+          "position": 16,
+          "name": "Роторный Распушитель",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 123.9,
+          "installed_total_kw": 123.9,
+          "calculated_unit_kw": 86.73,
+          "calculated_total_kw": 86.73
+        },
+        {
+          "position": 17,
+          "name": "Бункер-накопитель",
+          "quantity": 5,
+          "group": "equipment",
+          "installed_unit_kw": 25.5,
+          "installed_total_kw": 127.5,
+          "calculated_unit_kw": 17.85,
+          "calculated_total_kw": 89.25
+        },
+        {
+          "position": 21,
+          "name": "Ленточный транспортёр L10,66 x W0,8 = 8,53 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 5.5,
+          "installed_total_kw": 5.5,
+          "calculated_unit_kw": 3.85,
+          "calculated_total_kw": 3.85
+        },
+        {
+          "position": 22,
+          "name": "Ленточный транспортёр L5,64 x W0,8 = 4,51 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 3.5,
+          "installed_total_kw": 3.5,
+          "calculated_unit_kw": 2.45,
+          "calculated_total_kw": 2.45
+        },
+        {
+          "position": 23,
+          "name": "Автоматический пресс",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 27.0,
+          "installed_total_kw": 27.0,
+          "calculated_unit_kw": 18.9,
+          "calculated_total_kw": 18.9
+        },
+        {
+          "position": 24,
+          "name": "Рольганг двух поточный",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 0.3,
+          "installed_total_kw": 0.3,
+          "calculated_unit_kw": 0.21,
+          "calculated_total_kw": 0.21
+        },
+        {
+          "position": 25,
+          "name": "Ленточный транспортёр L11,4 x W0,5 = 5,7 м2",
+          "quantity": 2,
+          "group": "belt",
+          "installed_unit_kw": 5.5,
+          "installed_total_kw": 11.0,
+          "calculated_unit_kw": 3.85,
+          "calculated_total_kw": 7.7
+        },
+        {
+          "position": 26,
+          "name": "Ленточный транспортёр L10,4 x W0,5 = 5,2 м2",
+          "quantity": 2,
+          "group": "belt",
+          "installed_unit_kw": 5.5,
+          "installed_total_kw": 11.0,
+          "calculated_unit_kw": 3.85,
+          "calculated_total_kw": 7.7
+        },
+        {
+          "position": 27,
+          "name": "Ленточный транспортёр L8,92 x W0,8 = 7,14 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 5.5,
+          "installed_total_kw": 5.5,
+          "calculated_unit_kw": 3.85,
+          "calculated_total_kw": 3.85
+        },
+        {
+          "position": 28,
+          "name": "Ленточный транспортёр L3 x W0,5 = 1,5 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 2.2,
+          "installed_total_kw": 2.2,
+          "calculated_unit_kw": 1.54,
+          "calculated_total_kw": 1.54
+        },
+        {
+          "position": 29,
+          "name": "Ленточный транспортёр L9,12 x W0,5 = 4,56 м2",
+          "quantity": 5,
+          "group": "belt",
+          "installed_unit_kw": 5.5,
+          "installed_total_kw": 27.5,
+          "calculated_unit_kw": 3.85,
+          "calculated_total_kw": 19.25
+        },
+        {
+          "position": 30,
+          "name": "Ленточный транспортёр L6,65 x W0,5 = 3,33 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 3.5,
+          "installed_total_kw": 3.5,
+          "calculated_unit_kw": 2.45,
+          "calculated_total_kw": 2.45
+        },
+        {
+          "position": 31,
+          "name": "Ленточный транспортёр L5,9 x W0,5 = 2,95 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 3.5,
+          "installed_total_kw": 3.5,
+          "calculated_unit_kw": 2.45,
+          "calculated_total_kw": 2.45
+        },
+        {
+          "position": 32,
+          "name": "Ленточный транспортёр L9,8 x W0,8 = 7,84 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 5.5,
+          "installed_total_kw": 5.5,
+          "calculated_unit_kw": 3.85,
+          "calculated_total_kw": 3.85
+        },
+        {
+          "position": 33,
+          "name": "Рама - наполнитель для биг-бэгов",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 0.37,
+          "installed_total_kw": 0.37,
+          "calculated_unit_kw": 0.26,
+          "calculated_total_kw": 0.26
+        }
+      ]
+    },
+    "moyka-plenki": {
+      "installed_kw": 1271.7,
+      "calculated_kw": 890.19,
+      "load_factor": 0.7,
+      "groups": {
+        "equipment": {
+          "quantity": 22,
+          "installed_kw": 1133.1,
+          "calculated_kw": 793.17
+        },
+        "belt": {
+          "quantity": 15,
+          "installed_kw": 46.1,
+          "calculated_kw": 32.27
+        },
+        "screw": {
+          "quantity": 6,
+          "installed_kw": 92.5,
+          "calculated_kw": 64.75
+        }
+      },
+      "periods": [
+        {
+          "hours": 1,
+          "kwh": 890.19
+        },
+        {
+          "hours": 24,
+          "kwh": 21364.56
+        },
+        {
+          "hours": 720,
+          "kwh": 640936.8
+        },
+        {
+          "hours": 8760,
+          "kwh": 7798064.4
+        }
+      ],
+      "rows": [
+        {
+          "position": 1,
+          "name": "Предварительный измельчитель",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 47.0,
+          "installed_total_kw": 47.0,
+          "calculated_unit_kw": 32.9,
+          "calculated_total_kw": 32.9
+        },
+        {
+          "position": 2,
+          "name": "Ленточный транспортёр L10м х W1,5м = 15 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 7.5,
+          "installed_total_kw": 7.5,
+          "calculated_unit_kw": 5.25,
+          "calculated_total_kw": 5.25
+        },
+        {
+          "position": 3,
+          "name": "Сепаратор баллистический",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 25.0,
+          "installed_total_kw": 25.0,
+          "calculated_unit_kw": 17.5,
+          "calculated_total_kw": 17.5
+        },
+        {
+          "position": 4,
+          "name": "Ленточный транспортёр L6,9м х W0,5м = 3,45 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 2.2,
+          "installed_total_kw": 2.2,
+          "calculated_unit_kw": 1.54,
+          "calculated_total_kw": 1.54
+        },
+        {
+          "position": 5,
+          "name": "Ленточный транспортёр L7,5м х W0,5м = 3,75 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 2.2,
+          "installed_total_kw": 2.2,
+          "calculated_unit_kw": 1.54,
+          "calculated_total_kw": 1.54
+        },
+        {
+          "position": 6,
+          "name": "Ленточный транспортёр L9,78м х W0,5м = 4,89 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 3.5,
+          "installed_total_kw": 3.5,
+          "calculated_unit_kw": 2.45,
+          "calculated_total_kw": 2.45
+        },
+        {
+          "position": 7,
+          "name": "Ленточный транспортёр L5,14м х W0,5м = 2,57 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 1.5,
+          "installed_total_kw": 1.5,
+          "calculated_unit_kw": 1.05,
+          "calculated_total_kw": 1.05
+        },
+        {
+          "position": 8,
+          "name": "Ленточный транспортёр L5,94м х W0,5м = 2,97 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 2.2,
+          "installed_total_kw": 2.2,
+          "calculated_unit_kw": 1.54,
+          "calculated_total_kw": 1.54
+        },
+        {
+          "position": 9,
+          "name": "Рама - наполнитель для биг-бэгов",
+          "quantity": 3,
+          "group": "equipment",
+          "installed_unit_kw": 0.4,
+          "installed_total_kw": 1.2,
+          "calculated_unit_kw": 0.28,
+          "calculated_total_kw": 0.84
+        },
+        {
+          "position": 10,
+          "name": "Бункер-накопитель",
+          "quantity": 2,
+          "group": "equipment",
+          "installed_unit_kw": 26.0,
+          "installed_total_kw": 52.0,
+          "calculated_unit_kw": 18.2,
+          "calculated_total_kw": 36.4
+        },
+        {
+          "position": 11,
+          "name": "Ленточный транспортёр (реверсивный) L9,04м х W0,8м = 7,23 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 5.5,
+          "installed_total_kw": 5.5,
+          "calculated_unit_kw": 3.85,
+          "calculated_total_kw": 3.85
+        },
+        {
+          "position": 12,
+          "name": "Ленточный транспортёр L7,8м х W0,7м = 5,46 м2",
+          "quantity": 2,
+          "group": "belt",
+          "installed_unit_kw": 3.5,
+          "installed_total_kw": 7.0,
+          "calculated_unit_kw": 2.45,
+          "calculated_total_kw": 4.9
+        },
+        {
+          "position": 13,
+          "name": "Роторный измельчитель (вертикальный)",
+          "quantity": 2,
+          "group": "equipment",
+          "installed_unit_kw": 55.0,
+          "installed_total_kw": 110.0,
+          "calculated_unit_kw": 38.5,
+          "calculated_total_kw": 77.0
+        },
+        {
+          "position": 14,
+          "name": "Шнек горизонтальный (реверсивный) Ø 400мм; L3810мм; V = 0,479 м3",
+          "quantity": 1,
+          "group": "screw",
+          "installed_unit_kw": 7.5,
+          "installed_total_kw": 7.5,
+          "calculated_unit_kw": 5.25,
+          "calculated_total_kw": 5.25
+        },
+        {
+          "position": 15,
+          "name": "Шнек подающий Ø 530мм; L6283мм; V = 1,385 м3",
+          "quantity": 1,
+          "group": "screw",
+          "installed_unit_kw": 17.0,
+          "installed_total_kw": 17.0,
+          "calculated_unit_kw": 11.9,
+          "calculated_total_kw": 11.9
+        },
+        {
+          "position": 16,
+          "name": "Центрифуга роторная",
+          "quantity": 3,
+          "group": "equipment",
+          "installed_unit_kw": 22.0,
+          "installed_total_kw": 66.0,
+          "calculated_unit_kw": 15.4,
+          "calculated_total_kw": 46.2
+        },
+        {
+          "position": 17,
+          "name": "Шнек подающий Ø 530мм; L9500мм; V = 2,096 м3",
+          "quantity": 2,
+          "group": "screw",
+          "installed_unit_kw": 17.0,
+          "installed_total_kw": 34.0,
+          "calculated_unit_kw": 11.9,
+          "calculated_total_kw": 23.8
+        },
+        {
+          "position": 18,
+          "name": "Флотатор плёночный",
+          "quantity": 2,
+          "group": "equipment",
+          "installed_unit_kw": 193.0,
+          "installed_total_kw": 386.0,
+          "calculated_unit_kw": 135.1,
+          "calculated_total_kw": 270.2
+        },
+        {
+          "position": 19,
+          "name": "Шнек подающий Ø 530мм; L6283мм; V = 1,385 м3",
+          "quantity": 2,
+          "group": "screw",
+          "installed_unit_kw": 17.0,
+          "installed_total_kw": 34.0,
+          "calculated_unit_kw": 11.9,
+          "calculated_total_kw": 23.8
+        },
+        {
+          "position": 20,
+          "name": "Ленточный транспортёр L9,42м х W0,5м = 4,71 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 2.2,
+          "installed_total_kw": 2.2,
+          "calculated_unit_kw": 1.54,
+          "calculated_total_kw": 1.54
+        },
+        {
+          "position": 21,
+          "name": "Ленточный транспортёр (реверсивный) L5,9м х W0,8м = 4,72 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 2.2,
+          "installed_total_kw": 2.2,
+          "calculated_unit_kw": 1.54,
+          "calculated_total_kw": 1.54
+        },
+        {
+          "position": 22,
+          "name": "Ленточный транспортёр (реверсивный) L5,84м х W0,8м = 4,67 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 2.2,
+          "installed_total_kw": 2.2,
+          "calculated_unit_kw": 1.54,
+          "calculated_total_kw": 1.54
+        },
+        {
+          "position": 23,
+          "name": "Ленточный транспортёр (реверсивный) L7м х W0,8м = 5,6 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 3.5,
+          "installed_total_kw": 3.5,
+          "calculated_unit_kw": 2.45,
+          "calculated_total_kw": 2.45
+        },
+        {
+          "position": 24,
+          "name": "Автоматический пресс",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 27.0,
+          "installed_total_kw": 27.0,
+          "calculated_unit_kw": 18.9,
+          "calculated_total_kw": 18.9
+        },
+        {
+          "position": 25,
+          "name": "Рольганг двух поточный",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 0.3,
+          "installed_total_kw": 0.3,
+          "calculated_unit_kw": 0.21,
+          "calculated_total_kw": 0.21
+        },
+        {
+          "position": 26,
+          "name": "Пресс винтовой с конвейером (капсулятор)",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 150.0,
+          "installed_total_kw": 150.0,
+          "calculated_unit_kw": 105.0,
+          "calculated_total_kw": 105.0
+        },
+        {
+          "position": 27,
+          "name": "Ленточный транспортёр L5,94м х W0,5м = 2,97 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 2.2,
+          "installed_total_kw": 2.2,
+          "calculated_unit_kw": 1.54,
+          "calculated_total_kw": 1.54
+        },
+        {
+          "position": 28,
+          "name": "Двухстадийная линия грануляции",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 250.0,
+          "installed_total_kw": 250.0,
+          "calculated_unit_kw": 175.0,
+          "calculated_total_kw": 175.0
+        },
+        {
+          "position": 29,
+          "name": "Ленточный транспортёр L5,8м х W0,5м = 2,9 м2",
+          "quantity": 1,
+          "group": "belt",
+          "installed_unit_kw": 2.2,
+          "installed_total_kw": 2.2,
+          "calculated_unit_kw": 1.54,
+          "calculated_total_kw": 1.54
+        },
+        {
+          "position": 31,
+          "name": "Гидроциклон",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 2.2,
+          "installed_total_kw": 2.2,
+          "calculated_unit_kw": 1.54,
+          "calculated_total_kw": 1.54
+        },
+        {
+          "position": 32,
+          "name": "Химдозатор моющих реагентов",
+          "quantity": 2,
+          "group": "equipment",
+          "installed_unit_kw": 2.2,
+          "installed_total_kw": 4.4,
+          "calculated_unit_kw": 1.54,
+          "calculated_total_kw": 3.08
+        },
+        {
+          "position": 33,
+          "name": "Комплекс очистки стоков",
+          "quantity": 1,
+          "group": "equipment",
+          "installed_unit_kw": 12.0,
+          "installed_total_kw": 12.0,
+          "calculated_unit_kw": 8.4,
+          "calculated_total_kw": 8.4
+        }
+      ]
+    }
+  }
+}

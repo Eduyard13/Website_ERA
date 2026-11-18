@@ -238,5 +238,53 @@
     "sha256": "fb44cc8869eccfd96c5703949786092ec6e5d754a04f1f5c97c5daef86a63668",
     "sourceSha256": "2b399241ee41e5a792d87ab051f1d764f65faa1071b27bc1950a75024a5b52f6",
     "page": 1
+  },
+  "separatsiya-01-brochure": {
+    "width": 650,
+    "height": 840,
+    "bytes": 100274,
+    "sha256": "558a943d8313826a13a89ef78803bcbddca9e1b3256fcebbf88d2bdd74d8b368",
+    "sourceSha256": "b865e3daa0dfb2ae0d878d5ae838b509fab73063fb1cacfd4f4f3aa7b4072725",
+    "page": 1
+  },
+  "separatsiya-03-brochure": {
+    "width": 594,
+    "height": 840,
+    "bytes": 92522,
+    "sha256": "8e46a199f681e6c093c43ca8a7b3137b7510b2076018bc42855e120d0cad8f96",
+    "sourceSha256": "14c26d583eeae83ff98c114911b700e24ed8be85e3c21e560337a7635e501479",
+    "page": 1
+  },
+  "moyka-plenki-brochure": {
+    "width": 594,
+    "height": 840,
+    "bytes": 76970,
+    "sha256": "5b2ec3836a3e81c5e0692008fa3a1af592df22884cae13a5ecb7a45134ceebd0",
+    "sourceSha256": "92d74c2fd50dcb997a16e328539ce15d88b0af237a948e7c6d910ae88bd02594",
+    "page": 1
+  },
+  "separatsiya-01-dimensions": {
+    "width": 594,
+    "height": 840,
+    "bytes": 40998,
+    "sha256": "8b669af2c21830016c98c0185acc4276de4d9da7d12ef93167610510df0aec09",
+    "sourceSha256": "db8a8883361184e9c6ac84cc1dc85e5d50128a233c232c15cda7b903de461211",
+    "page": 1
+  },
+  "separatsiya-03-dimensions": {
+    "width": 595,
+    "height": 840,
+    "bytes": 70308,
+    "sha256": "41d3aed96a7efdb51bee478029e05e5455fe39417b779b579148a769ab99b9b9",
+    "sourceSha256": "d19c0e028f486765df3ab18b2a1070fc5fe01e3d208f2caabfc1e3b2138a59f6",
+    "page": 1
+  },
+  "moyka-plenki-dimensions": {
+    "width": 595,
+    "height": 840,
+    "bytes": 80624,
+    "sha256": "a6bbc777cc44b79370ff8284ae29a230f6a4dd9fa78589942111ff6be4f62ef3",
+    "sourceSha256": "b83934c4ec61b92192056a2f16ef48eae353d1506820f7e8516abf98f38dc2c7",
+    "page": 1
   }
 }

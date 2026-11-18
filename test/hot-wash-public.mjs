@@ -12,7 +12,7 @@ const url=base+'/catalog/lines/moyka-plenki/';
 const response=await fetch(url,{cache:'no-store'});assert.equal(response.status,200);
 const html=await response.text();assert.ok(html.includes('data-hot-wash-line'));
 const version=html.match(/hot-film-washing\.css\?v=([^"&]+)/)?.[1];assert.ok(version);
-const document=JSON.parse(html.match(/<script type="application\/json" id="line-document-data">(.*?)<\/script>/s)[1])[0];
+const document=JSON.parse(html.match(/<script type="application\/json" id="line-document-data">(.*?)<\/script>/s)[1]).find(entry=>entry.id==='moyka-plenki-technical');
 assert.equal(document.pages,22);assert.equal(document.bytes,4430978);assert.equal(document.sha256,'5648714c2f667ddb9d2168803aac50faf927fedbecb5147deebb57b0186a704a');
 const pdf=await fetch(base+'/documents/'+document.file,{cache:'no-store'});assert.equal(pdf.status,200);assert.equal(pdf.headers.get('content-type'),'application/pdf');
 const bytes=Buffer.from(await pdf.arrayBuffer());assert.equal(bytes.length,document.bytes);assert.equal(createHash('sha256').update(bytes).digest('hex'),document.sha256);
@@ -79,7 +79,7 @@ try{
  await evaluate(`document.querySelector('.hw-specification').closest('details').open=true`);
  await click('[data-hotwash-select="33"]');assert.equal((await root()).selected,'33');
  assert.ok(await evaluate(`document.querySelector('[data-hotwash-position="37"] a').getAttribute('href')==='#placement'`));
- await click('[data-dimension-tab="workshop"]');
+ await click('[data-dimension-tab="side"]');
  await click('[data-pdf-open="moyka-plenki-technical"]');
  await wait(`document.querySelector('[data-pdf-status]').textContent==='Страница 1 из 22'`);
  assert.ok(await evaluate(`document.querySelector('[data-pdf-canvas]').width>100`));

@@ -8,7 +8,6 @@ import {hotWashDiagram} from '../content/hot-wash-diagram.mjs';
 import {publicLibraryDocuments} from '../content/document-library.mjs';
 import {buildGalleryData} from '../scripts/gallery-data.mjs';
 import {selectGalleryItems,findGalleryItem} from '../public/gallery-model.js';
-import {lineComparison} from '../scripts/catalog-branches.mjs';
 import {revisedPage} from '../scripts/views.mjs';
 import {render,basePath,routes} from '../scripts/build.mjs';
 import {imageSize} from '../scripts/image-size.mjs';
@@ -44,8 +43,7 @@ test('Все 44 WebP, размеры, исходный PDF и единствен
  }
  const pdf=await readFile('public/documents/'+hotWashDocument.file);
  assert.equal(pdf.length,4430978);assert.equal(hash(pdf),'5648714c2f667ddb9d2168803aac50faf927fedbecb5147deebb57b0186a704a');assert.equal(hotWashDocument.pages,22);
- const docs=publicLibraryDocuments.filter(d=>d.objectSlug==='moyka-plenki');assert.equal(docs.length,1);assert.equal(docs[0].category,'technical');
- assert.equal(publicLibraryDocuments.length,30);
+ const docs=publicLibraryDocuments.filter(d=>d.objectSlug==='moyka-plenki');assert.deepEqual(docs.map(d=>d.id).sort(),['moyka-plenki-brochure','moyka-plenki-dimensions','moyka-plenki-technical']);
  assert.equal(hash(await readFile('public/assets/'+manifest.documentCover.file)),manifest.documentCover.sha256);
  assert.equal(manifest.documentCover.sourceSha256,hotWashDocument.sha256);
 });
@@ -99,9 +97,10 @@ test('Новая страница использует общий fit-монит
  assert.ok(html.includes(`href="${basePath}/documents/${hotWashDocument.file}"`)&&html.includes('download="'+hotWashDocument.downloadName+'"'));
  assert.ok(html.includes('/line-monitor.js?v=')&&html.includes('/line-documents.js?v=')&&html.includes('/hot-film-washing.js?v='));
  assert.equal((html.match(/src="[^"]*\/hot-film-washing.js/g)||[]).length,1);
- assert.ok(html.includes('data-hero-finish="titanium-gallery"')&&html.includes('Проектная компоновка линии · ТО, стр. 1'));
- assert.ok(html.includes('data-dimension-tab="workshop"')&&html.includes('data-dimension-tab="top"'));
- assert.ok(!html.includes('dimensions-a0')&&!html.includes('undefined')&&!html.includes('NaN')&&!html.includes('javascript:'));
+ assert.ok(html.includes('data-hero-finish="titanium-gallery"')&&html.includes('Проектная визуализация линии')&&html.includes('catalog-cover-detailed.webp'));
+ for(const view of ['top','side','opposite','section-b'])assert.ok(html.includes(`data-dimension-tab="${view}"`));
+ assert.ok(html.includes('era-moyka-plenki-dimensions-a0.pdf'));
+ assert.ok(!html.includes('undefined')&&!html.includes('NaN')&&!html.includes('javascript:'));
  const htmlIds=[...html.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);assert.equal(new Set(htmlIds).size,htmlIds.length);
 });
 test('Медиатека объединяет повторно используемые фотографии, считает материалы и выделяет новую линию',()=>{
@@ -118,11 +117,11 @@ test('Медиатека объединяет повторно использу�
  assert.equal(gallery.albums.find(a=>a.id==='moyka-plenki').title,hotFilmWashing.cardTitle);
  assert.ok(!JSON.stringify(gallery).includes('undefined')&&!JSON.stringify(gallery).includes('NaN'));
 });
-test('Остальные страницы, исходные две линии и сравнение 01/02 сохраняют утверждённые снимки',async()=>{
+test('Страницы вне комплектаций сохраняют утверждённые снимки',async()=>{
  const original=JSON.parse(await readFile('test/fixtures/hot-wash-preserved.json','utf8'));
- assert.equal(hash(lineComparison()),original.comparison);
- for(const {path,sha256} of original.oldLinePages)assert.equal(hash(revisedPage(path)),sha256,path);
- for(const [path,sha256] of Object.entries(basePath?original.unchangedPagesBase:original.unchangedPages))assert.equal(hash(render(path).replaceAll(release,'RELEASE')),sha256,path);
+ for(const [path,sha256] of Object.entries(basePath?original.unchangedPagesBase:original.unchangedPages)){
+  if(!lines.some(entry=>entry.enabled&&entry.path===path))assert.equal(hash(render(path).replaceAll(release,'RELEASE')),sha256,path);
+ }
  const tech=render('/technology').replace(/<a class="tf-hot-wash-card"[\s\S]*?<\/a>/,'<a data-wash-route></a>').replaceAll(release,'RELEASE');
  assert.equal(hash(tech),basePath?original.technologyOutsideWashCardBase:original.technologyOutsideWashCard);
  const html=render('/technology');assert.ok(html.includes(`href="${basePath}/catalog/lines/moyka-plenki"`));

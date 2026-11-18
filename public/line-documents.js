@@ -14,8 +14,8 @@ for(const link of document.querySelectorAll(':is(.film-line--full,.mini-line) [d
   }catch{location.assign(link.href);}
  });
 }
-for(const root of document.querySelectorAll('[data-line-dimensions]')){
- const tabs=[...root.querySelectorAll('[data-dimension-tab]')];
+for(const root of document.querySelectorAll('[data-line-dimensions],[data-line-layout-views]')){
+ const tabs=[...root.querySelectorAll('[role=tab]')];
  function activate(tab,focus=false){
   tabs.forEach(t=>{const active=t===tab;t.setAttribute('aria-selected',String(active));t.tabIndex=active?0:-1;root.querySelector('#'+t.getAttribute('aria-controls')).hidden=!active;});
   if(focus)tab.focus({preventScroll:true});
@@ -27,5 +27,6 @@ for(const root of document.querySelectorAll('[data-line-dimensions]')){
    if(next===null)return;event.preventDefault();activate(tabs[next],true);
   });
  });
- root.dataset.dimensionsReady='true';
+ const readyAttribute=root.hasAttribute('data-line-dimensions')?'data-dimensions-ready':'data-layout-views-ready';
+ root.setAttribute(readyAttribute,'true');
 }

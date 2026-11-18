@@ -23,7 +23,7 @@ test('Исходный A0 зарегистрирован у Сепарации 0
  assert.equal(selectionSummary(documentLibrary,new Set([d.id])).selected[0],d);
  assert.ok(!filterLibraryDocuments(documentLibrary,{product:'separatsiya-01'}).includes(d));
 });
-test('Полная линия сохраняет показатели, один fit-монитор и новый порядок разделов с двумя документами',async()=>{
+test('Полная линия сохраняет показатели, один fit-монитор и новый порядок разделов с тремя документами',async()=>{
  const page=render('/catalog/lines/separatsiya-02');
  const ids=['purpose','raw-materials','specs','process','composition','quality','placement','kair','photos','documents','equipment'];
  let previous=-1;
@@ -37,8 +37,8 @@ test('Полная линия сохраняет показатели, один 
  assert.ok(!page.includes('data-line-source-diagram'));assert.ok(!page.includes('id="line02-workshop"'));
  assert.ok(!composition.includes('line-unit-grid'));assert.ok(page.includes('line-flow-diagram'));
  const documents=page.slice(page.indexOf('id="documents"'),page.indexOf('id="equipment"'));
- assert.equal((documents.match(/data-library-document="/g)||[]).length,2);
- for(const id of ['separatsiya-02-technical','separatsiya-02-dimensions-a0'])assert.ok(documents.includes(`data-pdf-open="${id}"`));
+ assert.equal((documents.match(/data-library-document="/g)||[]).length,3);
+ for(const id of ['separatsiya-02-overview','separatsiya-02-technical','separatsiya-02-dimensions-a0'])assert.ok(documents.includes(`data-pdf-open="${id}"`));
  assert.equal((page.match(/id="pdf-viewer"/g)||[]).length,1);assert.ok(page.includes('/line-documents.js?v='));
  const equipment=page.slice(page.indexOf('id="equipment"'));assert.ok(equipment.includes('line-unit-grid'));assert.ok(equipment.includes('Предварительный распушитель'));assert.ok(equipment.includes('ДОПОЛНИТЕЛЬНЫЙ МОДУЛЬ'));
  for(const text of ['402,67','281,87','4,7','750 кг/ч','50%','810 м²','9 м','≈6,5 м','2–10','5 раздельных потоков'])assert.ok(page.includes(text),text);

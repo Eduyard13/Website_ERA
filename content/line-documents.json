@@ -1,0 +1,68 @@
+[
+  {
+    "id": "separatsiya-01-brochure",
+    "objectSlug": "separatsiya-01",
+    "category": "brochures",
+    "title": "Брошюра — Линия сухой сепарации плёнок и пакетов (мини)",
+    "file": "brochures/era-separatsiya-01-brochure.pdf",
+    "pages": 3,
+    "bytes": 1592432,
+    "sha256": "b865e3daa0dfb2ae0d878d5ae838b509fab73063fb1cacfd4f4f3aa7b4072725"
+  },
+  {
+    "id": "separatsiya-03-brochure",
+    "objectSlug": "separatsiya-03",
+    "category": "brochures",
+    "title": "Брошюра — Линия сухой сепарации и сушки плёнок и пакетов",
+    "file": "brochures/era-separatsiya-03-brochure.pdf",
+    "pages": 3,
+    "bytes": 4117790,
+    "sha256": "14c26d583eeae83ff98c114911b700e24ed8be85e3c21e560337a7635e501479"
+  },
+  {
+    "id": "moyka-plenki-brochure",
+    "objectSlug": "moyka-plenki",
+    "category": "brochures",
+    "title": "Брошюра — Линия горячей мойки плёнок и пакетов",
+    "file": "brochures/era-moyka-plenki-brochure.pdf",
+    "pages": 3,
+    "bytes": 4798310,
+    "sha256": "92d74c2fd50dcb997a16e328539ce15d88b0af237a948e7c6d910ae88bd02594"
+  },
+  {
+    "id": "separatsiya-01-dimensions",
+    "objectSlug": "separatsiya-01",
+    "category": "drawings",
+    "title": "Габаритная схема механической части — Сепарация 01",
+    "file": "drawings/era-separatsiya-01-dimensions.pdf",
+    "pages": 1,
+    "bytes": 172617,
+    "sha256": "db8a8883361184e9c6ac84cc1dc85e5d50128a233c232c15cda7b903de461211",
+    "format": "A4",
+    "kind": "raster-extract"
+  },
+  {
+    "id": "separatsiya-03-dimensions",
+    "objectSlug": "separatsiya-03",
+    "category": "drawings",
+    "title": "Габаритный чертёж — Сепарация 03",
+    "file": "drawings/era-separatsiya-03-dimensions-a0.pdf",
+    "pages": 1,
+    "bytes": 4016723,
+    "sha256": "d19c0e028f486765df3ab18b2a1070fc5fe01e3d208f2caabfc1e3b2138a59f6",
+    "format": "A0",
+    "kind": "original"
+  },
+  {
+    "id": "moyka-plenki-dimensions",
+    "objectSlug": "moyka-plenki",
+    "category": "drawings",
+    "title": "Габаритный чертёж — Линия горячей мойки",
+    "file": "drawings/era-moyka-plenki-dimensions-a0.pdf",
+    "pages": 1,
+    "bytes": 7428220,
+    "sha256": "b83934c4ec61b92192056a2f16ef48eae353d1506820f7e8516abf98f38dc2c7",
+    "format": "A0",
+    "kind": "original"
+  }
+]

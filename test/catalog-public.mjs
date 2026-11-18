@@ -65,7 +65,8 @@ try{
  const count=kind=>evaluate(`document.querySelectorAll('[data-${kind}]:not([hidden])').length`);
  const active=()=>evaluate(`document.querySelector('[data-quick-filter] [aria-pressed="true"]').textContent`);
  await command('Page.enable');await command('Runtime.enable');
- for(const width of [320,390,768,900,1024,1200,1440,1920]){
+ const widths=[320,360,390,768,900,1024,1280,1440,1920];
+ for(const width of widths){
   await command('Emulation.setDeviceMetricsOverride',{width,height:900,deviceScaleFactor:1,mobile:width<768});
   for(const path of ['/catalog/','/catalog/lines/','/catalog/equipment/']){
    await load(path);
@@ -81,6 +82,20 @@ try{
      assert.equal(await evaluate(`document.querySelector('.catalog-comparison').open`),false);
      await evaluate(`document.querySelector('.catalog-comparison summary').click()`);
      assert.equal(await evaluate('document.documentElement.scrollWidth>innerWidth'),false);
+     const comparison=await evaluate(`(()=>{
+      const table=document.querySelector('[data-line-comparison] table');
+      const headers=[...table.querySelectorAll('[data-comparison-line]')];
+      const rows=[...table.tBodies[0].rows];
+      const aligned=row=>{
+       const cells=row.querySelectorAll('td');
+       return cells.length===headers.length&&[...cells].every((cell,i)=>{
+        const box=cell.getBoundingClientRect(),header=headers[i].getBoundingClientRect();
+        return box.width>0&&box.left>=0&&box.right<=innerWidth+1&&Math.abs(box.left-header.left)<1&&Math.abs(box.width-header.width)<1&&cell.scrollWidth<=cell.clientWidth+1;
+       });
+      };
+      return {lines:headers.map(header=>header.dataset.comparisonLine),rows:rows.length,fits:rows.every(aligned)};
+     })()`);
+     assert.deepEqual(comparison,{lines:['separatsiya-01','separatsiya-02','separatsiya-03'],rows:13,fits:true},`Comparison at ${width}px`);
     }
    }
   }
@@ -88,7 +103,7 @@ try{
  await load('/catalog/lines/?campaign=test&group=Сепарация');assert.equal(await count('line'),3);assert.equal(await active(),'Сепарация');
  await evaluate(`document.querySelector('.catalog-comparison summary').click()`);
  const table=await evaluate(`document.querySelector('.catalog-comparison table').textContent`);
- for(const value of ['225 кВт','402,67 кВт','157,5 кВт','281,87 кВт','5 × 4,7 м³','Дополнительная опция, по согласованию','Не входят в базовую комплектацию'])assert.ok(table.includes(value),value);
+ for(const value of ['225 кВт','402,67 кВт','639,77 кВт','157,5 кВт','281,87 кВт','447,84 кВт','5 × 4,7 м³','Дополнительная опция, по согласованию','Не входят в базовую комплектацию','2–10 дополнительно','56,2 × 43,4'])assert.ok(table.includes(value),value);
  await clickButton('Мойка');assert.equal(await count('line'),1);assert.equal(await active(),'Мойка');
  assert.equal(await evaluate(`document.querySelector('.catalog-comparison').hidden`),true);
  await clickButton('Все линии');assert.equal(await count('line'),4);assert.equal(await evaluate(`document.querySelector('.catalog-comparison').open`),true);
@@ -108,7 +123,7 @@ try{
  await clickButton('Обезвоживание');assert.equal(await count('node'),3);assert.equal(await evaluate('history.state.custom'),'preserved');
  await clickButton('Сбросить');assert.equal(await count('node'),12);assert.equal(await evaluate('location.search'),'?campaign=test');
  assert.deepEqual(errors,[],'Catalog console errors');
- console.log(`::notice title=Published catalog verified::Release ${version}: all three catalogue routes and scoped resources return HTTP 200, 32 original WebP SHA-256 checks, 8 widths, 12/3/2/2/3/1/1 nodes, 4/3/1 lines, query normalization/reset/history state, detail Back, comparison and no document overflow passed in Chrome. ${base}/catalog/`);
+ console.log(`::notice title=Published catalog verified::Release ${version}: all three catalogue routes and scoped resources return HTTP 200, 32 original WebP SHA-256 checks, ${widths.length} widths, 12/3/2/2/3/1/1 nodes, 4/3/1 lines, query normalization/reset/history state, detail Back, all three comparison columns and no document overflow passed in Chrome. ${base}/catalog/`);
 }finally{
  socket?.close();chrome.kill('SIGTERM');await delay(250);await rm(profile,{recursive:true,force:true});
 }

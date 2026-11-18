@@ -1,0 +1,78 @@
+/* Shared refinements for the four detail pages. */
+.film-line [data-line-catalog-cover] .media-open{aspect-ratio:3/2;background:#010a37}
+.film-line [data-line-catalog-cover] img{display:block;width:100%;height:100%;padding:0;object-fit:contain;filter:none;transform:none}
+.film-line [data-line-catalog-cover] .media-open:hover img{transform:none}
+
+.film-line .line-image[data-type=photo] img{display:block;width:100%;height:100%;padding:0;object-fit:cover}
+.film-line .line-image:is([data-type=scheme],[data-type=visualization]):not(.line-image--hero) .media-open{
+ height:auto;
+ aspect-ratio:auto;
+}
+.film-line .line-image:is([data-type=scheme],[data-type=visualization]):not(.line-image--hero) img{
+ display:block;
+ width:100%;
+ height:auto;
+ padding:0;
+ object-fit:contain;
+ transform:none;
+}
+.film-line--hot-wash .hw-raw-photos .line-image[data-type=photo] .media-open{height:auto;aspect-ratio:3/4}
+.film-line--drying .line-raw-grid [data-image$='/raw-farm.webp'] img{object-position:50% 60%}
+.film-line .line-layout-views #line03-view-reverse img{width:auto;max-width:100%;max-height:680px;margin-inline:auto}
+.film-line .line-layout-views #line03-view-reverse .line-image{background:#fff}
+
+.film-line .line-power-kpis{
+ grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:18px 32px;
+ padding:24px;
+ margin:32px 0 0;
+ border:1px solid var(--line);
+ border-radius:6px;
+ background:#f6f3ec;
+}
+.film-line .line-power-kpis strong{font-size:clamp(27px,3.6vw,42px);font-variant-numeric:tabular-nums}
+.film-line .line-power-kpis small{font-size:.48em}
+.film-line .line-power-kpis span{max-width:none}
+.film-line .line-power-kpis p{grid-column:1/-1}
+.film-line .line-power-details{margin-top:12px}
+.film-line .line-power-details > summary::after{content:'⌄';font-size:23px}
+.film-line .line-power-details[open] > summary::after{transform:rotate(180deg)}
+.film-line .line-power-details > summary:focus-visible,.film-line .line-power-scroll:focus-visible{outline:2px solid var(--era-gold-dark);outline-offset:3px}
+.film-line .line-power-scroll{overflow-x:auto;max-width:100%}
+.film-line .line-power-table.line-power-components{min-width:720px;width:100%}
+.film-line .line-power-table.line-power-components th:first-child{width:auto}
+.film-line .line-power-components :is(th,td){width:auto;padding:11px 10px;vertical-align:top;font-size:14px}
+.film-line .line-power-components th[scope=row]{text-align:left}
+.film-line .line-power-components thead th{white-space:nowrap}
+.film-line .line-power-components .line-power-group th{background:var(--era-beige);width:auto}
+.film-line .line-power-components .line-power-subtotal th{font-weight:500}
+.film-line .line-power-components .line-power-subtotal td{font-weight:600}
+.film-line .line-power-components .line-power-number,.film-line .line-power-energy td,.film-line .line-production-table td{font-variant-numeric:tabular-nums}
+.film-line .line-power-energy{margin-top:28px}
+.film-line :is(.line-power-energy,.line-production-table){min-width:0}
+.film-line :is(.line-power-energy,.line-production-table) :is(th,td){font-size:14px;padding:10px 8px}
+.film-line :is(.line-power-energy,.line-production-table) th{width:auto}
+
+.film-line .line-dimensions--natural .line-dimensions-stage{height:auto;padding:12px;background:#fff}
+.film-line .line-dimensions--natural .line-dimensions-stage figure{height:auto;align-items:center}
+.film-line .line-dimensions--natural .line-dimensions-stage figure>a{width:100%;flex:none}
+.film-line .line-dimensions--natural .line-dimensions-stage img{
+ width:min(100%,var(--projection-width),calc(clamp(300px,52vw,660px) * var(--projection-ratio)));
+ height:auto;
+ margin-inline:auto;
+ mix-blend-mode:normal;
+}
+
+.film-line .line-document-grid.line-document-grid--complete{grid-template-columns:repeat(3,minmax(0,1fr));max-width:none;gap:18px}
+.film-line .line-document-grid--complete .dl-cover{height:220px}
+.film-line .line-document-grid--complete .dl-document h3{font-size:clamp(17px,1.55vw,22px)}
+.film-line .line-document-grid--complete .dl-document-copy{min-width:0;padding-inline:18px}
+@media (max-width:1023px){
+ .film-line .line-document-grid.line-document-grid--complete{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:767px){
+ .film-line .line-power-kpis{gap:12px 16px;padding:16px}
+ .film-line .line-power-kpis strong{font-size:clamp(23px,6vw,33px)}
+ .film-line .line-document-grid.line-document-grid--complete{grid-template-columns:minmax(0,1fr)}
+ .film-line .line-power-energy,.film-line .line-production-table{margin-inline:0}
+}

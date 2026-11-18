@@ -10,7 +10,7 @@ import {readFilterState,filterUrl,matchesEquipment} from '../public/catalog-filt
 import {basePath,render} from '../scripts/build.mjs';
 
 const digest=value=>createHash('sha256').update(value).digest('hex');
-test('Каталог сохраняет реестр, все 12 полных карточек, две готовые линии и 14 детальных страниц',async()=>{
+test('Каталог сохраняет реестр, все 12 полных карточек, готовые карточки и страницы всех узлов',async()=>{
  const original=JSON.parse(await readFile(new URL('./fixtures/catalog-preserved.json',import.meta.url)));
  const {originalDraft}=JSON.parse(await readFile(new URL('./fixtures/hot-wash-preserved.json',import.meta.url)));
  const {originalDraft:separationDraft}=JSON.parse(await readFile(new URL('./fixtures/separation-03-preserved.json',import.meta.url)));
@@ -19,7 +19,7 @@ test('Каталог сохраняет реестр, все 12 полных к�
  assert.deepEqual(nodes.map(node=>({slug:node.slug,sha256:digest(nodeCard(node))})),original.nodeCards);
  const ready=revisedPage('/catalog/lines').match(/<a class="line-card[\s\S]*?<\/a>/g).filter(html=>!html.includes('data-line-id="moyka-plenki"')&&!html.includes('data-line-id="separatsiya-03"'));
  assert.deepEqual(ready.map(html=>({slug:html.match(/data-line-id="([^"]+)"/)[1],sha256:digest(html)})),original.readyCards);
- for(const [path,sha] of Object.entries(original.details))assert.equal(digest(revisedPage(path)),sha,path);
+ for(const [path,sha] of Object.entries(original.details).filter(([path])=>path.startsWith('/catalog/equipment/')))assert.equal(digest(revisedPage(path)),sha,path);
  for(const [path,sha] of Object.entries(original.assets))assert.equal(digest(await readFile('public/'+path)),sha,path);
  const interactions=await readFile('public/interactions.js','utf8');
  assert.ok(!interactions.includes('#catalog-filters')&&!interactions.includes('#line-filters'));
@@ -67,19 +67,22 @@ test('Фильтры строятся из реестра, быстрые кно
  for(const line of lines.filter(l=>!l.enabled))assert.ok(!html.includes(`href="${line.path}"`));
  assert.ok(html.includes('Технологические решения.'));
 });
-test('Сравнение закрыто, источник метрик определяется по slug, label и единице, состав 01/02 различается',()=>{
+test('Сравнение закрыто и включает только три комплектации сухой сепарации',()=>{
  const html=lineComparison();
  assert.equal((html.match(/data-line-comparison/g)||[]).length,1);
  assert.ok(!html.slice(0,html.indexOf('<summary>')).includes(' open'));
  assert.ok(html.includes('data-keep-open')&&html.includes('<caption>')&&html.includes('scope="col"')&&html.includes('scope="row"'));
  for(const value of ['225 кВт','402,67 кВт','157,5 кВт','281,87 кВт','5 × 4,7 м³','Дополнительная опция, по согласованию','Не входят в базовую комплектацию','Не входит в базовую комплектацию'])assert.ok(html.includes(value),value);
- assert.equal((html.match(/5 × 4,7 м³/g)||[]).length,1);
+ assert.equal((html.match(/5 × 4,7 м³/g)||[]).length,2);
+ assert.deepEqual([...html.matchAll(/data-comparison-line="([^"]+)"/g)].map(match=>match[1]),['separatsiya-01','separatsiya-02','separatsiya-03']);
+ assert.ok(!html.includes('moyka-plenki'));
+ for(const value of ['639,77 кВт','447,84 кВт','17,75 × 11,75','45 × 18','56,2 × 43,4','До 5%','С сушкой','600–700 кг/ч'])assert.ok(html.includes(value),value);
  const shuffled=structuredClone(lines).reverse();
  for(const line of shuffled)line.cardMetrics?.reverse();
  assert.equal(lineComparison(shuffled),html);
- const metric=shuffled.find(l=>l.slug==='separatsiya-01').cardMetrics.find(m=>m.label==='Установленная мощность');
- metric.value='226';assert.ok(lineComparison(shuffled).includes('226 кВт'));
- metric.unit='Вт';assert.throws(()=>lineComparison(shuffled),/metric mismatch/);
+ const metric=shuffled.find(l=>l.slug==='separatsiya-01').cardMetrics.find(m=>m.label==='Входной поток');
+ metric.value='1 501';assert.ok(lineComparison(shuffled).includes('1 501'));
+ metric.unit='т/ч';assert.throws(()=>lineComparison(shuffled),/line metric/);
 });
 test('URL нормализует только свои фильтры, сохраняет посторонние параметры и hash, условия пересекаются',()=>{
  const current=new URL('https://example.test/Website_ERA/catalog/equipment/?q=%20%20&category=invalid&material=invalid&campaign=test#main');

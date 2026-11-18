@@ -36,10 +36,10 @@ with sync_playwright() as p:
    assert abs(root.bounding_box()['height']-initial)<1,(width,number)
    assert root.locator('.diagram-details').evaluate('e=>{const a=e.getBoundingClientRect();return [...e.children].filter(c=>getComputedStyle(c).display!=="none").every(c=>c.getBoundingClientRect().bottom<=a.bottom+1)}'),(width,number)
   dimensions=page.locator('[data-line-dimensions]');tabs=dimensions.get_by_role('tab')
-  expect(tabs).to_have_count(2)
-  tabs.nth(1).click();expect(tabs.nth(1)).to_have_attribute('aria-selected','true');expect(page.locator('#hot-dimension-view-top')).to_be_visible()
+  expect(tabs).to_have_count(4)
+  tabs.nth(1).click();expect(tabs.nth(1)).to_have_attribute('aria-selected','true');expect(page.locator('#hot-dimension-view-side')).to_be_visible()
   tabs.nth(1).focus();page.keyboard.press('Home');expect(tabs.first).to_have_attribute('aria-selected','true')
-  expect(page.locator('#hot-dimension-view-workshop')).to_be_visible();overflow()
+  expect(page.locator('#hot-dimension-view-top')).to_be_visible();overflow()
   assert page.locator('#quality .hw-product-grid>article').count()==3
   assert not page.locator('#quality').evaluate('e=>e.scrollWidth>e.clientWidth')
   report['widths'].append(width)
@@ -78,7 +78,7 @@ with sync_playwright() as p:
   dialog.locator('[data-pdf-download]').click()
  pdf=Path(download.value.path()).read_bytes();assert len(pdf)==4430978 and hashlib.sha256(pdf).hexdigest()=='5648714c2f667ddb9d2168803aac50faf927fedbecb5147deebb57b0186a704a'
  page.keyboard.press('Escape');expect(opener).to_be_focused()
- for selector,part in [('.line-hero .media-open','overview'),('#hot-dimension-view-workshop .media-open','placement-isometric')]:
+ for selector,part in [('.line-hero .media-open','catalog-cover-detailed'),('#hot-dimension-view-workshop .media-open','placement-isometric')]:
   page.locator(selector).click();expect(page.locator('#media-viewer')).to_be_visible()
   assert part in page.locator('#viewer-image').get_attribute('src');page.keyboard.press('Escape')
  page.locator('.line-hero [data-project-request]').click();expect(page.locator('#project-request')).to_be_visible();page.keyboard.press('Escape')
@@ -112,7 +112,7 @@ with sync_playwright() as p:
  static=browser.new_context(java_script_enabled=False,viewport={'width':320,'height':1000});s=static.new_page();s.goto(base+'/catalog/lines/moyka-plenki/')
  expect(s.locator('h1')).to_have_text('Линия горячей мойки плёнок и пакетов');expect(s.locator('svg image')).to_have_count(1)
  s.locator('details').filter(has=s.locator('.hw-specification')).locator('summary').click();expect(s.locator('[data-hotwash-position]')).to_have_count(37)
- assert s.locator('#documents a[download]').get_attribute('href').endswith('era-moyka-plenki-technical-description.pdf');static.close()
+ assert s.locator('#documents a[download][href$="/era-moyka-plenki-technical-description.pdf"]').count()==1;static.close()
  assert not errors,errors;assert not failures,failures
  report.update({'errors':errors,'localHttpFailures':failures,'pdfSHA256':'verified','linksHistoryAndTouch':'passed','noJS':'passed'})
  (out/'results.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')

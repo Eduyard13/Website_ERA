@@ -34,7 +34,7 @@ with sync_playwright() as p:
    assert root.locator('[data-detail-label]').inner_text() and root.locator('[data-detail-description]').inner_text()
    assert abs(root.bounding_box()['height']-initial)<1,(width,number,'unstable monitor')
    assert root.locator('.diagram-details').evaluate('e=>{const r=e.getBoundingClientRect();return [...e.children].filter(c=>getComputedStyle(c).display!=="none").every(c=>c.getBoundingClientRect().bottom<=r.bottom+1)}'),(width,number,'panel overflow')
-  tabs=page.locator('[data-line-dimensions] [role=tab]');expect(tabs).to_have_count(2)
+  tabs=page.locator('[data-line-dimensions] [role=tab]');expect(tabs).to_have_count(3)
   tabs.nth(1).click();expect(page.locator('#sd-dimension-view-side')).to_be_visible()
   tabs.nth(1).focus();page.keyboard.press('Home');expect(page.locator('#sd-dimension-view-top')).to_be_visible()
   overflow();report['widths'].append(width)
@@ -73,9 +73,12 @@ with sync_playwright() as p:
  pdf=Path(download.value.path()).read_bytes()
  assert len(pdf)==5397658 and hashlib.sha256(pdf).hexdigest()=='2b399241ee41e5a792d87ab051f1d764f65faa1071b27bc1950a75024a5b52f6'
  page.keyboard.press('Escape');expect(opener).to_be_focused()
- for selector,source in [('.line-hero .media-open','catalog-cover'),('#sd-dimension-view-top .media-open','placement-top')]:
+ page.locator('#line03-view-reverse-tab').click()
+ expect(page.locator('#line03-view-main')).to_be_hidden()
+ for selector,source in [('.line-hero .media-open','catalog-cover'),('#line03-view-reverse .media-open','layout-reverse')]:
   page.locator(selector).click();expect(page.locator('#media-viewer')).to_be_visible()
   assert source in page.locator('#viewer-image').get_attribute('src');page.keyboard.press('Escape')
+ page.locator('#line03-view-main-tab').click();expect(root.locator('[data-diagram-select]')).to_have_value('37')
  page.locator('.line-hero [data-project-request]').click();expect(page.locator('#project-request')).to_be_visible();page.keyboard.press('Escape')
  for link in page.locator('#equipment .text-link').all():assert page.request.get(link.evaluate('a=>a.href')).status==200
  print('Fullscreen, zoom/Escape/focus, specification, 28-page PDF/view/download, original images and equipment links OK',flush=True)
@@ -108,7 +111,7 @@ with sync_playwright() as p:
  static=browser.new_context(java_script_enabled=False,viewport={'width':320,'height':1000});s=static.new_page()
  s.goto(base+'/catalog/lines/separatsiya-03/');expect(s.locator('h1')).to_have_text('Линия сухой сепарации и сушки плёнок и пакетов')
  s.locator('details').filter(has=s.locator('.sd-specification')).locator('summary').click();expect(s.locator('[data-separation03-position]')).to_have_count(37)
- assert s.locator('#documents a[download]').get_attribute('href').endswith('era-separatsiya-03-technical-description.pdf');static.close()
+ assert s.locator('#documents a[download][href$="/era-separatsiya-03-technical-description.pdf"]').count()==1;static.close()
  assert not errors,errors;assert not failures,failures
  report.update({'errors':errors,'httpFailures':failures,'originalPdf':'SHA256 verified','linksHistoryTouchAndNoJS':'passed'})
  (out/'results.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')

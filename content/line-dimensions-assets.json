@@ -1,0 +1,89 @@
+{
+  "separatsiya-01": [
+    {
+      "id": "top",
+      "label": "Вид сверху",
+      "file": "lines/separatsiya-01/dimensions/top.png",
+      "width": 515,
+      "height": 405,
+      "bytes": 75066,
+      "sha256": "a3f389d7ce88982810658e92829e6a1a1ac803f100aaddf00754a0a0124c7c34"
+    },
+    {
+      "id": "side",
+      "label": "Вид сбоку",
+      "file": "lines/separatsiya-01/dimensions/side.png",
+      "width": 515,
+      "height": 159,
+      "bytes": 43879,
+      "sha256": "e78099508004a7c4d0b47adb0ca7bdd0b6445bfb3313c6f036191e58e28d146f"
+    }
+  ],
+  "separatsiya-03": [
+    {
+      "id": "top",
+      "label": "Вид сверху",
+      "file": "lines/separatsiya-03/dimensions/top.webp",
+      "width": 3576,
+      "height": 2829,
+      "bytes": 424208,
+      "sha256": "3c60168dd653e590fb45c7dbe1f1e43d5f000035220109e3ba71d942a544526d"
+    },
+    {
+      "id": "side",
+      "label": "Вид сбоку",
+      "file": "lines/separatsiya-03/dimensions/side.webp",
+      "width": 3576,
+      "height": 774,
+      "bytes": 179030,
+      "sha256": "6eab68f477f355182fd9d94b17b2b479223990b9fd9fd90d182a764ee2bb2d94"
+    },
+    {
+      "id": "opposite-and-sections",
+      "label": "Вид А и сечения B/C",
+      "file": "lines/separatsiya-03/dimensions/opposite-and-sections.webp",
+      "width": 3576,
+      "height": 1239,
+      "bytes": 241288,
+      "sha256": "aac595d937b599b80e993658764e6c3fec303709296d574ba8abfdc3bd7911e1"
+    }
+  ],
+  "moyka-plenki": [
+    {
+      "id": "top",
+      "label": "Вид сверху",
+      "file": "lines/moyka-plenki/dimensions/top.webp",
+      "width": 3576,
+      "height": 2017,
+      "bytes": 400446,
+      "sha256": "828b708a759f500c378057a6f12848fc1b905ec290c42f5b18069303c4f7e222"
+    },
+    {
+      "id": "side",
+      "label": "Вид сбоку",
+      "file": "lines/moyka-plenki/dimensions/side.webp",
+      "width": 3576,
+      "height": 875,
+      "bytes": 204910,
+      "sha256": "ab3b04b8346544764009aa15939d87dc818eeff2dd19d683bcdbfd55f50bd6b0"
+    },
+    {
+      "id": "opposite",
+      "label": "Вид А",
+      "file": "lines/moyka-plenki/dimensions/opposite.webp",
+      "width": 3576,
+      "height": 870,
+      "bytes": 185702,
+      "sha256": "97e34f6dc4bfa2683347ce21f03291d8bb4fbbdf1a25a10ddc3cf4b52490707d"
+    },
+    {
+      "id": "section-b",
+      "label": "Сечение Б–Б",
+      "file": "lines/moyka-plenki/dimensions/section-b.webp",
+      "width": 3576,
+      "height": 749,
+      "bytes": 160970,
+      "sha256": "699bf5af62187febd22112452e0537148a0575bf97ea0458494b9feaac4a32e0"
+    }
+  ]
+}

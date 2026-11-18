@@ -1,18 +1,23 @@
 import {nodes} from '../content/catalog.mjs';
-import {miniFilmSeparationMedia,miniLineHeroMedia,miniLineMetrics,miniRawMaterials,miniInclusions,miniStages,miniSpecification,miniUnits,miniSpecs,miniQuality,miniService} from '../content/mini-film-separation.mjs';
+import {miniFilmSeparationMedia,miniLineMetrics,miniRawMaterials,miniInclusions,miniStages,miniSpecification,miniUnits,miniSpecs,miniQuality,miniService} from '../content/mini-film-separation.mjs';
 import {mediaAttributes} from './media.mjs';
-import {libraryDocumentCard,pdfViewerDialog} from './documents.mjs';
-import {publicLibraryDocuments} from '../content/document-library.mjs';
+import {pdfViewerDialog} from './documents.mjs';
+import {lineDocuments,lineDocumentCards,lineHeroImage} from './line-page-media.mjs';
+import {linePower,dryLineProduction} from './line-power.mjs';
 import {equipmentCardImages} from '../content/equipment-card-images.mjs';
 import {interactiveLineDiagram} from './line-diagram.mjs';
+import {lineDimensions} from './line-dimensions.mjs';
 import {miniLineDiagram} from '../content/line-diagrams.mjs';
+import {imageSize} from './image-size.mjs';
 
-const pictures={...miniFilmSeparationMedia,hero:miniLineHeroMedia};
+const pictures=miniFilmSeparationMedia;
 const escape=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const button=(text,href,secondary=false)=>`<a class="button ${secondary?'secondary':''}" href="${href}">${text}<span aria-hidden="true">↗</span></a>`;
-function picture(key,{label,caption,hero=false,full=false}={}){
+function picture(key,{label,caption,full=false}={}){
  const m=pictures[key];
- return `<figure class="line-image line-image--${m.type}${hero?' line-image--hero':''}"${hero?' data-hero-finish="titanium-gallery-mini"':''} ${mediaAttributes(m)}><a class="media-open" href="/assets/${m.file}" aria-label="Увеличить: ${escape(m.title)}"><img src="/assets/${hero||full?m.file:m.thumbnail}" alt="${escape(m.title)}"${hero?` srcset="/assets/${m.smallFile} 768w, /assets/${m.file} ${m.width}w" sizes="(min-width:801px) 52vw, calc(100vw - 40px)" width="${m.width}" height="${m.height}" fetchpriority="high"`:' loading="lazy" decoding="async"'}>${label?`<span class="line-image-label">${label}</span>`:''}<span class="line-image-zoom" aria-hidden="true">⤢</span></a><figcaption>${caption||m.title}<span>${m.page?'Техническое описание мини-линии · стр. '+m.page:'Визуализация мини-комплектации'}</span></figcaption></figure>`;
+ const file=full?m.file:m.thumbnail;
+ const {width,height}=imageSize(new URL('../public/assets/'+file,import.meta.url));
+ return `<figure class="line-image line-image--${m.type}" ${mediaAttributes(m)}><a class="media-open" href="/assets/${m.file}" aria-label="Увеличить: ${escape(m.title)}"><img src="/assets/${file}" width="${width}" height="${height}" alt="${escape(m.title)}" loading="lazy" decoding="async">${label?`<span class="line-image-label">${label}</span>`:''}<span class="line-image-zoom" aria-hidden="true">⤢</span></a><figcaption>${caption||m.title}<span>${m.page?'Техническое описание мини-линии · стр. '+m.page:'Визуализация мини-комплектации'}</span></figcaption></figure>`;
 }
 const rows=items=>items.map(([label,value])=>`<tr><th scope="row">${escape(label)}</th><td>${escape(value)}</td></tr>`).join('');
 
@@ -24,12 +29,13 @@ function unitCard([position,title,text,value,slug,key]){
 
 export function renderMiniFilmSeparation(line){
  const email='mailto:edkom.office@mail.ru?subject='+encodeURIComponent('Запрос ЭРА: Сепарация 01 — мини-комплектация');
- const documents=publicLibraryDocuments.filter(d=>d.id==='separatsiya-01-mini-technical');
+ const documents=lineDocuments(line);
+ const drawing=documents.find(d=>d.id==='separatsiya-01-dimensions');
  return `<div class="film-line mini-line">
 
  <section class="section line-hero">
   <div class="line-hero-copy"><p class="eyebrow">СЕПАРАЦИЯ 01 / МИНИ-КОМПЛЕКТАЦИЯ ЛС-1500</p><h1>Линия сухой сепарации плёнок и пакетов</h1><p class="line-slogan">Основные ступени очистки.<br>В компактной комплектации.</p><p class="line-lead">Линия вскрывает тюки, отделяет крупные примеси и очищает плёнку в роторном распушителе. На выходе — один поток очищенной плёнки для продажи переработчику или подачи на мойку.</p><div class="actions">${button('Обсудить мини-линию',email)}${button('Схема и состав','#composition',true)}</div><a class="text-link line-document-shortcut" href="#documents">Техническое описание · PDF, 14 страниц ↓</a></div>
-  <div class="line-hero-visual">${picture('hero',{hero:true,caption:'Базовая линия: подготовка, сухая очистка и выдача плёнки'})}<div class="line-hero-tags"><span>Очистка без воды</span><span>Один поток плёнки</span><span>13 позиций</span></div></div>
+  <div class="line-hero-visual">${lineHeroImage(line)}<div class="line-hero-tags"><span>Очистка без воды</span><span>Один поток плёнки</span><span>13 позиций</span></div></div>
   <div class="line-metrics"><dl>${miniLineMetrics.map(([value,unit,label])=>`<div><dt>${label}</dt><dd>${value}<small>${unit}</small></dd></div>`).join('')}</dl><p>750 кг/ч — расчёт при засоре около 50%. Паспорт базового распушителя указывает 600–700 кг/ч. Целевой выпуск подтверждаем на выбранной комплектации и сырье заказчика. ТО, стр. 10.</p></div>
  </section>
  <nav class="anchor-nav line-anchor-nav" aria-label="Разделы мини-линии"><a href="#purpose">Назначение</a><a href="#raw-materials">Сырьё</a><a href="#specs">Характеристики</a><a href="#process">Процесс</a><a href="#composition">Схема линии</a><a href="#quality">Продукт</a><a href="#placement">Габариты</a><a href="#kair">КАИР</a><a href="#photos">Фото</a><a href="#documents">Документы</a><a href="#equipment">Состав узлов</a></nav>
@@ -46,8 +52,10 @@ export function renderMiniFilmSeparation(line){
  </section>
 
  <section class="section" id="specs"><div class="line-section-heading"><div><p class="eyebrow">03 / ПОКАЗАТЕЛИ И РЕСУРСЫ</p><h2>Производительность.<br>Мощность. Персонал.</h2></div><p>Показатели мини-комплектации приведены по техническому описанию от 3 ноября 2026 года. Входной поток включает полезную плёнку и все примеси.</p></div>
-  <div class="line-specs-layout"><div><div class="table-wrap"><table class="line-spec-table"><caption>Базовая комплектация · ТО, стр. 2–3, 10, 12</caption><tbody>${rows(miniSpecs)}</tbody></table></div><p class="line-note">750 кг/ч — расчётный ориентир, а не паспортная производительность отдельного распушителя. Для базового узла в ТО указаны 600–700 кг/ч; выпуск линии подтверждают на выбранном исполнении и пробной партии сырья.</p></div><aside class="line-output-panel era-indigo-surface"><p class="eyebrow">РАСЧЁТ ПРИ 750 КГ/Ч</p><h3>Выпуск очищенной плёнки</h3><dl><div><dt>За час работы</dt><dd>0,75 <small>т</small></dd></div><div><dt>За сутки / 24 часа</dt><dd>18 <small>т</small></dd></div><div><dt>За 30 рабочих суток</dt><dd>540 <small>т</small></dd></div></dl><p>При непрерывной работе, без вычета остановок. Фактический выпуск зависит от сырья, доступности оборудования и организации смен.</p></aside></div>
-  <details class="line-more" data-keep-open><summary>Полная спецификация и мощность по позициям</summary><div><div class="table-wrap"><table class="mini-specification-table"><caption>По одной единице на позицию · ТО, стр. 10</caption><thead><tr><th scope="col">№</th><th scope="col">Оборудование</th><th scope="col">Основные параметры</th><th scope="col">Установленная, кВт</th><th scope="col">Потребляемая, кВт</th></tr></thead><tbody>${miniSpecification.map(row=>`<tr>${row.map((value,i)=>`<${i===1?'th scope="row"':'td'}>${escape(value)}</${i===1?'th':'td'}>`).join('')}</tr>`).join('')}</tbody><tfoot><tr><th scope="row" colspan="3">Итого по спецификации</th><td>225</td><td>157,5</td></tr></tfoot></table></div><p class="line-note">Потребление рассчитано как 70% установленной мощности. Пусковые нагрузки, электроснабжение, сопротивление воздушных трасс и условия фильтрации учитывают при проектировании площадки.</p></div></details>
+  <div class="line-specs-layout"><div><div class="table-wrap"><table class="line-spec-table"><caption>Базовая комплектация · ТО, стр. 2–3, 10, 12</caption><tbody>${rows(miniSpecs)}</tbody></table></div><p class="line-note">750 кг/ч — расчётный ориентир, а не паспортная производительность отдельного распушителя. Для базового узла в ТО указаны 600–700 кг/ч; выпуск линии подтверждают на выбранном исполнении и пробной партии сырья.</p></div><aside class="line-output-panel era-indigo-surface"><p class="eyebrow">РАСЧЁТ ПРИ 750 КГ/Ч</p><h3>Выпуск очищенной плёнки</h3><dl><div><dt>За час работы</dt><dd>0,75 <small>т</small></dd></div><div><dt>За сутки / 24 часа</dt><dd>18 <small>т</small></dd></div><div><dt>За 30 суток</dt><dd>540 <small>т</small></dd></div><div><dt>За год / 365 суток</dt><dd>6 570 <small>т</small></dd></div></dl><p>При непрерывной работе, без вычета остановок. Фактический выпуск зависит от сырья, доступности оборудования и организации смен.</p></aside></div>
+  ${linePower(line,{note:'Мощности базовой мини-линии приведены по техническому описанию, стр. 10. Для позиций 4, 11 и 13 отдельных значений в ведомости нет. Пусковые нагрузки и электроснабжение учитывают при проектировании площадки.'})}
+  ${dryLineProduction(line)}
+  <details class="line-more" data-keep-open><summary>Полная спецификация базовой комплектации</summary><div><div class="table-wrap"><table class="mini-specification-table"><caption>По одной единице на позицию · ТО, стр. 10</caption><thead><tr><th scope="col">№</th><th scope="col">Оборудование</th><th scope="col">Основные параметры</th></tr></thead><tbody>${miniSpecification.map(([position,name,parameter])=>`<tr><td>${position}</td><th scope="row">${escape(name)}</th><td>${escape(parameter)}</td></tr>`).join('')}</tbody></table></div></div></details>
  </section>
 
  <section class="section" id="process"><div class="line-section-heading"><div><p class="eyebrow">04 / ТЕХНОЛОГИЧЕСКИЙ ПРОЦЕСС</p><h2>Один маршрут плёнки.<br>Раздельный отвод примесей.</h2></div><p>В базовой комплектации плёнка проходит общим потоком. На контрольном конвейере отбирают доступные загрязнения; отдельная сортировка плёнок по видам в базовую поставку не входит.</p></div>
@@ -75,7 +83,7 @@ export function renderMiniFilmSeparation(line){
  </section>
 
  <section class="section" id="placement"><div class="line-section-heading"><div><p class="eyebrow">07 / ГАБАРИТЫ И РАЗМЕЩЕНИЕ</p><h2>Компактная расстановка.<br>Доступ к каждому узлу.</h2></div><p>17,75 × 11,75 м — габарит механической части в плане. Проходы, загрузку, выгрузку и смену биг-бэгов учитывают дополнительно при привязке к площадке.</p></div>
-  <div class="line-dimensions mini-line-dimensions"><header><p class="eyebrow">КОМПОНОВКА / ТО, СТР. 11</p><h3>Размеры механической части.</h3><p>Исходный габаритный чертёж мини-линии. Откройте лист, чтобы рассмотреть размеры и взаимное расположение узлов.</p></header><dl class="line-dimensions-kpi"><div><dt>Габарит в плане · длина</dt><dd>17,75 <small>м</small></dd></div><div><dt>Габарит в плане · ширина</dt><dd>11,75 <small>м</small></dd></div><div><dt>Рабочий персонал</dt><dd>3 <small>чел./смена</small></dd></div></dl><div class="mini-placement-sheet">${picture('placement',{full:true})}</div><div class="line-placement-notes"><div><h3>Рабочие зоны</h3><p>Подача сырья, приём очищенной плёнки, смена биг-бэгов и обслуживание требуют свободного доступа к оборудованию.</p></div><div><h3>Привязка к цеху</h3><p>Монтажную высоту, проезды, электроснабжение, трассы аспирации и место приёмной секции уточняют по площадке.</p></div><div><h3>Задачи смены</h3><p>Подача сырья, контроль плёнки на конвейере, приём продукта и отвод включений. Работу механизмов координирует КАИР.</p></div></div><p class="line-note">Размер оборудования не равен требуемому размеру цеха. Монтажную высоту и рабочие зоны подтверждают по рабочей документации. ТО, стр. 11–12.</p></div>
+  ${lineDimensions(drawing)}
  </section>
 
  <section class="section line-kair-section" id="kair"><div class="line-section-heading"><div><p class="eyebrow">08 / СИСТЕМА УПРАВЛЕНИЯ</p><h2>Одна линия.<br>Согласованная работа.</h2></div><p>КАИР на базе Siemens управляет последовательностью операций и сохраняет режимы под сырьё. Настройка подачи и отбора, контроль состояния и защитная остановка — в едином интерфейсе. ТО, стр. 12.</p></div>
@@ -85,9 +93,9 @@ export function renderMiniFilmSeparation(line){
 
  <section class="section line-soft" id="photos"><div class="line-section-heading"><div><p class="eyebrow">09 / ФОТОГРАФИИ ИЗ ТЕХОПИСАНИЯ</p><h2>Оборудование и результат.<br>В деталях.</h2></div><p>Оригинальные фотографии роторного узла на сборке, очищенной плёнки и отделённых примесей. Нажмите на изображение, чтобы рассмотреть его крупнее.</p></div><div class="line-photo-grid">${picture('rotor',{label:'СБОРКА УЗЛА'})}${picture('after-close',{label:'ОЧИЩЕННАЯ ПЛЁНКА'})}${picture('rejects',{label:'ОТДЕЛЁННЫЕ ПРИМЕСИ'})}</div></section>
 
- <section class="section line-documents" id="documents"><div class="line-section-heading"><div><p class="eyebrow">10 / ТЕХНИЧЕСКАЯ ДОКУМЕНТАЦИЯ</p><h2>Схемы и параметры.<br>В оригинальном документе.</h2></div><p>Техническое описание мини-линии от 3 ноября 2026 года: 14 страниц о сырье, потоках, оборудовании, качестве продукта, спецификации, размещении, управлении и обслуживании.</p></div><div class="line-document-grid">${documents.map(d=>libraryDocumentCard(d,{related:false})).join('')}</div><a class="text-link" href="/documents/?objectType=line&amp;product=separatsiya-01">Все документы мини-линии в библиотеке ↗</a></section>
+ <section class="section line-documents" id="documents"><div class="line-section-heading"><div><p class="eyebrow">10 / ТЕХНИЧЕСКАЯ ДОКУМЕНТАЦИЯ</p><h2>Брошюра, техническое описание<br>и габаритная схема.</h2></div><p>Техническое описание мини-линии от 3 ноября 2026 года: 14 страниц о сырье, потоках, оборудовании, качестве продукта, спецификации, размещении, управлении и обслуживании.</p></div>${lineDocumentCards(documents)}<a class="text-link" href="/documents/?objectType=line&amp;product=separatsiya-01">Все документы мини-линии в библиотеке ↗</a></section>
 
- <section class="section line-soft" id="equipment"><div class="line-section-heading"><div><p class="eyebrow">11 / ОБОРУДОВАНИЕ В СОСТАВЕ ЛИНИИ</p><h2>Изучите каждый узел.</h2></div><p>Три основных рабочих узла мини-комплектации: назначение, установленная мощность и прямые переходы на страницы оборудования.</p></div><div class="line-unit-grid">${miniUnits.map(unitCard).join('')}</div></section>
+ <section class="section line-soft" id="equipment"><div class="line-section-heading"><div><p class="eyebrow">11 / ОБОРУДОВАНИЕ В СОСТАВЕ ЛИНИИ</p><h2>Изучите каждый узел.</h2></div><p>Подготовка сырья, сухая очистка и сбор отделённых включений. Перейдите к паспортам оборудования в каталоге.</p></div><div class="line-unit-grid">${miniUnits.map(unitCard).join('')}</div></section>
  <section class="section contact line-request"><div><p class="eyebrow">ПОДБОР МИНИ-КОМПЛЕКТАЦИИ</p><h2>Обсудим ваше сырьё<br>и будущую линию.</h2><p>Пришлите фото или видео материала, состав примесей, засорённость и влажность, требуемую подачу и форму продукта, план цеха и доступную мощность.</p></div><div>${button('Отправить запрос по мини-линии',email)}<a class="phone" href="tel:+79032813535">+7 903 281-35-35</a><a href="mailto:edkom.office@mail.ru">edkom.office@mail.ru</a><small>Заполните форму и приложите фотографии, видео или документы к заявке.</small></div></section>
  <script type="application/json" id="line-document-data">${JSON.stringify(documents).replaceAll('<','\\u003c')}</script>${pdfViewerDialog()}
  </div>`;

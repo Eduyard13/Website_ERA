@@ -12,16 +12,17 @@ import mask from '../content/separatsiya-02-occupancy.json' with {type:'json'};
 import miniAssets from '../content/separatsiya-01-presentation-assets.json' with {type:'json'};
 import miniMask from '../content/separatsiya-01-occupancy.json' with {type:'json'};
 
-test('Мини-линия сохраняет свои исходники, 11 точных выносок, 13 позиций и собственный светлый первый экран',async()=>{
+test('Мини-линия сохраняет свои исходники, 11 точных выносок, 13 позиций и синюю каталожную заставку',async()=>{
  const page=render('/catalog/lines/separatsiya-01');
  const ids=['purpose','raw-materials','specs','process','composition','quality','placement','kair','photos','documents','equipment'];
  const order=ids.map(id=>page.indexOf(`id="${id}"`));
  assert.ok(order.every((position,index)=>position>=0&&(!index||position>order[index-1])));
  assert.deepEqual([...page.match(/<nav class="anchor-nav line-anchor-nav"[^>]*>(.*?)<\/nav>/s)[1].matchAll(/href="#([^"]+)"/g)].map(m=>m[1]),ids);
- assert.ok(page.includes('data-hero-finish="titanium-gallery-mini"'));
- assert.ok(page.includes('width="1500" height="1010" fetchpriority="high"'));
- assert.ok(page.includes(`srcset="${basePath}/assets/${miniAssets.hero.smallFile} 768w, ${basePath}/assets/${miniAssets.hero.file} 1500w"`));
- assert.ok(page.includes(`data-image="${basePath}/assets/${miniAssets.hero.file}"`));
+ assert.ok(page.includes('data-line-catalog-cover'));
+ const mini=lines.find(line=>line.slug==='separatsiya-01');
+ assert.ok(page.includes('width="1536" height="1024"'));
+ assert.ok(page.includes(`srcset="${basePath}/assets/${mini.cardSmallFile} 768w, ${basePath}/assets/${mini.cardFile} 1536w"`));
+ assert.ok(page.includes(`data-image="${basePath}/assets/${mini.cardFile}"`));
  for(const asset of [miniAssets.hero,miniAssets.hero.small,miniAssets.hero.source,miniAssets.hero.background,miniAssets.diagram]){
   const bytes=await readFile('dist/assets/'+asset.file);
   assert.equal(bytes.length,asset.bytes);assert.equal(createHash('sha256').update(bytes).digest('hex'),asset.sha256);
@@ -45,23 +46,24 @@ test('Мини-линия сохраняет свои исходники, 11 т�
  assert.ok(!composition.includes('line-unit-grid'));
  assert.ok(page.indexOf('id="options"')>page.indexOf('id="quality"')&&page.indexOf('id="options"')<page.indexOf('id="placement"'));
  const documents=page.slice(page.indexOf('id="documents"'),page.indexOf('id="equipment"'));
- assert.equal([...documents.matchAll(/data-library-document="/g)].length,1);
+ assert.equal([...documents.matchAll(/data-library-document="/g)].length,3);
  assert.ok(documents.includes('data-pdf-open="separatsiya-01-mini-technical"'));
  assert.equal([...page.matchAll(/id="pdf-viewer"/g)].length,1);
  const equipment=page.slice(page.indexOf('id="equipment"'));
- assert.equal([...equipment.matchAll(/data-catalogue-image="/g)].length,3);
- for(const slug of ['predvaritelnyy-izmelchitel','ballisticheskiy-separator','rotornyy-raspushitel'])assert.ok(equipment.includes(equipmentCardImages[slug].file));
+ assert.equal([...equipment.matchAll(/data-catalogue-image="/g)].length,4);
+ for(const slug of ['predvaritelnyy-izmelchitel','ballisticheskiy-separator','rotornyy-raspushitel','rama-napolnitel'])assert.ok(equipment.includes(equipmentCardImages[slug].file));
  assert.ok(!page.includes('402,67'));assert.ok(!page.includes('dimensions-a0.pdf'));assert.ok(!page.includes('5 раздельных потоков'));
  const catalogue=render('/catalog/lines');assert.ok(!catalogue.includes(miniAssets.hero.file));
  assert.ok(!render('/media').includes(miniAssets.hero.file));
 });
 
-test('Titanium Gallery использует отдельный экспорт исходной линии только на её странице',async()=>{
+test('Titanium Gallery использует полное изображение карточки 02 и сохраняет исходные активы',async()=>{
  const page=render('/catalog/lines/separatsiya-02');
- assert.ok(page.includes('data-hero-finish="titanium-gallery"'));
- assert.ok(page.includes(`src="${basePath}/assets/${assets.hero.file}"`));
- assert.ok(page.includes(`srcset="${basePath}/assets/${assets.hero.smallFile} 768w, ${basePath}/assets/${assets.hero.file} 2056w"`));
- assert.ok(page.includes(`data-image="${basePath}/assets/${assets.hero.file}"`));
+ const full=lines.find(line=>line.slug==='separatsiya-02');
+ assert.ok(page.includes('data-hero-finish="titanium-gallery"')&&page.includes('data-line-catalog-cover'));
+ assert.ok(page.includes(`src="${basePath}/assets/${full.cardFile}"`));
+ assert.ok(page.includes(`srcset="${basePath}/assets/${full.cardSmallFile} 768w, ${basePath}/assets/${full.cardFile} 1536w"`));
+ assert.ok(page.includes(`data-image="${basePath}/assets/${full.cardFile}"`));
  assert.equal(assets.hero.width,assets.hero.source.width);assert.equal(assets.hero.height,assets.hero.source.height);
  assert.equal(assets.hero.source.sha256,'314b9a2161c6d9d00101c1097bd193a857283ad0d81f375a72d88622bb6e5399');
  for(const asset of [assets.hero,assets.hero.small,assets.hero.background,assets.hero.source,assets.diagram,assets.diagram.source]){
@@ -69,7 +71,7 @@ test('Titanium Gallery использует отдельный экспорт и
   assert.equal(bytes.subarray(0,4).toString(),'RIFF');assert.equal(bytes.subarray(8,12).toString(),'WEBP');
  }
  const catalogue=render('/catalog/lines');assert.ok(catalogue.includes(`src="${basePath}/assets/lines/separatsiya-01/catalog-cover.webp"`));assert.ok(!catalogue.includes(assets.hero.file));
- for(const path of ['/catalog/lines/separatsiya-01','/catalog/equipment',...nodes.map(n=>n.path)])assert.ok(!render(path).includes('data-hero-finish="titanium-gallery"'),path);
+ for(const path of ['/catalog/equipment',...nodes.map(n=>n.path)])assert.ok(!render(path).includes('data-hero-finish="titanium-gallery"'),path);
 });
 
 test('Полная схема использует прозрачную модель, 28 полных выносок и отдельные подсказки погрузчиков',async()=>{

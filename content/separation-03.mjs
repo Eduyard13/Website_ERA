@@ -9,6 +9,8 @@ export const separation03Document={
  sha256:'2b399241ee41e5a792d87ab051f1d764f65faa1071b27bc1950a75024a5b52f6',revision:'18.11.2026',
 };
 
+export const separation03Staff={primary:3,operators:1,forkliftDrivers:2,sorters:'2–10',total:'5–13'};
+
 export const separation03Specification=[
  [1,'Ленточный транспортёр',1,'7,55 × 1,00 м · 7,55 м²','Подача тюков и насыпного сырья в предварительный измельчитель.'],
  [2,'Предварительный измельчитель',1,'Ротор Ø 900 × 1 500 мм; момент около 12 000 Н·м','Раскрывает тюки и пакеты, подготавливает фракцию 80–400 мм.','predvaritelnyy-izmelchitel'],

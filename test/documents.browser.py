@@ -54,10 +54,11 @@ with sync_playwright() as p:
   report['responsive'].append(width);context.close()
  print('Responsive categories, lazy loading and 32-page PDF controls: OK',flush=True)
  context=browser.new_context(viewport={'width':1440,'height':1000},reduced_motion='reduce');page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)))
- scenarios=[('',total_docs),('?product=ballisticheskiy-separator',2),('?product=ballisticheskiy-separator&kind='+quote('Брошюра'),1),('?objectType=line&product=separatsiya-01',1),('?objectType=line&product=separatsiya-02',full_count),('?objectType=line&product=separatsiya-02&category=technical',1),('?q='+quote('пленочный-флотатор'),2)]
+ scenarios=[('',total_docs),('?product=ballisticheskiy-separator',2),('?product=ballisticheskiy-separator&kind='+quote('Брошюра'),1),('?objectType=line&product=separatsiya-01',3),('?objectType=line&product=separatsiya-02',full_count),('?objectType=line&product=separatsiya-02&category=technical',1),('?q='+quote('пленочный-флотатор'),2)]
  for query,count in scenarios:
   page.goto(base+'/documents/'+query);page.wait_for_function('(n)=>document.querySelectorAll("[data-library-document]:not([hidden])").length===n',arg=count)
-  if 'separatsiya-01' in query:assert page.locator('[data-library-document]:visible').get_attribute('data-library-document')=='separatsiya-01-mini-technical'
+  if 'separatsiya-01' in query:
+   assert set(page.locator('[data-library-document]:visible').evaluate_all('cards=>cards.map(card=>card.dataset.libraryDocument)'))=={'separatsiya-01-mini-technical','separatsiya-01-brochure','separatsiya-01-dimensions'}
   if 'separatsiya-02' in query and 'technical' in query:assert page.locator('[data-library-document]:visible a[download]').get_attribute('href').endswith('/technical/era-separatsiya-01-technical-description.pdf')
  page.goto(base+'/documents/?product=ballisticheskiy-separator');page.wait_for_function('document.querySelectorAll("[data-library-document]:not([hidden])").length===2')
  page.locator('[data-library-object-link]').click();assert '/catalog/equipment/ballisticheskiy-separator' in page.url

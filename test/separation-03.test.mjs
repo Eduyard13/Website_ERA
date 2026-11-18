@@ -91,12 +91,13 @@ test('Детальная страница повторяет порядок эт
  assert.ok(html.includes(`href="${basePath}/documents/${separation03Document.file}"`));assert.ok(html.includes(`data-pdf-open="${separation03Document.id}"`));
  assert.ok(html.includes('/separation-drying.js?v=')&&html.includes('/line-monitor.js?v='));
  assert.ok(html.includes(`href="${basePath}/catalog/lines/moyka-plenki"`));assert.ok(html.includes('data-project-request'));
- assert.ok(!html.includes('undefined')&&!html.includes('NaN')&&!html.includes('dimensions-a0'));
+ assert.ok(!html.includes('undefined')&&!html.includes('NaN'));assert.ok(html.includes('era-separatsiya-03-dimensions-a0.pdf'));
  const domIds=[...html.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);assert.equal(new Set(domIds).size,domIds.length);
 });
-test('Библиотека содержит ровно один новый документ, медиатека — полный альбом без повторных файлов',()=>{
- const docs=publicLibraryDocuments.filter(d=>d.objectSlug===line.slug);assert.equal(docs.length,1);assert.equal(docs[0].id,separation03Document.id);
- assert.equal(publicLibraryDocuments.length,30);assert.equal(docs[0].pages,28);assert.equal(docs[0].category,'technical');
+test('Библиотека содержит три типа документов линии, медиатека — полный альбом без повторных файлов',()=>{
+ const docs=publicLibraryDocuments.filter(d=>d.objectSlug===line.slug);
+ assert.deepEqual(docs.map(d=>d.id).sort(),['separatsiya-03-brochure','separatsiya-03-dimensions',separation03Document.id]);
+ const technical=docs.find(d=>d.category==='technical');assert.equal(technical.pages,28);
  const gallery=buildGalleryData();const selected=selectGalleryItems(gallery.items,{album:'separatsiya-03'});
  assert.equal(selected.length,32);assert.equal(gallery.albums.filter(a=>a.collection==='lines').length,4);
  assert.equal(new Set(gallery.items.map(m=>m.file)).size,gallery.items.length);
@@ -105,5 +106,6 @@ test('Библиотека содержит ровно один новый до�
 });
 test('Все прежние страницы вне каталога, библиотеки и медиатеки сохраняют утверждённый HTML',async()=>{
  const baseline=JSON.parse(await readFile('test/fixtures/separation-03-preserved.json'));
- for(const [path,sha] of Object.entries(basePath?baseline.pagesBase:baseline.pagesRoot))assert.equal(hash(render(path).replaceAll(release,'RELEASE')),sha,path);
+ const protectedPages=Object.entries(basePath?baseline.pagesBase:baseline.pagesRoot).filter(([path])=>!lines.some(line=>line.enabled&&line.path===path));
+ for(const [path,sha] of protectedPages)assert.equal(hash(render(path).replaceAll(release,'RELEASE')),sha,path);
 });

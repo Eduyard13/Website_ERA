@@ -24,7 +24,7 @@ with sync_playwright() as p:
   assert root.locator('.diagram-canvas').evaluate('(e)=>getComputedStyle(e).backgroundColor')=='rgb(228, 233, 237)'
   assert root.evaluate('(e)=>getComputedStyle(e).backgroundColor')=='rgb(244, 242, 237)'
   hero=page.locator('[data-hero-finish=titanium-gallery]');hero.locator('img').evaluate('(e)=>e.decode()')
-  assert hero.locator('img').get_attribute('src').endswith('/lines/separatsiya-01/hero-titanium.webp')
+  assert hero.locator('img').get_attribute('src').endswith('/lines/separatsiya-01/catalog-cover.webp')
   assert hero.locator('img').evaluate('(e)=>getComputedStyle(e).objectFit==="contain"&&getComputedStyle(e).filter==="none"')
   assert page.locator('#equipment [data-catalogue-image]').count()==5
   for card in page.locator('#equipment [data-catalogue-image]').all():
@@ -33,7 +33,7 @@ with sync_playwright() as p:
    assert image.evaluate('(e)=>getComputedStyle(e).objectFit==="contain"&&getComputedStyle(e).filter==="none"')
   if width in [390,1440]:
    hero.locator('.media-open').click();page.wait_for_selector('#media-viewer[open]')
-   assert page.locator('#viewer-image').get_attribute('src').endswith('/lines/separatsiya-01/hero-titanium.webp')
+   assert page.locator('#viewer-image').get_attribute('src').endswith('/lines/separatsiya-01/catalog-cover.webp')
    page.keyboard.press('Escape');assert not page.locator('#media-viewer').is_visible()
   assert page.locator('[data-diagram]').count()==1 and select.locator('option').count()==27
   assert root.locator('[data-fullscreen-zoom]').is_hidden()
@@ -170,7 +170,7 @@ with sync_playwright() as p:
    path=out/'a0.pdf';info.value.save_as(path);assert sha256(path.read_bytes()).hexdigest()=='8557bce36e8963146ec9fd33d11295c4483e2e4d4106f19ae41e7c50c39f98d0';path.unlink()
   page.keyboard.press('Escape');assert not pdf.is_visible();assert opener.evaluate('(e)=>document.activeElement===e')
   assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
-  assert page.locator('#documents [data-library-document]').count()==2
+  assert page.locator('#documents [data-library-document]').count()==3
   assert page.locator('#equipment .line-unit-grid article').count()>5
   report['widths'].append(width);context.close();print('Full line, 27 positions, 4 A0 views, PDF and fullscreen:',width,'OK',flush=True)
  # Explicitly test unavailable Fullscreen API and rejected request fallback, Escape and body/focus cleanup.
@@ -197,7 +197,7 @@ with sync_playwright() as p:
  # No-JS PDF fallbacks remain genuine links and downloads.
  context=browser.new_context(java_script_enabled=False,viewport={'width':390,'height':844});page=context.new_page();page.goto(base+'/catalog/lines/separatsiya-02/')
  assert page.locator('#dimension-view-top').is_visible()
- assert page.locator('#documents [download]').count()==2
+ assert page.locator('#documents [download]').count()==3
  assert page.locator('.line-dimensions-actions [download]').get_attribute('href').endswith('/drawings/era-separatsiya-02-dimensions-a0.pdf')
  context.close();browser.close()
 assert not errors,errors

@@ -160,9 +160,37 @@ jobs:
                       if content_type != 'image/webp' or image[:4] != b'RIFF' or image[8:12] != b'WEBP':
                           raise RuntimeError('Titanium, construction or approved catalogue WebP is missing: ' + image_path)
                   print('::notice title=Titanium Gallery verified::Titanium hero and responsive WebP, light 01-27 construction display, six compact equipment cards and five unchanged catalogue images are published. Line and both catalogue routes return HTTP 200.')
-                  line_documents = json.loads(re.search(r'<script type="application/json" id="line-document-data">(.*?)</script>', full_line, re.S).group(1))
-                  if {d['id'] for d in line_documents} != {'separatsiya-02-technical', 'separatsiya-02-dimensions-a0'}:
-                      raise RuntimeError('Separation 02 must show its two actual documents')
+                  line_checks = {
+                      'separatsiya-01': (('separatsiya-01-brochure', 'separatsiya-01-mini-technical', 'separatsiya-01-dimensions'), ('225', '157,5'), 'A4', 2),
+                      'separatsiya-02': (('separatsiya-02-overview', 'separatsiya-02-technical', 'separatsiya-02-dimensions-a0'), ('402,67', '281,87'), 'A0', 4),
+                      'separatsiya-03': (('separatsiya-03-brochure', 'separatsiya-03-technical', 'separatsiya-03-dimensions'), ('639,77', '447,84'), 'A0', 3),
+                      'moyka-plenki': (('moyka-plenki-brochure', 'moyka-plenki-technical', 'moyka-plenki-dimensions'), ('1 271,70', '890,19'), 'A0', 4),
+                  }
+                  checked_pdfs = ['ballisticheskiy-separator-brochure']
+                  for slug, (expected_docs, power, drawing_format, tabs) in line_checks.items():
+                      line_page = full_line if slug == 'separatsiya-02' else fetch('catalog/lines/' + slug + '/')[1]
+                      line_documents = json.loads(re.search(r'<script type="application/json" id="line-document-data">(.*?)</script>', line_page, re.S).group(1))
+                      if {d['id'] for d in line_documents} != set(expected_docs) or len(line_documents) != 3:
+                          raise RuntimeError('Line PDF links are incorrect: ' + slug)
+                      for document_id, category in zip(expected_docs, ('brochures', 'technical', 'drawings')):
+                          document = by_id[document_id]
+                          if document['category'] != category or document['objectSlug'] != slug:
+                              raise RuntimeError('Line PDF ownership is incorrect: ' + document_id)
+                      if by_id[expected_docs[0]]['pages'] != 3 or by_id[expected_docs[2]]['pages'] != 1 or by_id[expected_docs[2]]['format'] != drawing_format:
+                          raise RuntimeError('Brochure or drawing format is incorrect: ' + slug)
+                      checked_pdfs.extend(expected_docs)
+                      specs = re.search(r'<section[^>]* id="specs">(.*?)</section>', line_page, re.S).group(1)
+                      if 'class="line-more line-power-details" data-keep-open>' not in specs or any(f'<strong>{value} <small>кВт</small>' not in specs for value in power):
+                          raise RuntimeError('Line power summary is incorrect: ' + slug)
+                      placement = re.search(r'<section[^>]* id="placement">(.*?)</section>', line_page, re.S).group(1)
+                      if placement.count('data-dimension-tab="') != tabs or f'data-pdf-open="{expected_docs[2]}"' not in placement:
+                          raise RuntimeError('Line drawing projections are incomplete: ' + slug)
+                      if slug == 'separatsiya-01' and ('растровые проекции' not in placement or 'кВт' in placement or 'placement.webp' in placement):
+                          raise RuntimeError('The clean A4 projections are missing')
+                      card = re.search(fr'<a class="line-card[^>]*data-line-id="{slug}"[^>]*>.*?</a>', lines_catalogue, re.S).group(0)
+                      hero = re.search(r'<figure[^>]*data-line-catalog-cover[^>]*>.*?</figure>', line_page, re.S).group(0)
+                      if re.search(r'<img src="([^"]+)"', card).group(1) != re.search(r'<img src="([^"]+)"', hero).group(1):
+                          raise RuntimeError('Line cover differs from its catalogue image: ' + slug)
                   drawing = by_id['separatsiya-02-dimensions-a0']
                   if drawing['objectSlug'] != 'separatsiya-02' or drawing['category'] != 'drawings' or drawing.get('format') != 'A0' or drawing['pages'] != 1 or drawing['sha256'] != '8557bce36e8963146ec9fd33d11295c4483e2e4d4106f19ae41e7c50c39f98d0':
                       raise RuntimeError('Original A0 record is incorrect')
@@ -179,7 +207,6 @@ jobs:
                       content_type, cover = fetch('assets/' + document['cover'], binary=True)
                       if content_type != 'image/webp' or cover[:4] != b'RIFF' or cover[8:12] != b'WEBP':
                           raise RuntimeError('PDF cover is missing: ' + document['id'])
-                  checked_pdfs = ('ballisticheskiy-separator-brochure', 'separatsiya-01-mini-technical', 'separatsiya-02-overview', 'separatsiya-02-technical', 'separatsiya-02-dimensions-a0')
                   for document_id in checked_pdfs:
                       document = by_id[document_id]
                       content_type, pdf = fetch('documents/' + document['file'], binary=True)

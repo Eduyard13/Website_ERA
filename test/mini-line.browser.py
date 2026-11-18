@@ -20,7 +20,7 @@ with sync_playwright() as p:
   page.on('response',lambda r:failed.append([r.status,r.url]) if r.status>=400 and r.url.startswith(base) else None)
   page.goto(base+'/catalog/lines/');page.wait_for_function('document.querySelector("#line-result").textContent.includes("4")')
   cards=page.locator('[data-line]');assert cards.count()==4
-  assert cards.evaluate_all('es=>es.map(e=>e.tagName)')==['A','A','ARTICLE','ARTICLE']
+  assert cards.evaluate_all('es=>es.map(e=>e.tagName)')==['A']*4
   boxes=[cards.nth(i).bounding_box() for i in range(4)]
   if width>=768:assert boxes[0]['x']<boxes[1]['x'] and abs(boxes[0]['y']-boxes[1]['y'])<1
   else:assert boxes[0]['y']<boxes[1]['y']
@@ -36,13 +36,13 @@ with sync_playwright() as p:
   assert page.locator('#kair .line-control').count()==1 and page.locator('#placement .line-control').count()==0
   for text in ['225 кВт','157,5 кВт','600–700 кг/ч','17,75 × 11,75 м','3 человека в смену']:
    assert text in page.locator('main').inner_text()
-  hero=page.locator('[data-hero-finish=titanium-gallery-mini]');image=hero.locator('img');image.evaluate('(e)=>e.decode()')
-  assert image.get_attribute('src').endswith('/separatsiya-01-mini/hero-titanium.webp')
-  assert image.get_attribute('width')=='1500' and image.get_attribute('height')=='1010' and image.get_attribute('fetchpriority')=='high'
+  hero=page.locator('[data-line-catalog-cover]');image=hero.locator('img');image.evaluate('(e)=>e.decode()')
+  assert image.get_attribute('src').endswith('/separatsiya-01-mini/catalog-cover-navy.webp')
+  assert image.get_attribute('width')=='1536' and image.get_attribute('height')=='1024' and image.get_attribute('fetchpriority')=='high'
   assert image.evaluate('(e)=>getComputedStyle(e).objectFit==="contain"&&getComputedStyle(e).filter==="none"')
-  assert abs(image.bounding_box()['width']/image.bounding_box()['height']-1500/1010)<.01
+  assert abs(image.bounding_box()['width']/image.bounding_box()['height']-1.5)<.01
   hero.locator('.media-open').click();assert page.locator('#media-viewer').is_visible()
-  assert page.locator('#viewer-image').get_attribute('src').endswith('/separatsiya-01-mini/hero-titanium.webp')
+  assert page.locator('#viewer-image').get_attribute('src').endswith('/separatsiya-01-mini/catalog-cover-navy.webp')
   assert page.locator('#viewer-product').get_attribute('href')==prefix+'/catalog/lines/separatsiya-01'
   page.keyboard.press('Escape')
   # Exact same rhythm and typography as the full line, on the two review widths.
@@ -99,10 +99,14 @@ with sync_playwright() as p:
    page.locator(summary).click();link=page.locator('.mini-line [data-media][data-image$="/'+key+'.webp"] .media-open');link.click()
    assert page.locator('#media-viewer').is_visible() and page.locator('#viewer-image').get_attribute('src').endswith('/'+key+'.webp')
    page.keyboard.press('Escape')
-  page.locator('#placement .media-open').click();assert page.locator('#viewer-image').get_attribute('src').endswith('/placement.webp');page.keyboard.press('Escape')
-  page.locator('#specs details summary').click();assert page.locator('.mini-specification-table tbody tr').count()==13
-  page.locator('#raw-materials details summary').click();assert page.locator('#specs details').get_attribute('open') is not None
-  assert page.locator('#equipment [data-catalogue-image]').count()==3
+  page.locator('#mini-dimension-view-top [data-pdf-open]').click()
+  page.wait_for_function('document.querySelector("[data-pdf-status]").textContent==="Страница 1 из 1"',timeout=30000)
+  page.keyboard.press('Escape')
+  spec=page.locator('#specs details').filter(has=page.locator('.mini-specification-table'))
+  spec.locator('summary').click();assert spec.locator('tbody tr').count()==13
+  page.locator('#raw-materials details summary').click();assert spec.get_attribute('open') is not None
+  assert page.locator('#equipment [data-catalogue-image]').count()==4
+  assert 'включени' in page.locator('#equipment [data-catalogue-image="rama-napolnitel"]').inner_text().lower()
   for card in page.locator('#equipment [data-catalogue-image]').all():
    assert card.locator('a').get_attribute('href').startswith(prefix+'/catalog/equipment/')
    assert card.locator('img').evaluate('(e)=>getComputedStyle(e).objectFit==="contain"&&getComputedStyle(e).filter==="none"')
@@ -114,7 +118,7 @@ with sync_playwright() as p:
    with page.expect_download() as info:pdf.locator('[data-pdf-download]').click()
    saved=out/'mini-original.pdf';info.value.save_as(saved);assert sha256(saved.read_bytes()).hexdigest()=='07e383f99d3abd1049d4b1ff4472749a510005311558993e46ea87e0409a3a3d';saved.unlink()
   page.keyboard.press('Escape');assert not pdf.is_visible() and opener.evaluate('(e)=>document.activeElement===e')
-  assert page.locator('#documents [download]').count()==1
+  assert page.locator('#documents [download]').count()==3
   assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
   results.append({'width':width,'callouts':11,'modes':['normal','fullscreen fit','fullscreen 200%'],'placements':placements,'pdfPages':14,'screenshots':False});context.close()
   print('Mini-line, source media, 11 callouts and 14-page PDF:',width,'OK',flush=True)
@@ -124,7 +128,7 @@ with sync_playwright() as p:
  assert page.locator('.line-monitor-modal[open]').is_visible();page.keyboard.press('Escape');assert page.locator('.line-monitor-modal').count()==0
  assert page.locator('body').evaluate('(e)=>getComputedStyle(e).overflow')!='hidden';context.close()
  context=browser.new_context(java_script_enabled=False);page=context.new_page();page.goto(base+'/catalog/lines/separatsiya-01/')
- assert page.locator('#documents [download]').get_attribute('href').endswith('/era-separatsiya-01-mini-technical-description.pdf');context.close();browser.close()
+ assert page.locator('#documents [download][href$="/era-separatsiya-01-mini-technical-description.pdf"]').count()==1;context.close();browser.close()
 assert not errors,errors
 assert not failed,failed
 (out/'results.json').write_text(json.dumps({'widths':results,'pageErrors':errors,'failedResponses':failed},ensure_ascii=False,indent=2)+'\n')

@@ -12,7 +12,7 @@ const url=base+'/catalog/lines/separatsiya-03/';
 const response=await fetch(url,{cache:'no-store'});assert.equal(response.status,200);
 const html=await response.text();assert.ok(html.includes('data-separation03-line'));
 const version=html.match(/separation-drying\.css\?v=([^"&]+)/)?.[1];assert.ok(version);
-const document=JSON.parse(html.match(/<script type="application\/json" id="line-document-data">(.*?)<\/script>/s)[1])[0];
+const document=JSON.parse(html.match(/<script type="application\/json" id="line-document-data">(.*?)<\/script>/s)[1]).find(entry=>entry.id==='separatsiya-03-technical');
 assert.equal(document.pages,28);assert.equal(document.bytes,5397658);assert.equal(document.sha256,'2b399241ee41e5a792d87ab051f1d764f65faa1071b27bc1950a75024a5b52f6');
 const pdf=await fetch(base+'/documents/'+document.file,{cache:'no-store'});assert.equal(pdf.status,200);assert.equal(pdf.headers.get('content-type'),'application/pdf');
 const bytes=Buffer.from(await pdf.arrayBuffer());assert.equal(bytes.length,document.bytes);assert.equal(createHash('sha256').update(bytes).digest('hex'),document.sha256);

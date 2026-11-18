@@ -6,6 +6,7 @@ import {renderEquipment,renderDocuments} from './equipment.mjs';
 import {renderFilmSeparation} from './line.mjs';
 import {renderHotFilmWashing} from './hot-film-washing.mjs';
 import {renderSeparationDrying} from './separation-drying.mjs';
+import {lineCoverFiles} from './line-page-media.mjs';
 import {renderMiniFilmSeparation} from './mini-line.mjs';
 import {presentationTechnology,presentationAutomation} from './home.mjs';
 import {documentCategories} from '../content/document-manifest.mjs';
@@ -16,7 +17,7 @@ const intro=(label,title,text)=>`<section class="section page-intro"><p class="e
 const placeholder=(n,label='Изображение готовится')=>`<div class="asset-placeholder"><span class="placeholder-number" aria-hidden="true">${String(n).padStart(2,'0')}</span><span>${label}</span></div>`;
 export {nodeCard};
 const lineCard=l=>{
- const cardFile=l.catalogCardFile||l.cardFile,cardSmallFile=l.catalogCardSmallFile||l.cardSmallFile;
+ const {file:cardFile,smallFile:cardSmallFile}=lineCoverFiles(l);
  const attributes=`data-line data-line-id="${l.slug}" data-group="${l.group}" aria-labelledby="line-${l.slug}-title"`;
  if(l.enabled&&l.status==='source-checked')return `<a class="line-card line-card--complete${l.slug==='separatsiya-01'?' line-card--mini':''}" ${attributes} href="${l.path}"><span class="line-card-cover"><img src="/assets/${cardFile}" srcset="/assets/${cardSmallFile} 768w, /assets/${cardFile} 1536w" sizes="(min-width:1344px) 628px, (min-width:768px) calc((100vw - 88px) / 2), calc(100vw - 40px)" width="1536" height="1024" alt="${l.cardImageAlt||'Линия сепарации плёнок и пакетов с сортировочным боксом'}" fetchpriority="high" decoding="async"></span><div class="line-card-content"><span class="eyebrow">${l.slug==='moyka-plenki'?'ГОРЯЧАЯ МОЙКА':'СЕПАРАЦИЯ '+l.number} / ГОТОВАЯ ЛИНИЯ</span><h3 id="line-${l.slug}-title">${l.cardTitle}</h3><p class="line-card-subtitle">${l.cardDescription}</p><span class="line-card-feature">${l.cardFeature}</span><dl class="line-card-metrics">${l.cardMetrics.map(m=>`<div${m.text?' class="line-card-metric--text"':''}><dt>${m.label}</dt><dd>${m.value}<small>${m.unit}</small></dd>${m.note?`<p>${m.note}</p>`:''}</div>`).join('')}</dl><span class="card-action">Подробнее о линии <span aria-hidden="true">↗</span></span></div></a>`;
  const reserved=l.number==='01';
