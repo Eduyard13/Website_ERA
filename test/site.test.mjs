@@ -3,34 +3,51 @@ import assert from 'node:assert/strict';
 import {readFile,stat} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {routes,product,basePath} from '../scripts/build.mjs';
-test('На главной четыре вида сырья, три стадии, пять продуктов и три экономические оценки',async()=>{
+test('На главной четыре фотокарточки сырья, пять секторов и пять карточек экономики',async()=>{
  const html=await readFile('dist/index.html','utf8');
  assert.deepEqual([...html.matchAll(/data-process-step="([^"]+)"/g)].map(match=>match[1]),['01','02','03']);
- assert.deepEqual([...html.matchAll(/data-home-economics="([^"]+)"/g)].map(match=>match[1]),['complex','region','country']);
+ assert.deepEqual([...html.matchAll(/data-home-economics="([^"]+)"/g)].map(match=>match[1]),['profit','network','feedstocks','central','volga']);
  assert.equal((html.match(/data-home-feedstock=/g)||[]).length,4);
+ assert.deepEqual([...html.matchAll(/data-feedstock-sector="([^"]+)"/g)].map(match=>match[1]),['household','packaging','agro','construction','bigbags']);
  assert.equal((html.match(/data-home-product=/g)||[]).length,5);
  assert.equal((html.match(/class="resource-launch-grid"/g)||[]).length,1);
  assert.match(html,new RegExp(`href="${basePath}/economics" data-economics-page`));
  assert.match(html,/data-resource-play aria-label="Воспроизвести видео о технологии ЭРА" hidden/);
 });
-test('Карта показывает восемь округов и десять регионов по единой оценочной модели',async()=>{
+test('Карта, кольцевая диаграмма и экономика используют один сценарий восьми округов',async()=>{
  const html=await readFile('dist/index.html','utf8');
- const {marketTotals,marketRegions,marketMoney}=await import('../content/home-market.mjs');
- const {calculateEconomics,initialEconomicsState}=await import('../public/economics-model.js');
+ const {marketTotals,marketDistricts,marketRegions,marketFeedstocks,marketModel}=await import('../content/home-market.mjs');
  const normalized=value=>value.replace(/\s/g,' ');
- assert.deepEqual(marketTotals,{tonnes:4_947_874,complexes:330,monthly:4_950_000_000,annual:59_400_000_000});
- for(const [id,tonnes,complexes,monthly] of [['moscow',441833,29,435000000],['moscow-oblast',302796,20,300000000]]){
-  const row=marketRegions.find(item=>item.id===id);
-  assert.deepEqual([row.tonnes,row.complexes,row.monthly],[tonnes,complexes,monthly]);
+ assert.deepEqual(marketTotals,{population:146_313_081,tonnes:4_947_874,complexes:330,monthly:4_950_000_000,annual:59_400_000_000});
+ assert.equal(marketModel.targetMonthlyProfit,15_000_000);
+ assert.equal(marketModel.monthsPerYear,12);
+ const territories=[
+  ['central',1350720,90],['northwest',426272,28],['south',628390,42],['caucasus',341678,23],
+  ['volga',999250,67],['ural',392840,26],['siberia',564480,38],['far-east',244244,16],
+  ['moscow-oblast',302796,20],['krasnodar',236820,16],['tatarstan',145775,10],['rostov',156965,10],
+  ['bashkortostan',141330,9],['samara',105370,7],['sverdlovsk',140090,9],['novosibirsk',92314,6],
+  ['saint-petersburg',180417,12],['moscow',441833,29],
+ ];
+ for(const [id,tonnes,complexes] of territories){
+  const row=[...marketDistricts,...marketRegions].find(item=>item.id===id);
+  assert.deepEqual([row.tonnes,row.complexes,row.monthly,row.annual],[tonnes,complexes,complexes*15_000_000,complexes*180_000_000],id);
  }
+ assert.deepEqual(marketFeedstocks.map(row=>row.share),[40,30,15,10,5]);
+ assert.equal(marketFeedstocks.reduce((sum,row)=>sum+row.share,0),100);
+ assert.deepEqual(marketFeedstocks.map(row=>row.tonnes),[1_979_149.6,1_484_362.2,742_181.1,494_787.4,247_393.7]);
+ assert.ok(Math.abs(marketFeedstocks.reduce((sum,row)=>sum+row.tonnes,0)-marketTotals.tonnes)<1e-8);
  assert.match(html,/<svg[^>]+role="group" aria-labelledby="market-graphic-title"/);
  assert.equal((html.match(/data-market-feature="[^" ]+" data-market-group="districts"/g)||[]).length,8);
  assert.equal((html.match(/data-market-feature="[^" ]+" data-market-group="regions"/g)||[]).length,10);
- assert.equal((html.match(/data-market-record=/g)||[]).length,18);
+ assert.equal((html.match(/data-market-record=/g)||[]).length,19);
+ assert.match(html,/data-market-record="national">/);
  assert.equal((html.match(/data-market-select=/g)||[]).length,2);
- assert.match(normalized(html),/условной ёмкости 15 000 т входящего сырья в год/);
- assert.match(html,/Итог по России складывается из округов/);
- assert.ok(html.includes(`<strong>${marketMoney(calculateEconomics(initialEconomicsState('full')).net)}</strong>`));
+ assert.equal((html.match(/class="resource-district-contour"/g)||[]).length,2);
+ assert.match(normalized(html),/15 000 т\/год с округлением до целого/);
+ assert.match(html,/Приоритетные регионы входят в итоги своих округов/);
+ assert.match(html,/href="#feedstock-methodology">Как оценена сырьевая база/);
+ for(const value of ['≈ 2 млн т/год','≈ 1,5 млн т/год','≈ 750 тыс. т/год','≈ 500 тыс. т/год','≈ 250 тыс. т/год','4,95 млрд ₽','59,4 млрд ₽'])assert.ok(normalized(html).includes(value),value);
+ assert.doesNotMatch(normalized(html),/10,7 млн ₽|3,53 млрд ₽|40,83 млрд ₽/);
 });
 test('Все 12 материалов владельца подключены, размеры и контрольные суммы веб-файлов совпадают',async()=>{
  const {createHash}=await import('node:crypto');

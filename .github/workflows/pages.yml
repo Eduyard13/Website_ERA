@@ -88,6 +88,8 @@ jobs:
                           raise RuntimeError(f'{urljoin(base, path)}: preview mode must not be published')
                       if path == '' and ('id="russia-market"' not in page or page.count('data-home-block=') != 12 or page.count('data-market-feature=') != 18):
                           raise RuntimeError('The homepage and interactive map update is missing')
+                      if path == '' and ('data-market-record="national"' not in page or page.count('data-feedstock-sector=') != 5 or page.count('data-home-economics=') != 5):
+                          raise RuntimeError('The national estimate, feedstock chart or economics cards are missing')
                       if path == '' and ('data-media-slot="heroHook"' not in page or 'Отходы одного цикла — сырьё для следующего.' not in page):
                           raise RuntimeError('The new homepage headline and artwork are missing')
                       if path == 'media/':

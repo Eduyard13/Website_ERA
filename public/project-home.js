@@ -22,10 +22,72 @@
 })();
 
 (() => {
+ const chart=document.querySelector('[data-feedstock-chart]');
+ if(!chart)return;
+
+ const buttons=[...chart.querySelectorAll('[data-feedstock-choice]')];
+ const sectors=[...chart.querySelectorAll('[data-feedstock-sector]')];
+ const centers=[...chart.querySelectorAll('[data-feedstock-center]')];
+ const details=[...chart.querySelectorAll('[data-feedstock-detail]')];
+ const announcement=chart.querySelector('[data-feedstock-announcement]');
+ let selected='all';
+ let preview=null;
+
+ function paint(id){
+  chart.dataset.view=id;
+  for(const button of buttons)button.toggleAttribute('data-active',button.dataset.feedstockChoice===id);
+  for(const sector of sectors)sector.toggleAttribute('data-active',sector.dataset.feedstockSector===id);
+  for(const center of centers)center.hidden=center.dataset.feedstockCenter!==id;
+  for(const detail of details){
+   const active=detail.dataset.feedstockDetail===id;
+   detail.toggleAttribute('data-active',active);
+   detail.setAttribute('aria-hidden',String(!active));
+  }
+ }
+
+ function choose(id){
+  selected=id===selected?'all':id;
+  preview=null;
+  for(const button of buttons)button.setAttribute('aria-pressed',String(button.dataset.feedstockChoice===selected));
+  for(const sector of sectors)sector.setAttribute('aria-pressed',String(sector.dataset.feedstockSector===selected));
+  paint(selected);
+  const detail=details.find(item=>item.dataset.feedstockDetail===selected);
+  announcement.textContent=detail.innerText.trim();
+ }
+
+ for(const control of [...buttons,...sectors]){
+  const id=control.dataset.feedstockChoice||control.dataset.feedstockSector;
+  control.addEventListener('click',()=>choose(id));
+  control.addEventListener('pointerenter',event=>{
+   if(event.pointerType==='touch')return;
+   preview=control;
+   paint(id);
+  });
+  control.addEventListener('pointerleave',()=>{
+   if(preview!==control)return;
+   preview=null;
+   paint(selected);
+  });
+ }
+ for(const button of buttons)button.disabled=false;
+ for(const sector of sectors){
+  sector.setAttribute('tabindex','0');
+  sector.removeAttribute('aria-disabled');
+  sector.addEventListener('keydown',event=>{
+   if(event.key!=='Enter'&&event.key!==' ')return;
+   event.preventDefault();
+   if(!event.repeat)choose(sector.dataset.feedstockSector);
+  });
+ }
+ chart.dataset.feedstockReady='true';
+})();
+
+(() => {
  const map=document.querySelector('[data-market-map]');
  if(!map)return;
 
  const modes=[...map.querySelectorAll('[data-market-mode]')];
+ const reset=map.querySelector('[data-market-reset]');
  const pickers=[...map.querySelectorAll('[data-market-picker]')];
  const selects=[...map.querySelectorAll('[data-market-select]')];
  const features=[...map.querySelectorAll('[data-market-feature]')];
@@ -37,6 +99,7 @@
  const canvas=map.querySelector('[data-market-canvas]');
  const svg=canvas.querySelector('svg');
  const tooltip=map.querySelector('[data-market-tooltip]');
+ const methodology=document.getElementById('feedstock-methodology');
  let mode='districts';
 
  function hideTooltip(){
@@ -63,8 +126,8 @@
 
  function selectRecord(id){
   if(!recordById.has(id))return;
-  const selectedInput=selects.find(input=>input.dataset.marketSelect===mode);
-  selectedInput.value=id;
+  for(const input of selects)input.value=input.dataset.marketSelect===mode?id:'national';
+  reset.setAttribute('aria-pressed',String(id==='national'));
   for(const record of records)record.hidden=record.dataset.marketRecord!==id;
   for(const feature of features){
    const active=feature.dataset.marketGroup===mode&&feature.dataset.marketFeature===id;
@@ -74,39 +137,60 @@
   hideTooltip();
  }
 
- function selectMode(next){
+ function selectMode(next,id='national'){
   mode=next;
   map.dataset.mode=mode;
   districts.setAttribute('aria-hidden',String(mode!=='districts'));
   regions.toggleAttribute('hidden',mode!=='regions');
   for(const button of modes)button.setAttribute('aria-pressed',String(button.dataset.marketMode===mode));
   for(const picker of pickers)picker.hidden=picker.dataset.marketPicker!==mode;
-  for(const feature of features)feature.setAttribute('tabindex',feature.dataset.marketGroup===mode?'0':'-1');
-  const visibleSelect=selects.find(input=>input.dataset.marketSelect===mode);
-  selectRecord(visibleSelect.value);
+  for(const feature of features){
+   const active=feature.dataset.marketGroup===mode;
+   feature.setAttribute('tabindex',active?'0':'-1');
+   feature.setAttribute('aria-disabled',String(!active));
+  }
+  selectRecord(id);
  }
 
  for(const button of modes){
   button.disabled=false;
-  button.addEventListener('click',()=>selectMode(button.dataset.marketMode));
+  button.addEventListener('click',()=>{if(button.dataset.marketMode!==mode)selectMode(button.dataset.marketMode);});
  }
+ reset.disabled=false;
+ reset.addEventListener('click',()=>selectRecord('national'));
  for(const input of selects){
   input.disabled=false;
   input.addEventListener('change',()=>selectRecord(input.value));
  }
  for(const feature of features){
-  feature.addEventListener('click',()=>selectRecord(feature.dataset.marketFeature));
+  const choose=()=>{if(feature.dataset.marketGroup===mode)selectRecord(feature.dataset.marketFeature);};
+  feature.addEventListener('click',choose);
   feature.addEventListener('keydown',event=>{
    if(event.key==='Escape'){hideTooltip();return;}
    if(event.key!=='Enter'&&event.key!==' ')return;
    event.preventDefault();
-   selectRecord(feature.dataset.marketFeature);
+   if(!event.repeat)choose();
   });
   feature.addEventListener('pointerenter',event=>{if(event.pointerType!=='touch')showTooltip(feature);});
   feature.addEventListener('pointerleave',hideTooltip);
-  feature.addEventListener('focus',()=>showTooltip(feature));
+  feature.addEventListener('focus',()=>{if(feature.matches(':focus-visible'))showTooltip(feature);});
   feature.addEventListener('blur',hideTooltip);
  }
+ for(const link of document.querySelectorAll('[data-market-district-link]')){
+  link.addEventListener('click',event=>{
+   if(event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+   const id=link.dataset.marketDistrictLink;
+   selectMode('districts',id);
+   if(event.detail===0)requestAnimationFrame(()=>recordById.get(id).querySelector('[data-market-name]').focus({preventScroll:true}));
+  });
+ }
+ document.querySelector('.market-method-link').addEventListener('click',event=>{
+  methodology.open=true;
+  if(event.detail===0)requestAnimationFrame(()=>methodology.querySelector('summary').focus({preventScroll:true}));
+ });
+ const showMethodology=()=>{if(location.hash==='#feedstock-methodology')methodology.open=true;};
+ showMethodology();
+ window.addEventListener('hashchange',showMethodology);
  window.addEventListener('resize',hideTooltip);
  selectMode('districts');
  map.dataset.marketReady='true';

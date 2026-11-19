@@ -1,15 +1,14 @@
 import {resourceHero,resourceChallenges,resourceFeedstocks,resourceStages,resourceStrengths,resourceProducts,resourceLaunch,legacyFinancialAnchors} from '../content/project-home.mjs';
-import {marketModel,marketRegions,marketTotals,marketMoney,marketNumber} from '../content/home-market.mjs';
+import {marketDistricts,marketModel,marketNational,marketNationalTonnes,marketMoney,marketNumber} from '../content/home-market.mjs';
 import {lines} from '../content/catalog.mjs';
 import {equipmentCardImages} from '../content/equipment-card-images.mjs';
-import {economicsConfig} from '../public/economics-config.js';
-import {calculateEconomics,initialEconomicsState} from '../public/economics-model.js';
 import {projectMedia as media} from './project-media.mjs';
 import {projectRequestHref} from './contact.mjs';
 import {escapeContact as esc} from './contact-channels.mjs';
 import {imageSize} from './image-size.mjs';
 import {lineCoverFiles} from './line-page-media.mjs';
-import {homeMarketMap} from './home-market.mjs';
+import {homeMarketMap,marketDistrictContour} from './home-market.mjs';
+import {homeFeedstockEstimate} from './home-feedstocks.mjs';
 
 const arrow='<span aria-hidden="true">↗</span>';
 const asset=file=>'/assets/'+file;
@@ -103,6 +102,7 @@ function feedstocks(){
    ${heading('resource-feedstocks-title','Что мы перерабатываем')}
    <div class="resource-material-grid">${resourceFeedstocks.map(item=>`<figure data-home-feedstock="${item.id}">${galleryImage(item)}<figcaption>${esc(item.title)}</figcaption></figure>`).join('')}</div>
    <p class="resource-note">Иллюстрации сырьевых групп. Состав биг-бэгов и совместимость полимеров проверяют для каждой партии.</p>
+   ${homeFeedstockEstimate()}
   </div>
  </section>`;
 }
@@ -143,34 +143,57 @@ function products(){
  </section>`;
 }
 
+function districtEconomics(id,title,description,{rounded=false}={}){
+ const row=marketDistricts.find(district=>district.id===id);
+ const prefix=rounded?'≈ ':'';
+ const tonnes=prefix+marketNumber(row.tonnes/1_000_000,rounded?0:2);
+ const monthly=prefix+marketMoney(row.monthly,rounded?0:2);
+ return `<article class="resource-district-card" data-home-economics="${id}">
+  ${marketDistrictContour(id)}
+  <div class="resource-district-content">
+   <h4>${esc(title)}</h4>
+   <strong class="resource-finance-value" data-finance-annual>${marketNumber(row.annual/1_000_000_000,1)} <small>млрд ₽/год</small></strong>
+   <p class="resource-district-label">Целевая чистая прибыль</p>
+   <dl>
+    <div><dt>Масштаб сети</dt><dd data-finance-complexes>${marketNumber(row.complexes)} комплексов</dd></div>
+    <div><dt>Сырьевая база</dt><dd>${tonnes} млн т/год</dd></div>
+    <div><dt>Чистая прибыль в месяц</dt><dd>${monthly}</dd></div>
+   </dl>
+   <p>${esc(description)}</p>
+   <a class="resource-link" href="#russia-market" data-market-district-link="${id}" aria-label="Посмотреть на карте · ${esc(title)}">Посмотреть на карте ${arrow}</a>
+  </div>
+ </article>`;
+}
+
 function economics(){
- const one=calculateEconomics(initialEconomicsState('full'));
- const region=marketRegions.find(row=>row.id==='moscow-oblast');
  return `<section class="resource-section resource-business" id="economics" aria-labelledby="resource-business-title" data-home-block="business">
   <div class="resource-container">
    <div class="resource-fragments" aria-hidden="true">${legacyFinancialAnchors.map(id=>`<span id="${id}"></span>`).join('')}</div>
-   ${heading('resource-business-title','Экономика, которая масштабируется',{lead:'Результат предприятия зависит от загрузки, затрат и сбыта. Оценка сырьевой базы помогает наметить масштаб сети.'})}
+   ${heading('resource-business-title','Экономика, которая масштабируется',{lead:'От одного предприятия до промышленной сети федерального масштаба.'})}
    <div class="resource-finance-grid">
-    <article data-home-economics="complex">
-     <h3>Один комплекс</h3>
-     <strong>${marketMoney(one.net)}</strong>
-     <p>расчётная чистая прибыль за ${economicsConfig.monthDays} день</p>
-     <p>Базовый сценарий полного цикла. ${marketNumber(one.capacity)} т сырья и ${marketNumber(one.output)} т гранулы при цене ${marketNumber(one.grossPrice/1000)} ₽/кг с НДС.</p>
+    <article data-home-economics="profit">
+     <h3>Совокупная чистая прибыль</h3>
+     <strong class="resource-finance-value" data-finance-annual>${marketNumber(marketNational.annual/1_000_000_000,1)} <small>млрд ₽/год</small></strong>
+     <p>Около ${marketMoney(marketNational.monthly,0)} в месяц</p>
+     <p>Целевой сценарий после расходов и налогов</p>
     </article>
-    <article data-home-economics="region">
-     <h3>Региональная сеть</h3>
-     <strong>${marketNumber(region.complexes)} <small>комплексов</small></strong>
-     <p>ориентир для Московской области</p>
-     <p>${marketNumber(region.tonnes)} т плёночного сырья в год. ${marketMoney(region.monthly)} в месяц по оценочной модели карты.</p>
+    <article data-home-economics="network">
+     <h3>Промышленная сеть</h3>
+     <strong class="resource-finance-value" data-finance-complexes>${marketNumber(marketNational.complexes)} <small>комплексов</small></strong>
+     <p>Расчётный масштаб сети по России</p>
     </article>
-    <article data-home-economics="country">
-     <h3>Потенциал по России</h3>
-     <strong>${marketNumber(marketTotals.tonnes/1_000_000)} <small>млн т/год</small></strong>
-     <p>оценка плёночного сырья в восьми округах</p>
-     <p>${marketTotals.complexes} условных комплексов. ${marketMoney(marketTotals.monthly)} в месяц по сценарию карты.</p>
+    <article data-home-economics="feedstocks">
+     <h3>Сырьевая база России</h3>
+     <strong class="resource-finance-value">≈ ${marketNationalTonnes} <small>млн т/год</small></strong>
+     <p>Оценка образования плёночных отходов и мягкой тары по восьми округам</p>
     </article>
    </div>
-   <p class="resource-note">Регион и Россия рассчитаны при условной ёмкости ${marketNumber(marketModel.moduleTonnes)} т/год и сценарии ${marketMoney(marketModel.targetMonthlyProfit)} чистой прибыли в месяц на условный комплекс.</p>
+   <h3 class="resource-district-title">Приоритетные территории</h3>
+   <div class="resource-district-grid">
+    ${districtEconomics('central','Центральный федеральный округ','Высокая концентрация населения, торговли, логистики и строительного сектора.')}
+    ${districtEconomics('volga','Приволжский федеральный округ','Развитое сельское хозяйство и промышленность. Татарстан, Башкортостан, Самарская область.',{rounded:true})}
+   </div>
+   <p class="resource-note resource-finance-note">Инвестиционный сценарий при целевой чистой прибыли ${marketMoney(marketModel.targetMonthlyProfit)} в месяц на один условный комплекс, после предусмотренных операционных расходов, амортизации и налога на прибыль. Годовой сценарий предполагает ${marketModel.monthsPerYear} месяцев стабильной работы. Фактический результат зависит от сырья, загрузки, себестоимости, условий площадки и сбыта.</p>
    <a class="button" href="/economics" data-economics-page>Подробнее об экономике проекта ${arrow}</a>
   </div>
  </section>`;

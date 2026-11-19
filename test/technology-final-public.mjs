@@ -131,17 +131,19 @@ try{
   return {
    name:record.querySelector('[data-market-name]').textContent,
    volume:record.querySelector('[data-market-volume]').textContent.replace(/\\s+/g,' '),
-   active:document.querySelector('[data-market-feature][aria-pressed="true"]').dataset.marketFeature,
+   active:document.querySelector('[data-market-feature][aria-pressed="true"]')?.dataset.marketFeature??null,
   };
  })()`);
  for(const width of [390,1440]){
   await command('Emulation.setDeviceMetricsOverride',{width,height:940,deviceScaleFactor:1,mobile:width<768});
   await command('Page.navigate',{url:base+'/#russia-market'});
-  await wait(`document.readyState==='complete' && document.querySelector('[data-market-map][data-market-ready="true"]') && document.querySelector('.page-progress-rail a')`);
+  await wait(`document.readyState==='complete' && document.querySelector('[data-market-map][data-market-ready="true"]') && document.querySelector('[data-feedstock-ready="true"]') && document.querySelector('.page-progress-rail a')`);
   assert.deepEqual(await evaluate(`Array.from(document.querySelectorAll('[data-home-block]'),e=>e.dataset.homeBlock)`),homeSections);
   assert.equal(await evaluate(`document.querySelectorAll('.page-progress-rail a').length`),homeSections.length);
   assert.deepEqual(await evaluate(`[document.querySelectorAll('[data-market-districts] path.market-district-area').length,document.querySelectorAll('[data-market-regions] .market-pin').length]`),[8,10]);
-  assert.deepEqual(await mapSelection(),{name:'Центральный ФО',volume:'1 350 720 т/год',active:'central'});
+  const national={name:'Вся Россия',volume:'≈ 5 млн т/год',active:null};
+  assert.deepEqual(await mapSelection(),national);
+  assert.equal(await evaluate(`document.querySelector('[data-market-record="national"] [data-market-annual]').textContent.replace(/\\s/g,' ')`),'59,4 млрд ₽');
   const brokenImages=await evaluate(`Promise.all([...document.querySelectorAll('[data-resource-home] img[src]')].map(async i=>{
    i.loading='eager';try{await i.decode();}catch{return i.src;}return i.alt&&i.naturalWidth?null:i.src;
   })).then(results=>results.filter(Boolean))`);
@@ -179,11 +181,25 @@ try{
   await evaluate(`document.querySelector('[data-market-feature="moscow-oblast"]').dispatchEvent(new MouseEvent('click',{bubbles:true}))`);
   assert.deepEqual(await mapSelection(),{name:'Московская область',volume:'302 796 т/год',active:'moscow-oblast'});
   await click('[data-market-mode="districts"]');
-  assert.deepEqual(await mapSelection(),{name:'Центральный ФО',volume:'1 350 720 т/год',active:'central'});
+  assert.deepEqual(await mapSelection(),national);
+  const finance=await evaluate(`document.querySelector('.resource-finance-grid').textContent`);
+  assert.equal(await evaluate(`document.querySelectorAll('[data-home-economics]').length`),5);
+  await click('[data-market-district-link="volga"]');
+  assert.deepEqual(await mapSelection(),{name:'Приволжский ФО',volume:'999 250 т/год',active:'volga'});
+  assert.equal(await evaluate(`document.querySelector('.resource-finance-grid').textContent`),finance);
+  await click('[data-market-reset]');
+  assert.deepEqual(await mapSelection(),national);
+  assert.equal(await evaluate(`document.querySelectorAll('[data-feedstock-sector]').length`),5);
+  await click('[data-feedstock-choice="construction"]');
+  assert.equal(await evaluate(`document.querySelector('[data-feedstock-chart]').dataset.view`),'construction');
+  assert.deepEqual(await mapSelection(),national);
+  await click('[data-feedstock-choice="all"]');
+  await click('.market-method-link');
+  assert.ok(await evaluate(`document.querySelector('#feedstock-methodology').open`));
   assert.ok(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),'Homepage overflow at '+width);
  }
  assert.deepEqual(errors,[],'Homepage console errors');
- console.log(`::notice title=Published homepage verified::New two-part heading and artwork, 12 sections and live map at 390 and 1440 px. ${base}/`);
+ console.log(`::notice title=Published homepage verified::Hero, 12 sections, five interactive sectors, national map, shared figures and five economics cards at 390 and 1440 px. ${base}/`);
 }finally{
  socket?.close();
  chrome.kill('SIGTERM');

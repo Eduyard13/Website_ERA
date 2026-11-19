@@ -4,6 +4,7 @@
     "filmShare": 0.07,
     "moduleTonnes": 15000,
     "targetMonthlyProfit": 15000000,
+    "monthsPerYear": 12,
     "populationYear": 2024
   },
   "districts": [

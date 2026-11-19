@@ -1,20 +1,19 @@
 import geography from '../content/home-market-geography.json' with {type:'json'};
-import {marketGroups,marketDistricts,marketRegions,marketModel,marketNumber,marketMoney,marketLevel,filmKgPerCapita} from '../content/home-market.mjs';
+import {marketGroups,marketDistricts,marketRegions,marketModel,marketNational,marketNationalTonnes,marketNumber,marketMoney,marketLevel} from '../content/home-market.mjs';
 import {escapeContact as esc} from './contact-channels.mjs';
 
 const legend=['До 400 тыс.','400–700 тыс.','700 тыс. – 1 млн','От 1 млн'];
 const scopes={districts:'Федеральные округа',regions:'Приоритетные регионы'};
-const sourceLabel='Оценки носят ориентировочный характер и сформированы на основе совокупности открытых данных, отраслевых допущений и модели ЭРА по доле плёночной фракции в общем потоке отходов.';
-const external=(label,href)=>`<a href="${esc(href)}" target="_blank" rel="noopener noreferrer">${esc(label)}</a>`;
+const scopesByRecord={districts:'Федеральный округ',regions:'Приоритетный регион',national:'Национальный масштаб'};
 
-function groupAttrs(record,group,center,active){
- return `data-market-feature="${record.id}" data-market-group="${group}" data-center="${center.join(',')}" tabindex="-1" role="button" aria-pressed="${active}" aria-label="${esc(record.name)}"`;
+function groupAttrs(record,group,center){
+ return `data-market-feature="${record.id}" data-market-group="${group}" data-center="${center.join(',')}" tabindex="-1" role="button" aria-disabled="true" aria-pressed="false" aria-label="${esc(record.name)}"`;
 }
 
-function districtShape(record,index){
+function districtShape(record){
  const shape=geography.districts[record.id];
  const [x,y]=shape.label;
- return `<g class="market-district" ${groupAttrs(record,'districts',shape.label,index===0)} data-level="${marketLevel(record)}">
+ return `<g class="market-district" ${groupAttrs(record,'districts',shape.label)} data-level="${marketLevel(record)}">
   <path class="market-district-area" d="${shape.path}" />
   <text x="${x}" y="${y}" aria-hidden="true">${shape.short}</text>
  </g>`;
@@ -28,7 +27,7 @@ function regionShape(record){
 function regionMarker(record){
  const {anchor,marker}=geography.regions[record.id];
  const [x,y]=marker,[a,b]=anchor;
- return `<g class="market-pin" ${groupAttrs(record,'regions',marker,false)}>
+ return `<g class="market-pin" ${groupAttrs(record,'regions',marker)}>
   <path class="market-pin-leader" d="M${a},${b}L${x},${y}" />
   <circle class="market-pin-hit" cx="${x}" cy="${y}" r="13" />
   <circle class="market-pin-ring" cx="${x}" cy="${y}" r="8" />
@@ -42,7 +41,7 @@ function mapDrawing(){
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="${geography.viewBox.join(' ')}" width="${width}" height="${height}" role="group" aria-labelledby="market-graphic-title">
    <title id="market-graphic-title">Карта федеральных округов России и приоритетных регионов</title>
    <defs>
-    <linearGradient id="market-selected-fill" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#bbae84"/><stop offset="1" stop-color="#88774b"/></linearGradient>
+    <linearGradient id="market-selected-fill" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c6a66a"/><stop offset="1" stop-color="#8f7346"/></linearGradient>
    </defs>
    <path class="market-graticule" d="${geography.grid}" aria-hidden="true"/>
    <g data-market-districts>${marketDistricts.map(districtShape).join('')}</g>
@@ -55,18 +54,20 @@ function mapDrawing(){
  </div>`;
 }
 
-function recordPanel(row,group,active){
- return `<article class="market-record" data-market-record="${row.id}"${active?'':' hidden'}>
-  <p class="market-record-scope">${group==='districts'?'Федеральный округ':'Приоритетный регион'}</p>
-  <h3 data-market-name>${esc(row.name)}</h3>
-  <div class="market-figure"><p>Оценка сырьевой базы</p><strong data-market-volume>${marketNumber(row.tonnes)} <small>т/год</small></strong></div>
+function recordPanel(row,group){
+ const national=group==='national';
+ const [volume,unit]=national?[`≈ ${marketNationalTonnes}`,'млн т/год']:[marketNumber(row.tonnes),'т/год'];
+ return `<article class="market-record" data-market-record="${row.id}"${national?'':' hidden'}>
+  <p class="market-record-scope">${scopesByRecord[group]}</p>
+  <h3 data-market-name tabindex="-1">${esc(row.name)}</h3>
+  <div class="market-figure"><p>Оценка сырьевой базы</p><strong data-market-volume>${volume} <small>${unit}</small></strong></div>
   <dl class="market-record-grid">
-   <div><dt>Население в модели · ${marketModel.populationYear}</dt><dd>${marketNumber(row.population)}</dd></div>
-   <div><dt>Расчётное число комплексов</dt><dd>${marketNumber(row.complexes)}</dd></div>
-   <div><dt>Прибыль по сценарию в месяц</dt><dd>${marketMoney(row.monthly)}</dd></div>
-   <div><dt>Прибыль по сценарию в год</dt><dd>${marketMoney(row.annual)}</dd></div>
+   <div><dt>${national?'Расчётный масштаб сети':'Расчётное число комплексов'}</dt><dd data-market-complexes>${marketNumber(row.complexes)}${national?' <small>комплексов</small>':''}</dd></div>
+   <div><dt>Население в модели · база ${marketModel.populationYear}</dt><dd>${national?`≈ ${marketNumber(row.population/1_000_000,0)} <small>млн чел.</small>`:marketNumber(row.population)}</dd></div>
+   <div><dt>${national?'Целевая совокупная чистая прибыль в месяц':'Целевая чистая прибыль в месяц'}</dt><dd data-market-monthly>${marketMoney(row.monthly)}</dd></div>
+   <div><dt>${national?'Целевая совокупная чистая прибыль в год':'Целевая чистая прибыль в год'}</dt><dd data-market-annual>${marketMoney(row.annual,1)}</dd></div>
   </dl>
-  <p class="market-reason">${esc(row.comment)}</p>
+  <p class="market-reason">${national?'Предварительная оценка сырьевой базы восьми округов и сценарий промышленного масштабирования.':esc(row.comment)}</p>
  </article>`;
 }
 
@@ -74,28 +75,15 @@ function nativeSelect(group,rows){
  const active=group==='districts';
  return `<label class="market-select" data-market-picker="${group}"${active?'':' hidden'}>
   <span>${active?'На карте':'Выбрать регион'}</span>
-  <select data-market-select="${group}" disabled aria-controls="russia-market-details">${rows.map(row=>`<option value="${row.id}">${esc(row.name)}</option>`).join('')}</select>
+  <select data-market-select="${group}" disabled aria-controls="russia-market-details"><option value="${marketNational.id}">${marketNational.name}</option>${rows.map(row=>`<option value="${row.id}">${esc(row.name)}</option>`).join('')}</select>
  </label>`;
 }
 
 function methodology(){
- const whole=marketNumber(marketModel.kgWastePerCapita),share=marketNumber(marketModel.filmShare*100);
  return `<div class="market-method">
-  <p>${sourceLabel}</p>
-  <details class="market-method-details" data-keep-open>
-   <summary>Как рассчитан потенциал</summary>
-   <div>
-    <p>База модели — ${whole} кг ТКО на человека в год. Доля плёночной фракции принята равной ${share}%, или ${marketNumber(filmKgPerCapita)} кг на человека в год. Объём по территории — население × ${marketNumber(filmKgPerCapita)} кг × местный коэффициент ÷ 1 000.</p>
-    <p>Число комплексов округляется до целого по условной ёмкости ${marketNumber(marketModel.moduleTonnes)} т входящего сырья в год. Прибыль — сценарий ${marketMoney(marketModel.targetMonthlyProfit)} в месяц на условный комплекс. Годовая оценка использует 12 месяцев. Итог по России складывается из округов. Приоритетные регионы входят в их состав.</p>
-    <p>Оценочная модель ЭРА использует данные о населении за ${marketModel.populationYear} год и расчётные региональные коэффициенты. Экономику конкретной площадки рассчитывают по её загрузке, затратам и цене реализации.</p>
-    <div class="market-sources">
-     ${external('Росстат · база населения', 'https://78.rosstat.gov.ru/news/document/233137?print=1')}
-     ${external('Всемирный банк · обзор отходов', 'https://documents1.worldbank.org/curated/en/702251549554831489/pdf/Waste-in-Russia-Garbage-or-Valuable-Resource.pdf')}
-     ${external('Natural Earth · геометрия', 'https://www.naturalearthdata.com/about/terms-of-use/')}
-    </div>
-   </div>
-  </details>
-  <noscript><details class="market-method-details">
+  <p>Расчётный сценарий ЭРА основан на доступных статистических ориентирах. Целевая чистая прибыль составляет ${marketMoney(marketModel.targetMonthlyProfit)} в месяц на комплекс после расходов, амортизации и налога на прибыль. Объём сырья и число комплексов рассчитаны по модели. Загрузка и доходность зависят от условий конкретного проекта.</p>
+  <a class="resource-link market-method-link" href="#feedstock-methodology">Как оценена сырьевая база</a>
+  <noscript><details class="market-method-details" data-keep-open>
    <summary>Оценки по всем округам и регионам</summary>
    <div class="market-table-wrap"><table><thead><tr><th scope="col">Территория</th><th scope="col">Население</th><th scope="col">Сырьё, т/год</th><th scope="col">Комплексы</th><th scope="col">Прибыль в месяц</th></tr></thead>
     <tbody>${[...marketDistricts,...marketRegions].map(row=>`<tr><th scope="row">${esc(row.name)}</th><td>${marketNumber(row.population)}</td><td>${marketNumber(row.tonnes)}</td><td>${row.complexes}</td><td>${marketMoney(row.monthly)}</td></tr>`).join('')}</tbody>
@@ -115,7 +103,10 @@ export function homeMarketMap(){
    </header>
    <div class="market-dashboard" data-market-map data-mode="districts">
     <div class="market-toolbar">
-     <div class="market-switch" aria-label="Уровень карты" role="group">${entries.map(([id],index)=>`<button type="button" data-market-mode="${id}" aria-pressed="${index===0}" disabled>${scopes[id]}</button>`).join('')}</div>
+     <div class="market-tools">
+      <div class="market-switch" aria-label="Уровень карты" role="group">${entries.map(([id],index)=>`<button type="button" data-market-mode="${id}" aria-pressed="${index===0}" disabled>${scopes[id]}</button>`).join('')}</div>
+      <button type="button" class="market-reset" data-market-reset aria-pressed="true" aria-controls="russia-market-details" disabled>${marketNational.name}</button>
+     </div>
      ${entries.map(([id,rows])=>nativeSelect(id,rows)).join('')}
     </div>
     <div class="market-layout">
@@ -127,11 +118,20 @@ export function homeMarketMap(){
       </div>
      </div>
      <div class="market-details-panel" id="russia-market-details" aria-live="polite" aria-atomic="true">
-      ${entries.map(([group,rows])=>rows.map((record,i)=>recordPanel(record,group,group==='districts'&&i===0)).join('')).join('')}
+      ${recordPanel(marketNational,'national')}
+      ${entries.map(([group,rows])=>rows.map(record=>recordPanel(record,group)).join('')).join('')}
      </div>
     </div>
    </div>
    ${methodology()}
   </div>
  </section>`;
+}
+
+export function marketDistrictContour(id){
+ const {path}=geography.districts[id];
+ const pairs=[...path.matchAll(/(-?[\d.]+),(-?[\d.]+)/g)].map(([,x,y])=>[Number(x),Number(y)]);
+ const xs=pairs.map(([x])=>x),ys=pairs.map(([,y])=>y);
+ const left=Math.min(...xs),top=Math.min(...ys),width=Math.max(...xs)-left,height=Math.max(...ys)-top;
+ return `<svg class="resource-district-contour" viewBox="${left-4} ${top-4} ${width+8} ${height+8}" aria-hidden="true" focusable="false"><path d="${path}"/></svg>`;
 }
