@@ -9,7 +9,8 @@ base = os.environ.get('ERA_PREVIEW_URL', 'http://127.0.0.1:3193/Website_ERA').rs
 out = Path(os.environ.get('ERA_SCREENSHOT_DIR', '/tmp/era-homepage/browser'))
 out.mkdir(parents=True, exist_ok=True)
 widths = [320, 360, 390, 768, 1024, 1280, 1440]
-title = 'Там, где другие видят отходы, мы видим промышленный ресурс.'
+title = 'От нефти к полимерам. От полимеров — снова к нефти.'
+subtitle = 'Отходы одного цикла — сырьё для следующего.'
 sections = ['hero', 'problem', 'feedstocks', 'process', 'strengths', 'products', 'market', 'business',
             'integration', 'equipment', 'kair', 'contact']
 video_manifest = json.loads(Path('docs/homepage-media-assets-0.31.json').read_text())
@@ -57,7 +58,20 @@ with sync_playwright() as playwright:
             await img.decode();
             return !!img.alt && img.naturalWidth > 0 && img.width > 0;
         })).then(results => results.every(Boolean))'''), width
-        assert page.locator('h1').count() == 1 and page.locator('h1').inner_text() == title
+        hero = page.locator('#resource')
+        assert page.locator('h1').count() == 1 and ' '.join(hero.locator('h1').inner_text().split()) == title
+        assert hero.locator('.resource-hero-subtitle').inner_text() == subtitle
+        art = hero.locator('.resource-hero-grid > img[data-media-slot=heroHook]')
+        assert art.get_attribute('src').endswith('/polymers-cycle.webp') and art.get_attribute('fetchpriority') == 'high'
+        assert hero.locator('figcaption').count() == 0
+        assert art.evaluate('img => getComputedStyle(img).maskImage !== "none" && getComputedStyle(img).borderWidth === "0px"')
+        picture, copy = art.bounding_box(), hero.locator('.resource-hero-copy').bounding_box()
+        if width < 1024:
+            assert picture['y'] >= copy['y'] + copy['height'], width
+        else:
+            assert picture['x'] >= copy['x'] + copy['width'] and picture['y'] < copy['y'] + copy['height'], width
+        assert hero.get_by_role('link', name='Изучить технологию').get_attribute('href').endswith('/technology')
+        assert hero.get_by_role('link', name='Смотреть оборудование').get_attribute('href').endswith('/catalog')
         assert page.locator('[data-home-block]').evaluate_all('nodes => nodes.map(e => e.dataset.homeBlock)') == sections
         assert page.locator('.page-progress-rail a').count() == len(sections)
         assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), width

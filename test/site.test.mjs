@@ -113,8 +113,12 @@ test('Учебный баланс сохраняет массу, нулевые 
 });
 test('Главная следует согласованной структуре и ведёт к экономике, технологии, оборудованию и КАИР',async()=>{
  const home=await readFile('dist/index.html','utf8'),tech=await readFile('dist/technology/index.html','utf8'),econ=await readFile('dist/economics/index.html','utf8');
- const {resourceHero}=await import('../content/project-home.mjs');
- const title=home.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)[1].replace(/<[^>]+>/g,'');assert.equal(title,resourceHero.title);
+ const hero=home.match(/<section class="resource-hero[\s\S]+?<\/section>/)[0];
+ const title=hero.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)[1].replace(/<[^>]+>/g,'').replace(/\s+/g,' ');
+ assert.equal(title,'От нефти к полимерам. От полимеров — снова к нефти.');
+ assert.ok(hero.includes('Отходы одного цикла — сырьё для следующего.'));
+ assert.match(hero,/polymers-cycle\.webp[\s\S]*fetchpriority="high"[^>]*data-media-slot="heroHook"/);
+ assert.doesNotMatch(hero,/<figure\b|<figcaption\b|catalog-cover\.webp/);
  assert.deepEqual([...home.matchAll(/data-home-block="([^"]+)"/g)].map(m=>m[1]),['hero','problem','feedstocks','process','strengths','products','market','business','integration','equipment','kair','contact']);
  assert.equal([...home.matchAll(/<h1[\s>]/g)].length,1);
  assert.equal([...home.matchAll(/data-widget-switch="/g)].length,0);assert.equal([...econ.matchAll(/data-economics-page/g)].length,1);

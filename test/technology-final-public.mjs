@@ -146,6 +146,23 @@ try{
    i.loading='eager';try{await i.decode();}catch{return i.src;}return i.alt&&i.naturalWidth?null:i.src;
   })).then(results=>results.filter(Boolean))`);
   assert.deepEqual(brokenImages,[]);
+  const hero=await evaluate(`(()=>{
+   const root=document.querySelector('#resource');
+   const copy=root.querySelector('.resource-hero-copy').getBoundingClientRect();
+   const image=root.querySelector('.resource-hero-grid > img[data-media-slot="heroHook"]');
+   const art=image.getBoundingClientRect();
+   return {
+    title:root.querySelector('h1').innerText.replace(/\\s+/g,' '),
+    subtitle:root.querySelector('.resource-hero-subtitle').textContent,
+    artwork:image.src.endsWith('/polymers-cycle.webp')&&image.naturalWidth>0,
+    mask:getComputedStyle(image).maskImage!=='none',
+    below:art.top>=copy.bottom,
+    right:art.left>=copy.right&&art.top<copy.bottom,
+   };
+  })()`);
+  assert.equal(hero.title,'От нефти к полимерам. От полимеров — снова к нефти.');
+  assert.equal(hero.subtitle,'Отходы одного цикла — сырьё для следующего.');
+  assert.ok(hero.artwork&&hero.mask&&(width<1024?hero.below:hero.right),'Homepage hero at '+width);
   await click('[data-market-mode="regions"]');
   await evaluate(`(()=>{const select=document.querySelector('[data-market-select="regions"]');select.value='moscow';select.dispatchEvent(new Event('change',{bubbles:true}));})()`);
   assert.deepEqual(await mapSelection(),{name:'Москва',volume:'441 833 т/год',active:'moscow'});
@@ -156,7 +173,7 @@ try{
   assert.ok(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),'Homepage overflow at '+width);
  }
  assert.deepEqual(errors,[],'Homepage console errors');
- console.log(`::notice title=Published homepage verified::12 sections, 8 districts, 10 regions, approved images and live selection at 390 and 1440 px. ${base}/#russia-market`);
+ console.log(`::notice title=Published homepage verified::New two-part heading and artwork, 12 sections and live map at 390 and 1440 px. ${base}/`);
 }finally{
  socket?.close();
  chrome.kill('SIGTERM');

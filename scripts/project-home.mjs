@@ -19,10 +19,10 @@ const request=(label,topic,classes='button resource-primary')=>link(label,projec
 const sizesGrid='(max-width:539px) calc(100vw - 40px), (max-width:999px) 46vw, 340px';
 const dims=file=>imageSize(new URL('../public/assets/'+file,import.meta.url));
 
-const dryLines=lines.filter(line=>line.enabled&&line.group==='Сепарация');
+const dryGroup='Сепарация';
+const dryLines=lines.filter(line=>line.enabled&&line.group===dryGroup);
 const washLine=lines.find(line=>line.enabled&&line.slug==='moyka-plenki');
-const dryExample=dryLines.find(line=>line.slug==='separatsiya-02');
-const dryCatalogue='/catalog/lines?group='+encodeURIComponent(dryExample.group);
+const dryCatalogue='/catalog/lines?group='+encodeURIComponent(dryGroup);
 
 function image(m,{eager=false,sizes=sizesGrid,slot=''}={}){
  const {file,alt,width,height}=m;
@@ -41,9 +41,9 @@ function galleryImage(item){
  return image(responsiveImage(baseFile+'.webp',baseFile+'-560.webp',item.alt));
 }
 
-function lineImage(line,{eager=false,sizes=sizesGrid,slot=''}={}){
+function lineImage(line){
  const {file,smallFile}=lineCoverFiles(line);
- return image(responsiveImage(file,smallFile,line.cardImageAlt||line.title),{eager,sizes,slot});
+ return image(responsiveImage(file,smallFile,line.cardImageAlt||line.title));
 }
 
 function heading(id,title,{kicker='',lead=''}={}){
@@ -64,11 +64,14 @@ export function resourceVideo(id,registry=media){
 }
 
 export function resourceHeroSection(){
+ const {opening,turn,accent}=resourceHero.title;
+ const graphic=responsiveImage('project-home/hero/polymers-cycle.webp','project-home/hero/polymers-cycle-800.webp','Иллюстрация цикла полимеров с использованными плёнками, гранулами, новыми изделиями и жидкими фракциями');
  return `<section class="resource-hero era-indigo-surface" id="resource" aria-labelledby="resource-title" data-home-block="hero">
   <div class="resource-container resource-hero-grid">
    <div class="resource-hero-copy">
     <p class="eyebrow">${esc(resourceHero.kicker)}</p>
-    <h1 id="resource-title">${esc(resourceHero.title).replace('промышленный ресурс.','<em>промышленный ресурс.</em>')}</h1>
+    <h1 id="resource-title"><span>${esc(opening)}</span> <span>${esc(turn)} <em>${esc(accent)}</em></span></h1>
+    <p class="resource-hero-subtitle">${esc(resourceHero.subtitle)}</p>
     <p class="resource-hero-lead">${esc(resourceHero.lead)}</p>
     <div class="resource-hero-actions">
      ${link('Изучить технологию','/technology','button resource-primary')}
@@ -76,10 +79,7 @@ export function resourceHeroSection(){
     </div>
     ${link('Смотреть оборудование','/catalog')}
    </div>
-   <figure class="resource-hero-media">
-    ${lineImage(dryExample,{slot:'heroLine',eager:true,sizes:'(max-width:899px) calc(100vw - 40px), 50vw'})}
-    <figcaption>Проектная визуализация линии сухой сепарации ЭРА</figcaption>
-   </figure>
+   ${image(graphic,{slot:'heroHook',eager:true,sizes:'(max-width:767px) calc(100vw - 18px), (max-width:1023px) 740px, (max-width:1440px) 55vw, 750px'})}
   </div>
  </section>`;
 }
