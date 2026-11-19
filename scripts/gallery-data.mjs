@@ -65,9 +65,11 @@ export function buildGalleryData({baseMedia=media,additional=galleryAdditionalMe
   const variants=(m.variants||[]).filter(v=>v?.file&&fileExists(v.file));
   const thumbnail=fileExists(m.thumbnail)?m.thumbnail:variants.find(v=>v.width>=480&&v.width<=880)?.file||m.poster||m.file;
   const sortOrder=m.sortOrder??(m.primary?0:kind==='video'?20:kind==='photo'?30+index:500+index);
+  const sourceLabel=m.source||m.caption||'Материалы ЭРА';
+  const description=m.description||m.caption||node?.description||'';
   byFile.set(m.file,{id,aliases:[],kind,file:m.file,thumbnail,poster:m.poster||null,variants,
-   title:m.title||m.file,description:m.description||m.caption||node?.description||'',topic:m.topic||'Схемы и визуализации',
-   source:m.source||m.caption||'Материалы ЭРА',productPath,productPaths:[productPath],productTitle:m.productTitle||node?.title||line?.title||'Проект ЭРА',
+   title:m.title||m.file,description:description===sourceLabel?'':description,topic:m.topic||'Схемы и визуализации',
+   source:sourceLabel,productPath,productPaths:[productPath],productTitle:m.productTitle||node?.title||line?.title||'Проект ЭРА',
    albumIds,collections,sortOrder,coverPriority:m.coverPriority??(m.primary?1:10),
    durationSeconds:m.durationSeconds||meta.durationSeconds||null,videoCategory:m.videoCategory||'Оборудование',
    width:Number.isFinite(Number(m.width))&&Number(m.width)>0?Number(m.width):size?.width||1600,height:Number.isFinite(Number(m.height))&&Number(m.height)>0?Number(m.height):size?.height||900,

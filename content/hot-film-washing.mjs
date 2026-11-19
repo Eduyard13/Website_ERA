@@ -20,12 +20,13 @@ export const hotFilmWashing={
  catalogCardFile:'lines/moyka-plenki/catalog-cover-detailed.webp',catalogCardSmallFile:'lines/moyka-plenki/catalog-cover-detailed-768.webp',
  cardImageAlt:'Проектная компоновка линии горячей мойки плёнок и пакетов ЭРА',
  cardMetrics:[
-  {value:'1 500',unit:'кг/ч',label:'Входной поток',note:'До 1,5 т/ч подготовленной плёнки · ТО, стр. 2, 16'},
-  {value:'750',unit:'кг/ч',label:'Выпуск гранулы',note:'Номинально, один гранулятор · стр. 2, 16'},
-  {value:'1 271,70',unit:'кВт',label:'Установленная мощность',note:'Сводная ведомость комплектации · стр. 17'},
-  {value:'890,19',unit:'кВт',label:'Потребляемая мощность',note:'Расчётная, 70% от установленной · стр. 17'},
-  {value:'3',unit:'чел./смена',label:'Рабочий персонал',note:'1 оператор, 2 водителя погрузчика · стр. 21'},
-  {value:'3',unit:'вида',label:'Готовая продукция',note:'Тюки, капсулят, гранула · стр. 2, 14–15'},
+  // ТО: вход и гранула, стр. 2, 16; мощности, стр. 17; персонал, стр. 21; продукция, стр. 2, 14–15.
+  {value:'1 500',unit:'кг/ч',label:'Входной поток',note:'До 1,5 т/ч подготовленной плёнки'},
+  {value:'750',unit:'кг/ч',label:'Выпуск гранулы',note:'Номинально, один гранулятор'},
+  {value:'1 271,70',unit:'кВт',label:'Установленная мощность',note:'Сводная ведомость комплектации'},
+  {value:'890,19',unit:'кВт',label:'Потребляемая мощность',note:'Расчётная, 70% от установленной'},
+  {value:'3',unit:'чел./смена',label:'Рабочий персонал',note:'1 оператор, 2 водителя погрузчика'},
+  {value:'3',unit:'вида',label:'Готовая продукция',note:'Тюки, капсулят, гранула'},
  ],
  equipment:[...new Set(specification.map(p=>p.catalogSlug).filter(Boolean))],optionalEquipment:[],documents:[hotWashDocument],
 };
@@ -57,8 +58,8 @@ export const hotWashMedia=Object.fromEntries(assets.map(asset=>{
  const [type,title,topic]=descriptions[asset.id];
  return [asset.id,{...asset,id:'moyka-plenki-'+asset.id,type,title,topic,page:asset.sourcePage,thumbnail:asset.smallFile,
   product:'/catalog/lines/moyka-plenki',productTitle:hotFilmWashing.cardTitle,
-  caption:asset.sourcePage?`${title} · Техническое описание, стр. ${asset.sourcePage}`:'Утверждённая обложка владельца · проектная визуализация',
-  source:asset.sourcePage?`Техническое описание горячей мойки, стр. ${asset.sourcePage}`:'Предоставленная владельцем обложка линии',
+  caption:asset.sourcePage?'Техническое описание горячей мойки':'Утверждённая обложка владельца · проектная визуализация',
+  source:asset.sourcePage?'Техническое описание горячей мойки':'Предоставленная владельцем обложка линии',
  }];
 }));
 // The same photographs already exist in the media registry. Add line membership, not a second photo.

@@ -30,7 +30,9 @@ with sync_playwright() as p:
   assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
   menu=open_menu(page)
   assert menu.get_attribute('data-menu-layout')=='3-plus-2'
-  assert menu.locator('.drawer-group h2>span:last-child').all_text_contents()==groups
+  headings=menu.locator('.drawer-group-heading')
+  assert headings.all_text_contents()==groups
+  assert headings.evaluate_all('es=>es.every(e=>getComputedStyle(e).fontSize==="13px")')
   assert menu.locator('.drawer-major-groups>section').count()==3
   assert menu.locator('.drawer-support-groups>section').count()==2
   assert menu.locator('.drawer-link').count()==11 and menu.locator('.drawer-contact-cta').count()==1

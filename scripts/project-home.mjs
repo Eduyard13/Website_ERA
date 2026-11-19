@@ -87,7 +87,7 @@ function problem(){
  return `<section class="resource-section resource-problem" id="raw-material" aria-labelledby="resource-problem-title" data-home-block="problem">
   <div class="resource-container">
    <div class="resource-problem-intro">
-    ${heading('resource-problem-title','Плёнка — одна из самых сложных фракций отходов.',{lead:'Загрязнения удерживаются в складках и на поверхности. Стоимость подготовки и доступность сбыта зависят от того, насколько последовательно их отделяют.'})}
+    ${heading('resource-problem-title','Плёночные отходы трудно очистить от включений.',{lead:'Загрязнения удерживаются в складках и на поверхности. Стоимость подготовки и доступность сбыта зависят от того, насколько последовательно их отделяют.'})}
     <div class="resource-trial"><strong>до 80%</strong><span>засорённость сырья в испытаниях</span><small>Режим и выпуск подбирают по конкретной партии.</small></div>
    </div>
    <div class="resource-challenges">${resourceChallenges.map(item=>`<article><h3>${esc(item.title)}</h3><p>${esc(item.text)}</p></article>`).join('')}</div>
@@ -110,7 +110,7 @@ function feedstocks(){
 function process(){
  return `<section class="resource-section resource-process" id="process" aria-labelledby="resource-process-title" data-home-block="process">
   <div class="resource-container">
-   ${heading('resource-process-title','Технология превращает сложную плёнку в товарный продукт.')}
+   ${heading('resource-process-title','Технология превращает трудноочищаемую плёнку в товарный продукт.')}
    <ol class="resource-steps">${resourceStages.map((stage,index)=>`<li data-process-step="0${index+1}"><span aria-hidden="true">0${index+1}</span><h3>${esc(stage.title)}</h3><p>${esc(stage.text)}</p>${link('Открыть этап','/technology#'+stage.id)}</li>`).join('')}</ol>
    <div class="resource-links">
     ${link('Подробнее о технологии','/technology')}
@@ -213,7 +213,7 @@ function equipment(){
  const rotor=equipmentCardImages['rotornyy-raspushitel'];
  return `<section class="resource-section resource-equipment" id="manufacturing" aria-labelledby="resource-evidence-title" data-home-block="equipment" data-page-progress-label="Оборудование">
   <div class="resource-container">
-   ${heading('resource-evidence-title','Оборудование для сложного плёночного сырья',{lead:'Выберите готовую линию или узлы для своей производственной площадки.'})}
+   ${heading('resource-evidence-title','Оборудование для трудноочищаемого плёночного сырья',{lead:'Выберите готовую линию или узлы для своей производственной площадки.'})}
    <div class="resource-equipment-grid">
     <article>
      <a class="resource-equipment-image" href="${dryCatalogue}" aria-label="Линии сухой сепарации">${image(media.lineWide,{slot:'lineWide'})}</a>

@@ -4,6 +4,6 @@ import assets from './separatsiya-02-presentation-assets.json' with {type:'json'
 // and the original technical images keep their existing URLs and metadata.
 export const lineHeroPresentation={
  file:assets.hero.file,smallFile:assets.hero.smallFile,width:assets.hero.width,height:assets.hero.height,
- caption:'Общая компоновка линии · исходный инженерный рендер, ТО, стр. 1 · оформление Titanium Gallery',
+ caption:'Общая компоновка линии · исходный инженерный рендер · оформление Titanium Gallery',
 };
 export const lineConstructionPresentation=assets.diagram;

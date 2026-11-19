@@ -59,7 +59,7 @@ const equipmentMedia=[
  {id:'shredder',title:'Визуализация базового узла',type:'visualization',topic:'Схемы и визуализации',file:'shredder.webp'}
 ].map(m=>({...m,product:nodes[0].path,productTitle:nodes[0].title,source:'Техническое описание предварительного измельчителя'}));
 const photographedSlugs=new Set(customerPhotos.map(m=>m.slug));
-const sourceMedia=[...equipmentMedia,...presentationMedia,...equipmentAssets.map(m=>({...m,product:nodes.find(n=>n.slug===m.slug).path,productTitle:nodes.find(n=>n.slug===m.slug).title,source:documentManifest.find(d=>d.slug===m.slug&&d.category==='technical').title+', стр. '+m.page}))];
+const sourceMedia=[...equipmentMedia,...presentationMedia,...equipmentAssets.map(m=>({...m,product:nodes.find(n=>n.slug===m.slug).path,productTitle:nodes.find(n=>n.slug===m.slug).title,source:documentManifest.find(d=>d.slug===m.slug&&d.category==='technical').title}))];
 export const media=[...customerPhotos.map(m=>({...m,product:nodes.find(n=>n.slug===m.slug).path,productTitle:nodes.find(n=>n.slug===m.slug).title})),...equipmentVideos.filter(m=>m.ready).map(m=>({...m,product:nodes.find(n=>n.slug===m.slug).path,productTitle:nodes.find(n=>n.slug===m.slug).title})),...sourceMedia.filter(m=>m.type!=='photo'||!nodes.some(n=>n.path===m.product&&photographedSlugs.has(n.slug)))];
 for(const n of nodes)n.media=media.filter(m=>m.product===n.path).map(m=>m.id);
 export const mediaType={frame:'Кадр из видео',photo:'Фотография',video:'Видео',scheme:'Схема',visualization:'Визуализация'};

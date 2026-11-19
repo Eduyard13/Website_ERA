@@ -12,7 +12,7 @@ function mediaFigure(m,collection,{className='',caption=m?.title,album=''}={}){
  if(!m)return '';
  return `<figure class="gs-media ${className} gs-kind-${m.kind}" style="--gs-original-width:${m.width}px"><a class="gs-open" href="/assets/${escape(m.file)}" ${attributes(m,collection,album)} aria-label="Открыть: ${escape(m.title)}">${sourceImage(m)}${m.kind==='video'?`<span class="gs-play">${play}</span><span class="gs-duration">${durationLabel(m.durationSeconds)}</span>`:''}</a><figcaption><span class="gs-kind">${galleryKinds[m.kind]}</span>${escape(caption)}</figcaption></figure>`;
 }
-const heading=c=>`<div class="gs-heading"><p class="eyebrow">${escape(c.number)} / ${c.id==='videos'?'ВИДЕОТЕКА ЭРА':escape(c.label.toLocaleUpperCase('ru'))}</p><h2>${escape(c.title).replace('ПЭ-грануле','<span class="gs-nowrap">ПЭ-грануле</span>')}</h2><p>${escape(c.lead)}</p></div>`;
+const heading=c=>`<div class="gs-heading"><p class="eyebrow">${c.id==='videos'?'ВИДЕОТЕКА ЭРА':escape(c.label.toLocaleUpperCase('ru'))}</p><h2>${escape(c.title).replace('ПЭ-грануле','<span class="gs-nowrap">ПЭ-грануле</span>')}</h2><p>${escape(c.lead)}</p></div>`;
 const collectionAction=(c,first)=>`<div class="gs-section-actions"><a class="gs-collection-link" href="/assets/${escape(first.file)}" ${attributes(first,c.id)}>${escape(c.action)} ${arrow}</a>${c.href?`<a class="gs-text-link" href="${escape(c.href)}">${escape(c.link)} ${arrow}</a>`:''}</div>`;
 function albumCard(album,items,{line=false}={}){
  const m=items.find(item=>item.id===album.coverId);if(!m)return '';

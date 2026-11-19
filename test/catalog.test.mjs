@@ -33,7 +33,7 @@ test('Входная витрина содержит только две цел�
   assert.ok(html.includes(`href="${basePath}/catalog/${branch}"`));
   assert.ok(html.includes(`srcset="${basePath}/assets/covers/${cover}-768.webp 768w, ${basePath}/assets/covers/${cover}.webp 1536w"`));
  }
- for(const text of ['01 / КОМПЛЕКСНЫЕ РЕШЕНИЯ','02 / САМОСТОЯТЕЛЬНЫЕ РЕШЕНИЯ','Смотреть линии','Многофункциональное оборудование для конкретных производственных задач.'])assert.ok(html.includes(text));
+ for(const text of ['КОМПЛЕКСНЫЕ РЕШЕНИЯ','САМОСТОЯТЕЛЬНЫЕ РЕШЕНИЯ','Смотреть линии','Многофункциональное оборудование для конкретных производственных задач.'])assert.ok(html.includes(text));
  assert.ok(!html.includes('catalog-branches.js')&&!html.includes('<table'));
 });
 test('Обе ветки имеют одну нативную навигацию, корректный BASE_PATH и отдельные ресурсы',()=>{

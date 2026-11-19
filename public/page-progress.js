@@ -42,9 +42,9 @@
    if(repeats.get(entry.label)>1){const heading=entry.element.querySelector('h1,h2,h3');if(heading)entry.label=clean(heading.innerText);}
   });
   rail.replaceChildren(...entries.map(({fragment,label},index)=>{
-   const link=document.createElement('a');link.href='#'+fragment;link.dataset.pageSection=String(index+1);link.setAttribute('aria-label',`${index+1}. ${label}`);
+   const link=document.createElement('a');link.href='#'+fragment;link.dataset.pageSection=String(index+1);link.setAttribute('aria-label',label);
    const mark=document.createElement('span');mark.className='page-progress-mark';mark.setAttribute('aria-hidden','true');
-   const tooltip=document.createElement('span');tooltip.className='page-progress-tooltip';tooltip.setAttribute('aria-hidden','true');tooltip.textContent=String(index+1).padStart(2,'0')+' / '+label;
+   const tooltip=document.createElement('span');tooltip.className='page-progress-tooltip';tooltip.setAttribute('aria-hidden','true');tooltip.textContent=label;
    link.append(mark,tooltip);link.addEventListener('click',event=>{
     if(event.ctrlKey||event.metaKey||event.altKey||event.shiftKey)return;
     event.preventDefault();const url=new URL(location.href);url.hash=fragment;history.pushState(null,'',url);goTo(entries[index].element);

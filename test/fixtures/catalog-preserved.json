@@ -1,6 +1,6 @@
 {
   "base": "3ee697be21a242d7357f6e202cd7204b69ce1b4c",
-  "registry": "8d5c988332f138af891effac0fbdd1beea89e5d1d5f768bbd5750792533061da",
+  "registry": "0e4290b3c9af8243ebdd8db019611b5f7f0e0074b40fe378444257e23cd984e7",
   "nodeCards": [
     {
       "slug": "predvaritelnyy-izmelchitel",
@@ -62,18 +62,18 @@
     }
   ],
   "details": {
-    "/catalog/equipment/predvaritelnyy-izmelchitel": "3ae436e4382dc4f0e2fc6c342a82830a7cbf468343705d23e237918fb75e1a30",
-    "/catalog/equipment/predvaritelnyy-raspushitel": "59bc3e68f9e5d28295fcb5adf2d21a1cbf147176ec098bf70658d3edde4e6e65",
-    "/catalog/equipment/ballisticheskiy-separator": "523d11638a60c61e181ba94141b9aec59cdab3f2751e3dbddb1a1a4985332ed9",
-    "/catalog/equipment/rotornyy-raspushitel": "02051f6b735d58cd30b56c734571c5e34fa5b3b14a9e5fa025474acda2662359",
-    "/catalog/equipment/bunker-nakopitel": "dd9d6e67413293952e39db90a31cb91b283ea17ee5b23da70ebf0cbcf8828108",
-    "/catalog/equipment/vertikalno-rotornyy-izmelchitel": "0cd1504018e17f064c3977fb5239ced8044f02ad3fc9a0aa7bfb3dfa2d30e0d8",
-    "/catalog/equipment/plenochnyy-flotator": "03682787bce3ff7747bcab78e1a6544bc998177adb3832a13889a9cee94f6798",
-    "/catalog/equipment/rotornaya-tsentrifuga": "3b2de565737f03ff93eda9deecc1542fa14eb9743c03b4b195e9e6e50b93ec6b",
-    "/catalog/equipment/vintovoy-press": "e3a627efcababac0c29903ddf356f33f83a9e7edd2013e949f67af057f8f591b",
-    "/catalog/equipment/kapsulyator": "b58b26ddea636319cb4eb8a9af9081d23acc3b2473fe8cc708a96bf57b601e0a",
-    "/catalog/equipment/ochistka-stokov": "b5ca0e34b3c1c4cc36e2d16048990bb5af8cd44ff1266c0c902e8308ffd421e1",
-    "/catalog/equipment/rama-napolnitel": "7e938c479aee1e3e575a1ead12cb24fa3787b3b09c17b0a4a57d98d6110cbbf3",
+    "/catalog/equipment/predvaritelnyy-izmelchitel": "5f372d8f0b3d32d4ffa03933c456f4607f4f5ab4a5b4ef14e54b1cb3821df08f",
+    "/catalog/equipment/predvaritelnyy-raspushitel": "92962ba45729a89369ebafe1932ab6feab15c19dd4dc649319073892ca465d08",
+    "/catalog/equipment/ballisticheskiy-separator": "dc683edcddc98a5141371dd67c408f52a96f045a0fca97ecaa6af583c2d88f24",
+    "/catalog/equipment/rotornyy-raspushitel": "fb2803168585bae4db206ecc5197512aecafbb74430d7b28221581c99548a092",
+    "/catalog/equipment/bunker-nakopitel": "621341af7c512d0ba874c9370d01e205fe0c8cd57ced295aa81477f93a5899bc",
+    "/catalog/equipment/vertikalno-rotornyy-izmelchitel": "86b66caa4e8429b1bb2dc6338dcf4c5d1527263dda5043dc2ca169d6e654f403",
+    "/catalog/equipment/plenochnyy-flotator": "12d6054d4b02b3ee55daab7f8aedd3216a1a90b39d2c2f0abfea2b300c3a95cb",
+    "/catalog/equipment/rotornaya-tsentrifuga": "da56f58e64930ff50beb6b6789ed8ed3adbf148ef96ac60547a06c978b37e581",
+    "/catalog/equipment/vintovoy-press": "921b65efd4a56dc347fd8a81392c00688a626dc50c9ff8730ff715a92fa5ea62",
+    "/catalog/equipment/kapsulyator": "a86f8af91645fe3d4528524e395d2acf2be7db8e20ba9f6c8bf2107700a43ad5",
+    "/catalog/equipment/ochistka-stokov": "f748a4659f8a11ad7b6f6a06c174006d8b00db72103b45b4e765b139af530187",
+    "/catalog/equipment/rama-napolnitel": "82247c782d85e3af984eb0084be4090e0e634e8e7a4c3da1b227bf7a2deae660",
     "/catalog/lines/separatsiya-01": "316372f46950ad09946bb58bfae2dd9babf7f862ee539ef145242c086e8f5f8c",
     "/catalog/lines/separatsiya-02": "07c92cd598f1a2b8c2a09f061355bd9578f5004fbfc6da8d9623ca5a3f447991"
   },

@@ -72,12 +72,13 @@ export const separation03={
  cardFile:'lines/separatsiya-03/catalog-cover.webp',cardSmallFile:'lines/separatsiya-03/catalog-cover-768.webp',
  cardImageAlt:'Проектная компоновка линии сухой сепарации и сушки плёнок и пакетов ЭРА',
  cardMetrics:[
-  {value:'1 500',unit:'кг/ч',label:'Входной поток',note:'С включениями · ТО, стр. 2, 23'},
-  {value:'750',unit:'кг/ч',label:'Выход очищенной плёнки',note:'При засоре около 50% · стр. 23'},
-  {value:'до 5',unit:'%',label:'Остаточная влажность после сушки',note:'На выходе из сушилки · стр. 16'},
-  {value:'639,77',unit:'кВт',label:'Установленная мощность',note:'По электроведомости · стр. 24'},
-  {value:'447,84',unit:'кВт',label:'Расчётная потребляемая мощность',note:'70% от установленной · стр. 24'},
-  {value:'5',unit:'бункеров',label:'Раздельное накопление',note:'По 4,7 м³ каждый · стр. 19'},
+  // ТО: вход и выход, стр. 2, 23; остаточная влажность, стр. 16; мощности, стр. 24; бункеры, стр. 19.
+  {value:'1 500',unit:'кг/ч',label:'Входной поток',note:'С включениями'},
+  {value:'750',unit:'кг/ч',label:'Выход очищенной плёнки',note:'При засоре около 50%'},
+  {value:'до 5',unit:'%',label:'Остаточная влажность после сушки',note:'На выходе из сушилки'},
+  {value:'639,77',unit:'кВт',label:'Установленная мощность',note:'По электроведомости'},
+  {value:'447,84',unit:'кВт',label:'Расчётная потребляемая мощность',note:'70% от установленной'},
+  {value:'5',unit:'бункеров',label:'Раздельное накопление',note:'По 4,7 м³ каждый'},
  ],
  equipment:separation03Specification.filter(s=>s.catalogSlug).map(s=>s.catalogSlug),optionalEquipment:[],documents:[separation03Document],
 };
@@ -85,8 +86,8 @@ export const separation03Media=Object.fromEntries(assets.map(a=>[a.key,{
  ...a,id:'separatsiya-03-'+a.key,page:a.sourcePage,thumbnail:a.smallFile,
  product:'/catalog/lines/separatsiya-03',productTitle:'Сепарация 03',
  topic:a.key.startsWith('raw-')?'Входное сырьё':a.key.startsWith('product-')?'Результат':a.key.startsWith('placement-')?'Размещение':a.key.startsWith('kair-')?'Управление':'Состав линии',
- caption:a.sourcePage?`${a.title} · Техническое описание, стр. ${a.sourcePage}`:'Проектная визуализация линии · расширенная комплектация',
- source:a.sourcePage?`Техническое описание сухой сепарации и сушки, стр. ${a.sourcePage}`:'Проектная визуализация ЭРА',
+ caption:a.sourcePage?'Техническое описание сухой сепарации и сушки':'Проектная визуализация линии · расширенная комплектация',
+ source:a.sourcePage?'Техническое описание сухой сепарации и сушки':'Проектная визуализация ЭРА',
 }]));
 const sharedGalleryPhotos={
  'bag-frame':['photos/rama-napolnitel/02.webp','photos/rama-napolnitel/02-thumb.webp'],

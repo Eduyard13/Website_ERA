@@ -57,7 +57,7 @@ export const filmSeparationMedia=Object.fromEntries(pictures.map(([key,type,page
  id:'separatsiya-02-'+key,type,page,title,topic,
  file:`lines/separatsiya-01/${key}.webp`,thumbnail:`lines/separatsiya-01/${key}-thumb.webp`,
  product:'/catalog/lines/separatsiya-02',productTitle:'Сепарация 02',
- caption:`${title} · Техническое описание линии, стр. ${page}`,
+ caption:'Техническое описание линии',
 }]));
 
 export const lineMetrics=[

@@ -21,7 +21,6 @@
 .film-line--hot-wash .hw-specification .hw-spec-group th{background:var(--era-blue);color:var(--era-on-dark)}
 .film-line--hot-wash .hw-specification button{min-height:44px;padding:8px;border:1px solid var(--line);border-radius:3px;font-size:13px;background:var(--era-white);color:var(--era-blue)}
 .film-line--hot-wash .hw-specification .text-link{font-size:12px;min-height:44px;padding-block:8px}
-.film-line--hot-wash .hw-specification small{color:var(--muted)}
 .film-line--hot-wash .hw-product-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
 .film-line--hot-wash .hw-product-grid article{min-width:0;border-top:1px solid var(--line);padding-top:20px}
 .film-line--hot-wash .hw-product-grid h3{font-size:25px;line-height:1.25;margin-top:22px}

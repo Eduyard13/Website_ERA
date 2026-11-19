@@ -51,7 +51,7 @@ export const miniFilmSeparationMedia=Object.fromEntries(pictures.map(([key,type,
  id:'separatsiya-01-mini-'+key,type,page,title,topic,
  file:`lines/separatsiya-01-mini/${key}.webp`,thumbnail:`lines/separatsiya-01-mini/${key}-thumb.webp`,
  product:'/catalog/lines/separatsiya-01',productTitle:'Сепарация 01',
- caption:`${title} · Техническое описание мини-линии, стр. ${page}`,
+ caption:'Техническое описание мини-линии',
 }]));
 miniFilmSeparationMedia.cover={
  id:'separatsiya-01-mini-cover',type:'visualization',topic:'Линия целиком',
@@ -67,7 +67,7 @@ export const miniLineHeroMedia={
  file:presentation.hero.file,thumbnail:presentation.hero.smallFile,smallFile:presentation.hero.smallFile,
  width:presentation.hero.width,height:presentation.hero.height,
  product:'/catalog/lines/separatsiya-01',productTitle:'Сепарация 01',
- caption:'Инженерная визуализация мини-линии · ТО, стр. 1 · оформление Titanium Gallery',
+ caption:'Инженерная визуализация мини-линии · оформление Titanium Gallery',
 };
 
 export const miniLineMetrics=[

@@ -120,8 +120,7 @@
 .ka-scenario{border:1px solid var(--ka-rule);border-radius:var(--ka-radius);background:var(--era-cream);min-width:0;overflow:hidden}
 .ka-scenario>summary{display:flex;flex-direction:column;padding:25px;min-height:260px}
 .ka-scenario>summary:after{content:none}
-.ka-scenario-topline{display:flex;gap:20px;align-items:center;justify-content:space-between;color:var(--era-gold-dark);font-size:11px;line-height:1.5;letter-spacing:.03em;margin-bottom:24px}
-.ka-scenario-topline>span:last-child{font-size:16px}
+.ka-scenario-topline{display:block;color:var(--era-gold-dark);font-size:11px;line-height:1.5;letter-spacing:.03em;margin-bottom:24px}
 .kair-system .ka-scenario h3{font-size:25px;margin:0 0 15px;line-height:1.25}
 .ka-scenario-benefit{font-size:14px;line-height:1.6;color:var(--era-muted);margin-bottom:20px}
 .ka-scenario-open{display:flex;justify-content:space-between;align-items:center;gap:20px;font-size:13px;border-top:1px solid var(--ka-rule);padding-top:14px;margin-top:auto}
