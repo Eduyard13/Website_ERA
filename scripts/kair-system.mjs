@@ -1,7 +1,9 @@
 import {kairSystem,kairGroups,kairFunctions,kairLogicModes,kairHardware,kairBusinessBenefits,kairProcessMaps} from '../content/kair-system.mjs';
 import {kairScenarios} from '../content/kair-scenarios.mjs';
+import {siteContacts} from '../content/contact.mjs';
+import {projectRequestHref} from './contact.mjs';
 import {kairMonitor} from './kair.mjs';
-import {kairIcon,kairOverviewGraphic,kairLogicGraphic,kairProcessGraphic} from './kair-visuals.mjs';
+import {kairIcon,kairLogicGraphic,kairProcessGraphic} from './kair-visuals.mjs';
 
 const escape=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const arrow='<span aria-hidden="true">↗</span>';
@@ -11,9 +13,22 @@ const heading=(title,text)=>`<div class="ka-section-heading"><div><p class="eyeb
 function functionCard(f){return `<article class="ka-function" data-kair-function data-function-id="${f.id}" data-scope="${f.scope}" data-group="${f.group}" data-source-codes="${f.codes.join(' ')}" data-search="${escape([f.title,f.text,f.detail].join(' ').toLocaleLowerCase('ru-RU'))}"><div class="ka-function-tags"><span>${scopeLabel[f.scope]}</span>${f.level==='project'?'<span>По исполнению</span>':f.level==='local'?'<span>Собственный цикл узла</span>':''}</div><h4>${f.title}</h4><p>${f.text}</p>${f.detail?`<p class="ka-function-detail">${f.detail}</p>`:''}</article>`;}
 function scenarioCard(s){return `<details class="ka-scenario" data-keep-open data-kair-scenario="${s.number}"><summary><span class="ka-scenario-topline">${scopeLabel[s.scope]}</span><h3>${s.title}</h3><span class="ka-scenario-benefit">${s.benefit}</span><span class="ka-scenario-open">Как это работает <span aria-hidden="true">+</span></span></summary><div class="ka-scenario-content" data-artwork-slot="kair-scenario-${String(s.number).padStart(2,'0')}"><div><h4>Ситуация</h4><p>${s.situation}</p></div><div><h4>Действие системы и персонала</h4><p>${s.action}</p></div>${s.note?`<p class="ka-scenario-note">${s.note}</p>`:''}</div></details>`;}
 export function renderKairSystem(){
- const contact='mailto:edkom.office@mail.ru?subject='+encodeURIComponent('Запрос ЭРА: система управления КАИР');
+ const contact=projectRequestHref('Запрос ЭРА: система управления КАИР');
  return `<div class="story kair-system" data-kair-system>
- <section class="ka-hero era-indigo-surface"><div class="ka-hero-copy"><p class="eyebrow">ЭРА / ИНТЕЛЛЕКТУАЛЬНАЯ СИСТЕМА УПРАВЛЕНИЯ</p><h1>КАИР.<br><em>Согласованная работа <br>вашей линии.</em></h1><p class="story-lead">Связывает оборудование в общий процесс, сохраняет подобранные режимы, реагирует на контролируемые отклонения и даёт доступ к состоянию линии вне цеха.</p><div class="actions">${button('Посмотреть экраны','#kair-screens')}${button('Обсудить систему',contact,true)}</div><div class="ka-hero-tags"><span>На базе Siemens</span><span>Сепарация и мойка</span><span>По комплектации линии</span></div></div>${kairOverviewGraphic()}</section>
+ <section class="ka-hero era-indigo-surface" data-page-progress-label="Система управления КАИР">
+  <div class="ka-hero-copy">
+   <p class="ka-hero-kicker">Контроль производства — свобода для роста.</p>
+   <h1>Вы развиваете бизнес. <span>КАИР управляет линией.</span></h1>
+   <p class="story-lead">Сохранённые ресурсы превращаются в прибыль предприятия, а время владельца — в новые возможности для компании.</p>
+   <div class="actions">${button('Посмотреть экраны','#kair-screens')}${button('Обсудить систему',contact,true)}</div>
+   <div class="ka-hero-tags"><span>На базе Siemens</span><span>Сепарация и мойка</span><span>По комплектации линии</span></div>
+  </div>
+  <img class="ka-hero-art" data-artwork-slot="kair-overview" src="/assets/kair/hero-line-control.webp"
+   srcset="/assets/kair/hero-line-control-768.webp 768w, /assets/kair/hero-line-control.webp 1536w"
+   sizes="(min-width:1785px) 1160px, (min-width:1024px) 65vw, (min-width:840px) 840px, 100vw"
+   width="1536" height="1024" alt="Панель КАИР в цехе показывает загрузку, параметры, режимы, работу узлов, защитную реакцию и информацию для оператора"
+   fetchpriority="high" decoding="async">
+ </section>
  <nav class="ka-outline" aria-label="Разделы страницы КАИР"><a href="#kair-value">Польза</a><a href="#kair-screens">Реальные экраны</a><a href="#kair-logic">Логика действий</a><a href="#kair-functions">Функции</a><a href="#kair-process">Связь с оборудованием</a><a href="#kair-scenarios">Практические ситуации</a><a href="#kair-hardware">Оснащение</a><a href="#kair-project">Выгода для бизнеса</a></nav>
 
  <section class="ka-section" id="kair-value">${heading('Видеть процесс.<br>Сохранять рабочее время.','Контроль линии связывается с задачами владельца, технолога и смены: понимать состояние, повторять настройки и готовить нужное действие.')}<div class="ka-value-grid">${kairGroups.map(g=>`<a class="ka-value-card" href="#kair-functions-${g.id}" data-kair-group-link="${g.id}">${kairIcon(g.icon)}<h3>${g.title}</h3><p>${g.text}</p><span>Посмотреть функции ${arrow}</span></a>`).join('')}</div></section>
@@ -30,6 +45,21 @@ export function renderKairSystem(){
 
  <section class="ka-section" id="kair-hardware">${heading('Из чего складывается<br>контроль оборудования.','Датчики шума, вибрации и перегрузки контролируют состояние оборудования. pH-контроль и дозаторы управляют моющей средой.')}<div class="ka-hardware-grid">${kairHardware.map(([title,value,text])=>`<article><span>${title}</span><h3>${value}</h3><p>${text}</p></article>`).join('')}</div></section>
 
- <section class="ka-section ka-section-soft" id="kair-project">${heading('КАИР работает на<br>рентабельность вашего бизнеса.','Автоматизированная система искусственного интеллекта КАИР сохраняет рабочее время, сокращает расходы и освобождает ресурсы для развития предприятия.')}<div class="ka-business-grid">${kairBusinessBenefits.map(b=>`<article class="ka-business-card">${kairIcon(b.icon)}<h3>${b.title}</h3><p>${b.text}</p></article>`).join('')}</div><div class="ka-business-result era-indigo-surface"><div><p class="eyebrow">КОНТРОЛЬ ПРОИЗВОДСТВА. СВОБОДА ДЛЯ РОСТА.</p><h3>Вы развиваете бизнес.<br><em>КАИР управляет линией.</em></h3><p>Сохранённые ресурсы превращаются в прибыль предприятия, а время владельца — в новые возможности для компании.</p></div><div class="ka-business-contact">${button('Связаться с нами',contact)}<a class="text-link" href="/#economics">Экономика проекта ${arrow}</a><a href="tel:+79032813535">+7 903 281-35-35</a><a href="mailto:edkom.office@mail.ru">edkom.office@mail.ru</a></div></div></section>
+ <section class="ka-section ka-section-soft" id="kair-project">
+  ${heading('КАИР работает на<br>рентабельность вашего бизнеса.','Автоматизированная система искусственного интеллекта КАИР сохраняет рабочее время, сокращает расходы и освобождает ресурсы для развития предприятия.')}
+  <div class="ka-business-grid">${kairBusinessBenefits.map(b=>`<article class="ka-business-card">${kairIcon(b.icon)}<h3>${b.title}</h3><p>${b.text}</p></article>`).join('')}</div>
+  <div class="ka-business-result era-indigo-surface">
+   <div>
+    <h3>КАИР. <span>Согласованная работа вашей линии.</span></h3>
+    <p>Связывает оборудование в общий процесс, сохраняет подобранные режимы, реагирует на контролируемые отклонения и даёт доступ к состоянию линии вне цеха.</p>
+   </div>
+   <div class="ka-business-contact">
+    ${button('Связаться с нами',contact)}
+    <a class="text-link" href="/economics">Экономика проекта ${arrow}</a>
+    <a href="${escape(siteContacts.phoneHref)}">${escape(siteContacts.phone)}</a>
+    <a href="mailto:${escape(siteContacts.email)}">${escape(siteContacts.email)}</a>
+   </div>
+  </div>
+ </section>
  </div>`;
 }
