@@ -20,3 +20,94 @@
   update();
  }
 })();
+
+(() => {
+ const map=document.querySelector('[data-market-map]');
+ if(!map)return;
+
+ const modes=[...map.querySelectorAll('[data-market-mode]')];
+ const pickers=[...map.querySelectorAll('[data-market-picker]')];
+ const selects=[...map.querySelectorAll('[data-market-select]')];
+ const features=[...map.querySelectorAll('[data-market-feature]')];
+ const records=[...map.querySelectorAll('[data-market-record]')];
+ const zones=[...map.querySelectorAll('[data-market-zone]')];
+ const recordById=new Map(records.map(record=>[record.dataset.marketRecord,record]));
+ const districts=map.querySelector('[data-market-districts]');
+ const regions=map.querySelector('[data-market-regions]');
+ const canvas=map.querySelector('[data-market-canvas]');
+ const svg=canvas.querySelector('svg');
+ const tooltip=map.querySelector('[data-market-tooltip]');
+ let mode='districts';
+
+ function hideTooltip(){
+  tooltip.hidden=true;
+ }
+
+ function showTooltip(feature){
+  if(feature.dataset.marketGroup!==mode)return;
+  const record=recordById.get(feature.dataset.marketFeature);
+  tooltip.querySelector('strong').textContent=record.querySelector('[data-market-name]').textContent;
+  tooltip.querySelector('span').textContent=record.querySelector('[data-market-volume]').textContent;
+  tooltip.hidden=false;
+
+  const [x,y]=feature.dataset.center.split(',').map(Number);
+  const svgBounds=svg.getBoundingClientRect(),canvasBounds=canvas.getBoundingClientRect();
+  const view=svg.viewBox.baseVal;
+  const centerX=svgBounds.left-canvasBounds.left+x*svgBounds.width/view.width;
+  const centerY=svgBounds.top-canvasBounds.top+y*svgBounds.height/view.height;
+  const left=Math.min(Math.max(6,centerX+13),Math.max(6,canvasBounds.width-tooltip.offsetWidth-6));
+  const top=Math.min(Math.max(6,centerY-tooltip.offsetHeight-13),Math.max(6,canvasBounds.height-tooltip.offsetHeight-6));
+  tooltip.style.left=left+'px';
+  tooltip.style.top=top+'px';
+ }
+
+ function selectRecord(id){
+  if(!recordById.has(id))return;
+  const selectedInput=selects.find(input=>input.dataset.marketSelect===mode);
+  selectedInput.value=id;
+  for(const record of records)record.hidden=record.dataset.marketRecord!==id;
+  for(const feature of features){
+   const active=feature.dataset.marketGroup===mode&&feature.dataset.marketFeature===id;
+   feature.setAttribute('aria-pressed',String(active));
+  }
+  for(const zone of zones)zone.classList.toggle('is-selected',mode==='regions'&&zone.dataset.marketZone===id);
+  hideTooltip();
+ }
+
+ function selectMode(next){
+  mode=next;
+  map.dataset.mode=mode;
+  districts.setAttribute('aria-hidden',String(mode!=='districts'));
+  regions.toggleAttribute('hidden',mode!=='regions');
+  for(const button of modes)button.setAttribute('aria-pressed',String(button.dataset.marketMode===mode));
+  for(const picker of pickers)picker.hidden=picker.dataset.marketPicker!==mode;
+  for(const feature of features)feature.setAttribute('tabindex',feature.dataset.marketGroup===mode?'0':'-1');
+  const visibleSelect=selects.find(input=>input.dataset.marketSelect===mode);
+  selectRecord(visibleSelect.value);
+ }
+
+ for(const button of modes){
+  button.disabled=false;
+  button.addEventListener('click',()=>selectMode(button.dataset.marketMode));
+ }
+ for(const input of selects){
+  input.disabled=false;
+  input.addEventListener('change',()=>selectRecord(input.value));
+ }
+ for(const feature of features){
+  feature.addEventListener('click',()=>selectRecord(feature.dataset.marketFeature));
+  feature.addEventListener('keydown',event=>{
+   if(event.key==='Escape'){hideTooltip();return;}
+   if(event.key!=='Enter'&&event.key!==' ')return;
+   event.preventDefault();
+   selectRecord(feature.dataset.marketFeature);
+  });
+  feature.addEventListener('pointerenter',event=>{if(event.pointerType!=='touch')showTooltip(feature);});
+  feature.addEventListener('pointerleave',hideTooltip);
+  feature.addEventListener('focus',()=>showTooltip(feature));
+  feature.addEventListener('blur',hideTooltip);
+ }
+ window.addEventListener('resize',hideTooltip);
+ selectMode('districts');
+ map.dataset.marketReady='true';
+})();

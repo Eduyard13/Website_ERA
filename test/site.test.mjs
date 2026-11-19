@@ -3,14 +3,34 @@ import assert from 'node:assert/strict';
 import {readFile,stat} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {routes,product,basePath} from '../scripts/build.mjs';
-test('Главная раскрывает четыре стадии, два этапа, три бизнес-карточки и пять шагов проекта',async()=>{
- const html=await readFile('dist/index.html','utf8');const text=html.replaceAll('\u00a0',' ');
- assert.deepEqual([...html.matchAll(/data-process-step="([^"]+)"/g)].map(match=>match[1]),['01','02','03','04']);
- assert.deepEqual([...html.matchAll(/data-business-card="([^"]+)"/g)].map(match=>match[1]),['01','02','03']);
- for(const value of ['труднодоступной для переработки','на трёх производственных площадках','30–70 ppm (30–70 г/т)','Горячая мойка и гранулирование','Изготовление и поставка'])assert.ok(text.includes(value),value);
- assert.ok(!html.includes('class="resource-route-logic"')&&!html.includes('class="resource-fallback-link"'));
+test('На главной четыре вида сырья, три стадии, пять продуктов и три экономические оценки',async()=>{
+ const html=await readFile('dist/index.html','utf8');
+ assert.deepEqual([...html.matchAll(/data-process-step="([^"]+)"/g)].map(match=>match[1]),['01','02','03']);
+ assert.deepEqual([...html.matchAll(/data-home-economics="([^"]+)"/g)].map(match=>match[1]),['complex','region','country']);
+ assert.equal((html.match(/data-home-feedstock=/g)||[]).length,4);
+ assert.equal((html.match(/data-home-product=/g)||[]).length,5);
+ assert.equal((html.match(/class="resource-launch-grid"/g)||[]).length,1);
  assert.match(html,new RegExp(`href="${basePath}/economics" data-economics-page`));
  assert.match(html,/data-resource-play aria-label="Воспроизвести видео о технологии ЭРА" hidden/);
+});
+test('Карта показывает восемь округов и десять регионов по единой оценочной модели',async()=>{
+ const html=await readFile('dist/index.html','utf8');
+ const {marketTotals,marketRegions,marketMoney}=await import('../content/home-market.mjs');
+ const {calculateEconomics,initialEconomicsState}=await import('../public/economics-model.js');
+ const normalized=value=>value.replace(/\s/g,' ');
+ assert.deepEqual(marketTotals,{tonnes:4_947_874,complexes:330,monthly:4_950_000_000,annual:59_400_000_000});
+ for(const [id,tonnes,complexes,monthly] of [['moscow',441833,29,435000000],['moscow-oblast',302796,20,300000000]]){
+  const row=marketRegions.find(item=>item.id===id);
+  assert.deepEqual([row.tonnes,row.complexes,row.monthly],[tonnes,complexes,monthly]);
+ }
+ assert.match(html,/<svg[^>]+role="group" aria-labelledby="market-graphic-title"/);
+ assert.equal((html.match(/data-market-feature="[^" ]+" data-market-group="districts"/g)||[]).length,8);
+ assert.equal((html.match(/data-market-feature="[^" ]+" data-market-group="regions"/g)||[]).length,10);
+ assert.equal((html.match(/data-market-record=/g)||[]).length,18);
+ assert.equal((html.match(/data-market-select=/g)||[]).length,2);
+ assert.match(normalized(html),/условной ёмкости 15 000 т входящего сырья в год/);
+ assert.match(html,/Итог по России складывается из округов/);
+ assert.ok(html.includes(`<strong>${marketMoney(calculateEconomics(initialEconomicsState('full')).net)}</strong>`));
 });
 test('Все 12 материалов владельца подключены, размеры и контрольные суммы веб-файлов совпадают',async()=>{
  const {createHash}=await import('node:crypto');
@@ -39,7 +59,7 @@ test('Все 12 материалов владельца подключены, р
 test('Индикатор разделов подключён на содержательных страницах, главная возвращена к обычной прокрутке',async()=>{
  const home=await readFile('dist/index.html','utf8');
  assert.ok(!home.includes('home-slides'));assert.ok(!home.includes('dataset.homeView='));
- assert.equal([...home.matchAll(/data-home-block="/g)].length,8);
+ assert.equal([...home.matchAll(/data-home-block="/g)].length,12);
  for(const route of new Set(routes.filter(route=>!['/about','/ai','/company-details'].includes(route)))){
   const html=await readFile('dist'+(route==='/'?'':route)+'/index.html','utf8');
   assert.ok(html.includes(`${basePath}/page-progress.css?v=`),route);assert.ok(html.includes(`${basePath}/page-progress.js?v=`),route);
@@ -91,21 +111,23 @@ test('Учебный баланс сохраняет массу, нулевые 
  assert.ok(html.includes(`${basePath}/presentation-web.js?v=`));
  assert.ok(!(await readFile('dist/index.html','utf8')).includes('/presentation-web.js'));
 });
-test('Главная A содержит восемь блоков, а экономика и технические материалы сохранены отдельно',async()=>{
+test('Главная следует согласованной структуре и ведёт к экономике, технологии, оборудованию и КАИР',async()=>{
  const home=await readFile('dist/index.html','utf8'),tech=await readFile('dist/technology/index.html','utf8'),econ=await readFile('dist/economics/index.html','utf8');
  const {resourceHero}=await import('../content/project-home.mjs');
  const title=home.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)[1].replace(/<[^>]+>/g,'');assert.equal(title,resourceHero.title);
- assert.deepEqual([...home.matchAll(/data-home-block="([^"]+)"/g)].map(m=>m[1]),['hero','problem','process','products','evidence','business','integration','contact']);
+ assert.deepEqual([...home.matchAll(/data-home-block="([^"]+)"/g)].map(m=>m[1]),['hero','problem','feedstocks','process','strengths','products','market','business','integration','equipment','kair','contact']);
  assert.equal([...home.matchAll(/<h1[\s>]/g)].length,1);
  assert.equal([...home.matchAll(/data-widget-switch="/g)].length,0);assert.equal([...econ.matchAll(/data-economics-page/g)].length,1);
  assert.ok(!home.includes('/commercial.js'));assert.ok(econ.includes('/commercial.js'));
- assert.ok(home.includes('до 80%'));assert.ok(home.includes('Входная влажность сырья в испытаниях'));
- assert.ok(home.indexOf('data-video-slot="promo"')<home.indexOf('data-home-block="products"'));
+ assert.ok(home.includes('до 80%'));assert.ok(home.includes('засорённость сырья в испытаниях'));
+ assert.ok(home.indexOf('data-home-block="equipment"')<home.indexOf('data-video-slot="promo"'));
  assert.equal([...home.matchAll(/<video controls playsinline preload="none"/g)].length,2);assert.ok(!home.includes('autoplay'));assert.ok(!home.includes(' loop'));
- assert.ok(home.includes(`href="${basePath}/economics"`));assert.ok(home.includes(`href="${basePath}/media"`));
+ for(const path of ['/economics','/technology#products','/catalog','/automation','/catalog/lines/separatsiya-01','/catalog/lines/separatsiya-02','/catalog/lines/separatsiya-03','/catalog/lines/moyka-plenki']){
+  assert.ok(home.includes(`href="${basePath}${path}"`),path);
+ }
  assert.ok(!home.includes('quality-sequence.svg'));assert.ok(tech.includes('quality-sequence.svg'));
  for(const text of ['Ручное раскрытие трудно масштабировать','<dt>40</dt><dd>г материала</dd>','<dt>33</dt><dd>секунды</dd>','4,36 кг/ч','<li>Сбор стоков</li><li>Очистка</li><li>Возврат жидкости</li>'])assert.ok(tech.includes(text),text);
- assert.ok(home.includes('гранулятор')||home.includes('Гранулятор'));
+ assert.ok(home.includes('Подключить гранулирование'));
 });
 test('Все внутренние ссылки, изображения и якоря ведут к существующим ресурсам',async()=>{
  for(const route of new Set(routes)){
@@ -322,7 +344,7 @@ test('Адаптивные изображения и презентационн�
  }
  assert.match(technology,/Полный цикл переработки плёнки:/);
  assert.match(technology,/очистить, переработать, использовать снова/);
- assert.ok(html.includes(`href="${basePath}/technology#solution"`));
+ assert.ok(html.includes(`href="${basePath}/technology#dry-separation"`));
  assert.ok(html.includes(`href="${basePath}/contacts#project-form"`));
  assert.ok(html.includes('mailto:edkom.office@mail.ru'));
  assert.ok(!html.includes('eduard@ros-um.ru'));
@@ -571,7 +593,7 @@ test('Общий каталог предлагает две ветки, а ст�
  assert.equal(lines.filter(l=>l.enabled&&l.group==='Сепарация').length,3);
  assert.equal(lines.filter(l=>l.enabled&&l.group==='Мойка').length,1);
  const home=await readFile('dist/index.html','utf8');
- assert.ok(home.includes('id="about-era"'));assert.ok(home.includes('Начните с нужных узлов.'));
+ assert.ok(home.includes('id="about-era"'));assert.ok(home.includes('Можно начать с одного этапа и вырасти в полный цикл'));
  const about=await readFile('dist/about/index.html','utf8');
  assert.ok(about.includes(`content="0; url=${basePath}/"`));
  assert.ok(about.includes(`rel="canonical" href="${basePath}/"`));

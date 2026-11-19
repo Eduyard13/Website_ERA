@@ -1,4 +1,4 @@
-// Smoke-check the actual published technology in Chrome, without extra packages or screenshots.
+// Check the published technology and homepage in Chrome without extra packages.
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {spawn} from 'node:child_process';
@@ -62,7 +62,7 @@ try{
   if(r.exceptionDetails)throw new Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);
   return r.result.value;
  };
- const wait=async expression=>{for(let i=0;i<300;i++){if(await evaluate(expression))return;await delay(100);}throw new Error('Public technology condition failed: '+expression);};
+ const wait=async expression=>{for(let i=0;i<300;i++){if(await evaluate(expression))return;await delay(100);}throw new Error('Public Chrome condition failed: '+expression);};
  const click=selector=>evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
  const snapshot=()=>evaluate(`(()=>{
   const root=document.querySelector('[data-technology-final]');
@@ -124,6 +124,39 @@ try{
  await evaluate(`document.querySelector('#project-request').close()`);
  assert.deepEqual(errors,[],'Technology console errors');
  console.log(`::notice title=Published technology verified::12 sections, 9 contamination cards, 4 catalogue links, 3 products, 23 KAIR photos, 12 approved WebP SHA-256 checks, ${widths.length} widths, sticky navigation, balance, anchors and the request passed. ${url}`);
+
+ const homeSections=['hero','problem','feedstocks','process','strengths','products','market','business','integration','equipment','kair','contact'];
+ const mapSelection=()=>evaluate(`(()=>{
+  const record=document.querySelector('[data-market-record]:not([hidden])');
+  return {
+   name:record.querySelector('[data-market-name]').textContent,
+   volume:record.querySelector('[data-market-volume]').textContent.replace(/\\s+/g,' '),
+   active:document.querySelector('[data-market-feature][aria-pressed="true"]').dataset.marketFeature,
+  };
+ })()`);
+ for(const width of [390,1440]){
+  await command('Emulation.setDeviceMetricsOverride',{width,height:940,deviceScaleFactor:1,mobile:width<768});
+  await command('Page.navigate',{url:base+'/#russia-market'});
+  await wait(`document.readyState==='complete' && document.querySelector('[data-market-map][data-market-ready="true"]') && document.querySelector('.page-progress-rail a')`);
+  assert.deepEqual(await evaluate(`Array.from(document.querySelectorAll('[data-home-block]'),e=>e.dataset.homeBlock)`),homeSections);
+  assert.equal(await evaluate(`document.querySelectorAll('.page-progress-rail a').length`),homeSections.length);
+  assert.deepEqual(await evaluate(`[document.querySelectorAll('[data-market-districts] path.market-district-area').length,document.querySelectorAll('[data-market-regions] .market-pin').length]`),[8,10]);
+  assert.deepEqual(await mapSelection(),{name:'Центральный ФО',volume:'1 350 720 т/год',active:'central'});
+  const brokenImages=await evaluate(`Promise.all([...document.querySelectorAll('[data-resource-home] img[src]')].map(async i=>{
+   i.loading='eager';try{await i.decode();}catch{return i.src;}return i.alt&&i.naturalWidth?null:i.src;
+  })).then(results=>results.filter(Boolean))`);
+  assert.deepEqual(brokenImages,[]);
+  await click('[data-market-mode="regions"]');
+  await evaluate(`(()=>{const select=document.querySelector('[data-market-select="regions"]');select.value='moscow';select.dispatchEvent(new Event('change',{bubbles:true}));})()`);
+  assert.deepEqual(await mapSelection(),{name:'Москва',volume:'441 833 т/год',active:'moscow'});
+  await evaluate(`document.querySelector('[data-market-feature="moscow-oblast"]').dispatchEvent(new MouseEvent('click',{bubbles:true}))`);
+  assert.deepEqual(await mapSelection(),{name:'Московская область',volume:'302 796 т/год',active:'moscow-oblast'});
+  await click('[data-market-mode="districts"]');
+  assert.deepEqual(await mapSelection(),{name:'Центральный ФО',volume:'1 350 720 т/год',active:'central'});
+  assert.ok(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),'Homepage overflow at '+width);
+ }
+ assert.deepEqual(errors,[],'Homepage console errors');
+ console.log(`::notice title=Published homepage verified::12 sections, 8 districts, 10 regions, approved images and live selection at 390 and 1440 px. ${base}/#russia-market`);
 }finally{
  socket?.close();
  chrome.kill('SIGTERM');

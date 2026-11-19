@@ -86,6 +86,8 @@ jobs:
                           raise RuntimeError(f'{urljoin(base, path)}: the five footer channels are missing')
                       if '/preview-only.js?' in page:
                           raise RuntimeError(f'{urljoin(base, path)}: preview mode must not be published')
+                      if path == '' and ('id="russia-market"' not in page or page.count('data-home-block=') != 12 or page.count('data-market-feature=') != 18):
+                          raise RuntimeError('The homepage and interactive map update is missing')
                       if path == 'media/':
                           if 'data-gallery-showroom' not in page or 'id="gallery-data"' not in page:
                               raise RuntimeError('The gallery update is missing')
@@ -267,7 +269,7 @@ jobs:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
           ERA_VERIFY_FACTORY_TOUR: '1'
         run: node test/about-us-public.mjs
-      - name: Verify published technology in Chrome
+      - name: Verify published technology and homepage in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
         run: node test/technology-final-public.mjs

@@ -1,58 +1,255 @@
-import {resourceHero,resourceContaminants,resourceProcess,resourceRoutes,resourceIntegrationSteps,resourceCopy,resourceBusinessCards,legacyFinancialAnchors} from '../content/project-home.mjs';
+import {resourceHero,resourceChallenges,resourceFeedstocks,resourceStages,resourceStrengths,resourceProducts,resourceLaunch,legacyFinancialAnchors} from '../content/project-home.mjs';
+import {marketModel,marketRegions,marketTotals,marketMoney,marketNumber} from '../content/home-market.mjs';
+import {lines} from '../content/catalog.mjs';
+import {equipmentCardImages} from '../content/equipment-card-images.mjs';
+import {economicsConfig} from '../public/economics-config.js';
+import {calculateEconomics,initialEconomicsState} from '../public/economics-model.js';
 import {projectMedia as media} from './project-media.mjs';
-import {mediaAttributes} from './media.mjs';
+import {projectRequestHref} from './contact.mjs';
+import {escapeContact as esc} from './contact-channels.mjs';
+import {imageSize} from './image-size.mjs';
+import {lineCoverFiles} from './line-page-media.mjs';
+import {homeMarketMap} from './home-market.mjs';
+
 const arrow='<span aria-hidden="true">↗</span>';
-const esc=value=>String(value).replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;').replaceAll('>','&gt;');
 const asset=file=>'/assets/'+file;
 const posterAsset=m=>asset(m.file)+(m.assetVersion?'?v='+m.assetVersion:'');
-const prose=value=>esc(value).replace(/(?<!\p{L})([ВвКкСсОоУуАаИи]) +(?=\S)/gu,'$1\u00a0');
-const heading=lines=>lines.map(esc).join('<br>');
-const request=(label,topic)=>`<a class="button resource-primary" href="/contacts?topic=${encodeURIComponent(topic)}#project-form" data-project-request>${label}${arrow}</a>`;
-const link=(label,href,classes='resource-link')=>`<a class="${classes}" href="${href}">${label}${arrow}</a>`;
-function img(id,{priority=false,sizes='(min-width:1440px) 640px, (min-width:768px) 48vw, calc(100vw - 40px)'}={}){
- const m=media[id];if(!m.file)return '';
+const link=(label,href,classes='resource-link')=>`<a class="${classes}" href="${esc(href)}">${esc(label)} ${arrow}</a>`;
+const request=(label,topic,classes='button resource-primary')=>link(label,projectRequestHref(topic),classes);
+const sizesGrid='(max-width:539px) calc(100vw - 40px), (max-width:999px) 46vw, 340px';
+const dims=file=>imageSize(new URL('../public/assets/'+file,import.meta.url));
+
+const dryLines=lines.filter(line=>line.enabled&&line.group==='Сепарация');
+const washLine=lines.find(line=>line.enabled&&line.slug==='moyka-plenki');
+const dryExample=dryLines.find(line=>line.slug==='separatsiya-02');
+const dryCatalogue='/catalog/lines?group='+encodeURIComponent(dryExample.group);
+
+function image(m,{eager=false,sizes=sizesGrid,slot=''}={}){
+ const {file,alt,width,height}=m;
  const variants=m.variants?.length?` srcset="${m.variants.map(v=>asset(v.file)+' '+v.width+'w').join(', ')}" sizes="${sizes}"`:'';
- return `<img src="${asset(m.file)}"${variants} width="${m.width}" height="${m.height}" alt="${esc(m.alt)}" ${priority?'fetchpriority="high"':'loading="lazy"'} decoding="async" data-media-slot="${id}">`;
+ return `<img src="${asset(file)}"${variants} width="${width}" height="${height}" alt="${esc(alt)}" ${eager?'fetchpriority="high"':'loading="lazy"'} decoding="async"${slot?` data-media-slot="${slot}"`:''}>`;
 }
-function figure(id,caption,classes=''){
- const m=media[id];return `<figure class="resource-photo ${classes}" ${mediaAttributes({type:m.mediaType,topic:'Проект',title:caption,file:m.file,caption:m.alt,product:'/media'})}><a class="media-open" href="${asset(m.file)}" aria-label="Увеличить: ${esc(caption)}">${img(id)}<span aria-hidden="true">⤢</span></a><figcaption>${caption}</figcaption></figure>`;
+
+function responsiveImage(file,small,alt){
+ const {width,height}=dims(file);
+ const variants=[{file:small,width:dims(small).width},{file,width}];
+ return {file,alt,width,height,variants};
 }
+
+function galleryImage(item){
+ const baseFile='project-home/market/'+item.file;
+ return image(responsiveImage(baseFile+'.webp',baseFile+'-560.webp',item.alt));
+}
+
+function lineImage(line,{eager=false,sizes=sizesGrid,slot=''}={}){
+ const {file,smallFile}=lineCoverFiles(line);
+ return image(responsiveImage(file,smallFile,line.cardImageAlt||line.title),{eager,sizes,slot});
+}
+
+function heading(id,title,{kicker='',lead=''}={}){
+ return `<header class="resource-heading">
+  ${kicker?`<p class="eyebrow">${esc(kicker)}</p>`:''}<h2 id="${id}">${esc(title)}</h2>
+  ${lead?`<p>${esc(lead)}</p>`:''}
+ </header>`;
+}
+
 export function resourceVideo(id,registry=media){
  const m=registry[id],poster=registry[m.posterSlot];
- return `<div class="resource-video${m.file?'':' resource-video--poster'}" data-video-slot="${id}">${m.file?`<video controls playsinline preload="none" poster="${posterAsset(poster)}" aria-label="${esc(m.label)}"><source src="${asset(m.file)}" type="video/mp4">${m.webm?`<source src="${asset(m.webm)}" type="video/webm">`:''}${m.captions?`<track kind="captions" src="${asset(m.captions)}" srclang="ru" label="Русские субтитры">`:''}Ваш браузер не поддерживает видео. ${link('Открыть видео',asset(m.file))}</video>${id==='promo'?`<button class="resource-video-play" type="button" data-resource-play aria-label="Воспроизвести видео о технологии ЭРА" hidden><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M14 9 32 20 14 31Z" fill="currentColor"/></svg></button>`:''}<p class="resource-video-operation">${m.label}</p>`:`${img(m.posterSlot)}<div class="resource-poster-caption"><span>ЭРА / ТЕХНОЛОГИЯ</span><p>${m.label}</p></div>`}</div>`;
+ return `<div class="resource-video${m.file?'':' resource-video--poster'}" data-video-slot="${id}">
+  ${m.file?`<video controls playsinline preload="none" poster="${posterAsset(poster)}" aria-label="${esc(m.label)}"><source src="${asset(m.file)}" type="video/mp4">${m.webm?`<source src="${asset(m.webm)}" type="video/webm">`:''}${m.captions?`<track kind="captions" src="${asset(m.captions)}" srclang="ru" label="Русские субтитры">`:''}Ваш браузер не поддерживает видео. ${link('Открыть видео',asset(m.file))}</video>
+   ${id==='promo'?'<button class="resource-video-play" type="button" data-resource-play aria-label="Воспроизвести видео о технологии ЭРА" hidden><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M14 9 32 20 14 31Z" fill="currentColor"/></svg></button>':''}`:
+   image(poster,{slot:m.posterSlot})}
+  <p class="resource-video-operation">${esc(m.label)}</p>
+ </div>`;
 }
+
 export function resourceHeroSection(){
- const mobile=media.heroMobile.custom?media.heroMobile:media.heroFeedstock;
- return `<section class="resource-hero era-indigo-surface" id="resource" aria-labelledby="resource-title" data-home-block="hero"><div class="resource-hero-copy"><p class="resource-kicker">${resourceHero.kicker}</p><h1 id="resource-title">${esc(resourceHero.title).replace('промышленный ресурс.','<em>промышленный ресурс.</em>')}</h1><p class="resource-hero-lead">${prose(resourceHero.lead)}</p><div class="resource-hero-proof"><strong>до 80%</strong><p>${resourceHero.proof}</p></div><div class="resource-hero-actions">${request('Оценить моё сырьё','Оценить исходное сырьё для проекта ЭРА')}</div></div><div class="resource-hero-media"><picture style="--hero-mobile-ratio:${mobile.width}/${mobile.height}"><source media="(max-width:767px)" srcset="${mobile.variants?.length?mobile.variants.map(v=>asset(v.file)+' '+v.width+'w').join(', '):asset(mobile.file)}" sizes="calc(100vw - 40px)">${img('heroFeedstock',{priority:true})}</picture><figure class="resource-engineering-inset">${img('heroEquipment')}<figcaption>Оборудование ЭРА</figcaption></figure><p class="resource-hero-caption">Фото сырья и оборудования ЭРА. Иллюстративная композиция.</p></div></section>`;
+ return `<section class="resource-hero era-indigo-surface" id="resource" aria-labelledby="resource-title" data-home-block="hero">
+  <div class="resource-container resource-hero-grid">
+   <div class="resource-hero-copy">
+    <p class="eyebrow">${esc(resourceHero.kicker)}</p>
+    <h1 id="resource-title">${esc(resourceHero.title).replace('промышленный ресурс.','<em>промышленный ресурс.</em>')}</h1>
+    <p class="resource-hero-lead">${esc(resourceHero.lead)}</p>
+    <div class="resource-hero-actions">
+     ${link('Изучить технологию','/technology','button resource-primary')}
+     ${request('Связаться с нами','Проект переработки плёночного сырья','button secondary')}
+    </div>
+    ${link('Смотреть оборудование','/catalog')}
+   </div>
+   <figure class="resource-hero-media">
+    ${lineImage(dryExample,{slot:'heroLine',eager:true,sizes:'(max-width:899px) calc(100vw - 40px), 50vw'})}
+    <figcaption>Проектная визуализация линии сухой сепарации ЭРА</figcaption>
+   </figure>
+  </div>
+ </section>`;
 }
-const icons={mineral:'M9 28l7-12 11 2 6 10H9 M14 12l5-6 7 6 M7 34h30',organic:'M11 32C4 16 15 7 33 7c0 17-7 27-22 25zm0 0L28 12',solid:'M8 10h17l7 21-20 4L8 10zm17 0l9-5 5 15-7 11',moisture:'M21 5C17 12 9 21 9 28a12 12 0 0024 0C33 21 25 12 21 5z M15 27a6 6 0 006 6'};
-function problem(){return `<section class="resource-section resource-problem" id="raw-material" aria-labelledby="resource-problem-title" data-home-block="problem">
- <div class="resource-heading"><p class="eyebrow">01 / ИСХОДНОЕ СЫРЬЁ</p><h2 id="resource-problem-title">${heading(resourceCopy.problem.title)}</h2></div>
- <div class="resource-problem-layout">${figure('problemFilm','Загрязнённые пакеты и плёнки')}<div><p class="resource-lead">${prose('Пакеты, упаковочные и сельскохозяйственные плёнки нередко поступают смешанными с песком, землёй, органическими остатками, твёрдыми включениями и влагой. Слои слипаются, пакеты остаются закрытыми, загрязнения задерживаются внутри. Перед мойкой и грануляцией такой поток необходимо подготовить и разделить.')}</p>
- <ul class="resource-contaminants">${resourceContaminants.map(group=>`<li><div class="resource-detail-frame">${group.detail&&media[group.detail].file?img(group.detail):`<svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="${icons[group.icon]}"/></svg>`}</div><div><h3>${group.title}</h3><p>${group.text}</p></div></li>`).join('')}</ul>${link('Сырьё и способы очистки','/technology#raw-material')}</div></div>
- <p class="resource-insight">${prose(resourceCopy.problem.conclusion)}</p></section>`;}
-function process(){return `<section class="resource-section resource-process" id="process" aria-labelledby="resource-process-title" data-home-block="process">
- <div class="resource-heading"><p class="eyebrow">02 / КАК РАБОТАЕТ ЭРА</p><h2 id="resource-process-title">${heading(resourceCopy.process.title)}</h2><p class="resource-lead">${prose('ЭРА объединяет подготовку плёночных отходов, разделение включений и дальнейшую переработку в согласованный технологический маршрут. Состав оборудования определяется задачей: получить очищенную плёнку или пройти полный цикл до вторичной гранулы.')}</p></div>
- <ol class="resource-process-steps">${resourceProcess.map(step=>`<li data-process-step="${step.number}"><div class="resource-step-media">${step.image?img(step.image):`<figure>${img('cleanFilm')}</figure><figure>${img('pellets')}</figure>`}</div><div class="resource-step-copy"><span>${step.number}</span><h3>${step.title}</h3><p>${prose(step.text)}</p></div></li>`).join('')}</ol>
- ${link('Полная схема технологического процесса','/technology#solution')}
- <div class="resource-promo"><div><p class="eyebrow">ТЕХНОЛОГИЯ В КАДРЕ</p><h3>ЭРА в действии: путь плёнки от отходов к новому сырью</h3><p>${prose('Посмотрите основные этапы подготовки, очистки и дальнейшей переработки плёночных отходов.')}</p></div>${resourceVideo('promo')}</div></section>`;}
-function productAmbient(id){const m=media[id];return `<img class="resource-product-ambient" src="${asset(m.file)}" width="${m.width}" height="${m.height}" alt="" aria-hidden="true" loading="lazy">`;}
-function routes(){return `<section class="resource-section resource-routes" id="solution" aria-labelledby="resource-routes-title" data-home-block="products">
- <div class="resource-heading"><p class="eyebrow">${resourceCopy.routes.eyebrow}</p><h2 id="resource-routes-title">${heading(resourceCopy.routes.title)}</h2><p class="resource-lead">${prose(resourceCopy.routes.lead)}</p></div>
- <div class="resource-product-panels">${resourceRoutes.map(route=>`<article class="resource-product resource-product--${route.id}"><figure>${route.id==='separation'?productAmbient(route.image):''}${img(route.image)}<figcaption>${route.id==='separation'?'Очищенная плёночная фракция':'Образец вторичной ПЭ-гранулы'}</figcaption></figure><div><p class="resource-product-label">${route.stage}</p><h3>${route.title}</h3><p class="resource-product-description">${prose(route.text)}</p>${link(route.label,route.href)}</div></article>`).join('')}</div></section>`;}
-function evidence(){return `<section class="resource-section resource-evidence" id="manufacturing" aria-labelledby="resource-evidence-title" data-home-block="evidence">
- <div class="resource-heading"><p class="eyebrow">04 / РЕАЛЬНОЕ ОБОРУДОВАНИЕ. РЕАЛЬНЫЙ ПРОЦЕСС</p><h2 id="resource-evidence-title">Технологию важно не только описывать.<br>Её нужно показывать в работе.</h2><p class="resource-lead">${prose(resourceCopy.evidence.lead)}</p></div>
- <div class="resource-evidence-grid">${figure('evidenceInput','Исходное сырьё')}${figure('evidenceProcess','Оборудование в работе')}${figure('evidenceOutput','Очищенная фракция')}</div>
- <div class="resource-evidence-bottom"><div><dl class="resource-evidence-facts"><div><dt>Входная засорённость сырья в испытаниях</dt><dd>до 80%</dd></div><div><dt>Входная влажность сырья в испытаниях</dt><dd>до 30%</dd></div></dl>
- <p class="resource-production-note">${prose(resourceCopy.evidence.production)}</p><div class="resource-links">${link('Изучить технологическое описание','/catalog/lines/separatsiya-02')}${link('Смотреть фотогалерею','/media')}</div></div>${resourceVideo('cleaningDemo')}</div></section>`;}
-function business(){return `<section class="resource-section resource-business" id="economics" aria-labelledby="resource-business-title" data-home-block="business">
- <span id="market" class="resource-anchor"></span>${legacyFinancialAnchors.map(id=>`<span id="${id}" class="resource-anchor"></span>`).join('')}
- <div class="resource-heading"><p class="eyebrow">05 / БИЗНЕС-ПОТЕНЦИАЛ</p><h2 id="resource-business-title">${heading(resourceCopy.business.title)}</h2><p class="resource-lead">${prose(resourceCopy.business.lead)}</p></div>
- <ol class="resource-business-cards">${resourceBusinessCards.map(card=>{const image=card.image==='businessRaw'&&!media.businessRaw.custom?'evidenceInput':card.image;return `<li data-business-card="${card.number}"><div class="resource-business-visual">${img(image)}</div><div class="resource-business-copy"><span class="resource-business-index">${card.number}</span><h3>${card.title}</h3><p class="resource-business-description">${prose(card.text)}</p>${card.details?`<details class="resource-mfr-note" data-keep-open><summary>Что означает ПТР</summary><div><p>${prose(card.details)}</p></div></details>`:''}</div></li>`;}).join('')}</ol>
- <a class="button resource-primary" href="/economics" data-economics-page>Изучить экономику проекта${arrow}</a></section>`;}
-function integration(){return `<section class="resource-section resource-integration" id="about-era" aria-labelledby="resource-integration-title" data-home-block="integration">
- <div class="resource-heading"><p class="eyebrow">${resourceCopy.integration.eyebrow}</p><h2 id="resource-integration-title">${heading(resourceCopy.integration.title)}</h2><p class="resource-lead">${prose(resourceCopy.integration.lead)}</p></div>
- <div class="resource-system-visual">${figure('lineWide',media.lineWide.caption||'Общий вид оборудования ЭРА')}<aside class="resource-kair-inset">${img('kairScreen')}<div><h3>Интеллектуальная система управления КАИР</h3>${link('Узнать о системе управления','/automation')}</div></aside></div>
- <ol class="resource-integration-steps">${resourceIntegrationSteps.map((step,i)=>`<li><span>0${i+1}</span>${step}</li>`).join('')}</ol></section>`;}
-function contact(){return `<section class="resource-section resource-contact era-indigo-surface" id="discuss" aria-labelledby="discuss-title" data-home-block="contact"><div class="resource-contact-image" aria-hidden="true">${img('contactDetail')}</div><div class="resource-contact-copy"><p class="eyebrow">ВАШЕ СЫРЬЁ — НАЧАЛО ПРОЕКТА</p><h2 id="discuss-title">Расскажите, с каким сырьём вы работаете.<br>Подберём технологический маршрут.</h2><p class="resource-lead">${prose('Тип плёнки, источник образования, ориентировочная засорённость, влажность, планируемый объём переработки и желаемый продукт — отправная точка для обсуждения проекта.')}</p><div class="resource-contact-actions">${request('Связаться с нами','Сырьё и технологический маршрут ЭРА')}</div></div></section>`;}
-export function resourceHome(){return `<div class="story resource-page" data-resource-home>${resourceHeroSection()}${problem()}${process()}${routes()}${evidence()}${business()}${integration()}${contact()}</div>`;}
+
+function problem(){
+ return `<section class="resource-section resource-problem" id="raw-material" aria-labelledby="resource-problem-title" data-home-block="problem">
+  <div class="resource-container">
+   <div class="resource-problem-intro">
+    ${heading('resource-problem-title','Плёнка — одна из самых сложных фракций отходов.',{lead:'Загрязнения удерживаются в складках и на поверхности. Стоимость подготовки и доступность сбыта зависят от того, насколько последовательно их отделяют.'})}
+    <div class="resource-trial"><strong>до 80%</strong><span>засорённость сырья в испытаниях</span><small>Режим и выпуск подбирают по конкретной партии.</small></div>
+   </div>
+   <div class="resource-challenges">${resourceChallenges.map(item=>`<article><h3>${esc(item.title)}</h3><p>${esc(item.text)}</p></article>`).join('')}</div>
+   ${link('Как удаляют загрязнения','/technology#raw-material')}
+  </div>
+ </section>`;
+}
+
+function feedstocks(){
+ return `<section class="resource-section resource-feedstocks" id="feedstocks" aria-labelledby="resource-feedstocks-title" data-home-block="feedstocks" data-page-progress-label="Виды сырья">
+  <div class="resource-container">
+   ${heading('resource-feedstocks-title','Что мы перерабатываем')}
+   <div class="resource-material-grid">${resourceFeedstocks.map(item=>`<figure data-home-feedstock="${item.id}">${galleryImage(item)}<figcaption>${esc(item.title)}</figcaption></figure>`).join('')}</div>
+   <p class="resource-note">Иллюстрации сырьевых групп. Состав биг-бэгов и совместимость полимеров проверяют для каждой партии.</p>
+  </div>
+ </section>`;
+}
+
+function process(){
+ return `<section class="resource-section resource-process" id="process" aria-labelledby="resource-process-title" data-home-block="process">
+  <div class="resource-container">
+   ${heading('resource-process-title','Технология превращает сложную плёнку в товарный продукт.')}
+   <ol class="resource-steps">${resourceStages.map((stage,index)=>`<li data-process-step="0${index+1}"><span aria-hidden="true">0${index+1}</span><h3>${esc(stage.title)}</h3><p>${esc(stage.text)}</p>${link('Открыть этап','/technology#'+stage.id)}</li>`).join('')}</ol>
+   <div class="resource-links">
+    ${link('Подробнее о технологии','/technology')}
+    ${link('Линии сухой сепарации',dryCatalogue)}
+    ${link('Линия горячей мойки',washLine.path)}
+   </div>
+  </div>
+ </section>`;
+}
+
+function strengths(){
+ return `<section class="resource-section resource-strengths era-indigo-surface" id="engineering" aria-labelledby="resource-strengths-title" data-home-block="strengths" data-page-progress-label="Принципы ЭРА">
+  <div class="resource-container">
+   ${heading('resource-strengths-title','Инженерная логика ЭРА',{lead:'Состав сырья, последовательность очистки и требования к продукту определяют комплектацию.'})}
+   <div class="resource-strength-grid">${resourceStrengths.map(item=>`<article><h3>${esc(item.title)}</h3><p>${esc(item.text)}</p></article>`).join('')}</div>
+  </div>
+ </section>`;
+}
+
+function products(){
+ return `<section class="resource-section resource-products" id="products" aria-labelledby="resource-products-title" data-home-block="products">
+  <div class="resource-container">
+   ${heading('resource-products-title','От отходов — к новым продуктам',{lead:'Очищенная плёнка, капсулят и гранула дают разные возможности для сбыта и дальнейшей переработки.'})}
+   <div class="resource-products-grid">${resourceProducts.map(item=>`<article data-home-product="${item.id}">
+    <figure>${galleryImage(item)}</figure><div><h3>${esc(item.title)}</h3><p>${esc(item.text)}</p></div>
+   </article>`).join('')}</div>
+   <p class="resource-note">Иллюстрации форм материала и возможных направлений применения.</p>
+   ${link('Подробнее о технологических маршрутах','/technology#products')}
+  </div>
+ </section>`;
+}
+
+function economics(){
+ const one=calculateEconomics(initialEconomicsState('full'));
+ const region=marketRegions.find(row=>row.id==='moscow-oblast');
+ return `<section class="resource-section resource-business" id="economics" aria-labelledby="resource-business-title" data-home-block="business">
+  <div class="resource-container">
+   <div class="resource-fragments" aria-hidden="true">${legacyFinancialAnchors.map(id=>`<span id="${id}"></span>`).join('')}</div>
+   ${heading('resource-business-title','Экономика, которая масштабируется',{lead:'Результат предприятия зависит от загрузки, затрат и сбыта. Оценка сырьевой базы помогает наметить масштаб сети.'})}
+   <div class="resource-finance-grid">
+    <article data-home-economics="complex">
+     <h3>Один комплекс</h3>
+     <strong>${marketMoney(one.net)}</strong>
+     <p>расчётная чистая прибыль за ${economicsConfig.monthDays} день</p>
+     <p>Базовый сценарий полного цикла. ${marketNumber(one.capacity)} т сырья и ${marketNumber(one.output)} т гранулы при цене ${marketNumber(one.grossPrice/1000)} ₽/кг с НДС.</p>
+    </article>
+    <article data-home-economics="region">
+     <h3>Региональная сеть</h3>
+     <strong>${marketNumber(region.complexes)} <small>комплексов</small></strong>
+     <p>ориентир для Московской области</p>
+     <p>${marketNumber(region.tonnes)} т плёночного сырья в год. ${marketMoney(region.monthly)} в месяц по оценочной модели карты.</p>
+    </article>
+    <article data-home-economics="country">
+     <h3>Потенциал по России</h3>
+     <strong>${marketNumber(marketTotals.tonnes/1_000_000)} <small>млн т/год</small></strong>
+     <p>оценка плёночного сырья в восьми округах</p>
+     <p>${marketTotals.complexes} условных комплексов. ${marketMoney(marketTotals.monthly)} в месяц по сценарию карты.</p>
+    </article>
+   </div>
+   <p class="resource-note">Регион и Россия рассчитаны при условной ёмкости ${marketNumber(marketModel.moduleTonnes)} т/год и сценарии ${marketMoney(marketModel.targetMonthlyProfit)} чистой прибыли в месяц на условный комплекс.</p>
+   <a class="button" href="/economics" data-economics-page>Подробнее об экономике проекта ${arrow}</a>
+  </div>
+ </section>`;
+}
+
+function integration(){
+ return `<section class="resource-section resource-integration" id="solution" aria-labelledby="resource-integration-title" data-home-block="integration" data-page-progress-label="Поэтапный запуск">
+  <div class="resource-container">
+   <div id="about-era">${heading('resource-integration-title','Можно начать с одного этапа и вырасти в полный цикл',{lead:'Подбираем комплектацию под сырьё и площадку. Изготавливаем и поставляем оборудование, согласовываем запуск и сопровождение.'})}</div>
+   <ol class="resource-launch-grid">${resourceLaunch.map((step,index)=>`<li><span aria-hidden="true">0${index+1}</span><h3>${esc(step.title)}</h3><p>${esc(step.text)}</p></li>`).join('')}</ol>
+   ${request('Подобрать комплектацию','Поэтапный запуск переработки плёнки','resource-link')}
+  </div>
+ </section>`;
+}
+
+function equipment(){
+ const rotor=equipmentCardImages['rotornyy-raspushitel'];
+ return `<section class="resource-section resource-equipment" id="manufacturing" aria-labelledby="resource-evidence-title" data-home-block="equipment" data-page-progress-label="Оборудование">
+  <div class="resource-container">
+   ${heading('resource-evidence-title','Оборудование для сложного плёночного сырья',{lead:'Выберите готовую линию или узлы для своей производственной площадки.'})}
+   <div class="resource-equipment-grid">
+    <article>
+     <a class="resource-equipment-image" href="${dryCatalogue}" aria-label="Линии сухой сепарации">${image(media.lineWide,{slot:'lineWide'})}</a>
+     <div><h3>Линии сухой сепарации</h3><p>Три комплектации под очистку, сортировку и сушку.</p>
+     <div class="resource-line-links">${dryLines.map(line=>link('Сепарация '+line.number,line.path)).join('')}</div></div>
+    </article>
+    <article>
+     <a class="resource-equipment-image" href="${washLine.path}" aria-label="Линия горячей мойки">${lineImage(washLine)}</a>
+     <div><h3>Линия горячей мойки</h3><p>Глубокая очистка, обезвоживание и выбор товарного выхода.</p>
+     ${link('Смотреть линию',washLine.path)}</div>
+    </article>
+    <article>
+     <a class="resource-equipment-image" href="/catalog/equipment" aria-label="Отдельные узлы">${image(responsiveImage(rotor.file,rotor.smallFile,'Каталожный рендер роторного распушителя ЭРА'))}</a>
+     <div><h3>Отдельные узлы</h3><p>Измельчение, разделение, распушение, мойка и обезвоживание.</p>
+     ${link('Смотреть узлы','/catalog/equipment')}</div>
+    </article>
+   </div>
+   ${link('Перейти в каталог оборудования','/catalog','button')}
+   <details class="resource-video-details" data-keep-open>
+    <summary>Видео проекта и работа оборудования</summary>
+    <div class="resource-video-grid">${resourceVideo('promo')}${resourceVideo('cleaningDemo')}</div>
+   </details>
+  </div>
+ </section>`;
+}
+
+function kair(){
+ const source=media.kairScreen;
+ return `<section class="resource-section resource-control era-indigo-surface" id="kair" aria-labelledby="resource-kair-title" data-home-block="kair" data-page-progress-label="Управление КАИР">
+  <div class="resource-container resource-control-grid">
+   <div>
+    ${heading('resource-kair-title','КАИР — интеллект производства',{lead:'Система согласует работу узлов, сохраняет настройки под сырьё и даёт оператору контроль процесса. Удалённый мониторинг доступен в предусмотренном исполнении.'})}
+    ${link('Подробнее о системе КАИР','/automation')}
+   </div>
+   <figure>
+    ${image(responsiveImage(source.file,'kair/01-768.webp',source.alt),{slot:'kairScreen',sizes:'(max-width:899px) calc(100vw - 40px), 46vw'})}
+    <figcaption>Общий экран линии и сигналы КАИР</figcaption>
+   </figure>
+  </div>
+ </section>`;
+}
+
+function contact(){
+ return `<section class="resource-section resource-contact" id="discuss" aria-labelledby="discuss-title" data-home-block="contact">
+  <div class="resource-container resource-contact-panel">
+   <div>
+    ${heading('discuss-title','ЭРА превращает проблему отходов в промышленную возможность.',{lead:'Расскажите, с каким сырьём работаете, какой объём планируете перерабатывать и какой продукт хотите получать.'})}
+    <div class="resource-contact-actions">
+     ${request('Обсудить проект','Проект переработки плёночного сырья','button')}
+     ${request('Запросить презентацию','Презентация технологии и оборудования ЭРА','button secondary')}
+    </div>
+   </div>
+  </div>
+ </section>`;
+}
+
+export function resourceHome(){
+ return `<div class="story resource-page" data-resource-home>
+  ${resourceHeroSection()}${problem()}${feedstocks()}${process()}${strengths()}${products()}
+  ${homeMarketMap()}${economics()}${integration()}${equipment()}${kair()}${contact()}
+ </div>`;
+}
