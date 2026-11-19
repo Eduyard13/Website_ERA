@@ -79,7 +79,7 @@ export function resourceHeroSection(){
     </div>
     ${link('Смотреть оборудование','/catalog')}
    </div>
-   ${image(graphic,{slot:'heroHook',eager:true,sizes:'(max-width:767px) calc(100vw - 18px), (max-width:1023px) 740px, (max-width:1440px) 55vw, 750px'})}
+   ${image(graphic,{slot:'heroHook',eager:true,sizes:'(max-width:810px) 100vw, (max-width:1023px) 810px, (max-width:1800px) 60vw, 1080px'})}
   </div>
  </section>`;
 }

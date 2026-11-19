@@ -146,23 +146,31 @@ try{
    i.loading='eager';try{await i.decode();}catch{return i.src;}return i.alt&&i.naturalWidth?null:i.src;
   })).then(results=>results.filter(Boolean))`);
   assert.deepEqual(brokenImages,[]);
+  await evaluate('document.fonts.ready.then(()=>true)');
   const hero=await evaluate(`(()=>{
    const root=document.querySelector('#resource');
+   const box=root.getBoundingClientRect();
    const copy=root.querySelector('.resource-hero-copy').getBoundingClientRect();
    const image=root.querySelector('.resource-hero-grid > img[data-media-slot="heroHook"]');
+   const quote=root.querySelector('.resource-hero-subtitle');
    const art=image.getBoundingClientRect();
+   const range=document.createRange();
+   range.selectNodeContents(quote);
    return {
     title:root.querySelector('h1').innerText.replace(/\\s+/g,' '),
-    subtitle:root.querySelector('.resource-hero-subtitle').textContent,
+    subtitle:quote.textContent,
+    italicLine:getComputedStyle(quote).fontStyle==='italic'&&range.getClientRects().length===1,
+    faces:[...document.fonts].filter(font=>font.family==='IBM Plex Sans'&&font.status==='loaded').length,
     artwork:image.src.endsWith('/polymers-cycle.webp')&&image.naturalWidth>0,
     mask:getComputedStyle(image).maskImage!=='none',
     below:art.top>=copy.bottom,
-    right:art.left>=copy.right&&art.top<copy.bottom,
+    fullHeight:Math.abs(art.top-box.top)<1&&Math.abs(art.height-box.height)<1&&art.left+art.width/2>box.left+box.width/2,
    };
   })()`);
   assert.equal(hero.title,'От нефти к полимерам. От полимеров — снова к нефти.');
   assert.equal(hero.subtitle,'Отходы одного цикла — сырьё для следующего.');
-  assert.ok(hero.artwork&&hero.mask&&(width<1024?hero.below:hero.right),'Homepage hero at '+width);
+  assert.equal(hero.faces,2);
+  assert.ok(hero.italicLine&&hero.artwork&&hero.mask&&(width<1024?hero.below:hero.fullHeight),'Homepage hero at '+width);
   await click('[data-market-mode="regions"]');
   await evaluate(`(()=>{const select=document.querySelector('[data-market-select="regions"]');select.value='moscow';select.dispatchEvent(new Event('change',{bubbles:true}));})()`);
   assert.deepEqual(await mapSelection(),{name:'Москва',volume:'441 833 т/год',active:'moscow'});

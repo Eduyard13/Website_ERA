@@ -59,8 +59,16 @@ with sync_playwright() as playwright:
             return !!img.alt && img.naturalWidth > 0 && img.width > 0;
         })).then(results => results.every(Boolean))'''), width
         hero = page.locator('#resource')
+        page.evaluate('document.fonts.ready')
         assert page.locator('h1').count() == 1 and ' '.join(hero.locator('h1').inner_text().split()) == title
-        assert hero.locator('.resource-hero-subtitle').inner_text() == subtitle
+        quote = hero.locator('.resource-hero-subtitle')
+        assert quote.inner_text() == subtitle
+        assert quote.evaluate('''e => {
+            const range = document.createRange();
+            range.selectNodeContents(e);
+            return getComputedStyle(e).fontStyle === 'italic' && range.getClientRects().length === 1;
+        }'''), width
+        assert page.evaluate('''[...document.fonts].filter(font => font.family === 'IBM Plex Sans' && font.status === 'loaded').length''') == 2
         art = hero.locator('.resource-hero-grid > img[data-media-slot=heroHook]')
         assert art.get_attribute('src').endswith('/polymers-cycle.webp') and art.get_attribute('fetchpriority') == 'high'
         assert hero.locator('figcaption').count() == 0
@@ -69,7 +77,9 @@ with sync_playwright() as playwright:
         if width < 1024:
             assert picture['y'] >= copy['y'] + copy['height'], width
         else:
-            assert picture['x'] >= copy['x'] + copy['width'] and picture['y'] < copy['y'] + copy['height'], width
+            header = hero.bounding_box()
+            assert abs(picture['y'] - header['y']) < 1 and abs(picture['height'] - header['height']) < 1, width
+            assert picture['x'] + picture['width'] / 2 > header['x'] + header['width'] / 2, width
         assert hero.get_by_role('link', name='Изучить технологию').get_attribute('href').endswith('/technology')
         assert hero.get_by_role('link', name='Смотреть оборудование').get_attribute('href').endswith('/catalog')
         assert page.locator('[data-home-block]').evaluate_all('nodes => nodes.map(e => e.dataset.homeBlock)') == sections

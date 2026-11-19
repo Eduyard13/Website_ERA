@@ -1,4 +1,19 @@
 /* Homepage editorial layout. Shared navigation, buttons and site surfaces retain their tokens. */
+/* IBM Plex Sans v6.4.2 from IBM/plex. The SIL Open Font License ships with the fonts. */
+@font-face {
+ font-family:'IBM Plex Sans';
+ src:url('assets/fonts/ibm-plex-sans-medium.woff2') format('woff2');
+ font-style:normal;
+ font-weight:500;
+ font-display:swap;
+}
+@font-face {
+ font-family:'IBM Plex Sans';
+ src:url('assets/fonts/ibm-plex-sans-italic.woff2') format('woff2');
+ font-style:italic;
+ font-weight:400;
+ font-display:swap;
+}
 .resource-page {
  --home-gutter:clamp(18px,4.4vw,64px);
  --home-paper:#faf8f3;
@@ -72,46 +87,50 @@
 .resource-page .era-indigo-surface .button.secondary:hover {background:#ffffff17;border-color:var(--home-gold)}
 
 .resource-page .resource-hero {
- padding:clamp(52px,6.2vw,106px) 0;
+ display:grid;
+ align-items:center;
+ min-height:clamp(525px,42vw,650px);
+ padding:clamp(53px,4.9vw,94px) 0;
+ overflow:clip;
  background-image:radial-gradient(ellipse at 78% 46%,#2b3b56 0%,transparent 62%),linear-gradient(132deg,#101328,#152138 65%,#10192f);
 }
-.resource-hero-grid {
- display:grid;
- grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);
- align-items:center;
- gap:clamp(18px,2.3vw,34px);
+.resource-hero-copy {
+ position:relative;
+ z-index:1;
+ width:min(100%,43vw,620px);
 }
+.resource-page .resource-hero .eyebrow {margin-bottom:21px}
 .resource-page .resource-hero h1 {
- font-size:clamp(40px,3.9vw,56px);
- letter-spacing:-.052em;
- line-height:1.04;
- margin:0 0 23px;
+ font-family:'IBM Plex Sans',Arial,sans-serif;
+ font-weight:500;
+ font-size:clamp(31px,2.96vw,44px);
+ letter-spacing:-.037em;
+ line-height:1.12;
+ margin:0 0 clamp(23px,2vw,34px);
  color:var(--era-cream);
 }
-.resource-hero h1>span {display:block;text-wrap:balance}
+.resource-hero h1>span {display:block;text-wrap:pretty}
+.resource-hero h1>span+span {margin-top:.12em}
 .resource-hero h1 em {color:var(--home-gold);font-style:normal;white-space:nowrap}
 .resource-page .resource-hero-subtitle {
- max-width:540px;
- margin:0 0 15px;
- color:#f5e8ca;
- font-size:clamp(21px,2.05vw,32px);
- font-weight:500;
- letter-spacing:-.028em;
- line-height:1.22;
- text-wrap:balance;
+ margin:0 0 clamp(23px,2vw,35px);
+ color:var(--home-gold);
+ font:italic 400 clamp(16px,1.4vw,22px)/1.25 'IBM Plex Sans',Arial,sans-serif;
+ letter-spacing:-.015em;
 }
-.resource-page .resource-hero-lead {max-width:580px;color:var(--home-on-dark);font-size:clamp(16px,1.32vw,19px);line-height:1.52;margin:0 0 21px}
+.resource-page .resource-hero-lead {max-width:530px;color:var(--home-on-dark);font-size:clamp(15px,1.22vw,18px);line-height:1.57;margin:0 0 23px}
 .resource-hero-actions,.resource-contact-actions {display:flex;flex-wrap:wrap;gap:10px 12px}
 .resource-hero-copy>.resource-link {margin-top:14px;align-items:center}
 .resource-hero-grid>img {
+ position:absolute;
+ inset-block:0;
+ inset-inline-end:max(0px,calc((100% - 1760px)/2));
  display:block;
- width:calc(100% + clamp(10px,3.2vw,56px));
+ width:min(60%,1080px);
  max-width:none;
- height:auto;
- margin-inline-start:calc(-1 * clamp(8px,1.3vw,20px));
- mask-image:linear-gradient(to right,transparent,#000 12%,#000 91%,transparent),
-            linear-gradient(to bottom,transparent,#000 12%,#000 88%,transparent);
- mask-composite:intersect;
+ height:100%;
+ object-fit:cover;
+ mask-image:linear-gradient(to right,transparent 2%,#0005 18%,#000 34%,#000 94%,transparent);
 }
 
 .resource-problem-intro {display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);align-items:end;gap:26px;margin-bottom:28px}
@@ -379,9 +398,18 @@
  .resource-strength-grid {grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media(max-width:1023px){
- .resource-hero-grid {grid-template-columns:minmax(0,1fr);gap:24px}
- .resource-page .resource-hero h1 {max-width:740px;font-size:clamp(39px,6.5vw,62px)}
- .resource-hero-grid>img {justify-self:center;width:min(calc(100% + 18px),740px);margin:0}
+ .resource-page .resource-hero {min-height:0;padding-bottom:0}
+ .resource-hero-grid {display:grid;grid-template-columns:minmax(0,1fr);gap:22px}
+ .resource-hero-copy {width:min(100%,720px)}
+ .resource-page .resource-hero h1 {font-size:clamp(30px,5.3vw,44px)}
+ .resource-page .resource-hero-subtitle {font-size:clamp(13px,3.6vw,21px)}
+ .resource-hero-grid>img {
+  position:static;
+  justify-self:center;
+  width:min(calc(100% + 2 * var(--home-gutter)),810px);
+  height:auto;
+  mask-image:linear-gradient(to bottom,transparent,#000 16%,#000 97%,transparent);
+ }
 }
 @media(max-width:899px){
  .resource-control-grid,.market-layout {grid-template-columns:minmax(0,1fr)}
@@ -408,11 +436,9 @@
  .market-select {width:100%}
 }
 @media(max-width:420px){
- .resource-page .resource-hero {padding-block:34px 36px}
- .resource-hero-grid {gap:16px}
- .resource-page .resource-hero h1 {font-size:clamp(34px,10.2vw,43px);margin-bottom:17px}
- .resource-page .resource-hero-subtitle {margin-bottom:13px}
- .resource-page .resource-hero-lead {font-size:16px}
+ .resource-page .resource-hero {padding-top:36px}
+ .resource-hero-grid {gap:14px}
+ .resource-page .resource-hero .eyebrow {margin-bottom:18px}
  .resource-page .resource-hero .button {font-size:13px;padding-inline:11px;gap:8px}
  .resource-strength-grid {grid-template-columns:minmax(0,1fr)}
  .resource-products-grid {grid-template-columns:minmax(0,1fr)}
