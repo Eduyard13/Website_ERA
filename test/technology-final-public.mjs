@@ -159,6 +159,7 @@ try{
    return {
     title:root.querySelector('h1').innerText.replace(/\\s+/g,' '),
     subtitle:quote.textContent,
+    lead:root.querySelector('.resource-hero-lead').textContent,
     italicLine:getComputedStyle(quote).fontStyle==='italic'&&range.getClientRects().length===1,
     faces:[...document.fonts].filter(font=>font.family==='IBM Plex Sans'&&font.status==='loaded').length,
     artwork:image.src.endsWith('/polymers-cycle.webp')&&image.naturalWidth>0,
@@ -169,6 +170,7 @@ try{
   })()`);
   assert.equal(hero.title,'От нефти к полимерам. От полимеров — снова к нефти.');
   assert.equal(hero.subtitle,'Отходы одного цикла — сырьё для следующего.');
+  assert.equal(hero.lead,'ЭРА разрабатывает технологию и оборудование, которые возвращают загрязнённые плёночные отходы в промышленный цикл — в виде очищенной плёнки, капсулята, гранулы, топливных фракций и энергии.');
   assert.equal(hero.faces,2);
   assert.ok(hero.italicLine&&hero.artwork&&hero.mask&&(width<1024?hero.below:hero.fullHeight),'Homepage hero at '+width);
   await click('[data-market-mode="regions"]');

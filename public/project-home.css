@@ -118,7 +118,7 @@
  font:italic 400 clamp(16px,1.4vw,22px)/1.25 'IBM Plex Sans',Arial,sans-serif;
  letter-spacing:-.015em;
 }
-.resource-page .resource-hero-lead {max-width:530px;color:var(--home-on-dark);font-size:clamp(15px,1.22vw,18px);line-height:1.57;margin:0 0 23px}
+.resource-page .resource-hero-lead {max-width:clamp(530px,42vw,610px);color:var(--home-on-dark);font-size:clamp(15px,1.22vw,18px);line-height:1.57;margin:0 0 23px}
 .resource-hero-actions,.resource-contact-actions {display:flex;flex-wrap:wrap;gap:10px 12px}
 .resource-hero-copy>.resource-link {margin-top:14px;align-items:center}
 .resource-hero-grid>img {
