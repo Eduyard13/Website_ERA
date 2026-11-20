@@ -8,15 +8,17 @@ import {validateDocumentLibrary,safeDocumentPath} from '../scripts/validate-docu
 import {renderDocuments} from '../scripts/documents.mjs';
 import {readLibraryState,filterLibraryDocuments,libraryStateUrl,selectionSummary,zipLimitBytes} from '../public/document-library-model.js';
 import {render,basePath,routes} from '../scripts/build.mjs';
+import {dryLineNames} from '../content/line-names.mjs';
 import covers from '../content/document-covers.json' with {type:'json'};
 const options={objects:libraryObjects,categories:documentCategories.map(c=>c.id)};
-test('Исходный A0 зарегистрирован у Сепарации 02, находится поиском и выводит реальные метаданные',async()=>{
+test('Исходный A0 зарегистрирован у комплектации PRO, находится поиском и выводит реальные метаданные',async()=>{
  const d=publicLibraryDocuments.find(d=>d.id==='separatsiya-02-dimensions-a0');
  assert.ok(d);assert.equal(d.objectType,'line');assert.equal(d.objectSlug,'separatsiya-02');assert.equal(d.category,'drawings');
  assert.equal(d.format,'A0');assert.equal(d.pages,1);assert.equal(d.bytes,2239107);
  assert.equal(d.sha256,'8557bce36e8963146ec9fd33d11295c4483e2e4d4106f19ae41e7c50c39f98d0');
  assert.equal(d.revision,null);assert.equal(d.publishedAt,null);
- for(const q of ['Сепарация 02','габариты','чертёж','сухая сепарация'])assert.ok(filterLibraryDocuments(documentLibrary,{q}).some(e=>e.id===d.id),q);
+ assert.equal(d.objectTitle,dryLineNames['separatsiya-02'].title);
+ for(const q of ['затюковкой','габариты','чертёж','сухой сепарации'])assert.ok(filterLibraryDocuments(documentLibrary,{q}).some(e=>e.id===d.id),q);
  const page=render('/documents/drawings');assert.ok(page.includes('PDF · A0 · 1 лист · 2,2 МБ'));
  assert.equal((page.match(/data-library-document="/g)||[]).length,publicLibraryDocuments.filter(d=>d.category==='drawings').length);
  assert.ok(page.includes(`data-pdf-open="${d.id}"`));assert.ok(page.includes(`download="${d.downloadName}"`));

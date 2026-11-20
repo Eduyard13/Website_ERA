@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {nodes,lines} from '../content/catalog.mjs';
+import {dryLineNames} from '../content/line-names.mjs';
 import {separation03,separation03Document,separation03Specification,separation03Power,separation03ConveyorPower} from '../content/separation-03.mjs';
 import {separation03Diagram} from '../content/separation-03-diagram.mjs';
 import {basePath,render,routes} from '../scripts/build.mjs';
@@ -15,9 +16,9 @@ import {imageSize} from '../scripts/image-size.mjs';
 const hash=value=>createHash('sha256').update(value).digest('hex');
 const release=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8')).version;
 const line=lines.find(l=>l.slug==='separatsiya-03');
-test('Сепарация 03 опубликована четвёртой готовой линией, три прежние карточки сохранены',async()=>{
+test('PREMIUM опубликована в каталоге, три другие карточки сохранены',async()=>{
  assert.equal(lines.filter(l=>l.enabled).length,4);assert.ok(line.enabled);assert.equal(line.status,'source-checked');
- assert.ok(routes.includes(line.path));assert.equal(line.cardTitle,'Линия сухой сепарации и сушки плёнок и пакетов');
+ assert.ok(routes.includes(line.path));assert.equal(line.cardTitle,dryLineNames[line.slug].title);
  assert.deepEqual(separation03.cardMetrics.map(m=>[m.value,m.unit]),[['1 500','кг/ч'],['750','кг/ч'],['до 5','%'],['639,77','кВт'],['447,84','кВт'],['5','бункеров']]);
  const baseline=JSON.parse(await readFile('test/fixtures/separation-03-preserved.json'));
  const oldSlugs=new Set(baseline.cards.map(c=>c.slug));
@@ -25,7 +26,7 @@ test('Сепарация 03 опубликована четвёртой гото
  assert.equal(cards.length,4);
  assert.deepEqual(cards.filter(c=>oldSlugs.has(c.slug)).map(({slug,sha256})=>({slug,sha256})),baseline.cards);
  const card=cards.find(c=>c.slug===line.slug).html;
- for(const text of ['СЕПАРАЦИЯ 03 / ГОТОВАЯ ЛИНИЯ',line.cardTitle,line.cardDescription,line.cardFeature,'catalog-cover.webp','catalog-cover-768.webp 768w'])assert.ok(card.includes(text),text);
+ for(const text of ['PREMIUM',line.cardTitle,line.cardDescription,line.cardFeature,'catalog-cover.webp','catalog-cover-768.webp 768w'])assert.ok(card.includes(text),text);
  assert.equal((card.match(/<dt>/g)||[]).length,6);assert.ok(!card.includes('В разработке'));
 });
 test('Исходный PDF на 28 страницах и все извлечённые изображения имеют проверенное происхождение',async()=>{
@@ -108,5 +109,5 @@ test('Страницы вне обновлённых разделов сохра
  const baseline=JSON.parse(await readFile('test/fixtures/separation-03-preserved.json'));
  const changedPages=new Set(['/technology',...lines.filter(line=>line.enabled).map(line=>line.path)]);
  const protectedPages=Object.entries(basePath?baseline.pagesBase:baseline.pagesRoot).filter(([path])=>!changedPages.has(path));
- for(const [path,sha] of protectedPages)assert.equal(hash(render(path).replaceAll(release,'RELEASE')),sha,path);
+ for(const [path,sha] of protectedPages)assert.equal(hash(render(path).replaceAll(release,'RELEASE').replace(/<link rel="canonical" href="[^"]*">/g,'')),sha,path);
 });

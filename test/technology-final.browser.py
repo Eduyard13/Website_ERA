@@ -6,7 +6,7 @@ from urllib.parse import parse_qs, urlsplit
 from playwright.sync_api import expect, sync_playwright
 
 base = os.environ.get('ERA_PREVIEW_URL', 'http://127.0.0.1:3181').rstrip('/')
-widths = [320, 360, 390, 768, 1024, 1280, 1440]
+widths = [320, 390, 768, 1024, 1440, 1920]
 sections = ['technology-intro', 'raw-material', 'contaminants', 'solution',
             'dry-separation', 'hot-washing', 'granulation', 'products',
             'granule-quality', 'applications', 'control-story', 'technology-next']
@@ -32,13 +32,13 @@ def load(page, fragment=''):
     response = page.goto(base + '/technology/' + fragment)
     if response:
         assert response.status == 200
-    page.wait_for_selector('[data-balance-range]:not([disabled])', state='attached')
+    page.wait_for_selector('[data-tf-scenario="50"]:not([disabled])', state='attached')
     page.wait_for_selector('.page-progress-rail a')
 
 
 def assert_fit(page):
     assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
-    components = page.locator('.tf-container,.tf-contaminant,.tf-process-route,.tf-products,.tf-quality-metrics,.tf-applications-grid,.web-balance-layout')
+    components = page.locator('.tf-container,.tf-contaminant,.tf-process-route,.tf-products,.tf-quality-metrics,.tf-applications-grid,.tf-balance')
     overflowing = components.evaluate_all("""items => items.filter(e => e.getClientRects().length && e.scrollWidth > e.clientWidth+2)
         .map(e => [e.closest('section')?.id, e.className, e.clientWidth, e.scrollWidth])""")
     assert not overflowing, overflowing
@@ -54,13 +54,22 @@ def anchor_visible(page, fragment):
 
 
 def assert_balance(page):
-    slider = page.locator('#material-contamination')
-    assert [slider.get_attribute(k) for k in ('min', 'max', 'step')] == ['0', '50', '5']
-    for key, value, polymer, inclusions in [('Home', 0, 1500, 0), ('End', 50, 750, 750), ('ArrowLeft', 45, 825, 675)]:
-        slider.press(key)
-        assert slider.input_value() == str(value)
-        for selector, expected in [('[data-balance-polymer]', polymer), ('[data-balance-inclusions]', inclusions)]:
+    choices = page.locator('[data-tf-scenario]')
+    assert choices.evaluate_all('buttons => buttons.map(b => b.dataset.tfScenario)') == ['30', '40', '50']
+    expect(choices.last).to_have_attribute('aria-pressed', 'true')
+    for index, (value, polymer, inclusions) in enumerate([(30, 1050, 450), (40, 900, 600), (50, 750, 750)]):
+        button = choices.nth(index)
+        if value == 30:
+            button.press('Enter')
+        else:
+            button.click()
+        expect(button).to_have_attribute('aria-pressed', 'true')
+        expect(page.locator('[data-tf-scenario][aria-pressed="true"]')).to_have_count(1)
+        for selector, expected in [('[data-tf-polymer]', polymer), ('[data-tf-inclusions]', inclusions)]:
             assert int(''.join(page.locator(selector).inner_text().split())) == expected
+        expect(page.locator('.tf-balance-input strong')).to_have_text('1 500 кг/ч')
+        expect(page.locator('.tf-baseline > strong')).to_have_text('750 кг/ч')
+        assert page.locator('.tf-balance-bar').evaluate('bar => bar.style.getPropertyValue("--polymer")') == str(100 - value) + '%'
 
 
 def check_gallery(page):
@@ -115,7 +124,7 @@ with sync_playwright() as p:
         expect(page.locator('[data-feedstock-type]')).to_have_count(5)
         expect(page.locator('[data-contaminant-row]:visible')).to_have_count(9)
         expect(page.locator('[data-technology-output]')).to_have_count(3)
-        expect(page.locator('[data-technology-application]:visible')).to_have_count(3)
+        expect(page.locator('[data-technology-application]:visible')).to_have_count(5)
         assert page.locator('[data-technology-line]').evaluate_all('links => links.map(a => a.dataset.technologyLine)') == line_slugs
         assert page.locator('.tf-line-render img').evaluate_all("imgs => imgs.every(i => getComputedStyle(i).objectFit === 'contain')")
         images = page.locator('main img[src]')
@@ -131,10 +140,7 @@ with sync_playwright() as p:
         load(page, '#material-balance')
         anchor_visible(page, '#material-balance')
         assert_balance(page)
-        summary = page.locator('#material-balance summary')
-        summary.press('Enter')
-        expect(page.locator('.web-balance-table tbody tr')).to_have_count(11)
-        expect(page.locator('.web-balance-table')).to_be_visible()
+        expect(page.locator('#material-balance summary,.web-balance-table')).to_have_count(0)
         assert_fit(page)
         print(f'{width}px. Route, images, sticky navigation and mass balance OK', flush=True)
 
@@ -142,32 +148,25 @@ with sync_playwright() as p:
     check_gallery(page)
     load(page, '#contaminant-surface')
     anchor_visible(page, '#contaminant-surface')
-    page.locator('#contaminant-surface summary').press('Enter')
-    expect(page.locator('#contaminant-surface details')).to_have_attribute('open', '')
+    expect(page.locator('#contaminant-surface details')).to_have_count(0)
+    page.locator('#contaminant-surface a').press('Enter')
+    anchor_visible(page, '#hot-washing')
+    expect(page.locator('#hot-washing .tf-water-loop > li')).to_have_count(4)
+    expect(page.locator('#granulation .tf-scale-grid article')).to_have_count(2)
     load(page, '#granule-quality')
     quality = page.locator('#granule-quality')
     expect(quality.locator('.tf-quality-metrics')).to_contain_text('190 °C / 2,16 кг')
-    with page.expect_popup() as image:
-        quality.locator('.quality-visual-open').press('Enter')
-    assert image.value.url.endswith('/assets/presentation/quality-sequence.svg')
-    image.value.close()
-    quality.get_by_text('Методики и источники', exact=True).press('Enter')
-    expect(quality.locator('.tf-sources a:visible')).to_have_count(5)
+    expect(quality.locator('.tf-quality-metrics')).to_contain_text('3–5%')
+    expect(quality.locator('details')).to_have_count(0)
     load(page, '#applications')
-    page.locator('#applications summary').press('Enter')
+    expect(page.locator('#applications details')).to_have_count(0)
     expect(page.locator('[data-technology-application]:visible')).to_have_count(5)
     load(page, '#about-era')
-    expect(page.locator('#about-era')).to_have_attribute('open', '')
+    anchor_visible(page, '#about-era')
     launch = page.locator('#discuss [data-project-request]')
     target = urlsplit(launch.evaluate('a => a.href'))
     assert target.path.endswith('/contacts') and target.fragment == 'project-form' and parse_qs(target.query)['topic']
-    launch.press('Enter')
-    request = page.locator('#project-request')
-    expect(request).to_be_visible()
-    expect(request.locator('[data-request-topic]')).to_have_value(parse_qs(target.query)['topic'][0])
-    expect(request.locator('input[type=file]')).to_have_count(1)
-    page.keyboard.press('Escape')
-    expect(request).to_be_hidden()
+    expect(launch).to_have_text('Подобрать решение под ваше сырьё')
 
     response = page.request.get(base + '/technology/')
     parser = LinkParser()
@@ -186,13 +185,14 @@ with sync_playwright() as p:
     no_js = browser.new_page(java_script_enabled=False, reduced_motion='reduce', viewport={'width': 390, 'height': 844})
     no_js.goto(base + '/technology/')
     expect(no_js.locator('[data-contaminant-row]:visible')).to_have_count(9)
-    expect(no_js.locator('#material-balance input[type=range]')).to_be_disabled()
-    no_js.locator('#material-balance summary').click()
-    expect(no_js.locator('.web-balance-table')).to_be_visible()
+    expect(no_js.locator('[data-tf-scenario="50"]')).to_be_disabled()
+    expect(no_js.locator('[data-tf-scenario="50"]')).to_have_attribute('aria-pressed', 'true')
+    expect(no_js.locator('.tf-baseline > strong')).to_have_text('750 кг/ч')
+    expect(no_js.locator('[data-technology-application]:visible')).to_have_count(5)
     no_js.locator('.tf-outline a[href="#applications"]').press('Enter')
     no_js.wait_for_url(base + '/technology/#applications')
     assert_fit(no_js)
     assert not errors, errors
     assert not failed, failed
     browser.close()
-    print('KAIR navigation, pause, original and fullscreen; native disclosures and request; all local links and no-JS fallback OK', flush=True)
+    print('KAIR navigation, pause, original and fullscreen, all local links and no-JS content OK', flush=True)

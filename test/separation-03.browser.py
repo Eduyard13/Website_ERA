@@ -109,7 +109,7 @@ with sync_playwright() as p:
  touch.locator('[data-diagram-select]').select_option('10');touch.locator('[data-callout="10-1"]').tap()
  expect(touch.locator('[data-detail-number]')).to_have_text('10');touch.close()
  static=browser.new_context(java_script_enabled=False,viewport={'width':320,'height':1000});s=static.new_page()
- s.goto(base+'/catalog/lines/separatsiya-03/');expect(s.locator('h1')).to_have_text('Линия сухой сепарации и сушки плёнок и пакетов')
+ s.goto(base+'/catalog/lines/separatsiya-03/');expect(s.locator('h1')).to_have_text('Линия сухой сепарации и сушки плёнок с сортировкой по видам')
  s.locator('details').filter(has=s.locator('.sd-specification')).locator('summary').click();expect(s.locator('[data-separation03-position]')).to_have_count(37)
  assert s.locator('#documents a[download][href$="/era-separatsiya-03-technical-description.pdf"]').count()==1;static.close()
  assert not errors,errors;assert not failures,failures

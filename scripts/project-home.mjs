@@ -110,7 +110,7 @@ function feedstocks(){
 function process(){
  return `<section class="resource-section resource-process" id="process" aria-labelledby="resource-process-title" data-home-block="process">
   <div class="resource-container">
-   ${heading('resource-process-title','Технология превращает трудноочищаемую плёнку в товарный продукт.')}
+   ${heading('resource-process-title','Технология превращает трудноочищаемую плёнку в готовую продукцию.')}
    <ol class="resource-steps">${resourceStages.map((stage,index)=>`<li data-process-step="0${index+1}"><span aria-hidden="true">0${index+1}</span><h3>${esc(stage.title)}</h3><p>${esc(stage.text)}</p>${link('Открыть этап','/technology#'+stage.id)}</li>`).join('')}</ol>
    <div class="resource-links">
     ${link('Подробнее о технологии','/technology')}
@@ -218,11 +218,11 @@ function equipment(){
     <article>
      <a class="resource-equipment-image" href="${dryCatalogue}" aria-label="Линии сухой сепарации">${image(media.lineWide,{slot:'lineWide'})}</a>
      <div><h3>Линии сухой сепарации</h3><p>Три комплектации под очистку, сортировку и сушку.</p>
-     <div class="resource-line-links">${dryLines.map(line=>link('Сепарация '+line.number,line.path)).join('')}</div></div>
+     <div class="resource-line-links">${dryLines.map(line=>link(line.tier,line.path)).join('')}</div></div>
     </article>
     <article>
      <a class="resource-equipment-image" href="${washLine.path}" aria-label="Линия горячей мойки">${lineImage(washLine)}</a>
-     <div><h3>Линия горячей мойки</h3><p>Глубокая очистка, обезвоживание и выбор товарного выхода.</p>
+     <div><h3>Линия горячей мойки</h3><p>Глубокая очистка, обезвоживание и выбор вида готовой продукции.</p>
      ${link('Смотреть линию',washLine.path)}</div>
     </article>
     <article>

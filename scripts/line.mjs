@@ -26,14 +26,14 @@ function unitCard([position,title,text,value,slug,key]){
 }
 
 export function renderFilmSeparation(line){
- const email='mailto:edkom.office@mail.ru?subject='+encodeURIComponent(`Запрос ЭРА: ${line.title} — линия сухой сепарации плёнок`);
+ const email='mailto:edkom.office@mail.ru?subject='+encodeURIComponent(`Запрос ЭРА: ${line.title}`);
  const documents=lineDocuments(line);
  const staffing=line.cardMetrics.filter(m=>['Основной персонал','Сортировщики'].includes(m.label)).map(m=>[m.label,`${m.value} ${m.unit} · ${m.note}`]);
  const drawing=documents.find(d=>d.id==='separatsiya-02-dimensions-a0');
  return `<div class="film-line film-line--full">
 
  <section class="section line-hero">
-  <div class="line-hero-copy"><p class="eyebrow">${escape(line.title.toLocaleUpperCase('ru'))} / ГОТОВАЯ ЛИНИЯ ЭРА</p><h1>Линия сухой сепарации плёнок и пакетов</h1><p class="line-slogan">Из загрязнённой плёнки —<br>в товарные партии.</p><p class="line-lead">Раскрытие пакетов, многоступенчатая очистка, ручной отбор и прессование. Подготовленная плёнка для продажи переработчикам или дальнейшей мойки.</p><div class="actions">${button('Обсудить линию',email)}${button('Схема и состав','#composition',true)}</div><a class="text-link line-document-shortcut" href="#documents">Техническое описание · PDF, 32 страницы ↓</a></div>
+  <div class="line-hero-copy"><p class="eyebrow">${line.tier} / ГОТОВАЯ ЛИНИЯ ЭРА</p><h1>${escape(line.title)}</h1><p class="line-slogan">Из загрязнённой плёнки —<br>в партии очищенной плёнки.</p><p class="line-lead">Раскрытие пакетов, многоступенчатая очистка, ручной отбор и прессование. Подготовленная плёнка для продажи переработчикам или дальнейшей мойки.</p><div class="actions">${button('Обсудить линию',email)}${button('Схема и состав','#composition',true)}</div><a class="text-link line-document-shortcut" href="#documents">Техническое описание · PDF, 32 страницы ↓</a></div>
   <div class="line-hero-visual">${lineHeroImage(line)}<div class="line-hero-tags"><span>Сухая очистка</span><span>5 раздельных потоков</span><span>Автоматическая увязка</span></div></div>
   <div class="line-metrics"><dl>${lineMetrics.map(([value,unit,label])=>`<div><dt>${label}</dt><dd>${value}<small>${unit}</small></dd></div>`).join('')}</dl><p>750 кг/ч — рабочий ориентир при среднем засоре около 50%. Фактический выпуск зависит от состава сырья, влажности и режима.</p></div>
  </section>
@@ -68,7 +68,7 @@ export function renderFilmSeparation(line){
 
  </section>
 
- <section class="section line-soft" id="quality"><div class="line-section-heading"><div><p class="eyebrow">ПРОДУКТ И КАЧЕСТВО</p><h2>Очищенная плёнка.<br>Готовая к следующему шагу.</h2></div><p>Товарный продукт линии — подготовленная плёнка в раздельных тюках. Её можно продавать переработчикам или направлять на собственную линию мойки.</p></div>
+ <section class="section line-soft" id="quality"><div class="line-section-heading"><div><p class="eyebrow">ПРОДУКТ И КАЧЕСТВО</p><h2>Очищенная плёнка.<br>Готовая к следующему шагу.</h2></div><p>Готовая продукция линии — подготовленная плёнка в раздельных тюках. Её можно продавать переработчикам или направлять на собственную линию мойки.</p></div>
   <div class="line-comparison">${picture('before',{label:'ДО СЕПАРАЦИИ',caption:'Плёнка с большой массой посторонних включений'})}${picture('after',{label:'ПОСЛЕ СЕПАРАЦИИ',caption:'Очищенный плёночный материал'})}</div>
   <div class="table-wrap"><table class="line-quality-table"><caption>Показатели готового продукта и критерии согласования партии</caption><thead><tr><th scope="col">Показатель</th><th scope="col">Что указано в техническом описании</th><th scope="col">Что оценивать для вашей партии</th></tr></thead><tbody>${lineQuality.map(([label,claim,check])=>`<tr><th scope="row">${label}</th><td data-label="По техническому описанию">${claim}</td><td data-label="Для вашей партии">${check}</td></tr>`).join('')}</tbody></table></div>
   <div class="line-evidence"><div><p class="eyebrow">ОСНОВАНИЕ ПОКАЗАТЕЛЕЙ</p><h3>Испытания, морфология и материалы работы</h3><p>Техническое описание содержит результаты испытаний на загрязнённом сырье, данные морфологических анализов ЭРА, сведения о потерях, расчёты выпуска, фотографии плёнки до и после очистки и снимки оборудования на площадках.</p></div><div><h3>Критерии качества под ваш материал</h3><p>Целевые значения остаточного засора, влажности и состава партии согласуются под требования покупателя или следующего передела. Основанием для приёмки служат согласованные показатели и результаты проверки конкретного сырья.</p><p class="line-note">В приложенном ТО нет отдельных протоколов испытаний и численных норм остаточного засора и выходной влажности. Фотографии показывают результат визуально.</p></div></div>

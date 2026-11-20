@@ -9,7 +9,7 @@ import {contactPage,requestForm} from '../scripts/contact.mjs';
 import {videoChannels,messengerChannels,confirmedChannelUrl} from '../scripts/contact-channels.mjs';
 import {mapCapabilities,productionMap} from '../scripts/contact-maps.mjs';
 import {primaryLinks,navigationGroups} from '../content/navigation.mjs';
-import {render,routes,basePath,previewMode} from '../scripts/build.mjs';
+import {render,routes,basePath,previewMode,siteUrl} from '../scripts/build.mjs';
 
 test('Компактная команда сохраняет три исходных портрета и весь HTML остальных разделов',async()=>{
  const original=JSON.parse(await readFile('test/fixtures/about-team-preserved.json','utf8'));
@@ -166,7 +166,8 @@ test('Контакты используют единственную прежн�
 test('Новые маршруты, безопасные старые URL и стили учитывают BASE_PATH',()=>{
  for(const path of ['/about-us','/contacts','/company-details'])assert.ok(routes.includes(path));
  for(const [path,target] of [['/company-details','/contacts'],['/about','/']]){
-  const html=render(path);assert.ok(html.includes(`content="0; url=${basePath}${target}"`));assert.ok(html.includes(`rel="canonical" href="${basePath}${target}"`));assert.ok(html.includes(`href="${basePath}${target}"`));
+  const html=render(path);assert.ok(html.includes(`content="0; url=${basePath}${target}"`));assert.ok(html.includes(`href="${basePath}${target}"`));
+  assert.equal(html.match(/<link rel="canonical" href="([^"]+)">/)?.[1],siteUrl?siteUrl+target.replace(/\/$/,'')+'/':undefined);
  }
  for(const [path,style] of [['/about-us','about-us.css'],['/contacts','contact-premium.css']]){
   const html=render(path);assert.ok(html.includes(`href="${basePath}/${style}?v=`));assert.match(html,/<meta name="description"/);assert.equal((html.match(/<h1>/g)||[]).length,1);

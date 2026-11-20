@@ -1,6 +1,6 @@
 {
   "base": "3ee697be21a242d7357f6e202cd7204b69ce1b4c",
-  "registry": "0e4290b3c9af8243ebdd8db019611b5f7f0e0074b40fe378444257e23cd984e7",
+  "registry": "4f35beb83f574bfca005ae95668141b3e4ab88ad68fe695799d54c9759da3059",
   "nodeCards": [
     {
       "slug": "predvaritelnyy-izmelchitel",
@@ -54,11 +54,11 @@
   "readyCards": [
     {
       "slug": "separatsiya-01",
-      "sha256": "f246795f838418e0d15041e06d1c7b0c3c07c6cd3cfcf75e09e4dbe93aaf422c"
+      "sha256": "e90dd93a68b322d38d180fd71c8c062c53e27f342f4aa53765946b86e30f21e6"
     },
     {
       "slug": "separatsiya-02",
-      "sha256": "049d9bb07d045e160220048850f89bffdc53a4deb0a64492df82778e90627980"
+      "sha256": "6337749f1b94ae3f59f813415dcfaa2add973160da6ebe5841f9dfb3a7dca3c5"
     }
   ],
   "details": {

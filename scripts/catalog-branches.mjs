@@ -56,12 +56,12 @@ export function lineComparison(source=lines){
    <div class="catalog-comparison-scroll" role="region" aria-label="Сравнение линий">
     <table role="table">
      <caption>Три комплектации сухой сепарации</caption>
-     <thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">Параметр</th>${selected.map(({line,configuration})=>`<th role="columnheader" scope="col" data-comparison-line="${line.slug}"><span>Сепарация ${line.number}</span><small>${configuration.label}</small></th>`).join('')}</tr></thead>
+     <thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">Параметр</th>${selected.map(({line,configuration})=>`<th role="columnheader" scope="col" data-comparison-line="${line.slug}"><span>${line.tier}</span><span>${line.title}</span><small>${configuration.label}</small></th>`).join('')}</tr></thead>
      <tbody role="rowgroup">${rows.map(([label,...values])=>`<tr role="row"><th role="rowheader" scope="row">${escape(label)}</th>${values.map(value=>`<td role="cell">${escape(value)}</td>`).join('')}</tr>`).join('')}</tbody>
     </table>
    </div>
-   <p class="catalog-comparison-note">Выпуск рассчитан при засорённости около 50%. *Для Сепарации 01 это ориентир выбранного исполнения: паспортная подача базового распушителя 600–700 кг/ч. Режимы подтверждают на сырье. Расчётная мощность — 70% установленной.</p>
-   <div class="catalog-comparison-links">${selected.map(({line})=>`<a class="text-link" href="${line.path}">Подробнее о Сепарации ${line.number} <span aria-hidden="true">↗</span></a>`).join('')}</div>
+   <p class="catalog-comparison-note">Выпуск рассчитан при засорённости около 50%. *Для комплектации BASE это ориентир выбранного исполнения: паспортная подача базового распушителя 600–700 кг/ч. Режимы подтверждают на сырье. Расчётная мощность — 70% установленной.</p>
+   <div class="catalog-comparison-links">${selected.map(({line})=>`<a class="text-link" href="${line.path}">Подробнее о линии ${line.tier} <span aria-hidden="true">↗</span></a>`).join('')}</div>
   </div>
  </details>`;
 }

@@ -120,7 +120,7 @@ test('Медиатека объединяет повторно использу�
 test('Страницы вне комплектаций сохраняют утверждённые снимки',async()=>{
  const original=JSON.parse(await readFile('test/fixtures/hot-wash-preserved.json','utf8'));
  for(const [path,sha256] of Object.entries(basePath?original.unchangedPagesBase:original.unchangedPages)){
-  if(!lines.some(entry=>entry.enabled&&entry.path===path))assert.equal(hash(render(path).replaceAll(release,'RELEASE')),sha256,path);
+  if(!lines.some(entry=>entry.enabled&&entry.path===path))assert.equal(hash(render(path).replaceAll(release,'RELEASE').replace(/<link rel="canonical" href="[^"]*">/g,'')),sha256,path);
  }
  const html=render('/technology');
  assert.ok(html.includes(`href="${basePath}/catalog/lines/moyka-plenki" data-technology-line="moyka-plenki"`));

@@ -2,7 +2,8 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile,stat} from 'node:fs/promises';
 import {resolve} from 'node:path';
-import {routes,product,basePath} from '../scripts/build.mjs';
+import {routes,product,basePath,siteUrl} from '../scripts/build.mjs';
+import {dryLineNames} from '../content/line-names.mjs';
 test('На главной четыре фотокарточки сырья, пять секторов и пять карточек экономики',async()=>{
  const html=await readFile('dist/index.html','utf8');
  assert.deepEqual([...html.matchAll(/data-process-step="([^"]+)"/g)].map(match=>match[1]),['01','02','03']);
@@ -121,10 +122,11 @@ test('Учебный баланс сохраняет массу, нулевые 
  for(const point of materialBalancePoints){assert.equal(point.polymer+point.inclusions,1500);assert.ok(point.polymer>=750&&point.polymer<=1500);}
  const html=await readFile('dist/technology/index.html','utf8');
  assert.equal([...html.matchAll(/id="material-balance"/g)].length,1);
- assert.ok(html.includes('Полимерная составляющая до технологических потерь, кг/ч'));
- assert.match(html,/id="material-contamination" min="0" max="50" step="5" value="50"/);
- assert.ok(html.includes('Вода и технологические потери здесь не моделируются.'));
- assert.ok(html.includes('Расчёт при входе 1 500 кг/ч'));
+ assert.deepEqual([...html.matchAll(/data-tf-scenario="(\d+)" aria-pressed="(true|false)" disabled/g)].map(([,value,pressed])=>[value,pressed]),[['30','false'],['40','false'],['50','true']]);
+ assert.match(html,/data-tf-polymer>750<\/strong>/);
+ assert.match(html,/data-tf-inclusions>750<\/strong>/);
+ assert.match(html,/class="tf-baseline[^>]*>\s*<strong>750 <small>кг\/ч<\/small><\/strong>/);
+ assert.doesNotMatch(html,/data-balance-range|web-balance-table/);
  assert.ok(html.includes(`${basePath}/presentation-web.js?v=`));
  assert.ok(!(await readFile('dist/index.html','utf8')).includes('/presentation-web.js'));
 });
@@ -146,8 +148,8 @@ test('Главная следует согласованной структур�
  for(const path of ['/economics','/technology#products','/catalog','/automation','/catalog/lines/separatsiya-01','/catalog/lines/separatsiya-02','/catalog/lines/separatsiya-03','/catalog/lines/moyka-plenki']){
   assert.ok(home.includes(`href="${basePath}${path}"`),path);
  }
- assert.ok(!home.includes('quality-sequence.svg'));assert.ok(tech.includes('quality-sequence.svg'));
- for(const text of ['Ручное раскрытие трудно масштабировать','<dt>40</dt><dd>г материала</dd>','<dt>33</dt><dd>секунды</dd>','4,36 кг/ч','<li>Сбор стоков</li><li>Очистка</li><li>Возврат жидкости</li>'])assert.ok(tech.includes(text),text);
+ assert.ok(!home.includes('quality-sequence.svg'));
+ for(const text of ['Ручная очистка — экономический тупик.','33 сек.','40 г','4–5 кг/ч','65 000 ₽/т','260 ₽/ч','Сбор стоков','Возврат воды'])assert.ok(tech.includes(text),text);
  assert.ok(home.includes('Подключить гранулирование'));
 });
 test('Все внутренние ссылки, изображения и якоря ведут к существующим ресурсам',async()=>{
@@ -194,9 +196,11 @@ test('В каталоге четыре линии по порядку; откр�
  assert.ok(!html.includes('name="optional"'));
  assert.ok(!html.includes('data-optional='));
  assert.match(cards[1][2],new RegExp(`href="${basePath}/catalog/lines/separatsiya-02"`));
- assert.match(cards[1][3],/СЕПАРАЦИЯ 02 \/ ГОТОВАЯ ЛИНИЯ/);
+ for(const [i,slug] of ['separatsiya-01','separatsiya-02','separatsiya-03'].entries()){
+  const {title,tier}=dryLineNames[slug];
+  assert.ok(cards[i][3].includes(title)&&cards[i][3].includes(tier));
+ }
  assert.equal([...cards[1][3].matchAll(/<dt>/g)].length,6);
- assert.ok(cards[2][3].includes('Линия сухой сепарации и сушки плёнок и пакетов'));
  assert.ok(cards[2][3].includes('Расширенная комплектация с роторной сушкой, второй баллистикой и раздельным накоплением'));
  assert.ok(cards[3][3].includes('Линия горячей мойки плёнок и пакетов'));
  assert.match(cards[2][2],new RegExp(`href="${basePath}/catalog/lines/separatsiya-03"`));
@@ -205,8 +209,8 @@ test('В каталоге четыре линии по порядку; откр�
  const ready=lines.find(l=>l.slug==='separatsiya-02');
  assert.equal(ready.slug,'separatsiya-02');assert.equal(ready.status,'source-checked');
  const page=await readFile('dist'+ready.path+'/index.html','utf8');
- assert.match(page,/<title>Сепарация 02 — ЭРА<\/title>/);
- assert.ok(page.includes('СЕПАРАЦИЯ 02 / ГОТОВАЯ ЛИНИЯ ЭРА'));
+ assert.ok(page.includes(`<title>${dryLineNames[ready.slug].title} — ЭРА</title>`));
+ assert.ok(page.includes('PRO / ГОТОВАЯ ЛИНИЯ ЭРА'));
  assert.ok(page.includes(`href="${basePath}/documents/${ready.documents[0].file}"`));
  assert.ok(page.includes(`data-product="${basePath}${ready.path}"`));
  for(const m of Object.values(filmSeparationMedia)){
@@ -232,7 +236,7 @@ test('Мини-линия 01 использует своё ТО, показат�
  const parse=value=>value==='—'?0:Number(value.replace(',','.'));
  assert.ok(Math.abs(miniSpecification.reduce((sum,row)=>sum+parse(row[3]),0)-225)<1e-9);
  assert.ok(Math.abs(miniSpecification.reduce((sum,row)=>sum+parse(row[4]),0)-157.5)<1e-9);
- assert.ok(page.includes('СЕПАРАЦИЯ 01 / МИНИ-КОМПЛЕКТАЦИЯ ЛС-1500'));
+ assert.ok(page.includes('BASE / ЛС-1500'));
  for(const text of ['157,5 кВт','225 кВт','17,75 × 11,75 м','600–700 кг/ч','70% установленной мощности','3–5%','80% → ≤10%','Конвейеры 07–10','3 человека в смену','Отдельные протоколы испытаний'])assert.ok(page.includes(text),text);
  assert.ok(page.includes('отдельная сортировка плёнок по видам в базовую поставку не входит'));
  assert.ok(page.includes('Сортировочный бокс, мойка и пресс не входят'));
@@ -240,7 +244,7 @@ test('Мини-линия 01 использует своё ТО, показат�
  assert.ok(!page.includes('402,67'));assert.ok(!page.includes('281,87'));
  const card=(await readFile('dist/catalog/lines/index.html','utf8')).match(/<a[^>]+data-line-id="separatsiya-01"[\s\S]*?<\/a>/)[0];
  assert.ok(card.includes(`href="${basePath}${line.path}"`));assert.equal([...card.matchAll(/<dt>/g)].length,6);
- assert.ok(card.includes('Мини-комплектация'));assert.ok(card.includes('Расчёт при засоре около 50%'));
+ assert.ok(card.includes(dryLineNames[line.slug].title));assert.ok(card.includes('Расчёт при засоре около 50%'));
  for(const m of Object.values(miniFilmSeparationMedia)){
   assert.equal(m.product,line.path);await stat('dist/assets/'+m.file);await stat('dist/assets/'+m.thumbnail);
  }
@@ -617,7 +621,7 @@ test('Общий каталог предлагает две ветки, а ст�
  assert.ok(home.includes('id="about-era"'));assert.ok(home.includes('Можно начать с одного этапа и вырасти в полный цикл'));
  const about=await readFile('dist/about/index.html','utf8');
  assert.ok(about.includes(`content="0; url=${basePath}/"`));
- assert.ok(about.includes(`rel="canonical" href="${basePath}/"`));
+ assert.equal(about.match(/<link rel="canonical" href="([^"]+)">/)?.[1],siteUrl?`${siteUrl}/`:undefined);
  for(const route of routes.filter(r=>r!=='/about')){
   const html=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
   assert.ok(!html.includes(`href="${basePath}/about"`));
@@ -652,9 +656,36 @@ test('Клиентский режим: единый кириллический �
   // Owner-approved public citations: the economics experiment and the BEIER corporate profile.
   const copy=(visible+' '+labels).replaceAll('Опыт, приведённый в презентации ЭРА.','').replaceAll(route==='/economics'?'Источник: ':route==='/about-us'?'Источник: корпоративный профиль BEIER Machinery':'\u0000','');
   assert.doesNotMatch(copy,/\bERA\b|прототип|для согласования|из презентации|в презентации|предоставленному КП|источник:|слайд №|сайт объединяет/iu,route);
-  assert.match(html,/noindex,nofollow/,route);
  }
  const notFound=await readFile('dist/404.html','utf8');assert.equal([...notFound.matchAll(/data-fx-bar /g)].length,1);
+});
+test('Индексация, canonical и sitemap согласованы для всех публичных страниц',async()=>{
+ const excluded=new Set(['/about','/ai','/company-details','/contacts/sent','/news','/blog']);
+ const titles=new Set(),descriptions=new Set(),expected=[];
+ for(const route of new Set(routes)){
+  const html=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
+  assert.match(html,/<html lang="ru">/,route);
+  assert.equal((html.match(/<h1[\s>]/g)||[]).length,1,route);
+  assert.equal(/<meta name="robots" content="noindex,nofollow">/.test(html),excluded.has(route),route);
+  if(excluded.has(route))continue;
+  const canonical=html.match(/<link rel="canonical" href="([^"]+)">/)?.[1];
+  const url=siteUrl?`${siteUrl}${route.replace(/\/$/,'')}/`:undefined;
+  assert.equal(canonical,url,route);
+  if(url)expected.push(url);
+  const title=html.match(/<title>([^<]+)<\/title>/)?.[1];
+  const description=html.match(/<meta name="description" content="([^"]+)">/)?.[1];
+  assert.ok(title&&!titles.has(title),route);titles.add(title);
+  assert.ok(description&&!descriptions.has(description),route);descriptions.add(description);
+ }
+ const robots=await readFile('dist/robots.txt','utf8');
+ assert.match(robots,/^User-agent: \*\nAllow: \/\n/);
+ assert.doesNotMatch(robots,/^Disallow:/m);
+ assert.match(await readFile('dist/404.html','utf8'),/<meta name="robots" content="noindex,nofollow">/);
+ if(siteUrl){
+  assert.ok(robots.includes(`Sitemap: ${siteUrl}/sitemap.xml\n`));
+  const sitemap=await readFile('dist/sitemap.xml','utf8');
+  assert.deepEqual([...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match=>match[1]).sort(),expected.sort());
+ }else await assert.rejects(stat('dist/sitemap.xml'),{code:'ENOENT'});
 });
 test('Контакты сохранены, КАИР перенесён в технологию с реальными фотографиями и автосменой',async()=>{
  const {kairSlides,kairPresentation}=await import('../content/kair.mjs');
@@ -666,8 +697,8 @@ test('Контакты сохранены, КАИР перенесён в тех
  const home=await readFile('dist/index.html','utf8');
  assert.ok(home.includes('id="discuss"'));assert.ok(!home.includes('data-kair-inspect'));
  const html=await readFile('dist/technology/index.html','utf8');
- assert.match(html,/<div id="discuss">[\s\S]*?Обсудить технологию под ваше сырьё/);
- assert.ok(html.includes('data-kair-inspect'));assert.ok(html.includes('Возможности КАИР'));
+ assert.match(html,/<div[^>]*id="discuss">[\s\S]*?Подобрать решение под ваше сырьё/);
+ assert.ok(html.includes('data-kair-inspect'));assert.ok(html.includes('Изучить возможности КАИР'));
  assert.ok(html.includes(`data-image="${basePath}/assets/${kairSlides[0].original}"`));
  assert.ok(!kairMonitor([]));
  const single=kairMonitor([kairSlides[0]],{...kairPresentation,autoplay:false});
@@ -698,7 +729,6 @@ test('Экономика связывает восемь разделов, ме�
  const deployed=await readFile('dist/economics-page-state.js','utf8');assert.match(deployed,/from '\.\/economics-model\.js\?v=/);
 });
 test('Технология сохраняет сырьё, последовательность, качество, КАИР и прежние якоря',async()=>{
- const {technicalInputs}=await import('../content/presentation-web.mjs');
  const {technologyContent}=await import('../content/technology-final.mjs');
  const html=await readFile('dist/technology/index.html','utf8');
  const ordered=['technology-intro','raw-material','contaminants','solution','dry-separation','hot-washing','granulation','products','granule-quality','applications','control-story','technology-next'];
@@ -707,7 +737,7 @@ test('Технология сохраняет сырьё, последовате
  const position=id=>html.indexOf(`id="${id}"`);
  assert.ok(ordered.every((id,index)=>!index||position(id)>position(ordered[index-1])));
  const allIds=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);assert.equal(new Set(allIds).size,allIds.length);
- for(const text of [...technologyContent.feedstocks.map(item=>item.title),...technicalInputs])assert.ok(html.includes(text),text);
+ for(const item of technologyContent.feedstocks)assert.ok(html.includes(item.title),item.title);
  assert.equal((html.match(/data-feedstock-type=/g)||[]).length,5);
  assert.equal((html.match(/data-contaminant-row=/g)||[]).length,9);assert.ok(!html.includes('data-contaminant-controls'));
  for(const row of technologyContent.cleaning){
@@ -716,19 +746,21 @@ test('Технология сохраняет сырьё, последовате
   assert.ok(!card.includes('<table'));
  }
  const granulation=html.match(/<section[^>]*id="granulation"[\s\S]*?<\/section>/)[0];
- assert.ok(granulation.includes('Качество полимера формируется до гранулятора.'));
- assert.ok(granulation.includes(`href="${basePath}/catalog/lines/moyka-plenki#quality"`));
+ assert.ok(granulation.includes('Финальный этап: из очищённой плёнки — в готовую гранулу.'));
+ assert.ok(granulation.includes('granulation-transformation.webp')&&granulation.includes('tf-scale-grid'));
+ assert.doesNotMatch(html.slice(position('hot-washing'),position('granulation')),/tf-scale-grid/);
  assert.equal((html.match(/data-technology-output=/g)||[]).length,3);
  assert.equal((html.match(/data-kair-slide(?=[\s>])/g)||[]).length,23);
- assert.ok(html.includes('Как проходит поставка и сопровождение')&&html.includes(`href="${basePath}/#about-era"`));
  assert.ok(html.includes(`href="${basePath}/catalog/equipment"`)&&html.includes(`href="${basePath}/automation"`));
  for(const slug of ['rotornyy-raspushitel','plenochnyy-flotator'])assert.ok(html.includes(`href="${basePath}/catalog/equipment/${slug}"`));
- assert.match(html,/<a[^>]+href="[^"]*\/contacts\?topic=[^"]+#project-form"[^>]*>Обсудить технологию под ваше сырьё/);
- assert.ok(html.includes('Схематическая иллюстрация')&&html.includes('ПТР при заданной температуре и нагрузке'));
- assert.ok(html.includes('190 °C / 2,16 кг')&&html.includes('30–70 г/т')&&html.includes('0,003–0,007% по массе'));
- assert.ok(html.includes('Остаточные включения в плёнке после сухой сепарации и горячей мойки'));
- assert.ok(html.includes('Ориентир потерь плёнки при мойке, от массы плёнки'));
- for(const source of technologyContent.sources)assert.ok(html.includes(source.url));
+ assert.match(html,/<a[^>]+href="[^"]*\/contacts\?topic=[^"]+#project-form"[^>]*>Подобрать решение под ваше сырьё/);
+ const next=html.slice(position('technology-next'),html.indexOf('</main>'));
+ for(const path of ['/catalog/lines','/catalog/equipment','/economics'])assert.ok(next.includes(`href="${basePath}${path}"`),path);
+ assert.ok(next.includes('investment-growth.webp')&&next.includes('Пока рынок формируется'));
+ assert.doesNotMatch(html,/Методики и источники|Что понадобится для подбора|Альтернативные направления для подходящих фракций/);
+ assert.ok(html.includes('190 °C / 2,16 кг')&&html.includes('30–70 г/т')&&html.includes('0,003–0,007%'));
+ assert.ok(html.includes('Остаточные включения после сухой сепарации и горячей мойки'));
+ assert.ok(html.includes('Допустимые потери плёнки за полный цикл')&&html.includes('От массы полезного полимера')&&html.includes('3–5%'));
  const eco=await readFile('public/economics-page-view.js','utf8');assert.ok(eco.includes(`${technologyContent.quality.mfr} ${technologyContent.quality.mfrUnit}`));assert.ok(eco.includes(`${technologyContent.quality.inclusions} ${technologyContent.quality.inclusionsUnit}`));
  assert.equal((html.match(/<h1[\s>]/g)||[]).length,1);
  assert.ok(html.includes(`${basePath}/technology-final.css?v=`)&&html.includes(`${basePath}/technology-final.js?v=`));
@@ -746,8 +778,8 @@ test('Пять иллюстраций применений предоставл�
   }
   assert.ok(html.includes(item.alt));
  }
- for(const text of ['Из вторичного полимера — в новую продукцию','Альтернативные направления для подходящих фракций','Иллюстрации возможных направлений применения','экологическим контролем'])assert.ok(html.includes(text),text);
- assert.match(html,/<details class="tf-details" data-keep-open><summary>Альтернативные направления для подходящих фракций<\/summary>/);
+ assert.match(html,/Очистить\. Переработать\. <span>Использовать снова\.<\/span>/);
+ assert.doesNotMatch(html.match(/<section[^>]*id="applications"[\s\S]*?<\/section>/)[0],/<details/);
  assert.ok(!html.includes('/catalog/lines/pyrolysis')&&!html.includes('/catalog/lines/energy'));
  for(const path of ['index.html','about-us/index.html','economics/index.html','contacts/index.html'])assert.ok(!(await readFile('dist/'+path,'utf8')).includes('/technology-final.css'));
 });
@@ -820,7 +852,7 @@ test('Отдельная страница ИИ удалена из меню и �
  }
  const legacy=await readFile('dist/ai/index.html','utf8');
  assert.ok(legacy.includes(`http-equiv="refresh" content="0; url=${basePath}/automation"`));
- assert.ok(legacy.includes(`rel="canonical" href="${basePath}/automation"`));
+ assert.equal(legacy.match(/<link rel="canonical" href="([^"]+)">/)?.[1],siteUrl?`${siteUrl}/automation/`:undefined);
  assert.ok(legacy.includes(`${basePath}/automation-redirect.js?v=`));
  assert.ok(!legacy.includes('site-header'));
 });
@@ -884,10 +916,9 @@ test('Сухая стадия использует один рендер, три
  assert.equal([...html.matchAll(/class="tf-line-render"/g)].length,2);
  assert.ok(html.includes('/assets/lines/separatsiya-01/catalog-cover.webp'));
  assert.ok(html.includes('/assets/lines/moyka-plenki/catalog-cover-detailed.webp'));
- assert.ok(html.includes('ориентир 750 кг/ч при засоре около 50%'));
- assert.ok(html.includes('600–700 кг/ч'));
+ assert.ok(html.includes('Результат сухой сепарации'));
  assert.ok(!html.includes('281,87 кВт')&&!html.includes('catalog-comparison'));
- assert.ok(html.includes('До сепарации'));assert.ok(html.includes('После сухой очистки'));
+ assert.ok(html.includes('Исходное загрязнённое сырьё'));assert.ok(html.includes('Очищенный плёночный материал'));
  assert.ok(html.includes(`href="${basePath}/documents/${overview.document.file}" download=`));
 });
 test('Гранулирование остаётся третьей стадией, а гранулятор входит в моечную комплектацию',async()=>{
@@ -897,10 +928,11 @@ test('Гранулирование остаётся третьей стадие�
  const dry=html.indexOf('id="dry-separation"'),wash=html.indexOf('id="hot-washing"'),granulation=html.indexOf('id="granulation"');
  assert.ok(dry>=0&&wash>dry&&granulation>wash);
  assert.equal(washingConfigurations.length,2);
- for(const option of washingConfigurations){assert.ok(html.includes(`data-washing-configuration="${option.id}"`));assert.ok(html.includes(option.text));}
- assert.ok(html.includes('Гранулятор уже установлен в линии горячей мойки'));
- assert.ok(html.includes('линию мойки изготовим без гранулятора'));
- assert.ok(html.includes('Гранулятор в составе линии мойки'));
+ const scale=html.slice(granulation,html.indexOf('id="products"'));
+ for(const option of washingConfigurations)assert.ok(scale.includes(`data-washing-configuration="${option.id}"`));
+ assert.ok(scale.includes('1 гранулятор')&&scale.includes('2 гранулятора'));
+ assert.ok(scale.includes(washingConfigurations.find(option=>option.id==='existing-granulator').text));
+ assert.doesNotMatch(html,/Гранулятор в составе линии мойки/);
  assert.ok(!lines.some(line=>/гранул/iu.test(line.title)));
  assert.ok(!/href="[^"]*\/catalog\/lines\/[^\"]*granul/.test(html));
  assert.ok(html.includes(`href="${basePath}/catalog/lines/moyka-plenki"`));

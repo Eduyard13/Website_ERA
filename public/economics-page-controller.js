@@ -44,7 +44,7 @@ export function initializeEconomicsPage(root){
   const quality=get('[data-product-quality-copy]');if(quality)quality.hidden=state.mode!=='full';
   renderedMode=state.mode;
   const mass=get('[data-mass-product]');if(mass)mass.style.width=r.totalYield*100+'%';
-  get('[data-mass-bar]')?.setAttribute('aria-label',`Вход ${tonnes(state.input)}, товарная продукция ${tonnes(r.output)}, остальная масса ${tonnes(state.input-r.output)}; доля товарного выхода сценария ${percentage(r.totalYield)}.`);
+  get('[data-mass-bar]')?.setAttribute('aria-label',`Вход ${tonnes(state.input)}, готовая продукция ${tonnes(r.output)}, остальная масса ${tonnes(state.input-r.output)}; доля готовой продукции в сценарии ${percentage(r.totalYield)}.`);
   monthResult=groupedMonth(r);
   if(!r.donutAvailable||!monthResult.segments.some(s=>s.id===pinned))pinned=null;
   html('[data-econ-month]',renderMonth(monthResult));selectSegment(pinned);

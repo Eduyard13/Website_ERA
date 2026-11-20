@@ -8,8 +8,8 @@ import newLineDocuments from './line-documents.json' with {type:'json'};
 // Future approved documents go here. Never place request-only source files in public/.
 export const additionalDocuments=[{
  id:'separatsiya-02-dimensions-a0',objectType:'line',objectSlug:'separatsiya-02',category:'drawings',type:'Габаритный чертёж',
- title:'Габаритный чертёж линии сухой сепарации плёнок и пакетов',
- description:'Сухая сепарация: габариты, три проекции и размеры показанной компоновки линии. Привязка к площадке уточняется при проектировании.',
+ title:'Габаритный чертёж линии PRO',
+ description:'Габариты, три проекции и размеры показанной компоновки линии. Привязка к площадке уточняется при проектировании.',
  file:'drawings/era-separatsiya-02-dimensions-a0.pdf',downloadName:'ЭРА — Сепарация 02 — Чертёж и габариты A0.pdf',
  format:'A0',pages:1,bytes:2239107,sha256:'8557bce36e8963146ec9fd33d11295c4483e2e4d4106f19ae41e7c50c39f98d0',
  access:'public',status:'published',revision:null,publishedAt:null,
@@ -27,7 +27,7 @@ export const additionalDocuments=[{
 }))];
 export const libraryObjects=[
  ...nodes.map(n=>({type:'node',slug:n.slug,title:n.title,path:n.path})),
- ...lines.filter(l=>l.enabled).map(l=>({type:'line',slug:l.slug,title:l.title+' · '+l.cardDescription,path:l.path})),
+ ...lines.filter(l=>l.enabled).map(l=>({type:'line',slug:l.slug,title:l.title,path:l.path})),
  {type:'project',slug:null,title:'Проект ЭРА',path:'/'},
 ];
 export function normalizeLibraryDocument(entry,object){

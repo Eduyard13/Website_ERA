@@ -1,9 +1,10 @@
+import {dryLineNames} from './line-names.mjs';
 // Источник: «ТО Линия Сепарации Пленок (мини).pdf», 03.11.2026, 14 страниц.
 // Оригиналы иллюстраций и контрольные суммы: docs/mini-film-separation-assets.json.
 import presentation from './separatsiya-01-presentation-assets.json' with {type:'json'};
 export const miniFilmSeparationDocument={
  id:'separatsiya-01-mini-technical',slug:'separatsiya-01',
- title:'Техническое описание — Линия сухой сепарации плёнок и пакетов · мини',
+ title:'Техническое описание линии BASE',
  type:'Техническое описание линии',category:'technical',
  file:'technical/era-separatsiya-01-mini-technical-description.pdf',
  downloadName:'ЭРА — Мини-линия сухой сепарации плёнок и пакетов.pdf',
@@ -13,11 +14,11 @@ export const miniFilmSeparationDocument={
 
 export const miniFilmSeparation={
  status:'source-checked',
- description:'Мини-комплектация линии сухой сепарации плёнок и пакетов ЛС-1500: измельчение, баллистическая и роторная очистка. Состав, расчётные показатели, фото, схемы и техническое описание.',
- cardTitle:'Линия сепарации плёнок и пакетов',
- cardDescription:'Мини-комплектация · сухая очистка',
+ description:'Базовая комплектация ЛС-1500 для сухой сепарации плёнок: измельчение, баллистическая и роторная очистка. Состав, расчётные показатели, фото, схемы и техническое описание.',
+ cardTitle:dryLineNames['separatsiya-01'].title,
+ cardDescription:'Сухая очистка плёнок без мойки',
  cardFeature:'Цветной плёночный микс',
- cardImageAlt:'Мини-линия сепарации плёнок и пакетов: измельчитель, баллистический сепаратор, роторный распушитель и конвейеры',
+ cardImageAlt:'Линия BASE с измельчителем, баллистическим сепаратором, роторным распушителем и конвейерами',
  cardFile:'lines/separatsiya-01-mini/catalog-cover-navy.webp',
  cardSmallFile:'lines/separatsiya-01-mini/catalog-cover-navy-768.webp',
  cardMetrics:[
@@ -33,11 +34,11 @@ export const miniFilmSeparation={
 };
 
 const pictures=[
- ['overview','visualization',1,'Общая компоновка мини-линии сухой сепарации','Линия целиком'],
+ ['overview','visualization',1,'Общая компоновка линии BASE','Линия целиком'],
  ['raw','photo',3,'Плёночное сырьё на площадках в Китае и Нидерландах','Входное сырьё'],
  ['flow','scheme',4,'Маршруты плёнки, отделённых включений и пыли','Технологическая схема'],
- ['layout','scheme',5,'Состав мини-линии с номерами позиций 01–11','Состав линии'],
- ['shredder','visualization',6,'Растюковщик-измельчитель мини-линии','Подготовка сырья'],
+ ['layout','scheme',5,'Состав линии BASE с номерами позиций 01–11','Состав линии'],
+ ['shredder','visualization',6,'Растюковщик-измельчитель линии BASE','Подготовка сырья'],
  ['ballistic','visualization',6,'Баллистический сепаратор: разделение 2D, 3D и просева','Баллистическая сепарация'],
  ['rotor','photo',7,'Роторный распушитель на этапе сборки','Сборка оборудования'],
  ['rotor-scheme','visualization',7,'Устройство роторного распушителя','Роторная очистка'],
@@ -45,29 +46,29 @@ const pictures=[
  ['rejects','photo',8,'Отделённые от плёнки включения','Результат очистки'],
  ['after-close','photo',8,'Очищенная плёнка крупным планом','Результат очистки'],
  ['after','photo',8,'Очищенная плёночная фракция после линии','Готовый продукт'],
- ['placement','scheme',11,'Габаритный чертёж механической части мини-линии','Размещение'],
+ ['placement','scheme',11,'Габаритный чертёж механической части линии BASE','Размещение'],
 ];
 export const miniFilmSeparationMedia=Object.fromEntries(pictures.map(([key,type,page,title,topic])=>[key,{
  id:'separatsiya-01-mini-'+key,type,page,title,topic,
  file:`lines/separatsiya-01-mini/${key}.webp`,thumbnail:`lines/separatsiya-01-mini/${key}-thumb.webp`,
- product:'/catalog/lines/separatsiya-01',productTitle:'Сепарация 01',
- caption:'Техническое описание мини-линии',
+ product:'/catalog/lines/separatsiya-01',productTitle:dryLineNames['separatsiya-01'].title,
+ caption:'Техническое описание линии BASE',
 }]));
 miniFilmSeparationMedia.cover={
  id:'separatsiya-01-mini-cover',type:'visualization',topic:'Линия целиком',
- title:'Мини-комплектация линии сепарации плёнок и пакетов',
+ title:'Компоновка линии BASE',
  file:miniFilmSeparation.cardFile,thumbnail:miniFilmSeparation.cardSmallFile,
- product:'/catalog/lines/separatsiya-01',productTitle:'Сепарация 01',
- caption:'Мини-комплектация линии сепарации плёнок и пакетов · подготовленная иллюстрация',
+ product:'/catalog/lines/separatsiya-01',productTitle:dryLineNames['separatsiya-01'].title,
+ caption:'Инженерная визуализация линии BASE',
 };
 // Detail-page finish has its own key; the catalogue and gallery keep their sources.
 export const miniLineHeroMedia={
  id:'separatsiya-01-mini-hero-titanium',type:'visualization',page:1,topic:'Линия целиком',
- title:'Общая компоновка мини-линии сухой сепарации',
+ title:'Общая компоновка линии BASE',
  file:presentation.hero.file,thumbnail:presentation.hero.smallFile,smallFile:presentation.hero.smallFile,
  width:presentation.hero.width,height:presentation.hero.height,
- product:'/catalog/lines/separatsiya-01',productTitle:'Сепарация 01',
- caption:'Инженерная визуализация мини-линии · оформление Titanium Gallery',
+ product:'/catalog/lines/separatsiya-01',productTitle:dryLineNames['separatsiya-01'].title,
+ caption:'Инженерная визуализация линии BASE',
 };
 
 export const miniLineMetrics=[

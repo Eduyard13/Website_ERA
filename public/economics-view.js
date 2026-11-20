@@ -39,7 +39,7 @@ export function renderMonth(result){
 }
 export function renderBridge(result,unit='tonne'){
  if(result.perProduct&&Object.values(result.perProduct).some(value=>!Number.isFinite(value)))return `<div class="econ-no-output"><strong>Объём слишком мал для расчёта на единицу продукции</strong><p>Увеличьте входящий тоннаж. Месячные постоянные расходы и амортизация продолжают учитываться.</p></div>${unitTotals(result)}`;
- if(!result.perProduct)return `<div class="econ-no-output"><strong>Товарного выпуска пока нет</strong><p>Показатели на тонну продукции появятся при положительном выходе. Постоянные расходы и амортизация продолжают учитываться.</p></div>${unitTotals(result)}`;
+ if(!result.perProduct)return `<div class="econ-no-output"><strong>Выпуска готовой продукции пока нет</strong><p>Показатели на тонну продукции появятся при положительном выходе. Постоянные расходы и амортизация продолжают учитываться.</p></div>${unitTotals(result)}`;
  const p=result.perProduct,steps=[
   {label:'Цена без НДС',start:0,end:p.price,value:p.price,color:'#242844'},
   {label:'Полная себестоимость',start:p.price,end:p.price-p.totalCosts,value:-p.totalCosts,color:'#747b94'},
@@ -49,7 +49,7 @@ export function renderBridge(result,unit='tonne'){
  const low=Math.min(0,...steps.flatMap(s=>[s.start,s.end])),high=Math.max(1,...steps.flatMap(s=>[s.start,s.end])),span=high-low;
  const x=v=>(v-low)/span*100,label=unit==='kg'?'кг':'т';
  const display=v=>number(v/(unit==='kg'?1000:1),unit==='kg'?2:0)+' ₽/'+label;
- return `<figure class="ec-waterfall" aria-label="Финансовый мост на единицу товарной продукции"><figcaption>От цены без НДС до чистой прибыли · ₽/${label}</figcaption><div class="ec-waterfall-rows">${steps.map(s=>`<div class="ec-waterfall-row"><span>${s.label}</span><div class="ec-waterfall-track"><i class="ec-waterfall-zero" style="left:${x(0)}%"></i><i class="ec-waterfall-bar" style="left:${x(Math.min(s.start,s.end))}%;width:${Math.abs(x(s.end)-x(s.start))}%;background:${s.color}"></i></div><strong data-bridge-value>${display(s.value)}</strong></div>`).join('')}</div><div class="ec-waterfall-scale"><span>${display(low)}</span><span>Общая денежная шкала</span><span>${display(high)}</span></div></figure>${unitTotals(result)}`;
+ return `<figure class="ec-waterfall" aria-label="Финансовый мост на единицу готовой продукции"><figcaption>От цены без НДС до чистой прибыли · ₽/${label}</figcaption><div class="ec-waterfall-rows">${steps.map(s=>`<div class="ec-waterfall-row"><span>${s.label}</span><div class="ec-waterfall-track"><i class="ec-waterfall-zero" style="left:${x(0)}%"></i><i class="ec-waterfall-bar" style="left:${x(Math.min(s.start,s.end))}%;width:${Math.abs(x(s.end)-x(s.start))}%;background:${s.color}"></i></div><strong data-bridge-value>${display(s.value)}</strong></div>`).join('')}</div><div class="ec-waterfall-scale"><span>${display(low)}</span><span>Общая денежная шкала</span><span>${display(high)}</span></div></figure>${unitTotals(result)}`;
 }
 function unitTotals(result){
  const label=result.net<0?'Убыток':'Чистая прибыль';

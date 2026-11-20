@@ -1,8 +1,9 @@
+import {dryLineNames} from './line-names.mjs';
 // Источник: «ТО Линия Сепарации Пленок.pdf», 02.11.2026, 32 страницы.
 // Происхождение оригинальных иллюстраций — docs/film-separation-assets.json.
 export const filmSeparationDocument={
  id:'separatsiya-02-technical',slug:'separatsiya-02',
- title:'Техническое описание — Линия сухой сепарации плёнок и пакетов',
+ title:'Техническое описание линии PRO',
  type:'Техническое описание линии',category:'technical',
  file:'technical/era-separatsiya-01-technical-description.pdf',
  downloadName:'ЭРА — Линия сухой сепарации плёнок и пакетов.pdf',
@@ -13,7 +14,7 @@ export const filmSeparationDocument={
 export const filmSeparation={
  status:'source-checked',
  description:'Линия сухой сепарации загрязнённых плёнок и пакетов: подготовка, очистка, ручная сортировка, пять накопителей и прессование в тюки.',
- cardTitle:'Линия сепарации плёнок и пакетов',
+ cardTitle:dryLineNames['separatsiya-02'].title,
  cardDescription:'С сортировкой плёнок по видам',
  cardFeature:'Закрытый сортировочный бокс',
  cardFile:'lines/separatsiya-01/catalog-cover.webp',
@@ -56,7 +57,7 @@ const pictures=[
 export const filmSeparationMedia=Object.fromEntries(pictures.map(([key,type,page,title,topic])=>[key,{
  id:'separatsiya-02-'+key,type,page,title,topic,
  file:`lines/separatsiya-01/${key}.webp`,thumbnail:`lines/separatsiya-01/${key}-thumb.webp`,
- product:'/catalog/lines/separatsiya-02',productTitle:'Сепарация 02',
+ product:'/catalog/lines/separatsiya-02',productTitle:dryLineNames['separatsiya-02'].title,
  caption:'Техническое описание линии',
 }]));
 
@@ -123,5 +124,5 @@ export const lineQuality=[
  ['Влажность продукта','Влага частично отделяется механически. Выходная влажность в ТО не нормирована; до 30% — показатель входного сырья.','Фактическая влажность готовой партии.'],
  ['Сохранение целевой плёнки','В ТО указаны технологические потери 3–5%. Показатель учитывают отдельно от удаляемой массы загрязнений.','Массовый баланс и доля полезной плёнки в отделённых материалах.'],
  ['Полимерный состав и однородность','Раздельный отбор по согласованным признакам позволяет формировать более ценные партии.','Состав полимеров: цвет и прозрачность сами по себе его не подтверждают.'],
- ['Тюк и товарная партия','Автоматическая увязка; ориентировочно 700 кг на тюк. Масса и плотность зависят от фракции и настроек пресса.','Масса, плотность, увязка, маркировка и раздельное хранение.'],
+ ['Тюк и отгрузочная партия','Автоматическая увязка; ориентировочно 700 кг на тюк. Масса и плотность зависят от фракции и настроек пресса.','Масса, плотность, увязка, маркировка и раздельное хранение.'],
 ];

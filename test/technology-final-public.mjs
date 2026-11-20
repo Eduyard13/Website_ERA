@@ -83,18 +83,31 @@ try{
    overflow:document.documentElement.scrollWidth>innerWidth,
    broken:elements('img[src]').filter(i=>!i.complete||!i.naturalWidth||!i.alt).map(i=>i.src),
    quality:root.querySelector('#granule-quality').textContent,
+   disclosures:elements('#applications details,#granule-quality details,#discuss details').length,
+   scale:elements('#granulation .tf-scale-grid article').length,
+   water:elements('#hot-washing .tf-water-loop > li').length,
   };
  })()`);
  const load=async fragment=>{
   await command('Page.navigate',{url:url+(fragment||'')});
-  await wait(`document.readyState==='complete'&&document.querySelector('[data-balance-range]:not([disabled])')&&document.querySelector('.page-progress-rail a')`);
+  await wait(`document.readyState==='complete'&&document.querySelector('[data-tf-scenario="50"]:not([disabled])')&&document.querySelector('.page-progress-rail a')`);
  };
- const balance=()=>evaluate(`(()=>{const r=document.querySelector('[data-material-balance]');return {polymer:r.querySelector('[data-balance-polymer]').textContent,inclusions:r.querySelector('[data-balance-inclusions]').textContent,value:r.querySelector('[data-balance-range]').value,min:r.querySelector('[data-balance-range]').min,max:r.querySelector('[data-balance-range]').max,step:r.querySelector('[data-balance-range]').step,overflow:r.scrollWidth>r.clientWidth+2}})()`);
+ const balance=()=>evaluate(`(()=>{
+  const root=document.querySelector('#material-balance');
+  const text=selector=>root.querySelector(selector).textContent;
+  return {
+   polymer:text('[data-tf-polymer]'),inclusions:text('[data-tf-inclusions]'),
+   input:text('.tf-balance-input strong'),baseline:text('.tf-baseline > strong'),
+   selected:[...root.querySelectorAll('[aria-pressed="true"]')].map(button=>button.dataset.tfScenario),
+   share:root.querySelector('.tf-balance-bar').style.getPropertyValue('--polymer'),
+   overflow:root.scrollWidth>root.clientWidth+2,
+  };
+ })()`);
  const amount=text=>Number(text.replace(/\s/g,''));
  const expected=['technology-intro','raw-material','contaminants','solution','dry-separation','hot-washing','granulation','products','granule-quality','applications','control-story','technology-next'];
  await command('Page.enable');await command('Runtime.enable');
  await command('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});
- const widths=[320,360,390,768,1024,1280,1440];
+ const widths=[320,390,768,1024,1440,1920];
  for(const width of widths){
   await command('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:width<768});
   await load();
@@ -102,32 +115,40 @@ try{
   const s=await snapshot();
   assert.deepEqual(s.sections,expected);
   assert.equal(s.h1,1);assert.equal(s.rail,expected.length);assert.equal(s.feedstock,5);assert.equal(s.visibleRows,9);
-  assert.equal(s.outputs,3);assert.equal(s.applications,3);assert.equal(s.washing,2);assert.equal(s.kair,23);
+  assert.equal(s.outputs,3);assert.equal(s.applications,5);assert.equal(s.washing,2);assert.equal(s.kair,23);
+  assert.equal(s.disclosures,0);assert.equal(s.scale,2);assert.equal(s.water,4);
   assert.deepEqual(s.lines,['separatsiya-01','separatsiya-02','separatsiya-03','moyka-plenki']);
   assert.deepEqual(s.renders,['lines/separatsiya-01/catalog-cover.webp','lines/moyka-plenki/catalog-cover-detailed.webp']);
   assert.ok(!s.overflow,'Layout '+width);assert.deepEqual(s.broken,[]);
-  for(const value of ['0,8–1,2','190 °C / 2,16 кг','30–70','ppm','30–70 г/т','0,003–0,007%','1–2%'])assert.ok(s.quality.includes(value),value);
+  for(const value of ['0,8–1,2','190 °C / 2,16 кг','30–70','ppm','30–70 г/т','0,003–0,007%','3–5%'])assert.ok(s.quality.includes(value),value);
   await click('.tf-outline a[href="#products"]');
   await wait(`document.querySelector('.tf-outline a[aria-current="location"]')?.hash==='#products'`);
   await load('#material-balance');
   await wait(`document.querySelector('#material-balance').getClientRects().length>0`);
-  for(const [value,polymer,inclusions] of [[0,1500,0],[20,1200,300],[50,750,750]]){
-   await evaluate(`(()=>{const e=document.querySelector('[data-balance-range]');e.value=${value};e.dispatchEvent(new Event('input',{bubbles:true}));})()`);
-   const b=await balance();assert.equal(amount(b.polymer),polymer);assert.equal(amount(b.inclusions),inclusions);assert.equal(b.min,'0');assert.equal(b.max,'50');assert.equal(b.step,'5');assert.ok(!b.overflow);
+  assert.deepEqual((await balance()).selected,['50']);
+  for(const [value,polymer,inclusions] of [[30,1050,450],[40,900,600],[50,750,750]]){
+   await click(`[data-tf-scenario="${value}"]`);
+   const b=await balance();
+   assert.deepEqual(b.selected,[String(value)]);
+   assert.equal(amount(b.polymer),polymer);assert.equal(amount(b.inclusions),inclusions);
+   assert.equal(b.share,`${100-value}%`);assert.ok(!b.overflow);
+   assert.equal(amount(b.input.replace('кг/ч','')),1500);assert.equal(amount(b.baseline.replace('кг/ч','')),750);
   }
  }
- await evaluate(`document.querySelector('[data-balance-range]').focus()`);
- await command('Input.dispatchKeyEvent',{type:'keyDown',key:'ArrowLeft',code:'ArrowLeft',windowsVirtualKeyCode:37});
- await command('Input.dispatchKeyEvent',{type:'keyUp',key:'ArrowLeft',code:'ArrowLeft',windowsVirtualKeyCode:37});
- const keyboard=await balance();assert.equal(keyboard.value,'45');assert.equal(amount(keyboard.polymer),825);
+ await evaluate(`document.querySelector('[data-tf-scenario="30"]').focus()`);
+ await command('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',text:'\r',unmodifiedText:'\r',windowsVirtualKeyCode:13});
+ await command('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
+ await wait(`document.querySelector('[data-tf-scenario="30"]').getAttribute('aria-pressed')==='true'`);
+ const keyboard=await balance();assert.deepEqual(keyboard.selected,['30']);assert.equal(amount(keyboard.polymer),1050);
  for(const fragment of ['#control-title','#about-era','#granule-quality']){
   await load(fragment);await wait(`(()=>{const e=document.querySelector(${JSON.stringify(fragment)});const r=e.getBoundingClientRect();return e.getClientRects().length>0&&r.top>=0&&r.top<innerHeight;})()`);
  }
  assert.equal(await evaluate(`document.querySelector('[data-kair]').dataset.autoplay`),'false');
- await click('#discuss [data-project-request]');await wait(`document.querySelector('#project-request').open`);
- await evaluate(`document.querySelector('#project-request').close()`);
+ const contact=new URL(await evaluate(`document.querySelector('#discuss [data-project-request]').href`));
+ assert.ok(contact.pathname.endsWith('/contacts')&&contact.hash==='#project-form');
+ assert.equal(contact.searchParams.get('topic'),'Технология переработки плёночного сырья');
  assert.deepEqual(errors,[],'Technology console errors');
- console.log(`::notice title=Published technology verified::12 sections, 9 contamination cards, 4 catalogue links, 3 products, 23 KAIR photos, ${images.length} image SHA-256 checks including the original hero PNG, ${widths.length} widths, sticky navigation, balance, anchors and the request passed. ${url}`);
+ console.log(`::notice title=Published technology verified::12 sections, 9 contamination cards, 4 catalogue links, 3 products, 5 applications, 23 KAIR photos, ${images.length} image SHA-256 checks including the original hero PNG, ${widths.length} widths, sticky navigation, balance and anchors passed. ${url}`);
 
  const homeSections=['hero','problem','feedstocks','process','strengths','products','market','business','integration','equipment','kair','contact'];
  const mapSelection=()=>evaluate(`(()=>{

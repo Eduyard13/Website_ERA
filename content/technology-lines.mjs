@@ -1,9 +1,11 @@
+import {dryLineNames} from './line-names.mjs';
+
 // Source: the owner's three-page dry separation overview uploaded 06.11.2026.
 // The five bunkers, sorting platform and automatic press identify line 02.
 export const drySeparationOverview={
  linePath:'/catalog/lines/separatsiya-02',
  number:'02',
- title:'Линия сухой сепарации плёнок и пакетов',
+ title:dryLineNames['separatsiya-02'].title,
  subtitle:'С сортировкой и автоматическим прессом',
  description:'Очищает полигонные, сельскохозяйственные и упаковочные плёнки от песка, грунта, камней, стекла, металла и растительных остатков.',
  features:['Без воды','Управление КАИР на базе Siemens'],
@@ -21,7 +23,7 @@ export const drySeparationOverview={
  ],
  output:'Очищенная плёнка в раздельных тюках — для продажи переработчикам или собственной горячей мойки.',
  document:{
-  title:'Визитка линии сухой сепарации плёнок и пакетов',
+  title:'Обзор комплектации PRO',
   file:'brochures/era-separatsiya-02-overview.pdf',
   pages:3,bytes:4022808,
   sha256:'80876c22af16480aafa298b7a0630b26c2a88a9341d577867300a49e7b58a068',
