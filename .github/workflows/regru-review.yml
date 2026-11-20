@@ -1,0 +1,118 @@
+name: Prepare ERA 0.47.0 downloads
+
+on:
+  push:
+    branches: [deploy/regru]
+    paths: [.github/workflows/regru-review.yml]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: regru-0.47.0-review
+  cancel-in-progress: false
+
+jobs:
+  package:
+    if: github.repository == 'Eduyard13/Website_ERA'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      BUILD_REF: 6e2dff96cd0d393033d65d6777a3ca68026e73e8
+      CBR_REF: 25fab69e4f4d4c2de77e22fea8b76086978b0c84
+      RELEASE_TAG: regru-0.47.0-review
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.BUILD_REF }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.19.0'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build the Reg.ru release with the recorded CBR snapshot
+        env:
+          DEPLOY_TARGET: regru
+          PREVIEW_MODE: '0'
+          BASE_PATH: ''
+          SITE_URL: https://era-cycle.ru
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$CBR_REF"
+          git show "$CBR_REF:cbr.json" > "$RUNNER_TEMP/era-cbr.json"
+          export CBR_SEED_FILE="$RUNNER_TEMP/era-cbr.json"
+          npm ci --omit=optional
+          npm run build
+      - name: Recreate and verify the two reviewed ZIP archives
+        run: |
+          set -euo pipefail
+          # Match the zlib version used for the recorded release checksums.
+          curl -fsSL --retry 2 https://codeload.github.com/madler/zlib/tar.gz/refs/tags/v1.3.2 -o "$RUNNER_TEMP/era-zlib.tar.gz"
+          printf '%s  %s\n' b99a0b86c0ba9360ec7e78c4f1e43b1cbdf1e6936c8fa0f6835c0cd694a495a1 "$RUNNER_TEMP/era-zlib.tar.gz" | sha256sum -c -
+          mkdir "$RUNNER_TEMP/era-zlib-src"
+          tar -xzf "$RUNNER_TEMP/era-zlib.tar.gz" --strip-components=1 -C "$RUNNER_TEMP/era-zlib-src"
+          (
+            cd "$RUNNER_TEMP/era-zlib-src"
+            ./configure --shared --prefix="$RUNNER_TEMP/era-zlib"
+            make -j2
+            make install
+          )
+          export LD_LIBRARY_PATH="$RUNNER_TEMP/era-zlib/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+          python scripts/package-regru.py --output "$RUNNER_TEMP/era-downloads"
+          cp docs/ERA_REG_RU_DEPLOY_STEPS.md docs/REG_RU_HTACCESS_RECOMMENDED.md docs/ERA_PERSONAL_DATA_TEMPLATE.md docs/ERA_REG_RU_RELEASE_MANIFEST.md "$RUNNER_TEMP/era-downloads/"
+          cd "$RUNNER_TEMP/era-downloads"
+          cat > SHA256SUMS <<'SUMS'
+          df40a87116f9e17791bb66876e1d7ec19dba932b0f36d0de08f954043e701e27  ERA_SITE_PUBLIC.zip
+          8e062ed80fa1919b48342a26825e8c7865cb752944560be2755e6d0b6fa2f417  ERA_SERVER_PRIVATE.zip
+          SUMS
+          sha256sum -c SHA256SUMS
+      - name: Make the reviewed files available for download
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        working-directory: ${{ runner.temp }}/era-downloads
+        run: |
+          set -euo pipefail
+          if ! gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release create "$RELEASE_TAG" \
+              ERA_SITE_PUBLIC.zip ERA_SERVER_PRIVATE.zip SHA256SUMS \
+              ERA_REG_RU_DEPLOY_STEPS.md REG_RU_HTACCESS_RECOMMENDED.md ERA_PERSONAL_DATA_TEMPLATE.md ERA_REG_RU_RELEASE_MANIFEST.md \
+              --target "$BUILD_REF" --prerelease --latest=false \
+              --title 'ЭРА 0.47.0 для проверки перед размещением на Рег.ру' \
+              --notes 'Публичный сайт, приватные PHP-компоненты, контрольные суммы и инструкция для ispmanager, SMTP и CRON. Проверьте архивы перед загрузкой на хостинг.'
+          fi
+          gh api "repos/$GH_REPO/releases/tags/$RELEASE_TAG" > release.json
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          release = json.loads(Path('release.json').read_text())
+          assert release['prerelease'] and not release['draft']
+          assets = {item['name']: item for item in release['assets']}
+          for path in [*Path('.').glob('*.zip'), *Path('.').glob('*.md'), Path('SHA256SUMS')]:
+              with path.open('rb') as stream:
+                  digest = hashlib.file_digest(stream, 'sha256').hexdigest()
+              item = assets[path.name]
+              assert item['size'] == path.stat().st_size
+              assert item['digest'] == 'sha256:' + digest
+              print(item['browser_download_url'])
+          PY
+      - name: Verify the current GitHub Pages release
+        run: |
+          set -euo pipefail
+          main_commit=$(git ls-remote origin refs/heads/main | cut -f1)
+          printf 'main %s\n' "$main_commit"
+          curl -fsSL --retry 2 --max-time 20 "https://eduyard13.github.io/Website_ERA/technology/?regru-check=$GITHUB_RUN_ID" -o "$RUNNER_TEMP/era-pages.html"
+          python - <<'PY'
+          import os
+          import re
+          from pathlib import Path
+
+          page = (Path(os.environ['RUNNER_TEMP']) / 'era-pages.html').read_text()
+          release = re.search(r'technology-final\.css\?v=([A-Za-z0-9.]+)', page)
+          assert release and release.group(1) == '0.46.0'
+          print('GitHub Pages returned the existing 0.46.0 release over HTTPS.')
+          PY
