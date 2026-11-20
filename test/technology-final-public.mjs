@@ -14,7 +14,8 @@ const response=await fetch(url,{cache:'no-store'});
 assert.equal(response.status,200,'Published technology HTTP status');
 const html=await response.text();
 assert.ok(html.includes('data-technology-final'),'The new technology page is published');
-assert.match(html,/<h1>Из плёнки<br>\s*в плёнку<span>\.<\/span><\/h1>/);
+assert.match(html,/<h1 id="technology-hero-heading">Загрязнение не определяет будущее полимера\.<\/h1>/);
+assert.match(html,/<p class="tf-hero-hook">Его будущее определяет технология\.<\/p>/);
 assert.equal((html.match(/data-feedstock-type=/g)||[]).length,5);
 assert.equal((html.match(/data-contaminant-row=/g)||[]).length,9);
 assert.equal((html.match(/data-technology-application=/g)||[]).length,5);
@@ -26,11 +27,14 @@ for(const path of ['catalog/lines/separatsiya-01/','catalog/lines/separatsiya-02
 }
 const images=[{"file":"technology/applications/film.webp","sha256":"4b504ccd3188e58ab77521a632a02a0d1bc9c4484c02b799957a340a63712c32"},{"file":"technology/applications/film-600.webp","sha256":"8fc5e1d45d7533bd5689e694d6f96fdd20a4407b428aa33156d75fb51d24cdee"},{"file":"technology/applications/pipes.webp","sha256":"83438f5baf4826151152c1ea0fc43461e8755405a52ecf1d5a29290605a4e538"},{"file":"technology/applications/pipes-600.webp","sha256":"8c50b55b96a3c3a10b19b660e0915709102f46bb3a33d34e3f91ff1bdced31d5"},{"file":"technology/applications/containers.webp","sha256":"551e1a6bbfb08312524870f817ad9ebcead9be4c92e2f49d437066380473778b"},{"file":"technology/applications/containers-600.webp","sha256":"18cee34f8d927f83d9bb1e8ef99641b9dbd7c736eeb306e3c1c0fce59cb1c9e8"},{"file":"technology/applications/pyrolysis.webp","sha256":"5b20a154e34b675646d5bb9d05dad2deea5c18c82d50ca3888836850f7ea8326"},{"file":"technology/applications/pyrolysis-600.webp","sha256":"1f3d17853387481eeb72111ce310ed094797f6181f2f7a84583aafc73237cb8d"},{"file":"technology/applications/energy.webp","sha256":"c837e6fef53a3a4f4cbdc4943695fd7923b448259399512eee2d42f494c535d2"},{"file":"technology/applications/energy-600.webp","sha256":"72d086fbdc10b26a63fede3ebb5047ae01253070093db591afaeaef6a83dfa3d"}];
 images.push(
+ {file:'technology/hero/technology-hero-transformation.png',sha256:'e480336ae73a5b94365806d123bdb374c3a39639cce34b514bd73336f483b116'},
+ {file:'technology/hero/technology-hero-transformation.webp',sha256:'aefada54cd92516daa8cd2b6b51b5c7bc4be8bed82158cc583d4d1c06f8434fc'},
+ {file:'technology/hero/technology-hero-transformation-800.webp',sha256:'0e249a4f51cfe93f8ef78bee7fc3df6e7e59d210da01a33d71a8dcf9fb7c28e4'},
  {file:'lines/separatsiya-01/catalog-cover.webp',sha256:'6c287c05cb55dcf7f05153e94ad18ff02c791d19c9e48de5a878d00bc3ae427b'},
  {file:'lines/moyka-plenki/catalog-cover-detailed.webp',sha256:'93ee722f324e163ab3cb5eac4df3546083393e0a9e7a080a3e7ff462769a6a80'},
 );
 for(const image of images){
- const r=await fetch(base+'/assets/'+image.file,{cache:'no-store'});assert.equal(r.status,200,image.file);assert.equal(r.headers.get('content-type'),'image/webp');
+ const r=await fetch(base+'/assets/'+image.file,{cache:'no-store'});assert.equal(r.status,200,image.file);assert.equal(r.headers.get('content-type'),image.file.endsWith('.png')?'image/png':'image/webp',image.file);
  const bytes=Buffer.from(await r.arrayBuffer());assert.equal(createHash('sha256').update(bytes).digest('hex'),image.sha256,image.file+' SHA-256');
 }
 const binary=process.env.ERA_CHROME_PATH||['/usr/bin/google-chrome','/usr/bin/chromium','/opt/google/chrome/chrome'].find(existsSync);
@@ -123,7 +127,7 @@ try{
  await click('#discuss [data-project-request]');await wait(`document.querySelector('#project-request').open`);
  await evaluate(`document.querySelector('#project-request').close()`);
  assert.deepEqual(errors,[],'Technology console errors');
- console.log(`::notice title=Published technology verified::12 sections, 9 contamination cards, 4 catalogue links, 3 products, 23 KAIR photos, 12 approved WebP SHA-256 checks, ${widths.length} widths, sticky navigation, balance, anchors and the request passed. ${url}`);
+ console.log(`::notice title=Published technology verified::12 sections, 9 contamination cards, 4 catalogue links, 3 products, 23 KAIR photos, ${images.length} image SHA-256 checks including the original hero PNG, ${widths.length} widths, sticky navigation, balance, anchors and the request passed. ${url}`);
 
  const homeSections=['hero','problem','feedstocks','process','strengths','products','market','business','integration','equipment','kair','contact'];
  const mapSelection=()=>evaluate(`(()=>{

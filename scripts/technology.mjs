@@ -23,11 +23,11 @@ const findNode=slug=>nodes.find(node=>node.slug===slug);
 const dimensions=file=>imageSize(new URL('../public/assets/'+file,import.meta.url));
 const materialSizes='(max-width:599px) calc(100vw - 40px), (max-width:999px) 46vw, 416px';
 
-function photo({file,small,alt},{sizes=materialSizes,eager=false,priority=false}={}){
+function photo({file,small,alt},{sizes=materialSizes}={}){
  const {width,height}=dimensions(file);
  const smallWidth=small&&small!==file?dimensions(small).width:0;
  const srcset=smallWidth&&smallWidth<width?` srcset="/assets/${escape(small)} ${smallWidth}w, /assets/${escape(file)} ${width}w" sizes="${escape(sizes)}"`:'';
- return `<img src="/assets/${escape(file)}"${srcset} width="${width}" height="${height}" alt="${escape(alt)}"${eager?'':' loading="lazy"'}${priority?' fetchpriority="high"':''} decoding="async">`;
+ return `<img src="/assets/${escape(file)}"${srcset} width="${width}" height="${height}" alt="${escape(alt)}" loading="lazy" decoding="async">`;
 }
 
 function mediaImage(media){
@@ -48,26 +48,24 @@ function disclosure(title,body){
 }
 
 function hero(){
- const raw={file:'presentation/raw-film.webp',small:'presentation/raw-film-480.webp',alt:'Спрессованное загрязнённое плёночное сырьё'};
- const granule={file:'presentation/granules.webp',alt:'Образцы вторичной полиэтиленовой гранулы'};
- return `<section class="tf-hero tf-dark era-indigo-surface" id="technology-intro" data-page-progress-label="Технология переработки">
-  <div class="tf-container tf-hero-grid">
+ const image='/assets/technology/hero/technology-hero-transformation';
+ return `<section class="tf-hero tf-dark era-indigo-surface" id="technology-intro" aria-labelledby="technology-hero-heading" data-page-progress-label="Технология переработки">
+  <div class="tf-container">
    <div class="tf-hero-copy">
     <p class="eyebrow">ЭРА / ТЕХНОЛОГИЯ ЗАМКНУТОГО ЦИКЛА</p>
-    <h1>Из плёнки<br> в плёнку<span>.</span></h1>
-    <p class="tf-hero-subtitle">Технология полного цикла переработки загрязнённых полимерных плёнок и пакетов.</p>
-    <p>От трудноочищаемых плёночных отходов — к очищенному полимеру, готовому вернуться в производство. Ключ к результату — последовательное удаление загрязнений до гранулирования.</p>
+    <h1 id="technology-hero-heading">Загрязнение не определяет будущее полимера.</h1>
+    <p class="tf-hero-hook">Его будущее определяет технология.</p>
+    <p class="tf-hero-lead">Последовательная сухая сепарация и глубокая горячая мойка позволяют преобразовывать невостребованные плёночные отходы в высококачественное полимерное сырьё, способное вновь использоваться в производстве плёнок и других изделий.</p>
     <a class="button tf-gold-button" href="#raw-material">Как работает технология <span aria-hidden="true">↓</span></a>
    </div>
-   <figure class="tf-hero-visual">
-    <div class="tf-hero-samples">
-     <div>${photo(raw,{sizes:'(max-width:599px) 43vw, 286px',eager:true,priority:true})}<span>Плёночное сырьё</span></div>
-     ${stageArrow}
-     <div>${photo(granule,{eager:true})}<span>Вторичная ПЭ-гранула</span></div>
-    </div>
-    <figcaption><a href="#dry-separation">Сухая сепарация</a>${stageArrow}<a href="#hot-washing">Горячая мойка</a>${stageArrow}<a href="#granulation">Гранулирование</a>${stageArrow}<a href="#applications">Новые изделия</a></figcaption>
-   </figure>
   </div>
+  <picture class="tf-hero-art">
+   <source type="image/webp" srcset="${image}-800.webp 800w, ${image}.webp 1536w"
+    sizes="(max-width:810px) 100vw, (max-width:1023px) 810px, (max-width:1800px) 60vw, 1080px">
+   <img src="${image}.png" width="1536" height="1024"
+    alt="Загрязнённые пакеты, очищенные фрагменты плёнки и светлая полимерная гранула"
+    fetchpriority="high" decoding="async">
+  </picture>
  </section>`;
 }
 

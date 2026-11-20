@@ -106,7 +106,12 @@ with sync_playwright() as p:
         load(page)
         assert page.locator('.tf-page>section').evaluate_all('sections => sections.map(s => s.id)') == sections
         assert page.locator('.page-progress-rail a').count() == len(sections)
-        expect(page.locator('main h1')).to_have_text('Из плёнки в плёнку.')
+        expect(page.locator('main h1')).to_have_text('Загрязнение не определяет будущее полимера.')
+        hero = page.locator('#technology-intro')
+        expect(hero.locator('.tf-hero-hook')).to_have_text('Его будущее определяет технология.')
+        expect(hero.locator('figure, figcaption')).to_have_count(0)
+        hero.get_by_role('link', name='Как работает технология').click()
+        anchor_visible(page, '#raw-material')
         expect(page.locator('[data-feedstock-type]')).to_have_count(5)
         expect(page.locator('[data-contaminant-row]:visible')).to_have_count(9)
         expect(page.locator('[data-technology-output]')).to_have_count(3)
