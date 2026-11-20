@@ -1,7 +1,6 @@
 """Request UI and exact multipart payload; email service responses are mocked, not delivery."""
 from pathlib import Path
 from playwright.sync_api import sync_playwright
-from urllib.parse import urlparse
 from email.parser import BytesParser
 from email import policy
 import json,os,io,zipfile
@@ -9,7 +8,7 @@ import json,os,io,zipfile
 base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3024/Website_ERA').rstrip('/')
 out=Path(os.environ.get('ERA_SCREENSHOT_DIR','/tmp/era-navigation-request-025'));out.mkdir(parents=True,exist_ok=True)
 repo=Path(__file__).resolve().parents[1]
-endpoint='https://formsubmit.co/edkom.office@mail.ru'
+endpoint=base+'/api/request.php'
 labels=['О проекте','Технология','Оборудование','Экономика','КАИР']
 photo=(repo/'public/assets/presentation/kair.webp').read_bytes()
 video=b'\x00\x00\x00\x18ftypmp42'+bytes(range(256))*100
@@ -78,23 +77,22 @@ with sync_playwright() as p:
   assert form.locator('[data-request-error]').is_hidden()
   if width in [390,1440]:
    page.screenshot(path=str(out/f'request-modal-{width}.png'))
+  form.locator('[name="Согласие"]').check()
   form.locator('[type=submit]').click()
   page.wait_for_url(base+'/contacts/sent/')
   fields=posts[-1]['fields'];attachments=posts[-1]['attachments']
   for key in ['Имя','Компания','email','Телефон','Задача','Ссылки','Страница обращения']:assert fields.get(key),(width,key,fields)
   assert fields['email']=='client@example.com'
   assert fields['_honey']==''
-  assert fields['_template']=='table';assert fields['_subject']=='Заявка с сайта ЭРА'
-  assert fields['_next']=='https://eduyard13.github.io'+urlparse(base).path+'/contacts/sent/'
+  assert fields['Согласие']=='1'
   assert len(attachments)==1
-  assert attachments[0]['field']=='attachment'
+  assert attachments[0]['field']=='attachment[]'
   assert attachments[0]['filename']=='Материалы_ЭРА.zip'
   with zipfile.ZipFile(io.BytesIO(attachments[0]['bytes'])) as archive:
    assert archive.namelist()==['сырьё.webp','работа.mp4']
    assert archive.read('сырьё.webp')==photo
    assert archive.read('работа.mp4')==video
    assert archive.testzip() is None
-  assert 'сырьё.webp' in fields['Вложения'] and 'работа.mp4' in fields['Вложения']
   assert page.locator('h1').inner_text()=='Спасибо за обращение.'
   assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
   print('Request: header, mobile menu, focus, validation, multipart bytes and return:',width,'OK',flush=True)
@@ -138,9 +136,9 @@ with sync_playwright() as p:
  context=browser.new_context(java_script_enabled=False,viewport={'width':1440,'height':1000})
  page=context.new_page();page.goto(base+'/')
  page.locator('.header-cta').click();assert page.url==base+'/contacts#project-form'
- assert page.locator('#project-form form').get_attribute('action')==endpoint
+ assert page.locator('#project-form form').evaluate('(form) => form.action')==endpoint
  assert page.locator('#project-form [name="email"]').is_visible()
  context.close()
  assert not errors,errors;assert not failed,failed
- (out/'request-results.json').write_text(json.dumps({'layouts':results,'errors':errors,'deliveryVerified':False,'activation':'recipient confirmation required','failedLocalResponses':failed},ensure_ascii=False,indent=2)+'\n')
+ (out/'request-results.json').write_text(json.dumps({'layouts':results,'errors':errors,'deliveryVerified':False,'activation':'production SMTP and privacy configuration required','failedLocalResponses':failed},ensure_ascii=False,indent=2)+'\n')
  browser.close()

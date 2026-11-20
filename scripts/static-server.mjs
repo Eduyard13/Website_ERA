@@ -3,7 +3,7 @@ import {createReadStream} from 'node:fs';
 import {readFile,stat} from 'node:fs/promises';
 import {resolve,extname,sep} from 'node:path';
 
-const types={'.html':'text/html; charset=utf-8','.xml':'application/xml; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.wasm':'application/wasm','.woff2':'font/woff2','.webp':'image/webp','.png':'image/png','.svg':'image/svg+xml','.ico':'image/x-icon','.txt':'text/plain; charset=utf-8','.pdf':'application/pdf','.mp4':'video/mp4','.webm':'video/webm','.vtt':'text/vtt; charset=utf-8'};
+const types={'.html':'text/html; charset=utf-8','.xml':'application/xml; charset=utf-8','.json':'application/json; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.wasm':'application/wasm','.woff2':'font/woff2','.webp':'image/webp','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.gif':'image/gif','.avif':'image/avif','.svg':'image/svg+xml','.ico':'image/x-icon','.txt':'text/plain; charset=utf-8','.pdf':'application/pdf','.mp4':'video/mp4','.webm':'video/webm','.vtt':'text/vtt; charset=utf-8'};
 function byteRange(header,size){
  const match=/^bytes=(\d*)-(\d*)$/.exec(header);
  if(!match||(!match[1]&&!match[2])||!size)return null;
@@ -32,7 +32,7 @@ export function createStaticServer({root,basePath=''}){
    if(file!==root&&!file.startsWith(root+sep)){res.writeHead(403);return res.end();}
    let info=await stat(file);
    if(info.isDirectory()){file+='/index.html';info=await stat(file);}
-   if(!info.isFile())throw new Error('Not found');
+   if(!info.isFile()||extname(file)==='.php')throw new Error('Not found');
    const headers={'Content-Type':types[extname(file)]||'application/octet-stream','Content-Length':info.size,'X-Content-Type-Options':'nosniff','Accept-Ranges':'bytes'};
    let range;
    if(req.headers.range&&req.method==='GET'){

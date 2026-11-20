@@ -6,8 +6,7 @@ const states=new Map();
 let opener=null;
 const cleanTopic=value=>String(value||'').replace(/[\u0000-\u001f\u007f]/g,' ').trim().slice(0,200);
 const sizeLabel=bytes=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(bytes/1_000_000)+' МБ';
-// Keep the gateway payload to a single attachment field. Bundle several originals
-// into a standard, uncompressed UTF-8 ZIP, keeping their bytes intact.
+// Bundle several originals into a standard, uncompressed UTF-8 ZIP.
 const encoder=new TextEncoder();
 const crcTable=Uint32Array.from({length:256},(_,value)=>{let crc=value;for(let bit=0;bit<8;bit++)crc=(crc&1)?0xedb88320^(crc>>>1):crc>>>1;return crc>>>0;});
 const crc32=bytes=>{let crc=0xffffffff;for(const byte of bytes)crc=crcTable[(crc^byte)&255]^(crc>>>8);return (crc^0xffffffff)>>>0;};
@@ -46,6 +45,9 @@ for(const form of forms){
  const submit=form.querySelector('[data-request-submit]');
  const drop=form.querySelector('[data-request-drop]');
  const limit=Number(form.dataset.maxBytes);
+ const maxFiles=Number(form.dataset.maxFiles);
+ const extensions=new Set(input.accept.split(','));
+ const preview=form.hasAttribute('data-request-preview');
  const state={files:[],sending:false,submitHTML:submit.innerHTML};states.set(form,state);input.multiple=true;input.tabIndex=-1;
  const pick=form.querySelector('[data-request-pick]');pick.hidden=false;pick.addEventListener('click',()=>input.click());
  const showError=text=>{error.textContent=text;error.hidden=!text;};
@@ -65,10 +67,11 @@ for(const form of forms){
  const addFiles=files=>{
   const all=[...state.files];
   for(const file of files){
-   const supported=/^(image\/|video\/|application\/pdf$)/i.test(file.type)||/\.(jpe?g|png|gif|webp|avif|heic|heif|bmp|tiff?|svg|mp4|mov|webm|avi|mkv|m4v|mpe?g|3gp|pdf)$/i.test(file.name);
+   const supported=extensions.has(file.name.match(/\.[^.]+$/)?.[0].toLowerCase());
    if(!supported){showError('Для вложений выберите фото, видео или PDF. Другие материалы можно передать ссылкой.');synchronise();return;}
    if(!all.some(existing=>existing.name===file.name&&existing.size===file.size&&existing.lastModified===file.lastModified))all.push(file);
   }
+  if(all.length>maxFiles){showError(`Можно приложить до ${maxFiles} файлов. Остальные материалы передайте ссылкой.`);synchronise();return;}
   if(transferSize(all)>limit){showError('Общий размер вложений превышает 5 МБ. Уберите крупные файлы или добавьте ссылку на них.');synchronise();return;}
   state.files=all;synchronise();showError('');
  };
@@ -78,16 +81,15 @@ for(const form of forms){
  drop.addEventListener('drop',event=>{event.preventDefault();drop.classList.remove('is-dragging');addFiles([...event.dataTransfer.files]);});
  form.addEventListener('submit',async event=>{
   event.preventDefault();
-  if(state.sending){event.preventDefault();return;}
+  if(preview||state.sending)return;
   const message=form.querySelector('[name="Задача"]');
   if(!message.value.trim()){event.preventDefault();showError('Опишите, пожалуйста, вашу задачу.');message.focus();return;}
   const files=[...input.files];
+  if(files.length>maxFiles){showError(`Можно приложить до ${maxFiles} файлов.`);error.focus();return;}
   if(transferSize(files)>limit){showError('Общий размер вложений превышает 5 МБ. Добавьте крупные материалы ссылкой.');error.focus();return;}
   const topic=cleanTopic(form.querySelector('[data-request-topic]').value);
   form.querySelector('[data-request-topic]').value=topic;
-  form.querySelector('[name="_subject"]').value='Заявка с сайта ЭРА'+(topic?' — '+topic.slice(0,120):'');
-  form.querySelector('[data-request-source]').value=location.origin+location.pathname;
-  form.querySelector('[data-request-manifest]').value=files.map(file=>file.name+' — '+sizeLabel(file.size)).join('\n');
+  form.querySelector('[data-request-source]').value||=location.pathname;
   showError('');state.sending=true;submit.disabled=true;submit.textContent='Отправляем…';form.setAttribute('aria-busy','true');
   try{
    if(files.length>1){const transfer=new DataTransfer();transfer.items.add(await bundleFiles(files));input.files=transfer.files;}
@@ -96,15 +98,13 @@ for(const form of forms){
    state.sending=false;submit.disabled=false;submit.innerHTML=state.submitHTML;form.removeAttribute('aria-busy');synchronise();
    showError('Не удалось подготовить вложения. Выберите файлы ещё раз или передайте их ссылкой.');error.focus();
   }
-  // Native multipart POST preserves binary files and the provider's spam check.
-  // Success is shown only after the provider returns to its configured next URL.
  });
  form.dataset.requestReady='true';
 }
 function setContext(form,topic,source){
  const value=cleanTopic(topic);
  if(value)form.querySelector('[data-request-topic]').value=value;
- form.querySelector('[data-request-source]').value=source||location.origin+location.pathname;
+ form.querySelector('[data-request-source]').value=source||location.pathname;
 }
 function restore(){
  if(dialog?.open)return;
@@ -137,16 +137,16 @@ document.addEventListener('click',event=>{
  if(url.origin!==location.origin)return;
  const form=dialog?.querySelector('[data-request-form]')||document.querySelector('[data-request-form]');
  if(!form)return;
- event.preventDefault();setContext(form,url.searchParams.get('topic'),location.origin+location.pathname);
+ event.preventDefault();setContext(form,url.searchParams.get('topic'),location.pathname);
  if(dialog){
   opener=link;if(!dialog.open){document.body.style.setProperty('--request-scroll-gap',Math.max(0,innerWidth-document.documentElement.clientWidth)+'px');document.body.classList.add('request-open');dialog.showModal();}
   form.querySelector('[name="Имя"]').focus({preventScroll:true});
  }else{form.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});form.querySelector('[name="Имя"]').focus({preventScroll:true});}
 });
 const inline=document.querySelector('#project-form [data-request-form]');
-if(inline)setContext(inline,new URL(location.href).searchParams.get('topic'));
+if(inline){const params=new URL(location.href).searchParams;setContext(inline,params.get('topic'),params.get('source'));}
 window.addEventListener('pageshow',()=>{
- for(const [form,state] of states){state.sending=false;form.removeAttribute('aria-busy');const button=form.querySelector('[data-request-submit]');button.disabled=false;button.innerHTML=state.submitHTML;state.synchronise();}
+ for(const [form,state] of states){state.sending=false;form.removeAttribute('aria-busy');const button=form.querySelector('[data-request-submit]');button.disabled=form.hasAttribute('data-request-preview');button.innerHTML=state.submitHTML;state.synchronise();}
  if(dialog&&!dialog.open)document.body.classList.remove('request-open');
 });
 })();

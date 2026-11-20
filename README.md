@@ -12,9 +12,9 @@
 
 Технология: [источники, состав изменений и проверки](docs/technology-lines-0.26.md).
 
-Галерея сохранена в «Все разделы», подвале и контекстных ссылках. Обращения открывают общую форму с контактами, задачей, ссылками и вложениями; контекст оборудования сохраняется. Подготовлена отправка на edkom.office@mail.ru через FormSubmit; запуск доставки требует подтверждения получателя в его почте.
+Галерея доступна в «Все разделы», подвале и контекстных ссылках. Общая форма передаёт контакты, задачу, ссылки, вложения и контекст выбранного оборудования на PHP-обработчик Рег.ру.
 
-Заявки: [устройство формы, активация почты и проверки](docs/project-request-0.25.md).
+Заявки и публикация описаны в [инструкции для ispmanager](docs/ERA_REG_RU_DEPLOY_STEPS.md).
 
 КАИР: [структура страницы, источники функций, план графики и проверки](docs/kair-system-0.24.md).
 
@@ -198,9 +198,9 @@ USD, EUR и CNY показаны в общем подвале с двумя зн
 
 ## Текущие ограничения
 
-Контакты сохранены по явному выбору заказчика: edkom.office@mail.ru и +7 903 281-35-35. Кнопки обращения открывают общую форму; доставка через FormSubmit требует разовой активации получателя. CMS, CRM и аналитика не подключены. Сайт не управляет промышленным оборудованием. Новости и блог ожидают материалов. Старый URL реквизитов в макете направляет к контактам.
+Публичные контакты ЭРА — info@era-cycle.ru и +7 903 281-35-35. На Рег.ру форма отправляет заявки через SMTP с адреса noreply@era-cycle.ru после настройки закрытого конфига и согласования политики обработки персональных данных.
 
-Публичные страницы доступны для индексации. Служебные маршруты и совместимые перенаправления исключены из карты сайта.
+Публичные страницы на era-cycle.ru доступны для индексации. GitHub Pages собирается с `noindex` и ссылкой на основной домен в формах.
 
 ## Навигация — версия 0.10.0
 
@@ -227,16 +227,24 @@ USD, EUR и CNY показаны в общем подвале с двумя зн
 
 ## Сборка для публикации
 
-Используйте Node ≥22.13.
+Используйте Node ≥22.13. Production использует корень `https://era-cycle.ru/`, локальный `/data/cbr.json` и PHP-обработчик `/api/request.php`. GitHub Pages использует `/Website_ERA/`, `noindex`, production canonical и форму в режиме предпросмотра.
 
 ```bash
 npm ci --omit=optional
-PREVIEW_MODE=0 BASE_PATH=/Website_ERA SITE_URL=https://eduyard13.github.io/Website_ERA npm run build
-PREVIEW_MODE=0 BASE_PATH='' SITE_URL="https://${CONFIRMED_DOMAIN}" npm run build
+DEPLOY_TARGET=preview PREVIEW_MODE=1 BASE_PATH=/Website_ERA npm test
+DEPLOY_TARGET=regru PREVIEW_MODE=0 BASE_PATH='' SITE_URL=https://era-cycle.ru npm test
+DEPLOY_TARGET=regru PREVIEW_MODE=0 BASE_PATH='' SITE_URL=https://era-cycle.ru npm run build
+python3 scripts/package-regru.py --output /путь/к/папке/релиза
 ```
 
-Задайте переменную `CONFIRMED_DOMAIN` после подключения домена. Для размещения в подкаталоге укажите его в `BASE_PATH` и в конце `SITE_URL`. Сборка без публичного адреса подходит для локальной проверки. Canonical и sitemap создаются при заданном адресе. GitHub Project Pages размещает их и `robots.txt` под префиксом `/Website_ERA/`. Управление общим `/robots.txt` домена относится к настройкам GitHub.
+Для первоначального JSON можно задать `CBR_SEED_FILE` с путём к проверенному снимку официальных курсов. Без файла виджет показывает статус недоступности до первого успешного запуска CRON. PHP, cURL, OpenSSL и SimpleXML используются на хостинге. Закрытый конфиг и PHPMailer находятся вне `www`.
 
-Загружайте содержимое `dist/`. Настройте HTTPS, переход с HTTP, один вариант имени хоста, каталожные `index.html`, ответ 404 с `404.html` и MIME для JS/MJS, WebP, PDF, видео, шрифтов и WASM. Для версионированных ассетов используйте длительное кеширование, для HTML, robots.txt и sitemap — короткое. Защитите черновую площадку доступом. `PREVIEW_MODE` управляет отправкой формы.
+Локальные серверные проверки на PHP 8.3, Python 3 и OpenSSL. С `ERA_BROWSER=1` также выполняется открытие формы в Chromium без JavaScript.
 
-После подключения домена проверьте HTTPS, коды ответов, canonical и sitemap. Согласуйте направление перехода со старого адреса. Подтвердите домен в Google Search Console и Яндекс Вебмастере, добавьте sitemap и запросите переобход ключевых страниц.
+```bash
+python3 scripts/package-regru.py --vendor-only
+php test/regru-cbr.php
+ERA_BROWSER=1 python3 test/regru-server.py
+```
+
+[Инструкция для ispmanager](docs/ERA_REG_RU_DEPLOY_STEPS.md) · [Правила Apache](docs/REG_RU_HTACCESS_RECOMMENDED.md)

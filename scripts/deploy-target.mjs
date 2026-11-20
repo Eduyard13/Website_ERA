@@ -1,0 +1,13 @@
+export const productionOrigin='https://era-cycle.ru';
+const previewOrigin='https://eduyard13.github.io/Website_ERA';
+export const deployTarget=process.env.DEPLOY_TARGET||'preview';
+if(!['regru','preview'].includes(deployTarget))throw new Error('DEPLOY_TARGET must be regru or preview');
+export const previewMode=deployTarget==='preview';
+export const basePath=(process.env.BASE_PATH||'').replace(/\/$/,'');
+if(basePath&&!/^\/[A-Za-z0-9_-]+(?:\/[A-Za-z0-9_-]+)*$/.test(basePath))throw new Error('Invalid BASE_PATH');
+if(!previewMode&&basePath)throw new Error('Reg.ru production requires a root build');
+if(process.env.PREVIEW_MODE!==undefined&&process.env.PREVIEW_MODE!==(previewMode?'1':'0'))throw new Error('PREVIEW_MODE conflicts with DEPLOY_TARGET');
+const expectedUrl=previewMode?(basePath==='/Website_ERA'?previewOrigin:''):productionOrigin;
+export const siteUrl=process.env.SITE_URL?.replace(/\/$/,'')||expectedUrl;
+if(siteUrl!==expectedUrl)throw new Error('SITE_URL conflicts with DEPLOY_TARGET and BASE_PATH');
+export const canonicalOrigin=productionOrigin;

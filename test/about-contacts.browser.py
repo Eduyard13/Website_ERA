@@ -67,7 +67,7 @@ with sync_playwright() as p:
     assert panel.locator('.contact-messenger:disabled').count()==0
     assert panel.locator('a').first.evaluate('element=>element===document.activeElement')
     assert panel.locator('a[href^="tel:"]').get_attribute('href')=='tel:+79032813535'
-    assert panel.locator('a[href^="mailto:"]').get_attribute('href')=='mailto:edkom.office@mail.ru'
+    assert panel.locator('a[href^="mailto:"]').get_attribute('href')=='mailto:info@era-cycle.ru'
     box=panel.bounding_box();assert box['x']>=0 and box['x']+box['width']<=width and box['y']>=0
     if os.environ.get('ERA_CAPTURE_INTERNAL')=='1' and width in [390,1440]:page.screenshot(path=str(out/f'quick-contact-open-{width}.png'))
     page.keyboard.press('Tab');assert panel.locator('a[href^="mailto:"]').evaluate('element=>element===document.activeElement')

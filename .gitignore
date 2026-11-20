@@ -1,3 +1,10 @@
 dist/
 node_modules/
 *.log
+server/regru/private/config.json
+server/regru/private/state/
+server/regru/private/vendor/
+.env
+.env.*
+ERA_SITE_PUBLIC.zip
+ERA_SERVER_PRIVATE.zip

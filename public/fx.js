@@ -1,6 +1,8 @@
 import {currencyCodes,moscowDay,shortDay,validateRates} from './fx-core.js';
 const bar=document.querySelector('[data-fx-bar]');
 if(bar){
+ const feed=new URL(bar.dataset.fxFeed,location.href);
+ const local=feed.origin===location.origin;
  const key='era-cbr-rates-v1',date=bar.querySelector('[data-fx-date]'),status=bar.querySelector('[data-fx-status]');
  const formatter=new Intl.NumberFormat('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2});
  let current=null,inFlight=false,offline=false,lastDay=moscowDay();
@@ -8,21 +10,22 @@ if(bar){
  function render(){
   if(!current)return;
   const today=moscowDay(),isToday=current.requestedDate===today;
-  bar.dataset.state=!isToday?'stale':offline?'cached':'live';
+  const cached=offline||(local&&Date.now()-Date.parse(current.fetchedAt)>2*60*60*1000);
+  bar.dataset.state=!isToday?'stale':cached?'cached':'live';
   date.dateTime=current.requestedDate;
   date.textContent=(isToday?'на ':'данные за ')+shortDay(current.requestedDate);
   for(const code of currencyCodes)bar.querySelector(`[data-fx-value="${code}"]`).textContent=formatter.format(current.rates[code].rate)+' ₽';
   const checked=new Intl.DateTimeFormat('ru-RU',{timeZone:'Europe/Moscow',hour:'2-digit',minute:'2-digit'}).format(new Date(current.fetchedAt));
   const since='Действуют с '+shortDay(current.effectiveDate);
   status.title=`${since}. Проверены ${shortDay(moscowDay(new Date(current.fetchedAt)))} в ${checked} МСК. Рубли за одну единицу валюты.`;
-  setStatus(!isToday?'Ожидаем обновление · ₽ за 1':offline?'Сохранённые курсы · ₽ за 1':current.effectiveDate!==current.requestedDate?since+' · ₽ за 1':`Проверено ${checked} МСК · ₽ за 1`);
+  setStatus(!isToday?'Ожидаем обновление · ₽ за 1':cached?'Сохранённые курсы · ₽ за 1':current.effectiveDate!==current.requestedDate?since+' · ₽ за 1':`Проверено ${checked} МСК · ₽ за 1`);
  }
  try{const saved=localStorage.getItem(key);if(saved){current=validateRates(JSON.parse(saved));offline=true;render();}}catch{}
  async function refresh(){
   if(inFlight)return;inFlight=true;
   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);
   try{
-   const url=new URL(bar.dataset.fxFeed);url.searchParams.set('v',String(Math.floor(Date.now()/60000)));
+   const url=new URL(feed);url.searchParams.set('v',String(Math.floor(Date.now()/60000)));
    const response=await fetch(url,{cache:'no-store',signal:controller.signal,credentials:'omit'});
    if(!response.ok)throw new Error('Rates unavailable');
    current=validateRates(await response.json());offline=false;

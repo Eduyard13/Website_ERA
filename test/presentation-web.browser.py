@@ -13,7 +13,7 @@ with sync_playwright() as p:
  page=browser.new_page(reduced_motion='reduce')
  page.on('pageerror',lambda error:errors.append(str(error)))
  page.on('response',lambda response:failed.append((response.status,response.url)) if response.status>=400 and response.url.startswith(base) else None)
- page.route('**/formsubmit.co/**',lambda route:(submissions.append(route.request.url),route.abort()))
+ page.route('**/api/request.php',lambda route:(submissions.append(route.request.url),route.abort()))
  def overflow():assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),(page.viewport_size,page.url)
  def images():
   page.locator('img[loading=lazy]').evaluate_all('images=>images.forEach(image=>image.loading="eager")')

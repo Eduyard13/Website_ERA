@@ -1,8 +1,9 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {readFile,stat} from 'node:fs/promises';
+import {readFile,stat,readdir} from 'node:fs/promises';
 import {resolve} from 'node:path';
-import {routes,product,basePath,siteUrl} from '../scripts/build.mjs';
+import {routes,product,basePath,previewMode,siteUrl} from '../scripts/build.mjs';
+import {canonicalOrigin} from '../scripts/deploy-target.mjs';
 import {dryLineNames} from '../content/line-names.mjs';
 test('На главной четыре фотокарточки сырья, пять секторов и пять карточек экономики',async()=>{
  const html=await readFile('dist/index.html','utf8');
@@ -371,7 +372,7 @@ test('Адаптивные изображения и презентационн�
  assert.match(technology,/очистить, переработать, использовать снова/);
  assert.ok(html.includes(`href="${basePath}/technology#dry-separation"`));
  assert.ok(html.includes(`href="${basePath}/contacts#project-form"`));
- assert.ok(html.includes('mailto:edkom.office@mail.ru'));
+ assert.ok(html.includes('mailto:info@era-cycle.ru'));
  assert.ok(!html.includes('eduard@ros-um.ru'));
  assert.ok(!html.includes('data-node'));
  assert.ok(!html.includes('Материалы готовятся'));
@@ -504,7 +505,7 @@ test('Панель ЦБ РФ доступна на всех страницах �
   const html=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
   assert.equal([...html.matchAll(/data-fx-bar /g)].length,1,route);
   assert.ok(html.includes('https://www.cbr.ru/currency_base/daily/'));
-  assert.ok(html.includes('refs/heads/data/cbr-rates/cbr.json'));
+  assert.ok(html.includes(previewMode?'refs/heads/data/cbr-rates/cbr.json':'data-fx-feed="/data/cbr.json"'));
   for(const code of ['USD','EUR','CNY'])assert.ok(html.includes(`data-fx-value="${code}">—</dd>`));
   assert.ok(html.includes(`src="${basePath}/fx.js?v=${version}"`));
  }
@@ -621,7 +622,7 @@ test('Общий каталог предлагает две ветки, а ст�
  assert.ok(home.includes('id="about-era"'));assert.ok(home.includes('Можно начать с одного этапа и вырасти в полный цикл'));
  const about=await readFile('dist/about/index.html','utf8');
  assert.ok(about.includes(`content="0; url=${basePath}/"`));
- assert.equal(about.match(/<link rel="canonical" href="([^"]+)">/)?.[1],siteUrl?`${siteUrl}/`:undefined);
+ assert.equal(about.match(/<link rel="canonical" href="([^"]+)">/)?.[1],`${canonicalOrigin}/`);
  for(const route of routes.filter(r=>r!=='/about')){
   const html=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
   assert.ok(!html.includes(`href="${basePath}/about"`));
@@ -654,24 +655,24 @@ test('Клиентский режим: единый кириллический �
   const visible=html.replace(/<script[\s\S]*?<\/script>/g,'').replace(/<[^>]+>/g,' ');
   const labels=[...html.matchAll(/(?:aria-label|alt|title|data-source|data-title|content)="([^"]*)"/g)].map(m=>m[1]).join(' ');
   // Owner-approved public citations: the economics experiment and the BEIER corporate profile.
-  const copy=(visible+' '+labels).replaceAll('Опыт, приведённый в презентации ЭРА.','').replaceAll(route==='/economics'?'Источник: ':route==='/about-us'?'Источник: корпоративный профиль BEIER Machinery':'\u0000','');
+  const copy=(visible+' '+labels).replaceAll('era-cycle.ru','').replaceAll('Опыт, приведённый в презентации ЭРА.','').replaceAll(route==='/economics'?'Источник: ':route==='/about-us'?'Источник: корпоративный профиль BEIER Machinery':'\u0000','');
   assert.doesNotMatch(copy,/\bERA\b|прототип|для согласования|из презентации|в презентации|предоставленному КП|источник:|слайд №|сайт объединяет/iu,route);
  }
  const notFound=await readFile('dist/404.html','utf8');assert.equal([...notFound.matchAll(/data-fx-bar /g)].length,1);
 });
 test('Индексация, canonical и sitemap согласованы для всех публичных страниц',async()=>{
- const excluded=new Set(['/about','/ai','/company-details','/contacts/sent','/news','/blog']);
+ const excluded=new Set(['/about','/ai','/company-details','/contacts/sent','/news','/blog','/privacy']);
  const titles=new Set(),descriptions=new Set(),expected=[];
  for(const route of new Set(routes)){
   const html=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
   assert.match(html,/<html lang="ru">/,route);
   assert.equal((html.match(/<h1[\s>]/g)||[]).length,1,route);
-  assert.equal(/<meta name="robots" content="noindex,nofollow">/.test(html),excluded.has(route),route);
+  assert.equal(/<meta name="robots" content="noindex,nofollow">/.test(html),previewMode||excluded.has(route),route);
   if(excluded.has(route))continue;
   const canonical=html.match(/<link rel="canonical" href="([^"]+)">/)?.[1];
-  const url=siteUrl?`${siteUrl}${route.replace(/\/$/,'')}/`:undefined;
+  const url=`${canonicalOrigin}${route.replace(/\/$/,'')}/`;
   assert.equal(canonical,url,route);
-  if(url)expected.push(url);
+  expected.push(url);
   const title=html.match(/<title>([^<]+)<\/title>/)?.[1];
   const description=html.match(/<meta name="description" content="([^"]+)">/)?.[1];
   assert.ok(title&&!titles.has(title),route);titles.add(title);
@@ -681,7 +682,7 @@ test('Индексация, canonical и sitemap согласованы для �
  assert.match(robots,/^User-agent: \*\nAllow: \/\n/);
  assert.doesNotMatch(robots,/^Disallow:/m);
  assert.match(await readFile('dist/404.html','utf8'),/<meta name="robots" content="noindex,nofollow">/);
- if(siteUrl){
+ if(!previewMode){
   assert.ok(robots.includes(`Sitemap: ${siteUrl}/sitemap.xml\n`));
   const sitemap=await readFile('dist/sitemap.xml','utf8');
   assert.deepEqual([...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match=>match[1]).sort(),expected.sort());
@@ -852,7 +853,7 @@ test('Отдельная страница ИИ удалена из меню и �
  }
  const legacy=await readFile('dist/ai/index.html','utf8');
  assert.ok(legacy.includes(`http-equiv="refresh" content="0; url=${basePath}/automation"`));
- assert.equal(legacy.match(/<link rel="canonical" href="([^"]+)">/)?.[1],siteUrl?`${siteUrl}/automation/`:undefined);
+ assert.equal(legacy.match(/<link rel="canonical" href="([^"]+)">/)?.[1],`${canonicalOrigin}/automation/`);
  assert.ok(legacy.includes(`${basePath}/automation-redirect.js?v=`));
  assert.ok(!legacy.includes('site-header'));
 });
@@ -865,35 +866,56 @@ test('Пять основных направлений ведут к прежн�
  assert.equal(navigationState('/catalog/equipment/plenochnyy-flotator').section,'equipment');
  assert.equal(navigationState('/contacts/sent').panelPath,'/contacts');
 });
-test('Заявка имеет настоящий multipart POST, адрес получателя, вложения и страницу возврата',async()=>{
+test('Заявки используют локальный POST на Рег.ру и безопасный предпросмотр на GitHub Pages',async()=>{
  const {projectRequest,siteContacts}=await import('../content/contact.mjs');
- assert.equal(siteContacts.email,'edkom.office@mail.ru');
- assert.equal(projectRequest.endpoint,'https://formsubmit.co/edkom.office@mail.ru');
+ assert.equal(siteContacts.email,'info@era-cycle.ru');
+ assert.equal(projectRequest.endpoint,'/api/request.php');
  const html=await readFile('dist/contacts/index.html','utf8');
- assert.equal([...html.matchAll(/data-request-form(?=[\s>])/g)].length,1);
  assert.ok(html.includes('method="post" enctype="multipart/form-data"'));
- for(const field of ['Имя','email','Телефон','Компания','Интересует','Задача','Ссылки','Страница обращения','Вложения','attachment','_honey','_subject','_next','_template'])assert.ok(html.includes(`name="${field}"`),field);
- assert.ok(html.includes('type="file"'));assert.ok(html.includes('data-request-files'));
- assert.ok(html.includes(`value="https://eduyard13.github.io${basePath}/contacts/sent/"`));
- assert.ok(!html.includes('name="_captcha"'));assert.ok(!html.includes('mailto:edkom.office@mail.ru?subject='));
- const thankYou=await readFile('dist/contacts/sent/index.html','utf8');assert.ok(thankYou.includes('Спасибо за обращение.'));
+ for(const field of ['Имя','email','Телефон','Компания','Интересует','Задача','Ссылки','Страница обращения','attachment[]','_honey'])assert.ok(html.includes(`name="${field}"`),field);
+ assert.match(html,/type="file" name="attachment\[\]"[^>]+multiple data-request-files/);
+ assert.doesNotMatch(html,/name="_(?:captcha|subject|next|template)"/);
+ const thankYou=await readFile('dist/contacts/sent/index.html','utf8');
+ if(previewMode){
+  assert.ok(html.includes('data-request-submit disabled')&&html.includes('data-request-preview'));
+  assert.ok(html.includes('href="https://era-cycle.ru/contacts/"')&&!html.includes('action="/api/request.php"'));
+  assert.ok(thankYou.includes('Предпросмотр заявки.'));
+  await assert.rejects(stat('dist/api/request.php'),{code:'ENOENT'});
+ }else{
+  assert.ok(html.includes('action="/api/request.php"')&&html.includes('name="Согласие" type="checkbox" value="1" required'));
+  assert.ok(html.includes('href="/privacy/"')&&!html.includes('data-request-preview'));
+  assert.ok(thankYou.includes('Почтовый сервер принял заявку к отправке.'));
+  assert.ok((await stat('dist/api/request.php')).isFile());
+  assert.ok((await stat('dist/data/cbr.json')).isFile());
+ }
  for(const route of new Set(routes.filter(path=>!['/about','/ai','/company-details'].includes(path)))){
   const page=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
   assert.equal([...page.matchAll(/data-request-form(?=[\s>])/g)].length,1,route);
   assert.ok(page.includes(`href="${basePath}/contacts#project-form"`),route);
-  assert.ok(!page.includes('mailto:edkom.office@mail.ru?subject='),route);
-  assert.ok(!page.includes('откроет почтовую программу'),route);
+  assert.ok(!page.includes('mailto:info@era-cycle.ru?subject='),route);
  }
+});
+test('Публичная сборка использует корпоративную почту и транспорт курсов по целевой среде',async()=>{
+ const oldContact=/edkom\.office(?:@|%40)mail\.ru|formsubmit\.co/iu;
+ for(const entry of await readdir('dist',{recursive:true,withFileTypes:true})){
+  if(!entry.isFile()||!/[.](?:html|css|m?js|json|xml|txt)$/i.test(entry.name))continue;
+  const data=await readFile(resolve(entry.parentPath,entry.name),'utf8');
+  assert.doesNotMatch(data,oldContact,entry.name);
+  if(!previewMode)assert.doesNotMatch(data,/eduyard13\.github\.io|\/Website_ERA\/|raw\.githubusercontent\.com\/Eduyard13/iu,entry.name);
+ }
+ const home=await readFile('dist/index.html','utf8');
+ assert.ok(home.includes(previewMode?'data-fx-feed="https://raw.githubusercontent.com/':'data-fx-feed="/data/cbr.json"'));
+ assert.ok(home.includes('mailto:info@era-cycle.ru'));
 });
 test('Контекст запросов переносится в форму без потери текста и без внедрения разметки',async()=>{
  const {enhanceProjectRequests}=await import('../scripts/contact.mjs');
  const topic='Линия № 02: "плёнка" & <сырьё> + детали';
- const source=`<a class="button" href="mailto:edkom.office@mail.ru?subject=${encodeURIComponent(topic)}">Обсудить</a><a href="mailto:edkom.office@mail.ru">Почта</a>`;
+ const source=`<a class="button" href="mailto:info@era-cycle.ru?subject=${encodeURIComponent(topic)}">Обсудить</a><a href="mailto:info@era-cycle.ru">Почта</a>`;
  const html=enhanceProjectRequests(source);
  const link=new URL(html.match(/href="([^"]+)"/)[1],'https://site.test');
  assert.equal(link.searchParams.get('topic'),topic);assert.equal(link.hash,'#project-form');
  assert.ok(html.includes('data-project-request'));assert.ok(!html.includes('<сырьё>'));
- assert.ok(html.includes('href="mailto:edkom.office@mail.ru"'));
+ assert.ok(html.includes('href="mailto:info@era-cycle.ru"'));
  assert.ok(enhanceProjectRequests('<a href="#discuss">Обсудить</a>').includes('/contacts#project-form'));
 });
 test('Сухая стадия использует один рендер, три ссылки на линии и исходную визитку 02',async()=>{

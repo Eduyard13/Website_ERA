@@ -6,7 +6,7 @@ import {nodes,lines} from '../content/catalog.mjs';
 import {dryLineNames} from '../content/line-names.mjs';
 import {separation03,separation03Document,separation03Specification,separation03Power,separation03ConveyorPower} from '../content/separation-03.mjs';
 import {separation03Diagram} from '../content/separation-03-diagram.mjs';
-import {basePath,render,routes} from '../scripts/build.mjs';
+import {basePath,previewMode,render,routes} from '../scripts/build.mjs';
 import {revisedPage} from '../scripts/views.mjs';
 import {publicLibraryDocuments} from '../content/document-library.mjs';
 import {buildGalleryData} from '../scripts/gallery-data.mjs';
@@ -108,6 +108,6 @@ test('Библиотека содержит три типа документов
 test('Страницы вне обновлённых разделов сохраняют утверждённый HTML',async()=>{
  const baseline=JSON.parse(await readFile('test/fixtures/separation-03-preserved.json'));
  const changedPages=new Set(['/technology',...lines.filter(line=>line.enabled).map(line=>line.path)]);
- const protectedPages=Object.entries(basePath?baseline.pagesBase:baseline.pagesRoot).filter(([path])=>!changedPages.has(path));
+ const protectedPages=Object.entries(!previewMode?baseline.pagesProduction:basePath?baseline.pagesBase:baseline.pagesRoot).filter(([path])=>!changedPages.has(path));
  for(const [path,sha] of protectedPages)assert.equal(hash(render(path).replaceAll(release,'RELEASE').replace(/<link rel="canonical" href="[^"]*">/g,'')),sha,path);
 });

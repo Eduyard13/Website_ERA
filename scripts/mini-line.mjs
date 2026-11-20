@@ -1,3 +1,4 @@
+import {siteContacts} from '../content/contact.mjs';
 import {nodes} from '../content/catalog.mjs';
 import {miniFilmSeparationMedia,miniLineMetrics,miniRawMaterials,miniInclusions,miniStages,miniSpecification,miniUnits,miniSpecs,miniQuality,miniService} from '../content/mini-film-separation.mjs';
 import {mediaAttributes} from './media.mjs';
@@ -28,7 +29,7 @@ function unitCard([position,title,text,value,slug,key]){
 }
 
 export function renderMiniFilmSeparation(line){
- const email='mailto:edkom.office@mail.ru?subject='+encodeURIComponent(`Запрос ЭРА: ${line.title}`);
+ const email=`mailto:${siteContacts.email}?subject=`+encodeURIComponent(`Запрос ЭРА: ${line.title}`);
  const documents=lineDocuments(line);
  const drawing=documents.find(d=>d.id==='separatsiya-01-dimensions');
  return `<div class="film-line mini-line">
@@ -96,7 +97,7 @@ export function renderMiniFilmSeparation(line){
  <section class="section line-documents" id="documents"><div class="line-section-heading"><div><p class="eyebrow">ТЕХНИЧЕСКАЯ ДОКУМЕНТАЦИЯ</p><h2>Брошюра, техническое описание<br>и габаритная схема.</h2></div><p>Техническое описание линии BASE от 3 ноября 2026 года: 14 страниц о сырье, потоках, оборудовании, качестве продукта, спецификации, размещении, управлении и обслуживании.</p></div>${lineDocumentCards(documents)}<a class="text-link" href="/documents/?objectType=line&amp;product=separatsiya-01">Все документы линии BASE в библиотеке ↗</a></section>
 
  <section class="section line-soft" id="equipment"><div class="line-section-heading"><div><p class="eyebrow">ОБОРУДОВАНИЕ В СОСТАВЕ ЛИНИИ</p><h2>Изучите каждый узел.</h2></div><p>Подготовка сырья, сухая очистка и сбор отделённых включений. Перейдите к паспортам оборудования в каталоге.</p></div><div class="line-unit-grid">${miniUnits.map(unitCard).join('')}</div></section>
- <section class="section contact line-request"><div><p class="eyebrow">ПОДБОР ЛИНИИ BASE</p><h2>Обсудим ваше сырьё<br>и будущую линию.</h2><p>Пришлите фото или видео материала, состав примесей, засорённость и влажность, требуемую подачу и форму продукта, план цеха и доступную мощность.</p></div><div>${button('Отправить запрос по линии BASE',email)}<a class="phone" href="tel:+79032813535">+7 903 281-35-35</a><a href="mailto:edkom.office@mail.ru">edkom.office@mail.ru</a><small>Заполните форму и приложите фотографии, видео или документы к заявке.</small></div></section>
+ <section class="section contact line-request"><div><p class="eyebrow">ПОДБОР ЛИНИИ BASE</p><h2>Обсудим ваше сырьё<br>и будущую линию.</h2><p>Пришлите фото или видео материала, состав примесей, засорённость и влажность, требуемую подачу и форму продукта, план цеха и доступную мощность.</p></div><div>${button('Отправить запрос по линии BASE',email)}<a class="phone" href="tel:+79032813535">+7 903 281-35-35</a><a href="mailto:${siteContacts.email}">${siteContacts.email}</a><small>Заполните форму и приложите фотографии, видео или документы к заявке.</small></div></section>
  <script type="application/json" id="line-document-data">${JSON.stringify(documents).replaceAll('<','\\u003c')}</script>${pdfViewerDialog()}
  </div>`;
 }

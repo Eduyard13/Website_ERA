@@ -25,7 +25,7 @@ with sync_playwright() as p:
     page = browser.new_page(reduced_motion='reduce')
     page.on('pageerror', lambda error: errors.append(str(error)))
     page.on('response', lambda response: failures.append([response.status, response.url]) if response.status >= 400 and response.url.startswith(base) else None)
-    page.route('**/formsubmit.co/**', lambda route: route.abort())
+    page.route('**/api/request.php', lambda route: route.abort())
     def load():
         assert page.goto(base + '/economics/').status == 200
         page.wait_for_function('document.querySelector("[data-economics-page]").dataset.economicsReady === "true"')

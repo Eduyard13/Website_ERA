@@ -1,3 +1,4 @@
+import {siteContacts} from '../content/contact.mjs';
 import {nodes} from '../content/catalog.mjs';
 import {filmSeparationMedia as pictures,lineMetrics,lineRawMaterials,lineStages,lineUnits,linePositions,lineSpecs,lineQuality} from '../content/film-separation.mjs';
 import {mediaAttributes} from './media.mjs';
@@ -26,7 +27,7 @@ function unitCard([position,title,text,value,slug,key]){
 }
 
 export function renderFilmSeparation(line){
- const email='mailto:edkom.office@mail.ru?subject='+encodeURIComponent(`Запрос ЭРА: ${line.title}`);
+ const email=`mailto:${siteContacts.email}?subject=`+encodeURIComponent(`Запрос ЭРА: ${line.title}`);
  const documents=lineDocuments(line);
  const staffing=line.cardMetrics.filter(m=>['Основной персонал','Сортировщики'].includes(m.label)).map(m=>[m.label,`${m.value} ${m.unit} · ${m.note}`]);
  const drawing=documents.find(d=>d.id==='separatsiya-02-dimensions-a0');
@@ -88,7 +89,7 @@ export function renderFilmSeparation(line){
   <div class="line-unit-grid">${lineUnits.map(unitCard).join('')}</div>
   <aside class="line-option"><div><p class="eyebrow">ДОПОЛНИТЕЛЬНЫЙ МОДУЛЬ</p><h3>Предварительный распушитель</h3><p>Устанавливается между измельчителем и баллистикой. Разрыхляет комки и разделяет слои, улучшая освобождение включений и сохранение полезной плёнки.</p></div><div><strong>37 кВт</strong><p>Учитываются дополнительно к 402,67 кВт представленной комплектации.</p><a class="text-link" href="/catalog/equipment/predvaritelnyy-raspushitel">Подробнее об узле ↗</a></div></aside>
  </section>
- <section class="section contact line-request"><div><p class="eyebrow">ПОД ВАШЕ СЫРЬЁ И ПЛОЩАДКУ</p><h2>Обсудим вашу<br>линию сепарации.</h2><p>Для подбора нужны фото или видео сырья, состав и загрязнённость, влажность, требуемая подача и продукт, план цеха и доступная мощность.</p></div><div>${button('Отправить запрос по линии',email)}<a class="phone" href="tel:+79032813535">+7 903 281-35-35</a><a href="mailto:edkom.office@mail.ru">edkom.office@mail.ru</a><small>Заполните форму и приложите фотографии, видео или документы к заявке.</small></div></section>
+ <section class="section contact line-request"><div><p class="eyebrow">ПОД ВАШЕ СЫРЬЁ И ПЛОЩАДКУ</p><h2>Обсудим вашу<br>линию сепарации.</h2><p>Для подбора нужны фото или видео сырья, состав и загрязнённость, влажность, требуемая подача и продукт, план цеха и доступная мощность.</p></div><div>${button('Отправить запрос по линии',email)}<a class="phone" href="tel:+79032813535">+7 903 281-35-35</a><a href="mailto:${siteContacts.email}">${siteContacts.email}</a><small>Заполните форму и приложите фотографии, видео или документы к заявке.</small></div></section>
  <script type="application/json" id="line-document-data">${JSON.stringify(documents).replaceAll('<','\\u003c')}</script>${pdfViewerDialog()}
  </div>`;
 }

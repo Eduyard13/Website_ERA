@@ -40,7 +40,7 @@ try{
  const waitFor=async expression=>{for(let i=0;i<80;i++){if(await evaluate(expression))return;await delay(150);}throw Error('Browser condition: '+expression);};
  await call('Page.enable');await call('Runtime.enable');await call('Network.enable');
  // Provider availability is documented separately. These checks exercise the site's blocked-map behavior.
- await call('Network.setBlockedURLs',{urls:['https://formsubmit.co/*',...(process.env.ERA_VERIFY_MAP_PROVIDERS==='1'?[]:['https://www.google.com/maps/*','https://yandex.com/map-widget/*'])]});
+ await call('Network.setBlockedURLs',{urls:[base+'/api/request.php',...(process.env.ERA_VERIFY_MAP_PROVIDERS==='1'?[]:['https://www.google.com/maps/*','https://yandex.com/map-widget/*'])]});
  await call('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});
  await call('Page.navigate',{url});await waitFor('document.querySelector("[data-request-ready=true]")&&document.querySelector(".page-progress-rail a")');
  await evaluate('(async()=>{await Promise.all([...document.querySelectorAll("main img")].map(i=>{i.loading="eager";return i.decode().catch(()=>{});}));})()');

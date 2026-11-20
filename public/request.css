@@ -47,6 +47,11 @@
 .request-file-status{font-size:11px;color:var(--era-muted);margin:10px 0 0;font-variant-numeric:tabular-nums}
 .request-file-status:empty{display:none}
 .request-error{font-size:13px;padding:13px 16px;background:#f7e9e2;color:#702c20;border:1px solid #a35b4266;border-radius:6px;margin:0;max-width:none}
+.request-consent{display:flex;align-items:flex-start;gap:10px}
+.project-request-form .request-consent input[type=checkbox]{appearance:auto;flex:none;width:18px;min-height:18px;height:18px;margin:1px 0 0;padding:0;accent-color:var(--era-blue)}
+.project-request-form .request-consent label{display:block}
+.request-consent a,[data-preview-notice] a{text-decoration:underline;text-underline-offset:3px}
+[data-request-preview] .request-submit:disabled{cursor:default}
 .request-submit-row{display:flex;align-items:center;gap:23px;justify-content:space-between;min-width:0}
 .request-submit-row .request-submit{font-size:14px;min-height:49px;padding:13px 20px;gap:30px;border-radius:6px;white-space:nowrap}
 .request-submit-row .request-submit .arrow{width:16px;height:16px;flex:none}

@@ -11,28 +11,18 @@ import {quickContact} from './quick-contact.mjs';
 import {nodes,lines} from '../content/catalog.mjs';
 import {revisedPage,extraRoutes,galleryDialog} from './views.mjs';
 import {mkdir,rm,cp,writeFile,readFile} from 'node:fs/promises';
+import {basename} from 'node:path';
 import {sections} from '../content/site.mjs';
-import {contactPage,requestDialog,requestSentPage,enhanceProjectRequests} from './contact.mjs';
-export const basePath=(process.env.BASE_PATH||'').replace(/\/$/,'');
-if(basePath&&!/^\/[A-Za-z0-9_/-]+$/.test(basePath))throw new Error('Invalid BASE_PATH');
-const pagesSite='https://eduyard13.github.io/Website_ERA';
-const publicAddress=process.env.SITE_URL||(basePath==='/Website_ERA'?pagesSite:'');
-function publicBase(address){
- if(!address)return '';
- const url=new URL(address);
- if(url.protocol!=='https:'||url.username||url.password||url.search||url.hash||url.pathname.replace(/\/$/,'')!==basePath){
-  throw new Error('SITE_URL must be an HTTPS base URL matching BASE_PATH');
- }
- return url.origin+basePath;
-}
-export const siteUrl=publicBase(publicAddress);
-const excludedRoutes=new Set(['/about','/ai','/company-details','/contacts/sent','/news','/blog']);
+import {contactPage,requestDialog,requestSentPage,privacyPage,enhanceProjectRequests} from './contact.mjs';
+import {basePath,canonicalOrigin,previewMode,siteUrl} from './deploy-target.mjs';
+import {validateRates} from '../public/fx-core.js';
+export {basePath,previewMode,siteUrl};
+const excludedRoutes=new Set(['/about','/ai','/company-details','/contacts/sent','/news','/blog','/privacy']);
 
 const version=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8')).version;
 const lineDiagramVersion=version+'-callouts-3';
 const linePresentationPage=path=>['/catalog/lines/separatsiya-01','/catalog/lines/separatsiya-02','/catalog/lines/separatsiya-03','/catalog/lines/moyka-plenki'].includes(path);
-export const previewMode=process.env.PREVIEW_MODE==='1';
-const withBase=html=>(previewMode?html.replace(/(<button\b[^>]*\bdata-request-submit)(?=[\s>])/g,'$1 disabled'):html).replace(/(href|src|poster|data-product|data-image|data-video|data-poster|data-gallery-base|value)="\/(?!\/)/g,`$1="${basePath}/`).replace(/srcset="([^"]+)"/g,(_,sources)=>`srcset="${sources.replace(/(^|,)(\s*)\/(?!\/)/g,`$1$2${basePath}/`)}"`);
+const withBase=html=>html.replace(/(href|src|poster|data-product|data-image|data-video|data-poster|data-gallery-base|value)="\/(?!\/)/g,`$1="${basePath}/`).replace(/srcset="([^"]+)"/g,(_,sources)=>`srcset="${sources.replace(/(^|,)(\s*)\/(?!\/)/g,`$1$2${basePath}/`)}"`);
 const escape=s=>String(s).replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;').replaceAll('>','&gt;');
 export const product='/catalog/equipment/predvaritelnyy-izmelchitel';
 const button=(text,href,secondary=false)=>`<a class="button ${secondary?'secondary':''}" href="${href}">${text}<span aria-hidden="true">↗</span></a>`;
@@ -47,11 +37,12 @@ function page(path){
  const revised=revisedPage(path);if(revised!==null)return revised;
  if(path==='/contacts')return contactPage({basePath});
  if(path==='/contacts/sent')return requestSentPage();
+ if(path==='/privacy')return privacyPage();
  const entry=simplePages[path];if(!entry)throw new Error('Missing page: '+path);
  return `<section class="section page-intro"><p class="eyebrow">ЭРА / ${entry.title.toUpperCase()}</p><h1>${entry.heading}</h1><p class="lead">${entry.lead}</p></section><section class="section"><p>${entry.text}</p>${button(entry.action,entry.href||'/contacts')}</section>`;
 }
 const styles=path=>['style','equipment','documents','fx',...(contextNavigationData(path)?['context-navigation']:[]),...(path?.startsWith('/documents')||linePresentationPage(path)?['document-library','pdf-viewer']:[]),...(['/','/technology','/automation','/economics'].includes(path)?['presentation']:[]),'navigation','diagram','footer','kair','surfaces',...(['/economics','/technology'].includes(path)?['quality']:[]),...(path==='/economics'?['commercial']:[]),...(path==='/automation'?['kair-system']:[]),...(path==='/technology'?['technology-lines','technology-final']:[]),...(path==='/catalog'?['catalog']:[]),...(['/catalog/lines','/catalog/equipment'].includes(path)?['catalog-branches']:[]),...(path==='/catalog/equipment'?['node-cards']:[]),...(path==='/catalog/lines'||lines.some(l=>l.enabled&&l.path===path)?['lines']:[]),...(['/economics','/technology'].includes(path)?['presentation-web']:[]),...(path==='/media'?['gallery-showroom']:[]),...(path==='/economics'?['economics-page']:[]),...(path==='/'?['project-home']:[]),'request',...(path==='/about-us'?['about-us']:[]),...(path==='/contacts'?['contact-premium']:[]),'quick-contact','video-channels','page-progress',...(linePresentationPage(path)?['line-monitor']:[]),...(path==='/catalog/lines/moyka-plenki'?['hot-film-washing']:[]),...(path==='/catalog/lines/separatsiya-03'?['separation-drying']:[]),...(linePresentationPage(path)?['line-engineering']:[])].map(file=>`<link rel="stylesheet" href="/${file}.css?v=${file==='line-monitor'?lineDiagramVersion:version}">`).join('');
-const scripts=path=>`${path==='/catalog/lines/separatsiya-03'?`<script type="module" src="/separation-drying.js?v=${version}"></script>`:''}${path==='/catalog/lines/moyka-plenki'?`<script type="module" src="/hot-film-washing.js?v=${version}"></script>`:''}${['/catalog/lines','/catalog/equipment'].includes(path)?`<script type="module" src="/catalog-branches.js?v=${version}"></script>`:''}${linePresentationPage(path)?`<script type="module" src="/line-monitor.js?v=${lineDiagramVersion}"></script><script type="module" src="/line-documents.js?v=${lineDiagramVersion}"></script>`:''}${contextNavigationData(path)?`<script type="module" src="/context-navigation.js?v=${version}"></script>`:''}${path?.startsWith('/documents')?`<script type="module" src="/document-library.js?v=${version}"></script>`:''}${previewMode?`<script src="/preview-only.js?v=${version}" defer></script>`:''}<script src="/request.js?v=${version}" defer></script>${path==='/contacts'?`<script src="/contact-maps.js?v=${version}" defer></script>`:''}<script src="/navigation.js?v=${version}" defer></script><script src="/app.js?v=${version}" defer></script><script type="module" src="/interactions.js?v=${version}"></script><script src="/media-viewer.js?v=${version}" defer></script><script type="module" src="/fx.js?v=${version}"></script><script src="/diagram.js?v=${version}" defer></script><script type="module" src="/kair.js?v=${version}"></script>${path==='/media'?`<script type="module" src="/gallery-showroom.js?v=${version}"></script>`:''}${path==='/economics'?`<script type="module" src="/commercial.js?v=${version}"></script>`:''}${path==='/'?`<script src="/project-home.js?v=${version}" defer></script>`:''}${path==='/automation'?`<script type="module" src="/kair-system.js?v=${version}"></script>`:''}${path==='/technology'?`<script type="module" src="/presentation-web.js?v=${version}"></script><script type="module" src="/technology-final.js?v=${version}"></script>`:''}<script src="/quick-contact.js?v=${version}" defer></script><script src="/page-progress.js?v=${version}" defer></script>`;
+const scripts=path=>`${path==='/catalog/lines/separatsiya-03'?`<script type="module" src="/separation-drying.js?v=${version}"></script>`:''}${path==='/catalog/lines/moyka-plenki'?`<script type="module" src="/hot-film-washing.js?v=${version}"></script>`:''}${['/catalog/lines','/catalog/equipment'].includes(path)?`<script type="module" src="/catalog-branches.js?v=${version}"></script>`:''}${linePresentationPage(path)?`<script type="module" src="/line-monitor.js?v=${lineDiagramVersion}"></script><script type="module" src="/line-documents.js?v=${lineDiagramVersion}"></script>`:''}${contextNavigationData(path)?`<script type="module" src="/context-navigation.js?v=${version}"></script>`:''}${path?.startsWith('/documents')?`<script type="module" src="/document-library.js?v=${version}"></script>`:''}<script src="/request.js?v=${version}" defer></script>${path==='/contacts'?`<script src="/contact-maps.js?v=${version}" defer></script>`:''}<script src="/navigation.js?v=${version}" defer></script><script src="/app.js?v=${version}" defer></script><script type="module" src="/interactions.js?v=${version}"></script><script src="/media-viewer.js?v=${version}" defer></script><script type="module" src="/fx.js?v=${version}"></script><script src="/diagram.js?v=${version}" defer></script><script type="module" src="/kair.js?v=${version}"></script>${path==='/media'?`<script type="module" src="/gallery-showroom.js?v=${version}"></script>`:''}${path==='/economics'?`<script type="module" src="/commercial.js?v=${version}"></script>`:''}${path==='/'?`<script src="/project-home.js?v=${version}" defer></script>`:''}${path==='/automation'?`<script type="module" src="/kair-system.js?v=${version}"></script>`:''}${path==='/technology'?`<script type="module" src="/presentation-web.js?v=${version}"></script><script type="module" src="/technology-final.js?v=${version}"></script>`:''}<script src="/quick-contact.js?v=${version}" defer></script><script src="/page-progress.js?v=${version}" defer></script>`;
 const icons=()=>`<link rel="icon" href="/assets/favicon.ico?v=${version}" sizes="16x16 32x32 48x48"><link rel="icon" href="/assets/favicon.svg?v=${version}" type="image/svg+xml" sizes="any"><link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=${version}" sizes="180x180">`;
 const arrows=html=>html.replaceAll('↗','<svg class="arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13 13 3M3 3h10v10" stroke="currentColor" stroke-width="1.4"/></svg>');
 const sectionMeta={
@@ -61,38 +52,44 @@ const sectionMeta={
  '/economics':{description:'Экономика переработки плёнок. Расчёт выпуска, затрат, выручки и окупаемости при выбранных параметрах производства.'},
  '/media':{description:'Фотографии, видео, компоновки линий и альбомы оборудования ЭРА для переработки плёнок и пакетов.'},
 };
-const canonicalUrl=path=>siteUrl+path.replace(/\/$/,'')+'/';
-const canonicalLink=path=>siteUrl?`<link rel="canonical" href="${escape(canonicalUrl(path))}">`:'';
+const canonicalUrl=path=>canonicalOrigin+path.replace(/\/$/,'')+'/';
+const canonicalLink=path=>`<link rel="canonical" href="${escape(canonicalUrl(path))}">`;
 export function render(path){
  if(path==='/about')return renderLegacyAbout();
  if(path==='/ai')return renderLegacyAutomation();
  if(path==='/company-details')return renderLegacyCompanyDetails();
  const documentCategory=path.startsWith('/documents/')?documentCategories.find(c=>path==='/documents/'+c.id):null;
- const title=documentCategory?documentCategory.title:path==='/documents'?'Инженерная библиотека ЭРА':path==='/contacts/sent'?'Спасибо за обращение':path==='/'?'Промышленная переработка загрязнённых плёнок':sectionMeta[path]?.title||[...nodes,...lines].find(n=>n.path===path)?.title||sections.find(s=>s[0]===path)?.[1]||'Каталог оборудования';
+ const title=documentCategory?documentCategory.title:path==='/documents'?'Инженерная библиотека ЭРА':path==='/privacy'?'Политика обработки персональных данных':path==='/contacts/sent'?'Статус заявки':path==='/'?'Промышленная переработка загрязнённых плёнок':sectionMeta[path]?.title||[...nodes,...lines].find(n=>n.path===path)?.title||sections.find(s=>s[0]===path)?.[1]||'Каталог оборудования';
  const description=documentCategory?documentCategory.detail:path==='/documents'?'Брошюры, технические описания, схемы, чертежи и материалы для оценки производственных решений ЭРА. Документы узлов и производственных линий.':path==='/about-us'?'ЭРА: более 20 лет отраслевого опыта команды, инженерная разработка, производственная база BEIER и внедрение оборудования в Нидерландах и Челябинске.':path==='/contacts'?'Контакты ЭРА: прямая связь, форма проекта и производственная база BEIER Machinery в Чжанцзягане, Китай. Отправьте задачу, фотографии, видео и документы.':path==='/'?'ЭРА — технологические решения для переработки загрязнённых полиэтиленовых плёнок. Сухая сепарация и полный цикл до вторичной ПЭ-гранулы. Испытания при засорённости до 80%.':path==='/technology'?'Технология ЭРА: сырьё и загрязнения, сухая сепарация, горячая мойка, гранулирование, качество вторичного полиэтилена и направления применения.':path==='/automation'?'Система управления КАИР: согласование оборудования, защита, память режимов, экраны Siemens, мойка и водные контуры. Реальные фотографии и практические сценарии.':sectionMeta[path]?.description||[...nodes,...lines].find(n=>n.path===path)?.description||'ЭРА — оборудование, технологии и автоматизация переработки вторичных плёночных материалов.';
- return withBase(enhanceProjectRequests(arrows(`<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">${excludedRoutes.has(path)?'<meta name="robots" content="noindex,nofollow">':canonicalLink(path)}<title>${escape(title)} — ЭРА</title><meta name="description" content="${escape(description)}">${icons()}${styles(path)}${scripts(path)}</head><body><a class="skip" href="#main">К содержанию</a>${siteHeader(path)}${contextNavigation(path)}<main id="main">${page(path)}</main>${siteFooter()}${siteMenu(path)}${path==='/media'?showroomDialog():galleryDialog()}${path==='/contacts'?'':requestDialog({basePath})}${quickContact()}</body></html>`)));
+ return withBase(enhanceProjectRequests(arrows(`<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">${previewMode||excludedRoutes.has(path)?'<meta name="robots" content="noindex,nofollow">':''}${excludedRoutes.has(path)?'':canonicalLink(path)}<title>${escape(title)} — ЭРА</title><meta name="description" content="${escape(description)}">${icons()}${styles(path)}${scripts(path)}</head><body><a class="skip" href="#main">К содержанию</a>${siteHeader(path)}${contextNavigation(path)}<main id="main">${page(path)}</main>${siteFooter()}${siteMenu(path)}${path==='/media'?showroomDialog():galleryDialog()}${path==='/contacts'?'':requestDialog({basePath})}${quickContact()}</body></html>`),path));
 }
 function renderLegacyAbout(){return withBase(`<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>О проекте — ЭРА</title>${icons()}<meta http-equiv="refresh" content="0; url=${basePath}/">${canonicalLink('/')}<link rel="stylesheet" href="/style.css?v=${version}"><script src="/about-redirect.js?v=${version}" defer></script></head><body><main class="section" id="main"><h1>О проекте ЭРА</h1><p>Информация о проекте находится на главной странице.</p><a class="text-link" href="/">Перейти на главную →</a></main></body></html>`);}
 function renderLegacyAutomation(){return withBase(`<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Система управления КАИР — ЭРА</title>${icons()}<meta http-equiv="refresh" content="0; url=${basePath}/automation">${canonicalLink('/automation')}<link rel="stylesheet" href="/style.css?v=${version}"><script src="/automation-redirect.js?v=${version}" defer></script></head><body><main class="section" id="main"><h1>Система управления КАИР</h1><p>Материалы об управлении оборудованием объединены на странице системы КАИР.</p><a class="text-link" href="/automation">Перейти к системе управления →</a></main></body></html>`);}
 function renderLegacyCompanyDetails(){return withBase(`<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Контакты — ЭРА</title>${icons()}<meta http-equiv="refresh" content="0; url=${basePath}/contacts">${canonicalLink('/contacts')}<link rel="stylesheet" href="/style.css?v=${version}"><script src="/company-details-redirect.js?v=${version}" defer></script></head><body><main class="section" id="main"><h1>Связаться с ЭРА</h1><p>Актуальные способы связи находятся на странице контактов.</p><a class="text-link" href="/contacts">Перейти к контактам →</a></main></body></html>`);}
 function renderNotFound(){return withBase(arrows(`<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Страница не найдена — ЭРА</title>${icons()}${styles('/404')}${scripts()}</head><body><a class="skip" href="#main">К содержанию</a>${siteHeader('/404')}<main class="section" id="main"><h1>404</h1><p>Страница не найдена.</p><a href="/">На главную →</a></main>${siteFooter()}${siteMenu('/404')}</body></html>`));}
-export const routes=['/','/about','/ai','/company-details','/contacts/sent',product,'/catalog/equipment','/catalog/lines',...sections.map(s=>s[0]),...extraRoutes];
+export const routes=['/','/about','/ai','/company-details','/contacts/sent','/privacy',product,'/catalog/equipment','/catalog/lines',...sections.map(s=>s[0]),...extraRoutes];
 await validateDocumentLibrary();
-await rm('dist',{recursive:true,force:true});await mkdir('dist',{recursive:true});await cp('public','dist',{recursive:true});
+const ratesSeed=!previewMode&&process.env.CBR_SEED_FILE?validateRates(JSON.parse(await readFile(process.env.CBR_SEED_FILE,'utf8'))):{status:'unavailable'};
+await rm('dist',{recursive:true,force:true});await mkdir('dist',{recursive:true});await cp('public','dist',{recursive:true,filter:source=>basename(source)!=='.gitkeep'});
+if(!previewMode){
+ await cp('server/regru/public','dist',{recursive:true});
+ await mkdir('dist/data',{recursive:true});
+ await writeFile('dist/data/cbr.json',JSON.stringify(ratesSeed,null,2)+'\n');
+}
 await mkdir('dist/vendor/pdfjs',{recursive:true});
 for(const resource of ['build/pdf.mjs','build/pdf.worker.mjs','cmaps','standard_fonts','wasm','LICENSE'])await cp('node_modules/pdfjs-dist/'+resource,'dist/vendor/pdfjs/'+resource.replace(/^build\//,''),{recursive:true});
 await cp('node_modules/fflate/esm/browser.js','dist/vendor/fflate.js');
 await cp('node_modules/fflate/LICENSE','dist/vendor/fflate-LICENSE.txt');
 // Keep each browser module graph on the same release.
-for(const name of ['interactions','context-navigation','document-library','commercial','economics-controller','economics-model','economics-payback','economics-market','economics-view','economics-page-controller','economics-page-state','economics-page-view','gallery-showroom','gallery-viewer','gallery-model','presentation-web','technology-final']){
+for(const name of ['fx','interactions','context-navigation','document-library','commercial','economics-controller','economics-model','economics-payback','economics-market','economics-view','economics-page-controller','economics-page-state','economics-page-view','gallery-showroom','gallery-viewer','gallery-model','presentation-web','technology-final']){
  const file=`dist/${name}.js`,source=await readFile(file,'utf8');
  await writeFile(file,source.replace(/from '(\.\/[^']+\.js)'/g,`from '$1?v=${version}'`).replace(/import '(\.\/[^']+\.js)'/g,`import '$1?v=${version}'`));
 }
 const lineController=await readFile('dist/line-monitor.js','utf8');
 await writeFile('dist/line-monitor.js',lineController.replace("from './line-callout-layout.mjs'",`from './line-callout-layout.mjs?v=${lineDiagramVersion}'`));
 for(const path of new Set(routes)){const dir='dist'+(path==='/'?'':path);await mkdir(dir,{recursive:true});await writeFile(dir+'/index.html',render(path));}
-await writeFile('dist/robots.txt','User-agent: *\nAllow: /\n'+(siteUrl?`Sitemap: ${siteUrl}/sitemap.xml\n`:''));
-if(siteUrl){
+await writeFile('dist/robots.txt','User-agent: *\nAllow: /\n'+(!previewMode?`Sitemap: ${siteUrl}/sitemap.xml\n`:''));
+if(!previewMode){
  const entries=[...new Set(routes)].filter(path=>!excludedRoutes.has(path))
   .map(path=>`  <url><loc>${escape(canonicalUrl(path))}</loc></url>`);
  await writeFile('dist/sitemap.xml',`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries.join('\n')}\n</urlset>\n`);

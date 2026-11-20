@@ -1,0 +1,11 @@
+{
+  "web_root": "",
+  "requests_enabled": false,
+  "privacy_version": "",
+  "rate_secret": "",
+  "smtp": {
+    "host": "mail.hosting.reg.ru",
+    "port": 465,
+    "password": ""
+  }
+}

@@ -9,7 +9,7 @@ labels=['Инженерно-технологическое направлени�
 ids=['about-us-intro','experience','production-base','projects','engineering','team','working-together','about-us-contact']
 with sync_playwright() as p:
  browser=p.chromium.launch(executable_path=os.environ.get('ERA_CHROME_PATH','/usr/bin/chromium'),args=['--no-sandbox'])
- context=browser.new_context(reduced_motion='reduce');context.route('https://formsubmit.co/**',lambda route:route.abort())
+ context=browser.new_context(reduced_motion='reduce');context.route('**/api/request.php',lambda route:route.abort())
  page=context.new_page();errors=[];failures=[];page.on('pageerror',lambda e:errors.append(str(e)))
  page.on('response',lambda r:failures.append((r.status,r.url)) if r.status>=400 and r.url.startswith(base) else None)
  for width in [320,360,390,600,768,1024,1200,1280,1440,1920]:

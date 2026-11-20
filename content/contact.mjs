@@ -1,5 +1,5 @@
 import {beierProduction} from './production.mjs';
-export const siteContacts={email:'edkom.office@mail.ru',phone:'+7 903 281-35-35',phoneHref:'tel:+79032813535'};
+export const siteContacts={email:'info@era-cycle.ru',phone:'+7 903 281-35-35',phoneHref:'tel:+79032813535'};
 // Only confirmed account URLs belong here. A null URL never becomes a link.
 export const contactChannels={youtube:'https://www.youtube.com/@RASVET-LLC',vkVideo:null,telegram:'https://t.me/Eduyard13',max:'https://max.ru/u/f9LHodD0cOLJG4FZs3gHL3lpPmwQ0qEBZoRlKgEs72lHGd9FC0S8W-9NfpA',whatsapp:'https://wa.me/79032813535'};
 export const videoChannelDefinitions=[
@@ -19,9 +19,8 @@ export const productionSite={
  ],
 };
 export const projectRequest={
- endpoint:`https://formsubmit.co/${siteContacts.email}`,
+ endpoint:'/api/request.php',
  recipient:siteContacts.email,
  maxAttachmentBytes:5_000_000,
- publicOrigin:'https://eduyard13.github.io',
- subject:'Заявка с сайта ЭРА',
+ maxFiles:20,
 };

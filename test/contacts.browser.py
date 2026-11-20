@@ -7,7 +7,7 @@ widths=[320,360,375,390,768,1024,1280,1440,1920]
 with sync_playwright() as p:
  browser=p.chromium.launch(executable_path=os.environ.get('ERA_CHROME_PATH','/usr/bin/chromium'),args=['--no-sandbox'])
  context=browser.new_context(reduced_motion='reduce',permissions=['clipboard-read','clipboard-write'])
- context.route('https://formsubmit.co/**',lambda route:route.abort())
+ context.route(base+'/api/request.php',lambda route:route.abort())
  context.route('https://yandex.com/map-widget/**',lambda r:r.fulfill(status=200,content_type='text/html',body='<title>Map fixture</title>'))
  context.route('https://www.google.com/maps/**',lambda route:route.fulfill(status=200,content_type='text/html',body='<title>Map fixture</title>'))
  page=context.new_page();errors=[];page.on('pageerror',lambda error:errors.append(str(error)))
@@ -104,7 +104,7 @@ with sync_playwright() as p:
    if part.get_filename() is not None:attachments.append((part.get_filename(),part.get_payload(decode=True)))
    else:fields[key]=part.get_payload(decode=True).decode('utf-8')
   posts.append((fields,attachments));route.fulfill(status=303,headers={'Location':base+'/contacts/sent/'},body='')
- context.unroute('https://formsubmit.co/**');context.route('https://formsubmit.co/**',receive)
+ context.unroute(base+'/api/request.php');context.route(base+'/api/request.php',receive)
  page.set_viewport_size({'width':390,'height':844});page.goto(base+'/contacts/')
  form=page.locator('[data-request-form]');form.locator('[type=submit]').click();assert not posts
  for key,value in [('Имя','Проверка формы'),('Компания','Тестовая компания'),('email','fixture@example.com'),('Телефон','+7 900 000-00-00'),('Задача','Подбор линии; тест запроса только в браузерной фикстуре.')]:form.locator('[name="'+key+'"]').fill(value)
@@ -119,11 +119,10 @@ with sync_playwright() as p:
  form.locator('[data-request-drop]').dispatch_event('drop',{'dataTransfer':transfer});assert form.locator('.request-file-list li').count()==2
  form.locator('.request-file-list button').last.click();assert form.locator('.request-file-list li').count()==1
  form.locator('[data-request-drop]').dispatch_event('drop',{'dataTransfer':transfer});assert form.locator('.request-file-list li').count()==2
- assert form.locator('[data-request-error]').is_hidden();form.locator('[type=submit]').click();page.wait_for_url(base+'/contacts/sent/')
+ assert form.locator('[data-request-error]').is_hidden();form.locator('[name="Согласие"]').check();form.locator('[type=submit]').click();page.wait_for_url(base+'/contacts/sent/')
  assert len(posts)==1;fields,attachments=posts[0]
  assert fields['Интересует']=='Комплектация линии' and fields['Ссылки']=='https://example.com/video'
- assert fields['_honey']=='' and fields['_next']=='https://eduyard13.github.io'+urlparse(base).path+'/contacts/sent/'
- assert 'сырьё.webp' in fields['Вложения'] and 'задание.pdf' in fields['Вложения']
+ assert fields['_honey']=='' and fields['Согласие']=='1'
  assert len(attachments)==1 and attachments[0][0]=='Материалы_ЭРА.zip'
  with zipfile.ZipFile(io.BytesIO(attachments[0][1])) as archive:
   assert archive.read('сырьё.webp')==photo and archive.read('задание.pdf')==b'%PDF-fixture'

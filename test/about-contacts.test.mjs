@@ -9,7 +9,8 @@ import {contactPage,requestForm} from '../scripts/contact.mjs';
 import {videoChannels,messengerChannels,confirmedChannelUrl} from '../scripts/contact-channels.mjs';
 import {mapCapabilities,productionMap} from '../scripts/contact-maps.mjs';
 import {primaryLinks,navigationGroups} from '../content/navigation.mjs';
-import {render,routes,basePath,previewMode,siteUrl} from '../scripts/build.mjs';
+import {render,routes,basePath,previewMode} from '../scripts/build.mjs';
+import {canonicalOrigin} from '../scripts/deploy-target.mjs';
 
 test('Компактная команда сохраняет три исходных портрета и весь HTML остальных разделов',async()=>{
  const original=JSON.parse(await readFile('test/fixtures/about-team-preserved.json','utf8'));
@@ -151,7 +152,7 @@ test('Контакты используют единственную прежн�
  const html=contactPage({basePath});assert.equal((html.match(/data-request-form(?=[\s>])/g)||[]).length,1);
  assert.ok(html.includes(requestForm({prefix:'contact',basePath,compactOptional:true})));
  assert.ok(html.includes(siteContacts.phoneHref)&&html.includes(siteContacts.email));
- assert.ok(html.includes(projectRequest.endpoint));assert.equal((html.match(/<iframe\b/g)||[]).length,1);
+ assert.equal(html.includes(projectRequest.endpoint),!previewMode);assert.equal((html.match(/<iframe\b/g)||[]).length,1);
  assert.ok(html.includes('Открыть в Яндекс Картах'));
  assert.ok(!html.includes('data-map-load')&&!html.includes('Показать карту'));
  for(const [,href] of html.matchAll(/<a[^>]*href="([^"]+)"/g))if(href.startsWith('https:'))assert.ok(!/(^|\.)(beierpm|beierrecycling|beiermachinery)\.com$/.test(new URL(href).hostname));
@@ -167,7 +168,7 @@ test('Новые маршруты, безопасные старые URL и ст
  for(const path of ['/about-us','/contacts','/company-details'])assert.ok(routes.includes(path));
  for(const [path,target] of [['/company-details','/contacts'],['/about','/']]){
   const html=render(path);assert.ok(html.includes(`content="0; url=${basePath}${target}"`));assert.ok(html.includes(`href="${basePath}${target}"`));
-  assert.equal(html.match(/<link rel="canonical" href="([^"]+)">/)?.[1],siteUrl?siteUrl+target.replace(/\/$/,'')+'/':undefined);
+  assert.equal(html.match(/<link rel="canonical" href="([^"]+)">/)?.[1],canonicalOrigin+target.replace(/\/$/,'')+'/');
  }
  for(const [path,style] of [['/about-us','about-us.css'],['/contacts','contact-premium.css']]){
   const html=render(path);assert.ok(html.includes(`href="${basePath}/${style}?v=`));assert.match(html,/<meta name="description"/);assert.equal((html.match(/<h1>/g)||[]).length,1);
@@ -184,9 +185,8 @@ test('Быстрая связь одна на страницу, изолиров
   assert.ok(panel.includes('href="https://t.me/Eduyard13"'));
   assert.equal((panel.match(/class="contact-messenger is-pending"/g)||[]).length,0);
   assert.equal((panel.match(/class="contact-messenger is-available"/g)||[]).length,3);
-  assert.ok(!panel.includes('href="#"'));assert.equal(html.includes('/preview-only.js?v='),previewMode);
+  assert.ok(!panel.includes('href="#"'));assert.equal(html.includes('data-request-preview'),previewMode);
  }
- const preview=await readFile('public/preview-only.js','utf8');assert.ok(preview.includes('Предпросмотр: заявка не отправлена'));
 });
 
 test('Карты проверяют pin, HTTPS, hostname и src независимо от внешней ссылки',()=>{

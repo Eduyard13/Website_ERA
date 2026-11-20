@@ -9,7 +9,7 @@ import {publicLibraryDocuments} from '../content/document-library.mjs';
 import {buildGalleryData} from '../scripts/gallery-data.mjs';
 import {selectGalleryItems,findGalleryItem} from '../public/gallery-model.js';
 import {revisedPage} from '../scripts/views.mjs';
-import {render,basePath,routes} from '../scripts/build.mjs';
+import {render,basePath,previewMode,routes} from '../scripts/build.mjs';
 import {imageSize} from '../scripts/image-size.mjs';
 
 const hash=value=>createHash('sha256').update(value).digest('hex');
@@ -119,7 +119,7 @@ test('Медиатека объединяет повторно использу�
 });
 test('Страницы вне комплектаций сохраняют утверждённые снимки',async()=>{
  const original=JSON.parse(await readFile('test/fixtures/hot-wash-preserved.json','utf8'));
- for(const [path,sha256] of Object.entries(basePath?original.unchangedPagesBase:original.unchangedPages)){
+ for(const [path,sha256] of Object.entries(!previewMode?original.unchangedPagesProduction:basePath?original.unchangedPagesBase:original.unchangedPages)){
   if(!lines.some(entry=>entry.enabled&&entry.path===path))assert.equal(hash(render(path).replaceAll(release,'RELEASE').replace(/<link rel="canonical" href="[^"]*">/g,'')),sha256,path);
  }
  const html=render('/technology');

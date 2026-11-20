@@ -12,7 +12,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      PREVIEW_MODE: '0'
+      DEPLOY_TARGET: preview
+      PREVIEW_MODE: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -27,6 +28,13 @@ jobs:
         env:
           BASE_PATH: /Website_ERA
           SITE_URL: https://eduyard13.github.io/Website_ERA
+      - name: Test Reg.ru production build
+        run: npm test
+        env:
+          DEPLOY_TARGET: regru
+          PREVIEW_MODE: '0'
+          BASE_PATH: ''
+          SITE_URL: https://era-cycle.ru
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Build preview
@@ -57,7 +65,7 @@ jobs:
         run: |
           python - <<'PY'
           import os, re, time, json, hashlib, urllib.request
-          import urllib.error, xml.etree.ElementTree as ET
+          import urllib.error
           from urllib.parse import urljoin, urlsplit
 
           base = os.environ['ERA_SITE_URL'].rstrip('/') + '/'
@@ -89,8 +97,9 @@ jobs:
                       footer = re.search(r'<footer\b[^>]*>(.*?)</footer>', page, re.S)
                       if not footer or 'Мы на связи' not in footer.group(1) or footer.group(1).count('class="footer-channel footer-') != 5:
                           raise RuntimeError(f'{urljoin(base, path)}: the five footer channels are missing')
-                      if '/preview-only.js?' in page:
-                          raise RuntimeError(f'{urljoin(base, path)}: preview mode must not be published')
+                      if ('data-request-preview' not in page or 'data-request-submit disabled' not in page
+                              or 'https://era-cycle.ru/contacts/' not in page or 'action="/api/request.php"' in page):
+                          raise RuntimeError(f'{urljoin(base, path)}: preview request guard is missing')
                       if path == '' and ('id="russia-market"' not in page or page.count('data-home-block=') != 12 or page.count('data-market-feature=') != 18):
                           raise RuntimeError('The homepage and interactive map update is missing')
                       if path == '' and ('data-market-record="national"' not in page or page.count('data-feedstock-sector=') != 5 or page.count('data-home-economics=') != 5):
@@ -235,26 +244,29 @@ jobs:
                       if file.endswith('.svg') and (content_type != 'image/svg+xml' or '<svg' not in source):
                           raise RuntimeError(f'{file}: expected the brand SVG')
                   _, robots = fetch('robots.txt')
-                  if 'Allow: /' not in robots or re.search(r'^Disallow:\s*/\s*$', robots, re.M) or f'Sitemap: {base}sitemap.xml' not in robots:
-                      raise RuntimeError('Public robots rules or sitemap URL are incorrect')
-                  _, xml = fetch('sitemap.xml')
-                  urls = [tag.text for tag in ET.fromstring(xml).iter('{http://www.sitemaps.org/schemas/sitemap/0.9}loc')]
-                  excluded = {urljoin(base, p+'/') for p in ('about','ai','company-details','contacts/sent','news','blog')}
-                  required = {urljoin(base, p) for p in ('','technology/','catalog/lines/','automation/','economics/','contacts/','documents/','media/')}
-                  if len(set(urls)) != len(urls) or not required.issubset(urls) or set(urls) & excluded:
-                      raise RuntimeError('Public sitemap is missing content or includes duplicates or service pages')
+                  if 'Allow: /' not in robots or re.search(r'^Disallow:\s*/\s*$', robots, re.M) or 'Sitemap:' in robots:
+                      raise RuntimeError('Preview robots must allow crawlers to see noindex')
+                  try:
+                      fetch('sitemap.xml')
+                      raise RuntimeError('Preview must not publish a competing sitemap')
+                  except urllib.error.HTTPError as error:
+                      if error.code != 404:
+                          raise
+                  paths = {'', 'technology/', 'catalog/', 'catalog/lines/', 'catalog/equipment/', 'automation/',
+                           'economics/', 'contacts/', 'documents/', 'media/', 'about-us/'}
+                  paths.update('documents/' + category['id'] + '/' for category in data['categories'])
+                  paths.update(obj['path'].strip('/') + '/' for obj in data['objects'] if obj['type'] in ('node', 'line'))
                   titles, descriptions = set(), set()
-                  for url in urls:
-                      parts = urlsplit(url)
-                      if not url.startswith(base) or parts.query or parts.fragment or not url.endswith('/'):
-                          raise RuntimeError(f'Unexpected canonical URL: {url}')
-                      content_type, page = fetch(url)
+                  for path in sorted(paths):
+                      content_type, page = fetch(path)
+                      canonical = 'https://era-cycle.ru/' + path
                       title = re.search(r'<title>([^<]+)</title>', page)
                       description = re.search(r'<meta name="description" content="([^"]+)">', page)
-                      if content_type != 'text/html' or f'<link rel="canonical" href="{url}">' not in page or re.search(r'<meta name="robots"[^>]+(?:noindex|nofollow)', page, re.I):
-                          raise RuntimeError(f'Indexability or canonical mismatch: {url}')
+                      if (content_type != 'text/html' or f'<link rel="canonical" href="{canonical}">' not in page
+                              or '<meta name="robots" content="noindex,nofollow">' not in page):
+                          raise RuntimeError(f'Preview noindex or production canonical missing: {path}')
                       if not title or not description or title[1] in titles or description[1] in descriptions:
-                          raise RuntimeError(f'Missing or duplicate metadata: {url}')
+                          raise RuntimeError(f'Missing or duplicate metadata: {path}')
                       titles.add(title[1])
                       descriptions.add(description[1])
                   try:
@@ -263,12 +275,12 @@ jobs:
                   except urllib.error.HTTPError as error:
                       if error.code != 404:
                           raise
-                  print(f'::notice title=Public indexing verified::{len(urls)} pages, HTTPS canonicals, sitemap, robots rules and HTTP 404: {base}')
-                  print(f'::notice title=Public site verified::Home, about us, contacts, gallery and {len(assets)} assets return HTTP 200. Preview mode is off. {base}')
+                  print(f'::notice title=Preview indexing verified::{len(paths)} pages with noindex and production canonicals; robots and HTTP 404 verified. {base}')
+                  print(f'::notice title=Public site verified::Home, about us, contacts, gallery and {len(assets)} assets return HTTP 200. Preview forms cannot submit. {base}')
                   summary = os.environ.get('GITHUB_STEP_SUMMARY')
                   if summary:
                       with open(summary, 'a') as report:
-                          report.write(f'Public HTTP checks passed: [home]({base}), [about us]({base}about-us/), [contacts]({base}contacts/), [gallery]({base}media/) and twenty-seven assets. Preview mode is off.\n')
+                          report.write(f'Public HTTP checks passed: [home]({base}), [about us]({base}about-us/), [contacts]({base}contacts/), [gallery]({base}media/) and {len(assets)} assets. Preview forms cannot submit.\n')
                   break
               except Exception as error:
                   print(f'Public site check {attempt + 1}/6: {error}', flush=True)

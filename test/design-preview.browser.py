@@ -13,14 +13,15 @@ requests=[];errors=[]
 with sync_playwright() as p:
  browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'])
  context=browser.new_context(viewport={'width':1440,'height':1000},reduced_motion='reduce')
- context.route('https://formsubmit.co/**',lambda route:(requests.append(route.request.url),route.abort()))
+ context.route('**/api/request.php',lambda route:(requests.append(route.request.url),route.abort()))
  page=context.new_page();page.on('pageerror',lambda error:errors.append(str(error)))
  def submit_preview(form):
   form.locator('[name="Имя"]').fill('Просмотр макета')
   form.locator('[name="email"]').fill('preview@example.invalid')
   form.locator('[name="Задача"]').fill('Проверка визуального макета без отправки заявки.')
-  form.locator('[data-request-submit]').click()
-  assert form.locator('[data-preview-notice]').inner_text()=='Предпросмотр: заявка не отправлена'
+  assert form.locator('[data-request-submit]').is_disabled()
+  assert form.locator('[data-preview-notice] a').get_attribute('href')=='https://era-cycle.ru/contacts/'
+  form.locator('[name="Задача"]').press('Enter')
   assert not requests
  for path in ['/contacts/','/about-us/']:
   page.goto(base+path);page.wait_for_selector('#quick-contact:not([hidden])')

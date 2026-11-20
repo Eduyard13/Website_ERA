@@ -12,7 +12,7 @@ errors=[]; failures=[]; report={'widths':[],'positions':37,'sourceBadges':42}
 with sync_playwright() as p:
  browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'])
  page=browser.new_page(reduced_motion='reduce')
- page.route('https://formsubmit.co/**',lambda route:route.abort())
+ page.route('**/api/request.php',lambda route:route.abort())
  page.on('pageerror',lambda e:errors.append(str(e)))
  page.on('response',lambda r:failures.append([r.status,r.url]) if r.status>=400 and r.url.startswith(base) else None)
  def load(path='/catalog/lines/separatsiya-03/'):

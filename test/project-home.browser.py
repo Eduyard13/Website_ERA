@@ -60,7 +60,7 @@ with sync_playwright() as playwright:
     page.on('response', lambda response: failed.append((response.status, response.url))
             if response.status >= 400 and response.url.startswith(base) else None)
     page.on('request', lambda request: requested_videos.append(request.url) if request.url.endswith('.mp4') else None)
-    page.route('**/formsubmit.co/**', lambda route: (submitted.append(route.request.url), route.abort()))
+    page.route('**/api/request.php', lambda route: (submitted.append(route.request.url), route.abort()))
 
     for width in widths:
         page.set_viewport_size({'width': width, 'height': 844 if width < 768 else 900})
