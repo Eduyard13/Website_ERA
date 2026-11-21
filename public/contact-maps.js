@@ -22,80 +22,58 @@ if(copy&&address){
   }
  });
 }
-const map=root.querySelector('[data-contact-maps]');
-if(!map)return;
-const buttons=[...map.querySelectorAll('[data-map-select]')],panels=[...map.querySelectorAll('[data-map-panel]')];
-const storageKey='era-contact-map-provider';
-const choiceKey='era-map-consent-v1';
-const choices=map.querySelector('[data-map-cookie-panel]');
-const settings=map.querySelector('[data-map-cookie-settings]');
-if(!choices||!settings)return;
-const read=(key)=>{try{return localStorage.getItem(key);}catch{return null;}};
-const defaultProvider=buttons.find(button=>button.dataset.mapSelect==='google')?.dataset.mapSelect||buttons[0]?.dataset.mapSelect;
-let allowed=false;
-function showChoices(show){
- choices.hidden=!show;
- settings.setAttribute('aria-expanded',String(show));
-}
-settings.hidden=false;
-settings.addEventListener('click',()=>{showChoices(choices.hidden);if(!choices.hidden)choices.querySelector('button').focus();});
-const allowedEmbed=value=>{
- try{const url=new URL(value);return url.protocol==='https:'&&!url.username&&!url.password&&((url.hostname==='www.google.com'&&url.pathname==='/maps/embed')||(url.hostname==='yandex.com'&&url.pathname==='/map-widget/v1/'&&url.searchParams.has('pt')))?url.href:null;}catch{return null;}
-};
-function showUnavailable(panel){
- panel.querySelectorAll('iframe').forEach(frame=>frame.remove());
- panel.querySelector('.cp-map-message').hidden=false;
- panel.querySelector('[data-map-status]').textContent='Карта недоступна в этом браузере. Откройте её в картографическом сервисе.';
+const map = root.querySelector('[data-contact-maps]');
+const preferences = window.eraMapPreferences;
+const panels = [...(map?.querySelectorAll('[data-map-embed]') || [])];
+if (!preferences || !panels.length) return;
+
+const switcher = map.querySelector('[data-map-switch]');
+const buttons = [...map.querySelectorAll('[data-map-select]')];
+function approvedSource(value){
+ try {
+  const url = new URL(value);
+  if (url.username || url.password) return null;
+  if (url.origin === 'https://www.google.com' && url.pathname === '/maps/embed') return url.href;
+  if (url.origin === 'https://yandex.com' && url.pathname === '/map-widget/v1/' && url.searchParams.has('pt')) return url.href;
+ } catch { /* Keep the external map links available. */ }
+ return null;
 }
 function mount(panel){
- const src=allowedEmbed(panel.dataset.mapEmbed);
- if(!src)return;
- let frame=panel.querySelector('iframe');
- if(frame&&frame.src!==src){frame.remove();frame=null;}
- if(!frame){
-  frame=document.createElement('iframe');frame.src=src;
-  frame.title=panel.dataset.mapLabel+' — производственная площадка ЭРА · BEIER Machinery';
-  frame.width='100%';frame.height='340';frame.loading='lazy';frame.referrerPolicy='no-referrer';
-  panel.querySelector('[data-map-stage]').append(frame);
- }
- if(!frame.dataset.mapBound){
-  frame.dataset.mapBound='true';frame.addEventListener('error',()=>showUnavailable(panel),{once:true});
- }
- panel.querySelector('.cp-map-message').hidden=true;
- // A load event cannot establish that a cross-origin map rendered.
+ const src = approvedSource(panel.dataset.mapEmbed);
+ if (!src || panel.querySelector('iframe')) return;
+ const message = panel.querySelector('.cp-map-message');
+ const frame = document.createElement('iframe');
+ frame.src = src;
+ frame.title = panel.dataset.mapLabel + ' — производственная площадка ЭРА · BEIER Machinery';
+ frame.width = '100%';
+ frame.height = '340';
+ frame.loading = 'lazy';
+ frame.referrerPolicy = 'no-referrer';
+ frame.addEventListener('error', () => {
+  if (!frame.isConnected) return;
+  frame.remove();
+  message.hidden = false;
+  panel.querySelector('[data-map-status]').textContent = 'Карта недоступна. Откройте её по ссылке ниже.';
+ }, {once:true});
+ panel.querySelector('[data-map-stage]').append(frame);
+ message.hidden = true;
 }
-function select(provider,{remember=false}={}){
- if(!panels.some(panel=>panel.dataset.mapPanel===provider))return;
- for(const panel of panels){
-  panel.hidden=panel.dataset.mapPanel!==provider;
-  if(panel.hidden)panel.querySelectorAll('iframe').forEach(frame=>frame.remove());
-  else mount(panel);
+function applyPreferences(){
+ const {choice, provider} = preferences.read();
+ const allowed = choice === 'allow';
+ const selected = (allowed && panels.find(panel => panel.dataset.mapPanel === provider)) || panels[0];
+ if (switcher) switcher.hidden = !allowed;
+ for (const panel of panels) {
+  panel.hidden = panel !== selected;
+  if (allowed && panel === selected) mount(panel);
+  else {
+   panel.querySelector('iframe')?.remove();
+   panel.querySelector('.cp-map-message').hidden = false;
+  }
  }
- buttons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.mapSelect===provider)));
- if(remember)try{localStorage.setItem(storageKey,provider);}catch{}
+ for (const button of buttons) button.setAttribute('aria-pressed', String(button.dataset.mapSelect === selected.dataset.mapPanel));
 }
-function applyChoice(value){
- allowed=value==='allow';
- map.dataset.mapCookieState=allowed?'allowed':value==='deny'?'denied':'pending';
- map.querySelector('[data-map-switch]').hidden=!allowed;
- const preference=allowed?read(storageKey):null;
- const provider=buttons.some(button=>button.dataset.mapSelect===preference)?preference:defaultProvider;
- if(allowed)select(provider);
- else for(const panel of panels){
-  panel.hidden=panel.dataset.mapPanel!==defaultProvider;
-  panel.querySelectorAll('iframe').forEach(frame=>frame.remove());
-  panel.querySelector('.cp-map-message').hidden=false;
-  panel.querySelector('[data-map-status]').textContent='Откройте карту по ссылке ниже. Встроенная карта доступна после выбора в настройках cookies.';
- }
- showChoices(value!=='allow'&&value!=='deny');
-}
-for(const button of choices.querySelectorAll('[data-map-cookie-choice]'))button.addEventListener('click',()=>{
- const value=button.dataset.mapCookieChoice;
- try{localStorage.setItem(choiceKey,value);if(value==='deny')localStorage.removeItem(storageKey);}catch{}
- applyChoice(value);
- settings.focus({preventScroll:true});
-});
-for(const button of buttons)button.addEventListener('click',()=>{if(allowed)select(button.dataset.mapSelect,{remember:true});});
-window.addEventListener('storage',event=>{if(event.key===choiceKey||event.key===null)applyChoice(read(choiceKey));});
-applyChoice(read(choiceKey));
+for (const button of buttons) button.addEventListener('click', () => preferences.select(button.dataset.mapSelect));
+window.addEventListener('era:map-preferences', applyPreferences);
+applyPreferences();
 })();

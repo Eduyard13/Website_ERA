@@ -1,4 +1,4 @@
-"""Contacts acceptance with intercepted form requests and map fixtures."""
+"""Contacts acceptance with intercepted form requests and external map links."""
 import os,json
 from playwright.sync_api import sync_playwright
 
@@ -8,8 +8,6 @@ with sync_playwright() as p:
  browser=p.chromium.launch(executable_path=os.environ.get('ERA_CHROME_PATH','/usr/bin/chromium'),args=['--no-sandbox'])
  context=browser.new_context(reduced_motion='reduce',permissions=['clipboard-read','clipboard-write'])
  context.route(base+'/api/request.php',lambda route:route.abort())
- context.route('https://yandex.com/map-widget/**',lambda r:r.fulfill(status=200,content_type='text/html',body='<title>Map fixture</title>'))
- context.route('https://www.google.com/maps/**',lambda route:route.fulfill(status=200,content_type='text/html',body='<title>Map fixture</title>'))
  page=context.new_page();errors=[];page.on('pageerror',lambda error:errors.append(str(error)))
  for width in widths:
   page.set_viewport_size({'width':width,'height':960})
@@ -24,37 +22,22 @@ with sync_playwright() as p:
   assert not page.locator('[data-contact-optional]').get_attribute('open')
   assert page.locator('[data-request-files]').count()==1
   assert page.locator('[data-request-submit]').is_visible()
-  assert page.locator('[data-map-panel=google]').is_visible()
-  if page.locator('[data-map-cookie-panel]').is_visible():
-   assert page.locator('.cp-map iframe').count()==0
-   page.locator('[data-map-cookie-choice=allow]').click()
-  assert page.locator('.cp-map iframe').count()==1
+  assert page.locator('[data-map-embed]').count()==0
+  if page.locator('[data-cookie-notice]').is_visible():
+   page.locator('[data-cookie-choice=allow]').click()
+  assert page.locator('.cp-map iframe').count()==0
   assert page.locator('[data-map-external]').count()==2
   assert page.locator('a.cp-video-channel').count()==1
   assert page.locator('div.cp-video-channel.is-pending').count()==1
   assert page.locator('.cp-channel-badge img').get_attribute('src').endswith('/assets/brands/vk-video.svg')
   assert page.locator('.footer-video-channel img').get_attribute('src').endswith('/assets/brands/vk-video.svg')
   assert page.locator('[name="email"]').evaluate('i=>parseFloat(getComputedStyle(i).fontSize)>=16')
-  assert page.locator('[data-map-select]').evaluate_all('buttons=>buttons.every(b=>b.getBoundingClientRect().height>=44)')
   if width>=1024:
    left=page.locator('.cp-direct').bounding_box();right=page.locator('.cp-form-card').bounding_box()
    assert abs(left['y']-right['y'])<1 and abs(left['height']-right['height'])<1
    assert right['x']>=left['x']+left['width']-1
   else:
    assert page.locator('.cp-form-card').bounding_box()['y']>=page.locator('.cp-direct').bounding_box()['y']+page.locator('.cp-direct').bounding_box()['height']-1
-  for provider in ['yandex','google','yandex','google']:
-   button=page.locator('[data-map-select='+provider+']');button.focus();page.keyboard.press('Enter')
-   assert button.get_attribute('aria-pressed')=='true'
-   assert page.locator('[data-map-panel='+provider+']').is_visible()
-   assert page.locator('.cp-map iframe').count()==1
-  assert page.locator('.cp-map iframe').get_attribute('title').startswith('Google Maps')
-  assert page.locator('[data-map-load]').count()==0
-  page.locator('[data-map-select=yandex]').click();assert page.locator('.cp-map iframe').count()==1
-  assert 'pt=' in page.locator('.cp-map iframe').get_attribute('src')
-  page.locator('[data-map-select=google]').click()
-  page.locator('.cp-map iframe').evaluate("frame=>frame.dispatchEvent(new Event('error'))")
-  assert page.locator('.cp-map iframe').count()==0
-  assert 'Карта недоступна' in page.locator('[data-map-panel=google] [data-map-status]').inner_text()
   assert page.locator('[data-map-external=google]').is_visible()
   figure=page.locator('.cp-production-image').bounding_box();map_box=page.locator('.cp-map').bounding_box()
   if width>=768:assert abs(figure['y']-map_box['y'])<1 and abs(figure['height']-map_box['height'])<1
@@ -73,12 +56,6 @@ with sync_playwright() as p:
  page.locator('[data-copy-address]').click()
  page.wait_for_function("document.querySelector('[data-copy-status]').textContent==='Адрес скопирован.'")
  assert page.evaluate('navigator.clipboard.readText()')==page.locator('address [lang=en]').inner_text()
- # Storage remembers the explicitly chosen provider and mounts only that iframe.
- page.locator('[data-map-select=yandex]').click();page.reload()
- assert page.locator('[data-map-select=yandex]').get_attribute('aria-pressed')=='true'
- assert page.locator('.cp-map iframe').count()==1
- assert page.locator('.cp-map iframe').get_attribute('src').startswith('https://yandex.com/')
- page.evaluate("localStorage.removeItem('era-contact-map-provider')")
  page.goto(base+'/contacts/?topic=%3Cscript%3E%22%D0%A6%D0%B5%D1%85%22%3C%2Fscript%3E#project-form')
  assert page.locator('[data-contact-optional]').get_attribute('open') is not None
  assert page.locator('[data-request-topic]').input_value()=='<script>"Цех"</script>'
@@ -90,7 +67,9 @@ with sync_playwright() as p:
  f=fallback.new_page();f.goto(base+'/contacts/');f.locator('[data-copy-address]').click()
  assert 'вручную' in f.locator('[data-copy-status]').inner_text()
  assert f.evaluate('getSelection().toString()')==f.locator('address [lang=en]').inner_text()
- f.locator('[data-map-cookie-choice=allow]').click();f.locator('[data-map-select=yandex]').click();assert f.locator('[data-map-panel=yandex]').is_visible();fallback.close()
+ assert f.locator('[data-cookie-notice]').is_hidden()
+ assert f.locator('.cp-map iframe').count()==0
+ fallback.close()
  # Intercept the full-page form too: optional fields, picker, drag/drop, 5 MB and exact ZIP bytes.
  from email.parser import BytesParser
  from email import policy
@@ -125,7 +104,7 @@ with sync_playwright() as p:
  assert form.locator('[data-request-error]').is_hidden();form.locator('[name="Согласие"]').check();form.locator('[type=submit]').click();page.wait_for_url(base+'/contacts/sent/')
  assert len(posts)==1;fields,attachments=posts[0]
  assert fields['Интересует']=='Комплектация линии' and fields['Ссылки']=='https://example.com/video'
- assert fields['_honey']=='' and fields['Согласие']=='1'
+ assert fields['_honey']=='' and fields['Согласие']=='1' and fields['consent_revision']=='ERA-PD-1.3'
  assert len(attachments)==1 and attachments[0][0]=='Материалы_ЭРА.zip'
  with zipfile.ZipFile(io.BytesIO(attachments[0][1])) as archive:
   assert archive.read('сырьё.webp')==photo and archive.read('задание.pdf')==b'%PDF-fixture'

@@ -10,6 +10,8 @@ require_once __DIR__ . '/uploads.php';
 const ERA_ORIGIN = 'https://era-cycle.ru';
 const REQUEST_RECIPIENT = 'info@era-cycle.ru';
 const REQUEST_SENDER = 'noreply@era-cycle.ru';
+const REQUEST_CONSENT_REVISION = 'ERA-PD-1.3';
+const PRIVACY_POLICY_REVISION = 'ERA-PRIVACY-1.3';
 const THROTTLE_SECONDS = 600;
 
 final class RequestFailure extends RuntimeException
@@ -101,6 +103,12 @@ function limitRequests(string $directory, string $visitor, ?string $fingerprint 
     }
 }
 
+function hasApprovedLegalDocument(string $file, string $revision): bool
+{
+    return is_readable($file) && str_contains((string)file_get_contents($file),
+        'data-policy-status="approved" data-pd-revision="' . $revision . '"');
+}
+
 function receiveRequest(string $privateDir, string $webRoot): void
 {
     [$topic, $source] = formContext();
@@ -109,6 +117,9 @@ function receiveRequest(string $privateDir, string $webRoot): void
     }
     if (($_POST['Согласие'] ?? '') !== '1') {
         throw new RequestFailure(422, 'Для отправки подтвердите согласие на обработку персональных данных.');
+    }
+    if (($_POST['consent_revision'] ?? '') !== REQUEST_CONSENT_REVISION) {
+        throw new RequestFailure(422, 'Обновите страницу и подтвердите действующую редакцию согласия.');
     }
     $name = requestText($_POST['Имя'] ?? '', 100);
     $email = requestText($_POST['email'] ?? '', 254);
@@ -126,11 +137,10 @@ function receiveRequest(string $privateDir, string $webRoot): void
         'Ссылки' => requestText($_POST['Ссылки'] ?? '', 4000, true),
     ];
     $settings = loadSettings($privateDir);
-    $revision = $settings['privacy_version'] ?? '';
-    $policy = $webRoot . '/privacy/index.html';
-    if (($settings['requests_enabled'] ?? false) !== true || !is_string($revision)
-        || !preg_match('/^[a-zA-Z0-9._-]{1,50}$/D', $revision) || !is_file($policy)
-        || !str_contains(file_get_contents($policy), 'data-policy-status="approved"')) {
+    if (($settings['requests_enabled'] ?? false) !== true
+        || ($settings['privacy_version'] ?? '') !== REQUEST_CONSENT_REVISION
+        || !hasApprovedLegalDocument($webRoot . '/privacy/index.html', PRIVACY_POLICY_REVISION)
+        || !hasApprovedLegalDocument($webRoot . '/privacy/consent/index.html', REQUEST_CONSENT_REVISION)) {
         throw new RequestFailure(503, 'Приём заявок через форму пока недоступен. Свяжитесь с ЭРА через раздел «Контакты».');
     }
     $secret = $settings['rate_secret'] ?? '';
@@ -152,7 +162,7 @@ function receiveRequest(string $privateDir, string $webRoot): void
     limitRequests($state, $visitor, $fingerprint);
 
     $fields['Страница обращения'] = $source;
-    $fields['Согласие на обработку данных'] = $revision . ' · ' . gmdate('c');
+    $fields['Согласие на обработку данных'] = 'Подтверждено отдельной галочкой · ' . REQUEST_CONSENT_REVISION . ' · ' . gmdate('c');
     if ($attachments) {
         $fields['Вложения'] = implode(', ', array_column($attachments, 'name'));
     }

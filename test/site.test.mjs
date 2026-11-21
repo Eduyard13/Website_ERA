@@ -656,7 +656,8 @@ test('Клиентский режим: единый кириллический �
   const labels=[...html.matchAll(/(?:aria-label|alt|title|data-source|data-title|content)="([^"]*)"/g)].map(m=>m[1]).join(' ');
   // Owner-approved public citations: the economics experiment and the BEIER corporate profile.
   const copy=(visible+' '+labels).replaceAll('era-cycle.ru','').replaceAll('Опыт, приведённый в презентации ЭРА.','').replaceAll(route==='/economics'?'Источник: ':route==='/about-us'?'Источник: корпоративный профиль BEIER Machinery':'\u0000','');
-  assert.doesNotMatch(copy,/\bERA\b|прототип|для согласования|из презентации|в презентации|предоставленному КП|источник:|слайд №|сайт объединяет/iu,route);
+  const clientCopy=route.startsWith('/privacy')?copy.replace(/\b(?:ERA-(?:PRIVACY|PD|COOKIES)-1\.3|era-cbr-rates-v1|era-map-consent-v1|era-contact-map-provider)\b/g,''):copy;
+  assert.doesNotMatch(clientCopy,/\bERA\b|прототип|для согласования|из презентации|в презентации|предоставленному КП|источник:|слайд №|сайт объединяет/iu,route);
  }
  const notFound=await readFile('dist/404.html','utf8');assert.equal([...notFound.matchAll(/data-fx-bar /g)].length,1);
 });
@@ -896,11 +897,12 @@ test('Заявки используют локальный POST на Рег.ру
  }
 });
 test('Публичная сборка использует корпоративную почту и транспорт курсов по целевой среде',async()=>{
- const oldContact=/edkom\.office(?:@|%40)mail\.ru|formsubmit\.co/iu;
+ const legalRoutes=['dist/privacy/index.html','dist/privacy/consent/index.html','dist/privacy/cookies/index.html'].map(path=>resolve(path));
  for(const entry of await readdir('dist',{recursive:true,withFileTypes:true})){
   if(!entry.isFile()||!/[.](?:html|css|m?js|json|xml|txt)$/i.test(entry.name))continue;
-  const data=await readFile(resolve(entry.parentPath,entry.name),'utf8');
-  assert.doesNotMatch(data,oldContact,entry.name);
+  const path=resolve(entry.parentPath,entry.name),data=await readFile(path,'utf8');
+  assert.doesNotMatch(data,/formsubmit\.co/iu,entry.name);
+  if(!legalRoutes.includes(path))assert.doesNotMatch(data,/edkom\.office(?:@|%40)mail\.ru/iu,entry.name);
   if(!previewMode)assert.doesNotMatch(data,/eduyard13\.github\.io|\/Website_ERA\/|raw\.githubusercontent\.com\/Eduyard13/iu,entry.name);
  }
  const home=await readFile('dist/index.html','utf8');

@@ -1,7 +1,7 @@
 {
   "web_root": "",
   "requests_enabled": false,
-  "privacy_version": "",
+  "privacy_version": "ERA-PD-1.3",
   "rate_secret": "",
   "smtp": {
     "host": "mail.hosting.reg.ru",

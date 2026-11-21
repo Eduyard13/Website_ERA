@@ -158,9 +158,8 @@ test('Контакты используют единственную прежн�
  for(const [,href] of html.matchAll(/<a[^>]*href="([^"]+)"/g))if(href.startsWith('https:'))assert.ok(!/(^|\.)(beierpm|beierrecycling|beiermachinery)\.com$/.test(new URL(href).hostname));
  assert.ok(html.includes('href="/about-us#production-base"'));
  const photo=html.match(/<img[^>]*src="[^"]*beier-zhangjiagang-factory.webp"[^>]*>/)[0];assert.equal((photo.match(/\bsizes=/g)||[]).length,1);
- assert.ok(html.includes('data-map-select="google"'));
- assert.ok(html.includes('data-map-cookie-choice="allow"')&&html.includes('data-map-cookie-choice="deny"'));
- assert.ok(html.includes('href="/privacy/cookies/"'));
+ assert.match(html,/data-map-external="google"/);
+ assert.doesNotMatch(html,/data-map-embed|data-map-select|data-map-cookie-panel/);
  for(const id of ['contacts-intro','direct-contact','project-form','production-site','contact-task','official-videos','contacts-next'])assert.ok(html.includes(`id="${id}"`));
  assert.ok(html.includes('От вашей задачи — к нашему решению.'));
  assert.ok(html.includes('BEIER Machinery · Китай'));
@@ -205,9 +204,12 @@ test('Карты проверяют pin, HTTPS, hostname и src независи
  state=mapCapabilities({...yandex,markerVerified:true},productionSite);assert.equal(state.hasVerifiedMarker,true);assert.equal(state.hasEmbed,true);
  for(const bad of ['https://yandex.com/map-widget/v1/?text=fixture','https://yandex.com/map-widget/v1/?pt=121,33','https://evil.invalid/map-widget/v1/?pt=120,32','http://yandex.com/map-widget/v1/?pt=120,32','https://name:secret@yandex.com/map-widget/v1/?pt=120,32'])assert.equal(mapCapabilities({...yandex,markerVerified:true,embedUrl:bad},productionSite).hasEmbed,false,bad);
  assert.equal(mapCapabilities({...yandex,markerVerified:true,lat:200},productionSite).hasVerifiedMarker,false);
- const html=productionMap({...productionSite,maps:[{...fixture,label:'Google <script> " &'}]});
+ const html=productionMap({...productionSite,maps:[{...fixture,label:'Google <script> " &'}],operatorApprovedMapEmbeds:['google']});
  assert.ok(html.includes('&lt;script&gt; &quot; &amp;'));assert.equal((html.match(/<iframe\b/g)||[]).length,0);
- assert.ok(html.includes('data-map-switch hidden'));assert.ok(!html.includes('data-map-load'));
+ assert.ok(html.includes('data-map-embed="https://www.google.com/maps/embed?pb=official-fixture"'));assert.ok(!html.includes('data-map-load'));
+ const partial=productionMap({...productionSite,operatorApprovedMapEmbeds:['yandex']});
+ assert.match(partial,/data-map-embed="https:\/\/yandex\.com\/map-widget/);
+ assert.doesNotMatch(partial,/data-map-embed="https:\/\/www\.google\.com/);
 });
 
 test('Локальные фото BEIER и фирменный VK Видео имеют проверяемое происхождение',async()=>{

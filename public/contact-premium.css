@@ -78,13 +78,7 @@
 .contact-premium-page .cp-map-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:12px 16px;border-top:1px solid var(--era-border)}
 .contact-premium-page .cp-map-links a{display:inline-flex;min-width:0;align-items:center;gap:8px;min-height:44px;font-size:12px;line-height:1.6;text-decoration:underline;text-underline-offset:4px}
 .contact-premium-page .cp-map-note{font-size:11px;line-height:1.6;margin:0;padding:0 20px 16px}
-.contact-premium-page .cp-cookie{padding:18px 20px;background:var(--era-blue);color:var(--era-on-dark);border-top:2px solid var(--era-gold);font-size:13px;line-height:1.6}
-.contact-premium-page .cp-cookie p{margin:6px 0 12px;color:var(--era-on-dark-muted)}
-.contact-premium-page .cp-cookie-actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
-.contact-premium-page .cp-cookie button{border:1px solid var(--era-gold);border-radius:4px;background:transparent;color:var(--era-on-dark);font:inherit;padding:6px 12px;min-height:44px}
-.contact-premium-page .cp-cookie a,.contact-premium-page [data-map-cookie-settings]{text-decoration:underline;text-underline-offset:.2em}
-.contact-premium-page [data-map-cookie-settings]{background:transparent;border:0;color:inherit;font:inherit;min-height:44px;padding:0}
-.contact-premium-page .cp-cookie :focus-visible{outline-color:var(--era-gold)}
+.contact-premium-page .cp-map-note button{background:transparent;border:0;color:inherit;font:inherit;min-height:44px;padding:0;text-decoration:underline;text-underline-offset:.2em}
 
 .contact-premium-page .cp-videos{padding-block:70px}
 .contact-premium-page .cp-video-channel{background:var(--era-blue);color:var(--era-on-dark);border-color:#bba46c55;padding:30px;min-height:300px}

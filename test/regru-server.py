@@ -156,9 +156,11 @@ class ServiceTest(unittest.TestCase):
         shutil.copytree(DIST, cls.web, copy_function=os.link)
         shutil.copytree(REPO / 'server/regru/private', cls.private, ignore=shutil.ignore_patterns('config.json', 'state'))
         cls.private.chmod(0o700)
-        original_policy = cls.web / 'privacy/index.html'
-        cls.pending_policy = original_policy.read_text()
-        original_policy.unlink()
+        cls.legal = {}
+        for path in ('privacy/index.html', 'privacy/consent/index.html'):
+            document = cls.web / path
+            cls.legal[document] = document.read_text()
+            document.unlink()
         cls.cert, cls.key = work / 'certificate.pem', work / 'key.pem'
         subprocess.run(['openssl', 'req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-days', '1', '-subj', '/CN=localhost',
                         '-addext', 'subjectAltName=DNS:localhost', '-keyout', str(cls.key), '-out', str(cls.cert)],
@@ -171,7 +173,7 @@ class ServiceTest(unittest.TestCase):
         cls.http_port = port()
         cls.base = f'http://127.0.0.1:{cls.http_port}'
         cls.settings = {
-            'web_root': str(cls.web), 'requests_enabled': True, 'privacy_version': 'local-test',
+            'web_root': str(cls.web), 'requests_enabled': True, 'privacy_version': 'ERA-PD-1.3',
             'rate_secret': secrets.token_hex(32),
             'smtp': {'host': 'localhost', 'port': cls.mail.server_address[1], 'password': cls.mail.password},
         }
@@ -210,7 +212,8 @@ class ServiceTest(unittest.TestCase):
         self.mail.auth.clear()
         shutil.rmtree(self.private / 'state', ignore_errors=True)
         self.write_config()
-        (self.web / 'privacy/index.html').write_text(self.pending_policy.replace('data-policy-status="pending"', 'data-policy-status="approved"'))
+        for document, original in self.legal.items():
+            document.write_text(original)
 
     def write_config(self, **override):
         path = self.private / 'config.json'
@@ -219,11 +222,13 @@ class ServiceTest(unittest.TestCase):
 
     def post(self, fields=None, files=(), **headers):
         selected = {'Имя': 'Иван <Клиент>', 'email': 'fixture@example.test', 'Задача': 'Задача ЭРА & эскиз',
-                    'Согласие': '1', 'Ссылки': 'https://example.test/video', 'Интересует': 'Линия BASE'}
+                    'Согласие': '1', 'consent_revision': 'ERA-PD-1.3', 'Ссылки': 'https://example.test/video', 'Интересует': 'Линия BASE'}
         selected.update(fields or {})
         boundary = 'Era-' + secrets.token_hex(12)
         chunks = []
         for name, value in selected.items():
+            if value is None:
+                continue
             if isinstance(value, str):
                 value = value.encode()
             chunks.append(f'--{boundary}\r\nContent-Disposition: form-data; name="{name}"\r\n\r\n'.encode() + value + b'\r\n')
@@ -243,15 +248,20 @@ class ServiceTest(unittest.TestCase):
         self.assertEqual(self.request('GET', path='/era-private/config.json')[0], 404)
 
     def test_fields_and_policy_block(self):
-        for data in [{'Имя': ''}, {'Задача': '  '}, {'email': 'nope'}, {'Согласие': '0'}, {'_honey': 'robot'},
+        for data in [{'Имя': ''}, {'Задача': '  '}, {'email': 'nope'}, {'Согласие': '0'}, {'Согласие': None},
+                     {'consent_revision': 'ERA-PD-1.2'}, {'consent_revision': None}, {'_honey': 'robot'},
                      {'email': 'a@example.test\r\nBcc: x@y.test'}, {'Имя': b'\xff'}, {'Имя': 'A' * 101}]:
             with self.subTest(data=data):
                 self.assertEqual(self.post(data)[0], 422)
         self.write_config(requests_enabled=False)
         self.assertEqual(self.post()[0], 503)
-        self.write_config()
-        (self.web / 'privacy/index.html').write_text(self.pending_policy)
+        self.write_config(privacy_version='ERA-PD-1.2')
         self.assertEqual(self.post()[0], 503)
+        self.write_config()
+        for document, original in self.legal.items():
+            document.write_text(original.replace('data-policy-status="approved"', 'data-policy-status="pending"'))
+            self.assertEqual(self.post()[0], 503)
+            document.write_text(original)
         self.assertFalse(self.mail.messages)
 
     def test_smtp_headers_attachment_deduplication(self):
@@ -266,8 +276,9 @@ class ServiceTest(unittest.TestCase):
         self.assertEqual(mail['Reply-To'].addresses[0].addr_spec, 'fixture@example.test')
         self.assertEqual(mail['Subject'], 'Заявка с сайта ЭРА')
         text = mail.get_body(preferencelist=('plain',)).get_content()
-        for value in ['Иван <Клиент>', 'Задача ЭРА & эскиз', 'https://example.test/video', 'https://era-cycle.ru/catalog/lines/separatsiya-01', 'local-test']:
+        for value in ['Иван <Клиент>', 'Задача ЭРА & эскиз', 'https://example.test/video', 'https://era-cycle.ru/catalog/lines/separatsiya-01']:
             self.assertIn(value, text)
+        self.assertRegex(text, r'Подтверждено отдельной галочкой\s+·\s+ERA-PD-1\.3\s+·\s+\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+00:00')
         attachment, = mail.iter_attachments()
         self.assertEqual((attachment.get_filename(), attachment.get_content_type(), attachment.get_payload(decode=True)), ('эскиз.pdf', 'application/pdf', PDF))
         self.assertEqual(len(self.mail.messages), 1)
@@ -328,7 +339,9 @@ class ServiceTest(unittest.TestCase):
             form.locator('[name="Имя"]').fill('Тест без JavaScript')
             form.locator('[name="email"]').fill('native@example.test')
             form.locator('[name="Задача"]').fill('Передать исходный контекст и два файла')
-            form.locator('[name="Согласие"]').check()
+            checkbox = form.locator('[name="Согласие"]')
+            self.assertTrue(checkbox.evaluate('input => input.required && !input.checked'))
+            checkbox.check()
             form.locator('[data-request-files]').set_input_files([{'name': 'schema.pdf', 'mimeType': 'application/pdf', 'buffer': PDF},
                                                                {'name': 'photo.png', 'mimeType': 'image/png', 'buffer': PNG}])
             with page.expect_navigation(wait_until='domcontentloaded', timeout=10000) as navigation:
@@ -356,7 +369,9 @@ class ServiceTest(unittest.TestCase):
             form.locator('[name="Имя"]').fill('Тест комплектования')
             form.locator('[name="email"]').fill('bundle@example.test')
             form.locator('[name="Задача"]').fill('Проверить архив двух материалов')
-            form.locator('[name="Согласие"]').check()
+            checkbox = form.locator('[name="Согласие"]')
+            self.assertTrue(checkbox.evaluate('input => input.required && !input.checked'))
+            checkbox.check()
             form.locator('[data-request-files]').set_input_files([{'name': 'эскиз.pdf', 'mimeType': 'application/pdf', 'buffer': PDF},
                                                                {'name': 'сырьё.png', 'mimeType': 'image/png', 'buffer': PNG}])
             with page.expect_navigation(wait_until='domcontentloaded', timeout=10000) as navigation:
