@@ -6,7 +6,7 @@ import {nodes,lines} from '../content/catalog.mjs';
 import {dryLineNames} from '../content/line-names.mjs';
 import {separation03,separation03Document,separation03Specification,separation03Power,separation03ConveyorPower} from '../content/separation-03.mjs';
 import {separation03Diagram} from '../content/separation-03-diagram.mjs';
-import {basePath,previewMode,render,routes} from '../scripts/build.mjs';
+import {basePath,previewMode,render,routes,assetBaseVersion} from '../scripts/build.mjs';
 import {revisedPage} from '../scripts/views.mjs';
 import {publicLibraryDocuments} from '../content/document-library.mjs';
 import {buildGalleryData} from '../scripts/gallery-data.mjs';
@@ -14,7 +14,7 @@ import {selectGalleryItems} from '../public/gallery-model.js';
 import {imageSize} from '../scripts/image-size.mjs';
 
 const hash=value=>createHash('sha256').update(value).digest('hex');
-const release=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8')).version;
+const release=assetBaseVersion;
 const line=lines.find(l=>l.slug==='separatsiya-03');
 test('PREMIUM опубликована в каталоге, три другие карточки сохранены',async()=>{
  assert.equal(lines.filter(l=>l.enabled).length,4);assert.ok(line.enabled);assert.equal(line.status,'source-checked');

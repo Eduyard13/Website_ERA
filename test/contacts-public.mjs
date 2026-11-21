@@ -13,10 +13,10 @@ const response=await fetch(url,{cache:'no-store'});assert.equal(response.status,
 const html=await response.text();
 assert.ok(html.includes('От вашей задачи — к нашему решению.'));
 assert.ok(html.includes('North 2nd Ring Road, 318, 215600.')&&html.includes('张家港市经济技术开发区北二环路318号'));
-const version=html.match(/contact-premium\.css\?v=([\d.]+)/)?.[1];assert.ok(version);
-assert.ok(html.includes('contact-maps.js?v='+version));assert.ok(!html.includes('/preview-only.js?'));
+const version=html.match(/contact-premium\.css\?v=([\da-f.-]+)/)?.[1];assert.ok(version);
+assert.match(html,/contact-maps\.js\?v=[a-f\d.-]+/);assert.ok(!html.includes('/preview-only.js?'));
 assert.equal((html.match(/data-request-form(?=[\s>])/g)||[]).length,1);
-assert.equal((html.match(/<iframe\b/g)||[]).length,1,'Google iframe is present without JavaScript');
+assert.equal((html.match(/<iframe\b/g)||[]).length,0,'Provider iframe requires an explicit choice');
 assert.ok(!html.includes('data-map-load'));
 for(const [,href] of html.matchAll(/<a[^>]*href="([^"]+)"/g))if(href.startsWith('https:'))assert.ok(!/(^|\.)(beierpm|beierrecycling|beiermachinery)\.com$/.test(new URL(href).hostname));
 for(const asset of ['contact-premium.css','contact-maps.js','assets/brands/vk-video.svg','assets/contacts/beier-zhangjiagang-factory.webp','assets/contacts/beier-zhangjiagang-factory-768.webp']){
@@ -49,6 +49,8 @@ try{
   const result=await evaluate(`(()=>({overflow:document.documentElement.scrollWidth>innerWidth,h1:document.querySelectorAll('main h1').length,anchors:document.querySelectorAll('.page-progress-rail a').length,photos:[...document.querySelectorAll('main img')].every(i=>i.complete&&i.naturalWidth>0),panels:[...document.querySelectorAll('.cp-direct,.cp-form-card,.cp-map,.cp-production-address,.cp-video-channel')].every(e=>e.scrollWidth<=e.clientWidth+1),fields:[...document.querySelectorAll('.cp-form-card input:not([type=hidden]):not([type=file]),.cp-form-card textarea')].every(e=>parseFloat(getComputedStyle(e).fontSize)>=16)}))()`);
   assert.deepEqual(result,{overflow:false,h1:1,anchors:5,photos:true,panels:true,fields:true},'Contacts layout '+width);
  }
+ assert.equal(await evaluate('document.querySelectorAll(".cp-map iframe").length'),0);
+ await evaluate(`document.querySelector('[data-map-cookie-choice="allow"]').click()`);
  assert.equal(await evaluate('document.querySelectorAll(".cp-map iframe").length'),1);
  const crop=await evaluate("(()=>{const p=document.querySelector('.cp-production-image'),m=document.querySelector('.cp-map'),i=p.querySelector('img'),f=p.querySelector('.cp-production-frame');return {fill:getComputedStyle(i).objectFit==='cover'&&Math.abs(i.getBoundingClientRect().height-f.getBoundingClientRect().height)<1,equal:Math.abs(p.getBoundingClientRect().height-m.getBoundingClientRect().height)<1,fullResolution:i.currentSrc.endsWith('/assets/contacts/beier-zhangjiagang-factory.webp'),sizes:(i.outerHTML.match(/\\bsizes=/g)||[]).length}})()");
  assert.deepEqual(crop,{fill:true,equal:true,fullResolution:true,sizes:1},'Full desktop cover and one sizes attribute');
@@ -96,5 +98,5 @@ try{
  assert.equal(await evaluate('document.querySelector("[data-request-topic]").value'),'Подбор линии <проект>');
  assert.equal(await evaluate('document.querySelectorAll("[data-request-form] script").length'),0);
  assert.deepEqual(errors,[]);
- console.log('::notice title=Published contacts verified::Version '+version+', 9 responsive widths, BEIER photo and official address, original VK Video mark, optional topic, automatic Google iframe and verified Yandex pin, repeated provider switching, blocked-map message and live external links passed. No forms submitted. '+url);
+ console.log('::notice title=Published contacts verified::Version '+version+', 9 responsive widths, BEIER photo and official address, original VK Video mark, optional topic, consent-gated Google iframe and verified Yandex pin, repeated provider switching, blocked-map message and live external links passed. No forms submitted. '+url);
 }finally{socket?.close();chrome.kill('SIGTERM');await delay(250);await rm(profile,{recursive:true,force:true});}

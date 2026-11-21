@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile,stat,readdir} from 'node:fs/promises';
 import {resolve} from 'node:path';
-import {routes,product,basePath,previewMode,siteUrl} from '../scripts/build.mjs';
+import {routes,product,assetBaseVersion,basePath,previewMode,siteUrl} from '../scripts/build.mjs';
 import {canonicalOrigin} from '../scripts/deploy-target.mjs';
 import {dryLineNames} from '../content/line-names.mjs';
 test('На главной четыре фотокарточки сырья, пять секторов и пять карточек экономики',async()=>{
@@ -499,7 +499,7 @@ test('Полные ролики проверены по контрольным �
 });
 
 test('Панель ЦБ РФ доступна на всех страницах и не содержит выдуманных курсов',async()=>{
- const {version}=JSON.parse(await readFile('package.json','utf8'));
+ const version=assetBaseVersion;
  for(const route of new Set(routes)){
   if(['/about','/ai','/company-details'].includes(route))continue; // Legacy redirects render the destination header.
   const html=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
@@ -661,7 +661,7 @@ test('Клиентский режим: единый кириллический �
  const notFound=await readFile('dist/404.html','utf8');assert.equal([...notFound.matchAll(/data-fx-bar /g)].length,1);
 });
 test('Индексация, canonical и sitemap согласованы для всех публичных страниц',async()=>{
- const excluded=new Set(['/about','/ai','/company-details','/contacts/sent','/news','/blog','/privacy']);
+ const excluded=new Set(['/about','/ai','/company-details','/contacts/sent','/news','/blog','/privacy','/privacy/consent','/privacy/cookies']);
  const titles=new Set(),descriptions=new Set(),expected=[];
  for(const route of new Set(routes)){
   const html=await readFile(resolve('dist','.'+route,'index.html'),'utf8');

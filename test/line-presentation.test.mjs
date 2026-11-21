@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
-import {render,basePath} from '../scripts/build.mjs';
+import {render,basePath,assetBaseVersion} from '../scripts/build.mjs';
 import {nodes,lines} from '../content/catalog.mjs';
 import {lineUnits,filmSeparationMedia} from '../content/film-separation.mjs';
 import {equipmentCardImages} from '../content/equipment-card-images.mjs';
@@ -108,7 +108,7 @@ test('Полная схема использует прозрачную моде
  const trucks=fullLineDiagram.parts.find(p=>p.number===27);assert.deepEqual(trucks.callouts.map(c=>c.id),['27-loading','27-unloading']);
  assert.notEqual(trucks.callouts[0].tooltipDescription,trucks.callouts[1].tooltipDescription);
  for(const [n,count] of [[20,5],[25,4],[27,2]])assert.equal(fullLineDiagram.parts.find(p=>p.number===n).regions.length,count);
- const {version}=JSON.parse(await readFile('package.json','utf8'));
+ const version=assetBaseVersion;
  assert.ok(page.includes(`/line-monitor.js?v=${version}-callouts-3`));assert.ok(page.includes(`/line-monitor.css?v=${version}-callouts-3`));
  assert.ok((await readFile('dist/line-monitor.js','utf8')).includes(`./line-callout-layout.mjs?v=${version}-callouts-3`));
 });

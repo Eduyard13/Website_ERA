@@ -248,3 +248,9 @@ ERA_BROWSER=1 python3 test/regru-server.py
 ```
 
 [Инструкция для ispmanager](docs/ERA_REG_RU_DEPLOY_STEPS.md) · [Правила Apache](docs/REG_RU_HTACCESS_RECOMMENDED.md)
+
+## Инкрементальные обновления Рег.ру
+
+Исходный ZIP 0.47.0 используется для первичной сверки. Следующие поставки сравнивают SHA-256 с фактически проверенным состоянием сайта и передают только добавленные и изменённые файлы. Prepare формирует ZIP-патч и список путей. Размещение одобряется владельцем для конкретного запуска и коммита.
+
+[Как обновлять ЭРА](docs/ERA_REGRU_UPDATES.md) · [Подключение SFTP](docs/ERA_REGRU_CONNECT.md) · [Контрольный список конфиденциальности](docs/ERA_PRIVACY_LAUNCH_CHECKLIST.md)

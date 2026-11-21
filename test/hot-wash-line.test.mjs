@@ -9,12 +9,12 @@ import {publicLibraryDocuments} from '../content/document-library.mjs';
 import {buildGalleryData} from '../scripts/gallery-data.mjs';
 import {selectGalleryItems,findGalleryItem} from '../public/gallery-model.js';
 import {revisedPage} from '../scripts/views.mjs';
-import {render,basePath,previewMode,routes} from '../scripts/build.mjs';
+import {render,basePath,previewMode,routes,assetBaseVersion} from '../scripts/build.mjs';
 import {imageSize} from '../scripts/image-size.mjs';
 
 const hash=value=>createHash('sha256').update(value).digest('hex');
 const line=lines.find(l=>l.slug==='moyka-plenki');
-const release=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8')).version;
+const release=assetBaseVersion;
 test('Горячая мойка сохраняет показатели после публикации Сепарации 03',()=>{
  assert.ok(line.enabled);assert.equal(line.status,'source-checked');assert.equal(line.group,'Мойка');assert.equal(line.number,undefined);
  assert.ok(routes.includes('/catalog/lines/moyka-plenki'));

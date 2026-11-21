@@ -51,7 +51,7 @@ with sync_playwright() as p:
     assert page.locator('[data-request-form]').count()==1
     assert page.locator('#project-request').count()==0
     assert page.locator('.cp-video-channel').count()==2
-    assert page.locator('.cp-map iframe').count()==1
+    assert page.locator('.cp-map iframe').count()==0
     assert page.locator('[data-map-external]').count()==2
     assert page.locator('[data-map-select]').count()==2
    toggle=page.locator('[data-quick-contact-toggle]');panel=page.locator('#quick-contact-panel')

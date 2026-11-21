@@ -1,0 +1,156 @@
+name: ERA Reg.ru Prepare and approved deploy
+
+on:
+  push:
+    branches: [deploy/regru, regru/incremental-privacy]
+    tags: ['regru-prepare-*', 'regru-deploy-*', 'regru-rollback-*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    if: >-
+      github.repository == 'Eduyard13/Website_ERA' &&
+      (github.ref == 'refs/heads/deploy/regru' || github.ref == 'refs/heads/regru/incremental-privacy' ||
+       (github.actor == 'Eduyard13' && startsWith(github.ref, 'refs/tags/regru-prepare-')))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      DEPLOY_TARGET: regru
+      PREVIEW_MODE: '0'
+      BASE_PATH: ''
+      SITE_URL: https://era-cycle.ru
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: ctype, curl, fileinfo, openssl, simplexml, zip
+          coverage: none
+      - name: Test the production build and upload handler
+        run: |
+          npm ci --omit=optional
+          npm test
+          npm run build
+          python scripts/package-regru.py --vendor-only
+          php test/regru-cbr.php
+          python test/regru-server.py
+          python -m unittest discover -s test -p 'test_regru_incremental.py'
+      - name: Prepare the reviewed patch without connecting to Reg.ru
+        id: prepare-patch
+        run: |
+          set -euo pipefail
+          baseline=docs/regru/archive-0.47.0.json
+          flags=()
+          state_ref=refs/heads/regru/live-state
+          if [ -n "$(git ls-remote --heads origin "$state_ref")" ]; then
+            git fetch --no-tags --depth=1 origin "$state_ref"
+            baseline="$RUNNER_TEMP/era-live-manifest.json"
+            git show FETCH_HEAD:live-manifest.json > "$baseline"
+            flags+=(--verified-baseline)
+          fi
+          version=$(node -p "require('./package.json').version")
+          output="$RUNNER_TEMP/era-regru-patch"
+          python scripts/regru_release.py prepare --base "$baseline" --output "$output" \
+            --release "$version" --commit "$(git rev-parse HEAD)" "${flags[@]}"
+          cp scripts/regru_verify.php "$output/"
+          cp docs/regru/archive-0.47.0.json "$output/"
+          cp docs/ERA_REGRU_UPDATES.md docs/ERA_REGRU_CONNECT.md docs/ERA_PRIVACY_LAUNCH_CHECKLIST.md "$output/"
+          cp docs/ERA_PERSONAL_DATA_TEMPLATE.md docs/ERA_CONSENT_DRAFT.md "$output/"
+          printf 'patch=%s\n' "$output" >> "$GITHUB_OUTPUT"
+          cat "$output/PATCH_MANIFEST.md" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: era-regru-patch
+          path: ${{ steps.prepare-patch.outputs.patch }}
+          retention-days: 14
+          compression-level: 0
+          if-no-files-found: error
+
+  deliver:
+    if: >-
+      github.repository == 'Eduyard13/Website_ERA' && github.event_name == 'push' &&
+      github.actor == 'Eduyard13' && vars.REGRU_SFTP_ENABLED == 'true' &&
+      (startsWith(github.ref, 'refs/tags/regru-deploy-') || startsWith(github.ref, 'refs/tags/regru-rollback-'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment: reg-ru
+    concurrency:
+      group: regru-live-site
+      cancel-in-progress: false
+    permissions:
+      contents: write
+      actions: read
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify the owner approval and the prepared commit
+        id: approval
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          approved_sha=$(git rev-parse HEAD)
+          if [[ "$GITHUB_REF_NAME" =~ ^regru-deploy-([0-9]+)$ ]]; then
+            run=${BASH_REMATCH[1]}
+            gh api "repos/$GH_REPO/actions/runs/$run" | jq -e --arg sha "$approved_sha" --arg repo "$GH_REPO" '
+              .head_sha == $sha and .head_repository.full_name == $repo and .conclusion == "success" and
+              (.path | startswith(".github/workflows/regru-deploy.yml"))' >/dev/null
+            gh api "repos/$GH_REPO/actions/runs/$run/jobs" | jq -e '[.jobs[] | select(.name == "prepare" and .conclusion == "success")] | length == 1' >/dev/null
+            location="$RUNNER_TEMP/era-approved-patch"
+            gh run download "$run" --name era-regru-patch --dir "$location"
+            (cd "$location" && sha256sum -c SHA256SUMS)
+            version=$(python -c 'import json; print(json.load(open("package.json"))["version"])')
+            patch="$location/ERA_UPDATE_$version.zip"
+            python - "$patch" "$approved_sha" <<'PY'
+          from sys import argv, path
+          from zipfile import ZipFile
+          path.insert(0, 'scripts')
+          from regru_release import read_patch
+          with ZipFile(argv[1]) as package:
+              _, target, plan = read_patch(package)
+          if target['commit'] != argv[2] or not plan['baseline_verified']:
+              raise SystemExit('The approved patch must use this exact commit and a verified live baseline')
+          PY
+            printf 'operation=apply\ninput=%s\n' "$patch" >> "$GITHUB_OUTPUT"
+          elif [[ "$GITHUB_REF_NAME" == "regru-rollback-$approved_sha" ]]; then
+            printf 'operation=rollback\ninput=%s\n' "$approved_sha" >> "$GITHUB_OUTPUT"
+          else
+            echo 'The approval tag does not match the exact reviewed commit.' >&2
+            exit 1
+          fi
+      - name: Install the SFTP client
+        run: python -m pip install 'paramiko==4.0.0'
+      - name: Transfer only reviewed file changes and verify HTTPS
+        env:
+          OPERATION: ${{ steps.approval.outputs.operation }}
+          APPROVED_INPUT: ${{ steps.approval.outputs.input }}
+          SFTP_HOST: ${{ secrets.SFTP_HOST }}
+          SFTP_PORT: ${{ secrets.SFTP_PORT }}
+          SFTP_USER: ${{ secrets.SFTP_USER }}
+          SFTP_KEY: ${{ secrets.SFTP_KEY }}
+          SFTP_KNOWN_HOSTS: ${{ secrets.SFTP_KNOWN_HOSTS }}
+          REGRU_WEB_ROOT: ${{ secrets.REGRU_WEB_ROOT }}
+        run: python scripts/regru_sync.py "$OPERATION" "$APPROVED_INPUT" --receipt "$RUNNER_TEMP/era-live-manifest.json"
+      - name: Record the verified release for the next dry-run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/regru_record_state.sh "$RUNNER_TEMP/era-live-manifest.json"

@@ -25,6 +25,9 @@ with sync_playwright() as p:
   assert page.locator('[data-request-files]').count()==1
   assert page.locator('[data-request-submit]').is_visible()
   assert page.locator('[data-map-panel=google]').is_visible()
+  if page.locator('[data-map-cookie-panel]').is_visible():
+   assert page.locator('.cp-map iframe').count()==0
+   page.locator('[data-map-cookie-choice=allow]').click()
   assert page.locator('.cp-map iframe').count()==1
   assert page.locator('[data-map-external]').count()==2
   assert page.locator('a.cp-video-channel').count()==1
@@ -87,7 +90,7 @@ with sync_playwright() as p:
  f=fallback.new_page();f.goto(base+'/contacts/');f.locator('[data-copy-address]').click()
  assert 'вручную' in f.locator('[data-copy-status]').inner_text()
  assert f.evaluate('getSelection().toString()')==f.locator('address [lang=en]').inner_text()
- f.locator('[data-map-select=yandex]').click();assert f.locator('[data-map-panel=yandex]').is_visible();fallback.close()
+ f.locator('[data-map-cookie-choice=allow]').click();f.locator('[data-map-select=yandex]').click();assert f.locator('[data-map-panel=yandex]').is_visible();fallback.close()
  # Intercept the full-page form too: optional fields, picker, drag/drop, 5 MB and exact ZIP bytes.
  from email.parser import BytesParser
  from email import policy
@@ -150,7 +153,7 @@ with sync_playwright() as p:
  assert f.locator('address').is_visible()
  assert f.locator('[data-map-external=google]').is_visible() and f.locator('[data-map-external=yandex]').is_visible()
  assert f.locator('[data-map-switch]').is_hidden()
- assert f.locator('.cp-map iframe').count()==1
+ assert f.locator('.cp-map iframe').count()==0
  f.locator('[data-contact-optional] summary').click();assert f.locator('[name="Ссылки"]').is_visible()
  assert f.locator('[data-request-form]').get_attribute('method')=='post'
  nojs.close();assert not errors,errors

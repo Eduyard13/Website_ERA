@@ -26,6 +26,19 @@ const map=root.querySelector('[data-contact-maps]');
 if(!map)return;
 const buttons=[...map.querySelectorAll('[data-map-select]')],panels=[...map.querySelectorAll('[data-map-panel]')];
 const storageKey='era-contact-map-provider';
+const choiceKey='era-map-consent-v1';
+const choices=map.querySelector('[data-map-cookie-panel]');
+const settings=map.querySelector('[data-map-cookie-settings]');
+if(!choices||!settings)return;
+const read=(key)=>{try{return localStorage.getItem(key);}catch{return null;}};
+const defaultProvider=buttons.find(button=>button.dataset.mapSelect==='google')?.dataset.mapSelect||buttons[0]?.dataset.mapSelect;
+let allowed=false;
+function showChoices(show){
+ choices.hidden=!show;
+ settings.setAttribute('aria-expanded',String(show));
+}
+settings.hidden=false;
+settings.addEventListener('click',()=>{showChoices(choices.hidden);if(!choices.hidden)choices.querySelector('button').focus();});
 const allowedEmbed=value=>{
  try{const url=new URL(value);return url.protocol==='https:'&&!url.username&&!url.password&&((url.hostname==='www.google.com'&&url.pathname==='/maps/embed')||(url.hostname==='yandex.com'&&url.pathname==='/map-widget/v1/'&&url.searchParams.has('pt')))?url.href:null;}catch{return null;}
 };
@@ -42,7 +55,7 @@ function mount(panel){
  if(!frame){
   frame=document.createElement('iframe');frame.src=src;
   frame.title=panel.dataset.mapLabel+' — производственная площадка ЭРА · BEIER Machinery';
-  frame.width='100%';frame.height='340';frame.loading='lazy';frame.referrerPolicy='no-referrer-when-downgrade';
+  frame.width='100%';frame.height='340';frame.loading='lazy';frame.referrerPolicy='no-referrer';
   panel.querySelector('[data-map-stage]').append(frame);
  }
  if(!frame.dataset.mapBound){
@@ -61,8 +74,28 @@ function select(provider,{remember=false}={}){
  buttons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.mapSelect===provider)));
  if(remember)try{localStorage.setItem(storageKey,provider);}catch{}
 }
-for(const button of buttons)button.addEventListener('click',()=>select(button.dataset.mapSelect,{remember:true}));
-map.querySelector('[data-map-switch]').hidden=false;
-let preferred='google';try{preferred=localStorage.getItem(storageKey)||preferred;}catch{}
-select(buttons.some(button=>button.dataset.mapSelect===preferred)?preferred:'google');
+function applyChoice(value){
+ allowed=value==='allow';
+ map.dataset.mapCookieState=allowed?'allowed':value==='deny'?'denied':'pending';
+ map.querySelector('[data-map-switch]').hidden=!allowed;
+ const preference=allowed?read(storageKey):null;
+ const provider=buttons.some(button=>button.dataset.mapSelect===preference)?preference:defaultProvider;
+ if(allowed)select(provider);
+ else for(const panel of panels){
+  panel.hidden=panel.dataset.mapPanel!==defaultProvider;
+  panel.querySelectorAll('iframe').forEach(frame=>frame.remove());
+  panel.querySelector('.cp-map-message').hidden=false;
+  panel.querySelector('[data-map-status]').textContent='Откройте карту по ссылке ниже. Встроенная карта доступна после выбора в настройках cookies.';
+ }
+ showChoices(value!=='allow'&&value!=='deny');
+}
+for(const button of choices.querySelectorAll('[data-map-cookie-choice]'))button.addEventListener('click',()=>{
+ const value=button.dataset.mapCookieChoice;
+ try{localStorage.setItem(choiceKey,value);if(value==='deny')localStorage.removeItem(storageKey);}catch{}
+ applyChoice(value);
+ settings.focus({preventScroll:true});
+});
+for(const button of buttons)button.addEventListener('click',()=>{if(allowed)select(button.dataset.mapSelect,{remember:true});});
+window.addEventListener('storage',event=>{if(event.key===choiceKey||event.key===null)applyChoice(read(choiceKey));});
+applyChoice(read(choiceKey));
 })();

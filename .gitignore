@@ -1,5 +1,6 @@
 dist/
 node_modules/
+__pycache__/
 *.log
 server/regru/private/config.json
 server/regru/private/state/

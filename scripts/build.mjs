@@ -10,19 +10,44 @@ import {aboutUsPage} from './about-us.mjs';
 import {quickContact} from './quick-contact.mjs';
 import {nodes,lines} from '../content/catalog.mjs';
 import {revisedPage,extraRoutes,galleryDialog} from './views.mjs';
-import {mkdir,rm,cp,writeFile,readFile} from 'node:fs/promises';
+import {mkdir,rm,cp,writeFile,readFile,readdir} from 'node:fs/promises';
 import {basename} from 'node:path';
+import {createHash} from 'node:crypto';
 import {sections} from '../content/site.mjs';
-import {contactPage,requestDialog,requestSentPage,privacyPage,enhanceProjectRequests} from './contact.mjs';
+import {contactPage,requestDialog,requestSentPage,privacyPage,privacyConsentPage,cookiePolicyPage,enhanceProjectRequests} from './contact.mjs';
 import {basePath,canonicalOrigin,previewMode,siteUrl} from './deploy-target.mjs';
+import assetBaseline from '../content/asset-cache-baseline.json' with {type:'json'};
 import {validateRates} from '../public/fx-core.js';
 export {basePath,previewMode,siteUrl};
-const excludedRoutes=new Set(['/about','/ai','/company-details','/contacts/sent','/news','/blog','/privacy']);
+const excludedRoutes=new Set(['/about','/ai','/company-details','/contacts/sent','/news','/blog','/privacy','/privacy/consent','/privacy/cookies']);
 
-const version=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8')).version;
+// Legacy cache keys stay stable when a release changes copy or unrelated files.
+export const assetBaseVersion='0.47.0';
+const version=assetBaseVersion;
+const moduleAssets=['fx','interactions','context-navigation','document-library','commercial','economics-controller','economics-model','economics-payback','economics-market','economics-view','economics-page-controller','economics-page-state','economics-page-view','gallery-showroom','gallery-viewer','gallery-model','presentation-web','technology-final'];
+const publicRoot=new URL('../public/',import.meta.url);
+const publicEntries=await readdir(publicRoot,{withFileTypes:true});
+const trackedAssets=new Set([...Object.keys(assetBaseline),...publicEntries.filter(dir=>dir.isFile()&&/\.(?:css|m?js)$/.test(dir.name)).map(dir=>dir.name)]);
+const digest=value=>createHash('sha256').update(value).digest('hex');
+const sources=new Map(await Promise.all([...trackedAssets].map(async file=>{
+ try{return [file,await readFile(new URL(file,publicRoot))];}
+ catch(error){if(error.code==='ENOENT')return [file,null];throw error;}
+})));
+const checksums=new Map([...sources].filter(([,bytes])=>bytes).map(([file,bytes])=>[file,digest(bytes)]));
+const importPattern=/(?:from|import) '(\.\/[^']+\.js)'/g;
+const dependentFiles=file=>file==='line-monitor.js'?['line-callout-layout.mjs']:
+ moduleAssets.includes(file.replace(/\.js$/,''))&&sources.get(file)?[...sources.get(file).toString().matchAll(importPattern)].map(match=>match[1].slice(2)):[];
+function assetRevision(file,fallback=version){
+ if(!checksums.has(file))return fallback;
+ const closure=new Set([file]);
+ for(const resource of closure)for(const dependency of dependentFiles(resource))closure.add(dependency);
+ if([...closure].every(name=>checksums.get(name)===assetBaseline[name]))return fallback;
+ return digest([...closure].sort().map(name=>name+':'+checksums.get(name)).join('\n')).slice(0,12);
+}
+const revisionedMarkup=html=>html.replace(/((?:src|href)="\/([^"?]+)\?v=)([^"&]+)/g,(_,prefix,file,key)=>prefix+assetRevision(file,key));
 const lineDiagramVersion=version+'-callouts-3';
 const linePresentationPage=path=>['/catalog/lines/separatsiya-01','/catalog/lines/separatsiya-02','/catalog/lines/separatsiya-03','/catalog/lines/moyka-plenki'].includes(path);
-const withBase=html=>html.replace(/(href|src|poster|data-product|data-image|data-video|data-poster|data-gallery-base|value)="\/(?!\/)/g,`$1="${basePath}/`).replace(/srcset="([^"]+)"/g,(_,sources)=>`srcset="${sources.replace(/(^|,)(\s*)\/(?!\/)/g,`$1$2${basePath}/`)}"`);
+const withBase=html=>revisionedMarkup(html).replace(/(href|src|poster|data-product|data-image|data-video|data-poster|data-gallery-base|value)="\/(?!\/)/g,`$1="${basePath}/`).replace(/srcset="([^"]+)"/g,(_,sources)=>`srcset="${sources.replace(/(^|,)(\s*)\/(?!\/)/g,`$1$2${basePath}/`)}"`);
 const escape=s=>String(s).replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;').replaceAll('>','&gt;');
 export const product='/catalog/equipment/predvaritelnyy-izmelchitel';
 const button=(text,href,secondary=false)=>`<a class="button ${secondary?'secondary':''}" href="${href}">${text}<span aria-hidden="true">↗</span></a>`;
@@ -38,6 +63,8 @@ function page(path){
  if(path==='/contacts')return contactPage({basePath});
  if(path==='/contacts/sent')return requestSentPage();
  if(path==='/privacy')return privacyPage();
+ if(path==='/privacy/consent')return privacyConsentPage();
+ if(path==='/privacy/cookies')return cookiePolicyPage();
  const entry=simplePages[path];if(!entry)throw new Error('Missing page: '+path);
  return `<section class="section page-intro"><p class="eyebrow">ЭРА / ${entry.title.toUpperCase()}</p><h1>${entry.heading}</h1><p class="lead">${entry.lead}</p></section><section class="section"><p>${entry.text}</p>${button(entry.action,entry.href||'/contacts')}</section>`;
 }
@@ -59,7 +86,7 @@ export function render(path){
  if(path==='/ai')return renderLegacyAutomation();
  if(path==='/company-details')return renderLegacyCompanyDetails();
  const documentCategory=path.startsWith('/documents/')?documentCategories.find(c=>path==='/documents/'+c.id):null;
- const title=documentCategory?documentCategory.title:path==='/documents'?'Инженерная библиотека ЭРА':path==='/privacy'?'Политика обработки персональных данных':path==='/contacts/sent'?'Статус заявки':path==='/'?'Промышленная переработка загрязнённых плёнок':sectionMeta[path]?.title||[...nodes,...lines].find(n=>n.path===path)?.title||sections.find(s=>s[0]===path)?.[1]||'Каталог оборудования';
+ const title=documentCategory?documentCategory.title:path==='/documents'?'Инженерная библиотека ЭРА':path==='/privacy'?'Политика обработки персональных данных':path==='/privacy/consent'?'Согласие на обработку персональных данных':path==='/privacy/cookies'?'Cookies и хранилище браузера':path==='/contacts/sent'?'Статус заявки':path==='/'?'Промышленная переработка загрязнённых плёнок':sectionMeta[path]?.title||[...nodes,...lines].find(n=>n.path===path)?.title||sections.find(s=>s[0]===path)?.[1]||'Каталог оборудования';
  const description=documentCategory?documentCategory.detail:path==='/documents'?'Брошюры, технические описания, схемы, чертежи и материалы для оценки производственных решений ЭРА. Документы узлов и производственных линий.':path==='/about-us'?'ЭРА: более 20 лет отраслевого опыта команды, инженерная разработка, производственная база BEIER и внедрение оборудования в Нидерландах и Челябинске.':path==='/contacts'?'Контакты ЭРА: прямая связь, форма проекта и производственная база BEIER Machinery в Чжанцзягане, Китай. Отправьте задачу, фотографии, видео и документы.':path==='/'?'ЭРА — технологические решения для переработки загрязнённых полиэтиленовых плёнок. Сухая сепарация и полный цикл до вторичной ПЭ-гранулы. Испытания при засорённости до 80%.':path==='/technology'?'Технология ЭРА: сырьё и загрязнения, сухая сепарация, горячая мойка, гранулирование, качество вторичного полиэтилена и направления применения.':path==='/automation'?'Система управления КАИР: согласование оборудования, защита, память режимов, экраны Siemens, мойка и водные контуры. Реальные фотографии и практические сценарии.':sectionMeta[path]?.description||[...nodes,...lines].find(n=>n.path===path)?.description||'ЭРА — оборудование, технологии и автоматизация переработки вторичных плёночных материалов.';
  return withBase(enhanceProjectRequests(arrows(`<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">${previewMode||excludedRoutes.has(path)?'<meta name="robots" content="noindex,nofollow">':''}${excludedRoutes.has(path)?'':canonicalLink(path)}<title>${escape(title)} — ЭРА</title><meta name="description" content="${escape(description)}">${icons()}${styles(path)}${scripts(path)}</head><body><a class="skip" href="#main">К содержанию</a>${siteHeader(path)}${contextNavigation(path)}<main id="main">${page(path)}</main>${siteFooter()}${siteMenu(path)}${path==='/media'?showroomDialog():galleryDialog()}${path==='/contacts'?'':requestDialog({basePath})}${quickContact()}</body></html>`),path));
 }
@@ -67,7 +94,7 @@ function renderLegacyAbout(){return withBase(`<!doctype html><html lang="ru"><he
 function renderLegacyAutomation(){return withBase(`<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Система управления КАИР — ЭРА</title>${icons()}<meta http-equiv="refresh" content="0; url=${basePath}/automation">${canonicalLink('/automation')}<link rel="stylesheet" href="/style.css?v=${version}"><script src="/automation-redirect.js?v=${version}" defer></script></head><body><main class="section" id="main"><h1>Система управления КАИР</h1><p>Материалы об управлении оборудованием объединены на странице системы КАИР.</p><a class="text-link" href="/automation">Перейти к системе управления →</a></main></body></html>`);}
 function renderLegacyCompanyDetails(){return withBase(`<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Контакты — ЭРА</title>${icons()}<meta http-equiv="refresh" content="0; url=${basePath}/contacts">${canonicalLink('/contacts')}<link rel="stylesheet" href="/style.css?v=${version}"><script src="/company-details-redirect.js?v=${version}" defer></script></head><body><main class="section" id="main"><h1>Связаться с ЭРА</h1><p>Актуальные способы связи находятся на странице контактов.</p><a class="text-link" href="/contacts">Перейти к контактам →</a></main></body></html>`);}
 function renderNotFound(){return withBase(arrows(`<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Страница не найдена — ЭРА</title>${icons()}${styles('/404')}${scripts()}</head><body><a class="skip" href="#main">К содержанию</a>${siteHeader('/404')}<main class="section" id="main"><h1>404</h1><p>Страница не найдена.</p><a href="/">На главную →</a></main>${siteFooter()}${siteMenu('/404')}</body></html>`));}
-export const routes=['/','/about','/ai','/company-details','/contacts/sent','/privacy',product,'/catalog/equipment','/catalog/lines',...sections.map(s=>s[0]),...extraRoutes];
+export const routes=['/','/about','/ai','/company-details','/contacts/sent','/privacy','/privacy/consent','/privacy/cookies',product,'/catalog/equipment','/catalog/lines',...sections.map(s=>s[0]),...extraRoutes];
 await validateDocumentLibrary();
 const ratesSeed=!previewMode&&process.env.CBR_SEED_FILE?validateRates(JSON.parse(await readFile(process.env.CBR_SEED_FILE,'utf8'))):{status:'unavailable'};
 await rm('dist',{recursive:true,force:true});await mkdir('dist',{recursive:true});await cp('public','dist',{recursive:true,filter:source=>basename(source)!=='.gitkeep'});
@@ -81,12 +108,12 @@ for(const resource of ['build/pdf.mjs','build/pdf.worker.mjs','cmaps','standard_
 await cp('node_modules/fflate/esm/browser.js','dist/vendor/fflate.js');
 await cp('node_modules/fflate/LICENSE','dist/vendor/fflate-LICENSE.txt');
 // Keep each browser module graph on the same release.
-for(const name of ['fx','interactions','context-navigation','document-library','commercial','economics-controller','economics-model','economics-payback','economics-market','economics-view','economics-page-controller','economics-page-state','economics-page-view','gallery-showroom','gallery-viewer','gallery-model','presentation-web','technology-final']){
+for(const name of moduleAssets){
  const file=`dist/${name}.js`,source=await readFile(file,'utf8');
- await writeFile(file,source.replace(/from '(\.\/[^']+\.js)'/g,`from '$1?v=${version}'`).replace(/import '(\.\/[^']+\.js)'/g,`import '$1?v=${version}'`));
+ await writeFile(file,source.replace(/(from|import) '(\.\/[^']+\.js)'/g,(_,statement,path)=>`${statement} '${path}?v=${assetRevision(path.slice(2))}'`));
 }
 const lineController=await readFile('dist/line-monitor.js','utf8');
-await writeFile('dist/line-monitor.js',lineController.replace("from './line-callout-layout.mjs'",`from './line-callout-layout.mjs?v=${lineDiagramVersion}'`));
+await writeFile('dist/line-monitor.js',lineController.replace("from './line-callout-layout.mjs'",`from './line-callout-layout.mjs?v=${assetRevision('line-callout-layout.mjs',lineDiagramVersion)}'`));
 for(const path of new Set(routes)){const dir='dist'+(path==='/'?'':path);await mkdir(dir,{recursive:true});await writeFile(dir+'/index.html',render(path));}
 await writeFile('dist/robots.txt','User-agent: *\nAllow: /\n'+(!previewMode?`Sitemap: ${siteUrl}/sitemap.xml\n`:''));
 if(!previewMode){
