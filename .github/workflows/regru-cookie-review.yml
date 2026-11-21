@@ -1,0 +1,86 @@
+name: ERA 0.48.2 cookie banner review
+
+on:
+  push:
+    branches: [regru/cookies-0482]
+
+permissions:
+  contents: read
+
+jobs:
+  review:
+    if: github.repository == 'Eduyard13/Website_ERA'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      DEPLOY_TARGET: regru
+      PREVIEW_MODE: '0'
+      BASE_PATH: ''
+      SITE_URL: https://era-cycle.ru
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - name: Build and check both source versions
+        run: |
+          command -v pdftotext >/dev/null || { sudo apt-get update && sudo apt-get install -y poppler-utils; }
+          npm ci --omit=optional
+          npm test
+          python test/regru-legal-content.py
+          python -m unittest discover -s test -p 'test_regru_incremental.py'
+          base=03f07c9cae17c20091d2a80dfe44eb35f0d15d05
+          git cat-file -e "$base^{commit}" || git fetch --no-tags --depth=1 origin "$base"
+          git worktree add --detach "$RUNNER_TEMP/era-0481" "$base"
+          ln -s "$GITHUB_WORKSPACE/node_modules" "$RUNNER_TEMP/era-0481/node_modules"
+          (cd "$RUNNER_TEMP/era-0481" && npm run build)
+      - name: Compare the cookie UI in Chromium and capture the screens
+        run: |
+          python -m pip install playwright==1.62.0
+          export ERA_CHROME_PATH="$(command -v google-chrome || command -v chromium)"
+          export ERA_PRIVACY_SCREENSHOTS="$RUNNER_TEMP/era-0482-visual"
+          export ERA_PREVIEW_URL=http://127.0.0.1:3242
+          export ERA_REFERENCE_URL=http://127.0.0.1:3241
+          node --input-type=module - <<'JS' &
+          import {createStaticServer} from './scripts/static-server.mjs';
+          createStaticServer({root:process.env.RUNNER_TEMP+'/era-0481/dist'}).listen(3241, '127.0.0.1');
+          createStaticServer({root:'dist'}).listen(3242, '127.0.0.1');
+          JS
+          server=$!
+          trap 'kill "$server"' EXIT
+          curl -fsS --retry 4 --retry-connrefused -o /dev/null "$ERA_PREVIEW_URL/"
+          python test/regru-privacy.browser.py
+          (cd "$ERA_PRIVACY_SCREENSHOTS" && sha256sum *.png > SHA256SUMS)
+      - name: Package the reviewed files and replay the Shell procedure locally
+        run: |
+          output="$RUNNER_TEMP/era-0482-release"
+          python scripts/regru_cookie_0482.py --output "$output" --commit "$GITHUB_SHA"
+          (cd "$output" && sha256sum -c SHA256SUMS)
+          python test/regru-cookie-release.py --baseline "$RUNNER_TEMP/era-0481/dist" --release "$output"
+          head -n 8 "$output/PATCH_MANIFEST.md" >> "$GITHUB_STEP_SUMMARY"
+          tail -n 3 "$output/ERA_0482_TEST_REPORT.md" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ERA_0.48.2_RELEASE
+          path: ${{ runner.temp }}/era-0482-release
+          retention-days: 30
+          compression-level: 0
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ERA_0.48.2_VISUAL
+          path: ${{ runner.temp }}/era-0482-visual
+          retention-days: 30
+          compression-level: 0
+          if-no-files-found: error

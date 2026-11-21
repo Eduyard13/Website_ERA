@@ -8,7 +8,8 @@ from urllib.parse import urlsplit
 from playwright.sync_api import expect, sync_playwright
 
 base = os.environ.get('ERA_PREVIEW_URL', 'http://127.0.0.1:3231').rstrip('/')
-visual = Path(os.environ.get('ERA_PRIVACY_SCREENSHOTS', '/tmp/era-0481-visual'))
+reference = os.environ.get('ERA_REFERENCE_URL', '').rstrip('/')
+visual = Path(os.environ.get('ERA_PRIVACY_SCREENSHOTS', '/tmp/era-0482-visual'))
 visual.mkdir(parents=True, exist_ok=True)
 root = Path(__file__).resolve().parents[1]
 fixtures = subprocess.check_output(['node', '--input-type=module', '-e', """
@@ -44,31 +45,98 @@ def protect_network(context, requests):
         if 'google' in url.hostname or 'yandex' in url.hostname or 'gstatic' in url.hostname:
             requests.append(url)
             route.fulfill(status=200, content_type='text/html', body='<title>Map fixture</title>')
-        elif url.netloc == urlsplit(base).netloc:
+        elif url.netloc in {urlsplit(base).netloc, urlsplit(reference).netloc}:
             route.continue_()
         else:
             route.abort()
     context.route('http**/*', handle)
 
 
+def geometry(page):
+    return page.evaluate("""() => ['.site-header','#main','#resource-title'].map(selector => {
+        const r = document.querySelector(selector).getBoundingClientRect();
+        return [r.x, r.top + scrollY, r.width, selector === '#main' ? 0 : r.height];
+    })""")
+
+
+def asset_keys(page):
+    return page.evaluate("""() => Array.from(document.querySelectorAll('head [href*="/legal.css?"],head [src*="/cookie-consent.js?"]'),
+        element => new URL(element.href || element.src).search)""")
+
+
+def actions_clear(notice):
+    assert notice.get_by_role('button').evaluate_all("""buttons => buttons.every(button => {
+        const r = button.getBoundingClientRect();
+        return r.height >= 44 && r.left >= 0 && r.right <= innerWidth
+          && button.contains(document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2));
+    })""")
+
+
 with sync_playwright() as p:
     browser = p.chromium.launch(executable_path=os.environ.get('ERA_CHROME_PATH','/usr/bin/chromium'), args=['--no-sandbox'])
     requests, errors = [], []
-    for width, height in [(390, 844), (768, 900), (1440, 900)]:
+    widths = [(320, 640), (375, 812), (390, 844), (768, 900), (1024, 768), (1440, 900), (1920, 1080)]
+    for width, height in widths:
         context = browser.new_context(viewport={'width':width,'height':height}, reduced_motion='reduce',
-                                      is_mobile=width == 390, has_touch=width == 390)
+                                      is_mobile=width <= 390, has_touch=width <= 390)
         protect_network(context, requests)
         page = context.new_page()
         page.on('pageerror', lambda error: errors.append(str(error)))
         assert page.goto(base + '/').status == 200
         notice = page.locator('[data-cookie-notice]')
         expect(notice).to_be_visible()
-        expect(notice.get_by_role('button')).to_have_count(3)
-        assert notice.evaluate("e=>getComputedStyle(e).position==='static' && e.scrollWidth<=e.clientWidth")
+        assert notice.get_by_role('button').all_text_contents() == ['Принять', 'Отклонить', 'Настроить']
+        expect(notice).to_contain_text('включая IP-адрес')
+        expect(notice.get_by_role('link', name='О cookies')).to_have_attribute('href', re.compile(r'/privacy/cookies/$'))
+        assert notice.evaluate("e=>getComputedStyle(e).position==='fixed' && e.scrollWidth<=e.clientWidth")
         assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
-        assert notice.bounding_box()['y'] + notice.bounding_box()['height'] <= page.locator('#main').bounding_box()['y'] + 1
-        assert notice.bounding_box()['y'] + notice.bounding_box()['height'] < page.locator('#quick-contact').bounding_box()['y']
-        page.screenshot(path=visual / f'notice-{width}.png', animations='disabled')
+        box = notice.bounding_box()
+        assert abs(box['x']) < 1 and abs(box['width'] - width) < 1
+        assert abs(box['y'] + box['height'] - height) < 1
+        assert 44 <= box['height'] <= height * .45
+        if width >= 1440:
+            assert 76 <= box['height'] <= 105, box
+            assert len({button.bounding_box()['y'] for button in notice.get_by_role('button').all()}) == 1
+        first = geometry(page)
+        actions_clear(notice)
+        take_comparison = width in (390,1440)
+        if take_comparison:
+            page.screenshot(path=visual / f'after-{width}.png', animations='disabled')
+            if reference:
+                old = context.new_page()
+                old.goto(reference + '/')
+                old_notice = old.locator('[data-cookie-notice]')
+                expect(old_notice).to_be_visible()
+                assert old_notice.evaluate("e=>getComputedStyle(e).position==='static'")
+                assert asset_keys(page) != asset_keys(old)
+                old.screenshot(path=visual / f'before-{width}.png', animations='disabled')
+                old_notice.get_by_role('button', name='Отклонить', exact=True).click()
+                expect(old_notice).to_be_hidden()
+                assert first == geometry(old), (width, first, geometry(old))
+                old.close()
+
+        quick = page.locator('#quick-contact')
+        toggle = quick.locator('[data-quick-contact-toggle]')
+        expect(toggle).to_be_visible()
+        assert quick.bounding_box()['y'] + quick.bounding_box()['height'] < box['y']
+        toggle.click()
+        panel = quick.locator('#quick-contact-panel')
+        expect(panel).to_be_visible()
+        panel_box = panel.bounding_box()
+        assert panel_box['y'] >= -1 and panel_box['y'] + panel_box['height'] < box['y']
+        actions_clear(notice)
+        page.keyboard.press('Escape')
+        expect(panel).to_be_hidden()
+        expect(toggle).to_be_focused()
+
+        menu_toggle = page.locator('[data-menu-toggle]')
+        menu_toggle.click()
+        menu = page.locator('#site-menu')
+        assert menu.evaluate("node=>node.matches(':modal')")
+        expect(quick).to_be_hidden()
+        page.keyboard.press('Escape')
+        expect(menu).to_be_hidden()
+        expect(menu_toggle).to_be_focused()
 
         configure = notice.get_by_role('button', name='Настроить')
         configure.focus()
@@ -79,14 +147,33 @@ with sync_playwright() as p:
         for _ in range(9):
             page.keyboard.press('Tab')
             assert page.evaluate("document.activeElement===document.body || document.querySelector('#cookie-settings').contains(document.activeElement)")
-        page.screenshot(path=visual / f'settings-{width}.png', animations='disabled')
+        if width == 390:
+            page.screenshot(path=visual / 'settings-390.png', animations='disabled')
+        settings.get_by_role('radio', name='Разрешить карты').check()
         page.keyboard.press('Escape')
         expect(settings).to_be_hidden()
         expect(configure).to_be_focused()
+        assert page.evaluate("localStorage.getItem('era-map-consent-v1')") is None
+        configure.click()
+        settings.get_by_role('radio', name='Отклонить').check()
+        settings.get_by_role('button', name='Закрыть настройки cookies').click()
+        expect(settings).to_be_hidden()
+        expect(configure).to_be_focused()
+        assert page.evaluate("localStorage.getItem('era-map-consent-v1')") is None
 
-        notice.get_by_role('button', name='Отклонить', exact=True).click()
+        page.evaluate("scrollTo({top:document.body.scrollHeight,behavior:'instant'})")
+        footer = page.locator('#site-footer')
+        assert footer.bounding_box()['y'] + footer.bounding_box()['height'] <= notice.bounding_box()['y'] + 1
+        page.evaluate("scrollTo({top:180,behavior:'instant'})")
+        y = page.evaluate('scrollY')
+        action, choice = ('Принять','allow') if width in (375,1440) else ('Отклонить','deny')
+        notice.get_by_role('button', name=action, exact=True).press('Enter')
         expect(notice).to_be_hidden()
-        assert page.evaluate("localStorage.getItem('era-map-consent-v1')") == 'deny'
+        assert page.evaluate("localStorage.getItem('era-map-consent-v1')") == choice
+        assert page.evaluate('scrollY') == y
+        page.evaluate("scrollTo({top:0,behavior:'instant'})")
+        assert first == geometry(page), (width, first, geometry(page))
+        assert page.evaluate("!document.documentElement.hasAttribute('data-cookie-bar-open') && getComputedStyle(document.body).paddingBottom==='0px'")
         expect(page.locator('#main')).to_be_focused()
 
         other = context.new_page()
@@ -95,25 +182,75 @@ with sync_playwright() as p:
         expect(other.locator('[data-map-external]')).to_have_count(2)
         expect(other.locator('[data-map-embed], .cp-map iframe')).to_have_count(0)
         footer_settings(page).click()
-        expect(settings.get_by_role('radio', name='Отклонить')).to_be_checked()
+        expect(settings.get_by_role('radio', name='Разрешить карты' if choice == 'allow' else 'Отклонить')).to_be_checked()
         save_choice(page, 'Разрешить карты')
         expect(footer_settings(page)).to_be_focused()
         other.reload()
         expect(other.locator('[data-cookie-notice]')).to_be_hidden()
         expect(other.locator('[data-map-embed], .cp-map iframe')).to_have_count(0)
+        expect(other.locator('#contact-consent')).not_to_be_checked()
         assert other.evaluate("localStorage.getItem('era-map-consent-v1')") == 'allow'
         assert not requests, requests
-        if width == 390:
-            other.locator('#contact-email').tap()
-            assert other.evaluate("document.activeElement.id==='contact-email'")  # touch focus for the mobile keyboard
-            assert other.locator('#contact-email').evaluate("node=>node.inputMode==='email'")
-            other.locator('#contact-email').fill('fixture@example.test')
-            assert other.locator('#contact-email').input_value() == 'fixture@example.test'
-            expect(other.locator('#contact-consent')).not_to_be_checked()
-        page.goto(base + '/privacy/consent/')
-        page.screenshot(path=visual / f'legal-{width}.png', animations='disabled')
         context.close()
-        print(f'Global notice, keyboard dialog, saved preference, external links and visual layout at {width}px', flush=True)
+        print(f'{width}x{height}: fixed edges, stable first screen, reachable actions, quick contact, footer and keyboard settings', flush=True)
+
+    context = browser.new_context(viewport={'width':390,'height':844}, is_mobile=True, has_touch=True, reduced_motion='reduce')
+    protect_network(context, requests)
+    page = context.new_page()
+    page.on('pageerror', lambda error: errors.append(str(error)))
+    page.goto(base + '/contacts/')
+    notice = page.locator('[data-cookie-notice]')
+    expect(notice).to_be_visible()
+    email = page.locator('#contact-email')
+    email.tap()
+    expect(email).to_be_focused()
+    expect(notice).to_be_hidden()
+    page.set_viewport_size({'width':390,'height':430})
+    assert email.evaluate("node=>node.inputMode==='email'")
+    email.fill('fixture@example.test')
+    expect(email).to_have_value('fixture@example.test')
+    expect(notice).to_be_hidden()
+    email.blur()
+    page.set_viewport_size({'width':640,'height':270})
+    expect(notice).to_be_visible()
+    assert notice.evaluate('e=>Math.abs(e.getBoundingClientRect().bottom-innerHeight)<1 && e.scrollHeight>e.clientHeight')
+    quick = page.locator('#quick-contact')
+    quick.locator('[data-quick-contact-toggle]').click()
+    panel = quick.locator('#quick-contact-panel')
+    expect(panel).to_be_visible()
+    assert panel.bounding_box()['y'] >= 0
+    assert panel.bounding_box()['y'] + panel.bounding_box()['height'] < notice.bounding_box()['y']
+    page.keyboard.press('Escape')
+    expect(panel).to_be_hidden()
+    configure = notice.get_by_role('button', name='Настроить')
+    configure.click()
+    settings = page.get_by_role('dialog', name='Настройки cookies')
+    expect(settings).to_be_visible()
+    assert settings.evaluate('d=>d.getBoundingClientRect().height<innerHeight && d.scrollHeight>d.clientHeight')
+    settings.get_by_role('radio',name='Отклонить').check()
+    page.keyboard.press('Escape')
+    expect(configure).to_be_focused()
+    page.set_viewport_size({'width':390,'height':844})
+    actions_clear(notice)
+    for route in versions:
+        page.goto(base + route)
+        expect(page.locator('[data-cookie-notice]').get_by_role('button',name='Принять')).to_be_visible()
+        assert page.locator('[data-cookie-notice]').evaluate("e=>getComputedStyle(e).position==='fixed'")
+    context.close()
+    print('Touch focus, simulated keyboard viewport, landscape overflow, and preserved legal pages', flush=True)
+
+    for choice in ('allow', 'deny'):
+        context = browser.new_context()
+        protect_network(context, requests)
+        context.add_init_script(f"localStorage.setItem('era-map-consent-v1', '{choice}')")
+        page = context.new_page()
+        page.goto(base + '/')
+        expect(page.locator('[data-cookie-notice]')).to_be_hidden()
+        page.reload()
+        expect(page.locator('[data-cookie-notice]')).to_be_hidden()
+        assert not page.evaluate("document.documentElement.hasAttribute('data-cookie-bar-open')")
+        context.close()
+    print('Both saved choices from 0.48.1 survive the UI update and reload', flush=True)
 
     context = browser.new_context(accept_downloads=True, java_script_enabled=False)
     protect_network(context, requests)
