@@ -49,48 +49,38 @@ try{
   const result=await evaluate(`(()=>({overflow:document.documentElement.scrollWidth>innerWidth,h1:document.querySelectorAll('main h1').length,anchors:document.querySelectorAll('.page-progress-rail a').length,photos:[...document.querySelectorAll('main img')].every(i=>i.complete&&i.naturalWidth>0),panels:[...document.querySelectorAll('.cp-direct,.cp-form-card,.cp-map,.cp-production-address,.cp-video-channel')].every(e=>e.scrollWidth<=e.clientWidth+1),fields:[...document.querySelectorAll('.cp-form-card input:not([type=hidden]):not([type=file]),.cp-form-card textarea')].every(e=>parseFloat(getComputedStyle(e).fontSize)>=16)}))()`);
   assert.deepEqual(result,{overflow:false,h1:1,anchors:5,photos:true,panels:true,fields:true},'Contacts layout '+width);
  }
- assert.equal(await evaluate('document.querySelectorAll(".cp-map iframe").length'),0);
- await evaluate(`document.querySelector('[data-map-cookie-choice="allow"]').click()`);
- assert.equal(await evaluate('document.querySelectorAll(".cp-map iframe").length'),1);
- const crop=await evaluate("(()=>{const p=document.querySelector('.cp-production-image'),m=document.querySelector('.cp-map'),i=p.querySelector('img'),f=p.querySelector('.cp-production-frame');return {fill:getComputedStyle(i).objectFit==='cover'&&Math.abs(i.getBoundingClientRect().height-f.getBoundingClientRect().height)<1,equal:Math.abs(p.getBoundingClientRect().height-m.getBoundingClientRect().height)<1,fullResolution:i.currentSrc.endsWith('/assets/contacts/beier-zhangjiagang-factory.webp'),sizes:(i.outerHTML.match(/\\bsizes=/g)||[]).length}})()");
- assert.deepEqual(crop,{fill:true,equal:true,fullResolution:true,sizes:1},'Full desktop cover and one sizes attribute');
- if(process.env.ERA_VERIFY_MAP_PROVIDERS==='1'){
-  for(const provider of ['google','yandex']){
-   await evaluate("document.querySelector('[data-map-select="+provider+"]').click();document.querySelector('.cp-map iframe').scrollIntoView({block:'center'})");
-   let snapshot,session;
-   const prefix=provider==='google'?'https://www.google.com/maps/embed':'https://yandex.com/map-widget/v1/';
-   for(let i=0;i<80;i++){
-    try{
-     if(!session){
-      const targets=await call('Target.getTargets');const target=targets.targetInfos.find(t=>t.type==='iframe'&&t.url.startsWith(prefix));
-      if(target)session=(await call('Target.attachToTarget',{targetId:target.targetId,flatten:true})).sessionId;
-     }
-     if(session){
-      const r=await call('Runtime.evaluate',{expression:"({images:[...document.images].filter(i=>i.complete&&i.naturalWidth>16).length,google:document.documentElement.innerHTML.includes('14308622914688450133'),markers:document.querySelectorAll('.map-placemark').length})",returnByValue:true},session);
-      snapshot=r.result?.value;
-      if(snapshot?.images>=3&&(provider==='google'?snapshot.google:snapshot.markers>0))break;
-     }
-    }catch{session=null;}
-    await delay(300);
-   }
-   assert.ok(snapshot?.images>=3&&(provider==='google'?snapshot.google:snapshot.markers>0),'Real '+provider+' map tiles and marker: '+JSON.stringify(snapshot));
-   console.log('::notice title=Native '+provider+' map verified::Actual provider images and '+(provider==='google'?'the official BEIER object':'a visible custom placemark')+' rendered on '+url);
-  }
- }
- for(let i=0;i<3;i++){
-  await evaluate('document.querySelector("[data-map-select=yandex]").click()');
-  assert.equal(await evaluate('document.querySelector("[data-map-select=yandex]").getAttribute("aria-pressed")'),'true');
-  const target=new URL(await evaluate('document.querySelector("[data-map-external=yandex]").href'));
-  assert.ok(target.searchParams.has('pt')&&!target.searchParams.has('text'));
-  assert.equal(await evaluate('document.querySelectorAll(".cp-map iframe").length'),1);
-  assert.ok((await evaluate('document.querySelector(".cp-map iframe").src')).startsWith('https://yandex.com/map-widget/v1/'));
-  await evaluate('document.querySelector("[data-map-select=google]").click()');
-  assert.equal(await evaluate('document.querySelectorAll(".cp-map iframe").length'),1);
- }
- await evaluate('document.querySelector(".cp-map iframe").dispatchEvent(new Event("error"))');
- assert.equal(await evaluate('document.querySelectorAll(".cp-map iframe").length'),0);
- assert.ok((await evaluate('document.querySelector("#contact-map-google [data-map-status]").textContent')).includes('Карта недоступна'));
- assert.equal(await evaluate('document.querySelector("[data-map-external=google]").href'),'https://www.google.com/maps?cid=14308622914688450133');
+
+ // ERA 0.48.2: visitor consent and operator approval are separate gates.
+ // The operator currently approves no embedded map providers, so external links remain
+ // available while iframes must never appear, including after visitor consent.
+ assert.equal(await evaluate("document.querySelectorAll('[data-map-embed],.cp-map iframe,[data-map-switch]').length"),0,'Unapproved embedded providers must be absent');
+ assert.equal(await evaluate("document.querySelectorAll('[data-map-external]').length"),2,'Both external map links stay available');
+ await waitFor("window.eraMapPreferences && document.querySelector('[data-cookie-notice]') && !document.querySelector('[data-cookie-notice]').hidden");
+ assert.equal(await evaluate("document.querySelector('[data-cookie-choice=allow]').textContent.trim()"),'Принять');
+ await evaluate("document.querySelector('[data-cookie-choice=allow]').click()");
+ assert.equal(await evaluate("localStorage.getItem('era-map-consent-v1')"),'allow');
+ assert.equal(await evaluate("window.eraMapPreferences.read().choice"),'allow');
+ assert.equal(await evaluate("document.querySelector('[data-cookie-notice]').hidden"),true);
+ assert.equal(await evaluate("document.querySelectorAll('[data-map-embed],.cp-map iframe').length"),0,'Visitor consent alone must not enable unapproved maps');
+
+ const crop=await evaluate("(()=>{const p=document.querySelector('.cp-production-image'),m=document.querySelector('.cp-map'),i=p.querySelector('img'),f=p.querySelector('.cp-production-frame');return {fill:getComputedStyle(i).objectFit==='cover'&&Math.abs(i.getBoundingClientRect().height-f.getBoundingClientRect().height)<1,equal:Math.abs(p.getBoundingClientRect().height-m.getBoundingClientRect().height)<1,fullResolution:i.currentSrc.endsWith('/assets/contacts/beier-zhangjiagang-factory.webp'),sizes:i.hasAttribute('sizes')?1:0}})()");
+ assert.deepEqual(crop,{fill:true,equal:true,fullResolution:true,sizes:1},'Full desktop cover and responsive sizes attribute');
+
+ assert.equal(await evaluate("document.querySelector('[data-map-external=google]').href"),'https://www.google.com/maps?cid=14308622914688450133');
+ const yandex=new URL(await evaluate("document.querySelector('[data-map-external=yandex]').href"));
+ assert.equal(yandex.hostname,'yandex.com');
+ assert.ok(yandex.searchParams.has('pt')&&!yandex.searchParams.has('text'),'Yandex must retain the verified location pin');
+
+ // Preference changes in the footer remain accessible and must not start third-party maps.
+ await evaluate("document.querySelector('footer [data-cookie-settings]').click()");
+ assert.equal(await evaluate("document.querySelector('#cookie-settings').open"),true);
+ assert.equal(await evaluate("document.querySelector('#cookie-settings input[name=maps][value=allow]').checked"),true);
+ await evaluate("(()=>{const d=document.querySelector('#cookie-settings');d.querySelector('input[name=maps][value=deny]').checked=true;d.querySelector('[data-cookie-form]').requestSubmit();})()");
+ assert.equal(await evaluate("document.querySelector('#cookie-settings').open"),false);
+ assert.equal(await evaluate("localStorage.getItem('era-map-consent-v1')"),'deny');
+ assert.equal(await evaluate("window.eraMapPreferences.read().choice"),'deny');
+ assert.equal(await evaluate("document.querySelectorAll('.cp-map iframe').length"),0);
+ assert.equal(await evaluate("document.querySelector('[data-cookie-notice]').hidden"),true);
  assert.equal(await evaluate('document.querySelector(".cp-video-channel[data-video-channel=vkVideo]").tagName'),'DIV');
  assert.equal(await evaluate("[...document.images].filter(i=>i.src.endsWith('/assets/brands/vk-video.svg')).length"),2);
  await call('Page.navigate',{url:url+'?topic='+encodeURIComponent('Подбор линии <проект>')+'#project-form'});
