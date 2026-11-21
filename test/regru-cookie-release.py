@@ -30,7 +30,8 @@ def run(*argv, failure=False):
     return result.stdout or result.stderr
 
 
-with tempfile.TemporaryDirectory(prefix='era-0482-fixture-', dir=staging.parent) as temp:
+# The host verifier requires each directory component to start with a letter or digit.
+with tempfile.TemporaryDirectory(prefix='era-0482-fixture-', dir=Path('/tmp').resolve()) as temp:
     root = Path(temp)
     web = root / 'www' / 'era-cycle.ru'
     backups = root / 'era-backups'
