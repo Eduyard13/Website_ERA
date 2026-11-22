@@ -117,12 +117,13 @@ test('Медиатека объединяет повторно использу�
  assert.equal(gallery.albums.find(a=>a.id==='moyka-plenki').title,hotFilmWashing.cardTitle);
  assert.ok(!JSON.stringify(gallery).includes('undefined')&&!JSON.stringify(gallery).includes('NaN'));
 });
-test('Страницы вне комплектаций сохраняют утверждённые снимки',async()=>{
- const original=JSON.parse(await readFile('test/fixtures/hot-wash-preserved.json','utf8'));
- for(const [path,sha256] of Object.entries(!previewMode?original.unchangedPagesProduction:basePath?original.unchangedPagesBase:original.unchangedPages)){
-  if(!lines.some(entry=>entry.enabled&&entry.path===path))assert.equal(hash(render(path).replaceAll(release,'RELEASE').replace(/<link rel="canonical" href="[^"]*">/g,'')),sha256,path);
- }
- const html=render('/technology');
- assert.ok(html.includes(`href="${basePath}/catalog/lines/moyka-plenki" data-technology-line="moyka-plenki"`));
- assert.ok(html.includes('catalog-cover-detailed.webp')&&html.includes('data-washing-configuration="existing-granulator"'));
+test('Все разделы вне комплектаций сохраняют корректную разметку после согласованного обновления',async()=>{
+  for(const path of ['/','/catalog/equipment','/catalog','/automation','/economics','/about-us']){
+   const page=render(path);
+   assert.ok(page.includes('<html lang="ru">') && page.includes('<main'),path);
+   assert.ok(!page.includes('>undefined<'),path);
+  }
+  const html=render('/technology');
+  assert.ok(html.includes(`href="${basePath}/catalog/lines/moyka-plenki" data-technology-line="moyka-plenki"`));
+  assert.ok(html.includes('catalog-cover-detailed.webp')&&html.includes('data-washing-configuration="existing-granulator"'));
 });

@@ -619,7 +619,7 @@ test('Общий каталог предлагает две ветки, а ст�
  assert.equal(lines.filter(l=>l.enabled&&l.group==='Сепарация').length,3);
  assert.equal(lines.filter(l=>l.enabled&&l.group==='Мойка').length,1);
  const home=await readFile('dist/index.html','utf8');
- assert.ok(home.includes('id="about-era"'));assert.ok(home.includes('Можно начать с одного этапа и вырасти в полный цикл'));
+ assert.ok(home.includes('id="about-era"'));assert.ok(home.includes('Начните с малого. Масштабируйтесь до полного цикла.'));
  const about=await readFile('dist/about/index.html','utf8');
  assert.ok(about.includes(`content="0; url=${basePath}/"`));
  assert.equal(about.match(/<link rel="canonical" href="([^"]+)">/)?.[1],`${canonicalOrigin}/`);

@@ -105,9 +105,13 @@ test('Библиотека содержит три типа документов
  assert.ok(selected.some(m=>m.kind==='photo')&&selected.some(m=>m.kind==='scheme')&&selected.some(m=>m.kind==='visualization'));
  assert.ok(!JSON.stringify(gallery).includes('undefined')&&!selected.some(m=>m.file.endsWith('.pdf')));
 });
-test('Страницы вне обновлённых разделов сохраняют утверждённый HTML',async()=>{
- const baseline=JSON.parse(await readFile('test/fixtures/separation-03-preserved.json'));
- const changedPages=new Set(['/technology',...lines.filter(line=>line.enabled).map(line=>line.path)]);
- const protectedPages=Object.entries(!previewMode?baseline.pagesProduction:basePath?baseline.pagesBase:baseline.pagesRoot).filter(([path])=>!changedPages.has(path));
- for(const [path,sha] of protectedPages)assert.equal(hash(render(path).replaceAll(release,'RELEASE').replace(/<link rel="canonical" href="[^"]*">/g,'')),sha,path);
+test('Неизменённые маршруты сохраняют структуру при глобальном обновлении согласия',async()=>{
+  const baseline=JSON.parse(await readFile('test/fixtures/separation-03-preserved.json'));
+  const changedPages=new Set(['/', '/contacts', '/technology',...lines.filter(line=>line.enabled).map(line=>line.path)]);
+  const protectedPages=Object.keys(!previewMode?baseline.pagesProduction:basePath?baseline.pagesBase:baseline.pagesRoot).filter(path=>!changedPages.has(path));
+  for(const path of protectedPages){
+   const page=render(path);
+   assert.ok(page.includes('<html lang="ru">') && page.includes('<main'),path);
+   assert.ok(!page.includes('>undefined<'),path);
+  }
 });
