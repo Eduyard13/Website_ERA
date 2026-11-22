@@ -26,8 +26,9 @@ export function legalPage(path){
 }
 
 export function requestConsent(prefix){
- const [label, links] = copy('Подпись под формой заявки').slice(4).split(/ (?=\[Полный текст согласия\])/);
- return `<input type="hidden" name="consent_revision" value="${consentRevision}"><div class="request-consent"><input id="${prefix}-consent" name="Согласие" type="checkbox" value="1" required aria-describedby="${prefix}-consent-links"><div><label for="${prefix}-consent">${escape(label)}</label><div id="${prefix}-consent-links">${inlineLinks(links,true)}</div></div></div>`;
+ const [, links] = copy('Подпись под формой заявки').slice(4).split(/ (?=\[Полный текст согласия\])/);
+  const label = 'Даю отдельное согласие на обработку моих персональных данных для рассмотрения заявки, ответа и подготовки предложения.';
+ return `<input type="hidden" name="consent_revision" value="${consentRevision}"><div class="request-consent"><input id="${prefix}-consent" name="Согласие" type="checkbox" value="1" required aria-describedby="${prefix}-consent-links"><div class="request-consent-body"><label for="${prefix}-consent">${escape(label)}</label><div class="request-consent-links" id="${prefix}-consent-links">${inlineLinks(links,true)}</div></div></div>`;
 }
 
 export function cookieSettingsButton(){

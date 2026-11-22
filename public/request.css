@@ -103,3 +103,11 @@
  .request-sent{padding:45px 20px 55px;min-height:500px}.request-sent .lead{font-size:17px}
 }
 @media(prefers-reduced-motion:reduce){.request-upload{transition:none}}
+
+/* ERA approved refinement #1: compact neutral consent without crowding the checkbox. */
+.project-request-form .request-consent{align-items:flex-start;gap:12px}
+.project-request-form .request-consent-body{flex:1;min-width:0}
+.project-request-form .request-consent-body>label{font-size:13px;line-height:1.5;font-weight:400}
+.project-request-form .request-consent-links{display:flex;flex-wrap:wrap;column-gap:16px;row-gap:2px;margin-top:6px;font-size:11px;line-height:1.6}
+.project-request-form .request-consent-links a{font-size:inherit;overflow-wrap:anywhere;text-underline-offset:2px}
+@media(max-width:480px){.project-request-form .request-consent-links{gap:4px 12px}.project-request-form .request-consent-body>label{font-size:12px}}

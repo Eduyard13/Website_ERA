@@ -424,3 +424,9 @@
  .tf-page * {animation:none!important;transition:none!important}
  html:has(.tf-page) {scroll-behavior:auto}
 }
+
+/* ERA approved refinement #13: legible gold italic proof statement. */
+.tf-page .tf-trials>div>p:not(.eyebrow):not(.tf-caption){
+ color:#e9ca86;font-style:italic;font-weight:500;line-height:1.5;
+ text-shadow:0 1px 12px #080e2235;
+}
