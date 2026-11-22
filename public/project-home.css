@@ -859,3 +859,83 @@
  .resource-page .market-figure-pair .market-metric-unit{font-size:14px;}
  .resource-kair-benefits svg{width:32px;height:32px;margin:0;}
 }
+
+
+/* 2026-11-22: editorial corrections — native KAIR, full 4:3 covers and equal cards. */
+
+/* Every ERA product cover is authored as 4:3 artwork.
+   Keep the complete industrial line instead of cropping it into 16:10. */
+.resource-page .resource-equipment-grid {align-items:stretch;}
+.resource-page .resource-equipment-grid>article {
+ display:flex;flex-direction:column;height:100%;min-width:0;
+}
+.resource-page .resource-equipment-grid .resource-equipment-image {
+ display:block;position:relative;width:100%;aspect-ratio:4/3;
+ flex:none;overflow:hidden;background:#10182c;
+}
+.resource-page .resource-equipment-grid .resource-equipment-image img {
+ display:block;width:100%;height:100%;aspect-ratio:4/3;
+ object-fit:cover;object-position:center center;
+ max-width:none;
+}
+.resource-page .resource-equipment-grid>article>div {
+ flex:1;display:flex;flex-direction:column;min-width:0;
+}
+.resource-page .resource-equipment-grid .resource-line-links {
+ margin-top:auto;padding-top:9px;
+}
+.resource-page .resource-equipment-grid>article>div>.resource-link {
+ margin-top:auto;padding-top:9px;
+}
+
+/* KAIR — one continuous original midnight-blue scene.
+   No image frame, no screen blending (which had turned the artwork cyan).
+   Like the homepage hero, art floats over the same section, with soft edges. */
+.resource-page .resource-control {
+ position:relative;isolation:isolate;overflow:hidden;
+ background:linear-gradient(116deg,#11152e 0%,#121a31 58%,#081429 100%);
+}
+.resource-page .resource-control .resource-control-grid {
+ position:static;grid-template-columns:minmax(0,44fr) minmax(0,56fr);
+ gap:0;align-items:center;min-height:clamp(540px,39vw,735px);
+}
+.resource-page .resource-control .resource-control-copy {
+ position:relative;z-index:2;max-width:590px;min-width:0;
+}
+.resource-page .resource-control .resource-control-grid .resource-kair-visual {
+ position:absolute;z-index:1;
+ top:50%;right:0;
+ width:min(64%,1120px);max-width:none;
+ margin:0;transform:translateY(-50%);
+ padding:0;border:0;border-radius:0;background:transparent;
+ box-shadow:none;overflow:visible;
+ pointer-events:none;
+}
+.resource-page .resource-control .resource-kair-visual img {
+ display:block;width:100%;max-width:none;height:auto;object-fit:contain;
+ border:0;border-radius:0;box-shadow:none;
+ opacity:1;filter:none;mix-blend-mode:normal;
+ -webkit-mask-image:radial-gradient(ellipse 70% 69% at 50% 50%,#000 0 63%,transparent 72%);
+ mask-image:radial-gradient(ellipse 70% 69% at 50% 50%,#000 0 63%,transparent 72%);
+}
+.resource-page .resource-control .resource-kair-benefits {
+ position:relative;z-index:2;
+}
+@media(max-width:1100px) {
+ .resource-page .resource-control .resource-control-grid {
+  grid-template-columns:minmax(0,1fr);min-height:0;gap:clamp(15px,3vw,30px);
+ }
+ .resource-page .resource-control .resource-control-copy {max-width:820px;}
+ .resource-page .resource-control .resource-control-grid .resource-kair-visual {
+  position:relative;top:auto;right:auto;transform:none;
+  width:min(100%,900px);max-width:900px;
+  justify-self:center;grid-column:1;margin:0 auto;
+ }
+}
+@media(max-width:639px) {
+ .resource-page .resource-control .resource-control-grid {gap:10px;}
+ .resource-page .resource-control .resource-control-grid .resource-kair-visual {
+  width:calc(100% + 2 * var(--home-gutter));
+  max-width:none;margin-inline:calc(-1 * var(--home-gutter));
+ }
+}
