@@ -227,32 +227,40 @@ function equipment(){
 
 function kair(){
  const source=media.kairScreen;
+ const items=[
+  ['Согласованная работа','Все участки действуют по заданной логике.','flow'],
+  ['Память режимов','Сохранение настроек для повторных партий.','settings'],
+  ['Контроль и защита','Реакция на контролируемые отклонения.','shield'],
+ ];
+ const icons={
+  flow:'<path d="M12 12v-5h12m-12 5v14h12m-2-21h10v8H22zm0 19h10v8H22z"/>',
+  settings:'<path d="M7 9h34M7 21h34M7 33h34M17 5v8m13 4v8m-7 4v8"/>',
+  shield:'<path d="m24 3 18 7v14c0 12-18 21-18 21S6 36 6 24V10zM14 24l7 7 13-15"/>'
+ };
  return `<section class="resource-section resource-control era-indigo-surface" id="kair" aria-labelledby="resource-kair-title" data-home-block="kair" data-page-progress-label="Управление КАИР">
   <div class="resource-container resource-control-grid">
-   <div>
-    ${heading('resource-kair-title','КАИР — интеллект производства',{lead:'Система согласует работу узлов, сохраняет настройки под сырьё и даёт оператору контроль процесса. Удалённый мониторинг доступен в предусмотренном исполнении.'})}
-    ${link('Подробнее о системе КАИР','/automation')}
+   <div class="resource-control-copy">
+    <p class="eyebrow">ИНТЕЛЛЕКТУАЛЬНОЕ УПРАВЛЕНИЕ</p>
+    <h2 id="resource-kair-title">КАИР. Когда оборудование работает как <em>единая система.</em></h2>
+    <p class="resource-kair-lead">КАИР согласует работу оборудования, сохраняет настройки под сырьё и контролирует отклонения — помогая поддерживать стабильный производственный процесс.</p>
+    <div class="resource-kair-benefits">${items.map(([title,detail,id])=>`<div><svg viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">${icons[id]}</svg><h3>${title}</h3><p>${detail}</p></div>`).join('')}</div>
+    <div class="resource-kair-footer">${link('Изучить систему КАИР','/automation')}<small>Функции — по комплектации</small></div>
    </div>
-   <figure>
-    ${image(responsiveImage(source.file,'kair/01-768.webp',source.alt),{slot:'kairScreen',sizes:'(max-width:899px) calc(100vw - 40px), 46vw'})}
-    <figcaption>Общий экран линии и сигналы КАИР</figcaption>
+   <figure class="resource-kair-visual">
+    ${image(responsiveImage(source.file,'kair/01-768.webp',source.alt),{slot:'kairScreen',sizes:'(max-width:899px) calc(100vw - 40px), 58vw'})}
+    <figcaption class="sr-only">Система КАИР связывает технологические узлы, режимы и оператора.</figcaption>
    </figure>
-  </div>
- </section>`;
+  </div></section>`;
 }
 
 function contact(){
- return `<section class="resource-section resource-contact" id="discuss" aria-labelledby="discuss-title" data-home-block="contact">
-  <div class="resource-container resource-contact-panel">
-   <div>
-    ${heading('discuss-title','ЭРА превращает проблему отходов в промышленную возможность.',{lead:'Расскажите, с каким сырьём работаете, какой объём планируете перерабатывать и какой продукт хотите получать.'})}
-    <div class="resource-contact-actions">
-     ${request('Обсудить проект','Проект переработки плёночного сырья','button')}
-     ${request('Запросить презентацию','Презентация технологии и оборудования ЭРА','button secondary')}
-    </div>
-   </div>
-  </div>
- </section>`;
+ return `<section class="resource-section resource-contact" id="discuss" aria-labelledby="discuss-title" data-home-block="contact"><div class="resource-container resource-contact-panel">
+  <p class="resource-contact-kicker">ВАШ СЛЕДУЮЩИЙ ШАГ</p>
+  <h2 id="discuss-title">Технология готова. <em>Следующий шаг — ваше производство.</em></h2>
+  <p class="resource-contact-lead">Планируете переработку плёнки, расширение производства или инвестиции в отрасль? Обсудим ваше сырьё, задачи и масштаб проекта — от базовой линии сепарации до полного цикла.</p>
+  <div class="resource-contact-actions">${request('Обсудить проект','Подбор оборудования / запуск производства','button')}${request('Инвестиции и партнёрство','Инвестиции / партнёрство','button secondary')}</div>
+  <p class="resource-contact-meta">Оборудование · Технологии · Промышленные проекты</p>
+ </div></section>`;
 }
 
 export function resourceHome(){
