@@ -57,18 +57,22 @@ function mapDrawing(){
 function recordPanel(row,group){
  const national=group==='national';
  const [volume,unit]=national?[`≈ ${marketNationalTonnes}`,'млн т/год']:[marketNumber(row.tonnes),'т/год'];
+ const source=national?'Бытовые отходы, упаковка, сельское хозяйство, промышленность':row.comment;
  return `<article class="market-record" data-market-record="${row.id}"${national?'':' hidden'}>
-  <p class="market-record-scope">${scopesByRecord[group]}</p>
-  <h3 data-market-name tabindex="-1">${esc(row.name)}</h3>
-  <div class="market-figure"><p>Оценка сырьевой базы</p><strong data-market-volume>${volume} <small>${unit}</small></strong></div>
-  <dl class="market-record-grid">
-   <div><dt>${national?'Расчётный масштаб сети':'Расчётное число комплексов'}</dt><dd data-market-complexes>${marketNumber(row.complexes)}${national?' <small>комплексов</small>':''}</dd></div>
-   <div><dt>Население в модели · база ${marketModel.populationYear}</dt><dd>${national?`≈ ${marketNumber(row.population/1_000_000,0)} <small>млн чел.</small>`:marketNumber(row.population)}</dd></div>
-   <div><dt>${national?'Целевая совокупная чистая прибыль в месяц':'Целевая чистая прибыль в месяц'}</dt><dd data-market-monthly>${marketMoney(row.monthly)}</dd></div>
-   <div><dt>${national?'Целевая совокупная чистая прибыль в год':'Целевая чистая прибыль в год'}</dt><dd data-market-annual>${marketMoney(row.annual,1)}</dd></div>
-  </dl>
-  <p class="market-reason">${national?'Предварительная оценка сырьевой базы восьми округов и сценарий промышленного масштабирования.':esc(row.comment)}</p>
- </article>`;
+   <p class="market-record-scope">${scopesByRecord[group]}</p>
+   <h3 data-market-name tabindex="-1">${esc(row.name)}</h3>
+   <div class="market-figure market-figure-pair">
+    <div><p>Сырьевая база в год</p><strong data-market-volume>${volume} <small>${unit}</small></strong></div>
+    <div><p>Целевая чистая прибыль в год</p><strong data-market-annual>${marketMoney(row.annual,1)}</strong></div>
+   </div>
+   <dl class="market-record-grid">
+    <div><dt>${national?'Расчётный масштаб сети':'Расчётное число комплексов'}</dt><dd data-market-complexes>${marketNumber(row.complexes)}${national?' <small>комплексов</small>':''}</dd></div>
+    <div><dt>Население в модели · база ${marketModel.populationYear}</dt><dd>${national?`≈ ${marketNumber(row.population/1_000_000,0)} <small>млн чел.</small>`:marketNumber(row.population)}</dd></div>
+    <div><dt>Целевая чистая прибыль в месяц</dt><dd data-market-monthly>${marketMoney(row.monthly)}</dd></div>
+    <div class="market-source-sector"><dt>Основные источники сырья</dt><dd>${esc(source)}</dd></div>
+   </dl>
+   <p class="market-reason">${national?'Расчётный сценарий ЭРА. Фактические показатели зависят от сырья, загрузки, затрат и условий реализации проекта.':'Характерные отраслевые потоки по описанию территории в расчётной модели ЭРА.'}</p>
+  </article>`;
 }
 
 function nativeSelect(group,rows){
@@ -82,7 +86,7 @@ function nativeSelect(group,rows){
 function methodology(){
  return `<div class="market-method">
   <p>Расчётный сценарий ЭРА основан на доступных статистических ориентирах. Целевая чистая прибыль составляет ${marketMoney(marketModel.targetMonthlyProfit)} в месяц на комплекс после расходов, амортизации и налога на прибыль. Объём сырья и число комплексов рассчитаны по модели. Загрузка и доходность зависят от условий конкретного проекта.</p>
-  <a class="resource-link market-method-link" href="#feedstock-methodology">Как оценена сырьевая база</a>
+  
   <noscript><details class="market-method-details" data-keep-open>
    <summary>Оценки по всем округам и регионам</summary>
    <div class="market-table-wrap"><table><thead><tr><th scope="col">Территория</th><th scope="col">Население</th><th scope="col">Сырьё, т/год</th><th scope="col">Комплексы</th><th scope="col">Прибыль в месяц</th></tr></thead>
