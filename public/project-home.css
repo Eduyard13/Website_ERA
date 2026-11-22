@@ -955,3 +955,37 @@
 @media(max-width:639px){
  .resource-page .resource-equipment-grid>article>div {min-height:0;}
 }
+
+
+/* 2026-11-22 owner-approved final typography: KAIR + homepage closing CTA. */
+/* The approved KAIR artwork is unchanged. Only the text column is restrained
+   so it never runs underneath the machinery/operator artwork. */
+@media(min-width:1101px) {
+ .resource-page .resource-control .resource-control-copy {max-width:min(100%,580px);}
+ .resource-page .resource-control .resource-kair-lead {
+  max-width:480px;
+  width:100%;
+  text-wrap:pretty;
+  overflow-wrap:normal;
+ }
+ .resource-page .resource-control .resource-kair-benefits {
+  width:100%;
+  max-width:510px;
+  margin-top:24px;
+  gap:16px;
+ }
+ .resource-page .resource-control .resource-kair-footer {max-width:510px;}
+}
+.resource-page .resource-contact-panel h2 .resource-contact-title-line {display:block;}
+.resource-page .resource-contact-panel h2 .resource-contact-title-accent {
+ display:block;font-style:normal;color:#a47d44;
+}
+@media(min-width:641px) {
+ .resource-page .resource-contact-panel h2 .resource-contact-title-line--fixed {white-space:nowrap;}
+}
+@media(max-width:640px) {
+ .resource-page .resource-contact-panel h2 {font-size:clamp(29px,7vw,44px);}
+ .resource-page .resource-contact-panel h2 .resource-contact-title-line--fixed {
+  white-space:normal;
+ }
+}
