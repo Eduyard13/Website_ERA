@@ -56,7 +56,11 @@ function mapDrawing(){
 
 function recordPanel(row,group){
  const national=group==='national';
- const [volume,unit]=national?[`≈ ${marketNationalTonnes}`,'млн т/год']:[marketNumber(row.tonnes),'т/год'];
+ const [volume,unit]=national
+  ? [`≈ ${marketNationalTonnes}`,'млн т/год']
+  : row.tonnes>=1_000_000
+   ? [marketNumber(row.tonnes/1_000_000,2),'млн т/год']
+   : [marketNumber(row.tonnes/1_000,1),'тыс. т/год'];
  const source=national?'Бытовые отходы, упаковка, сельское хозяйство, промышленность':row.comment;
  const moneyParts=marketMoney(row.annual,1).split('\u00a0');
  const annualValue=moneyParts.shift();
