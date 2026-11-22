@@ -202,40 +202,25 @@ function economics(){
 function integration(){
  return `<section class="resource-section resource-integration" id="solution" aria-labelledby="resource-integration-title" data-home-block="integration" data-page-progress-label="Поэтапный запуск">
   <div class="resource-container">
-   <div id="about-era">${heading('resource-integration-title','Можно начать с одного этапа и вырасти в полный цикл',{lead:'Подбираем комплектацию под сырьё и площадку. Изготавливаем и поставляем оборудование, согласовываем запуск и сопровождение.'})}</div>
-   <ol class="resource-launch-grid">${resourceLaunch.map((step,index)=>`<li><span aria-hidden="true">0${index+1}</span><h3>${esc(step.title)}</h3><p>${esc(step.text)}</p></li>`).join('')}</ol>
-   ${request('Подобрать комплектацию','Поэтапный запуск переработки плёнки','resource-link')}
+   <div id="about-era">${heading('resource-integration-title','Начните с малого. Масштабируйтесь до полного цикла.',{lead:'Не обязательно инвестировать во весь комплекс сразу. Начните с базовой сухой сепарации и расширяйте производство по мере развития бизнеса — добавляя горячую мойку и гранулирование.'})}</div>
+   <ol class="resource-launch-grid">${resourceLaunch.map((step,index)=>`<li><div class="resource-launch-top"><span class="resource-launch-phase">${step.phase}</span><strong class="resource-launch-index">0${index+1}</strong></div><div class="resource-module-progress" aria-hidden="true">${[1,2,3].map(n=>`<span class="${n<=index+1?'active':''}"></span>`).join('')}</div><h3>${esc(step.title)}</h3><p>${esc(step.text)}</p></li>`).join('')}</ol>
+   <div class="resource-launch-conclusion"><h3>Инвестируйте в развитие, а не во всё оборудование сразу.</h3><p><em>Проектируем комплектацию с учётом дальнейшего расширения производства.</em></p></div>
   </div>
  </section>`;
 }
 
 function equipment(){
- const rotor=equipmentCardImages['rotornyy-raspushitel'];
+ const modules=responsiveImage('covers/catalog-nodes-close.webp','covers/catalog-nodes-close-768.webp','Три технологических узла ЭРА на выставочных пьедесталах');
+ const dry=lines.find(line=>line.slug==='separatsiya-02');
  return `<section class="resource-section resource-equipment" id="manufacturing" aria-labelledby="resource-evidence-title" data-home-block="equipment" data-page-progress-label="Оборудование">
   <div class="resource-container">
-   ${heading('resource-evidence-title','Оборудование для трудноочищаемого плёночного сырья',{lead:'Выберите готовую линию или узлы для своей производственной площадки.'})}
+   ${heading('resource-evidence-title','Технология ЭРА. Воплощённая в оборудовании.',{lead:'Три комплектации сухой сепарации, линия горячей мойки и отдельные технологические узлы — готовые решения под задачи вашего производства.'})}
    <div class="resource-equipment-grid">
-    <article>
-     <a class="resource-equipment-image" href="${dryCatalogue}" aria-label="Линии сухой сепарации">${image(media.lineWide,{slot:'lineWide'})}</a>
-     <div><h3>Линии сухой сепарации</h3><p>Три комплектации под очистку, сортировку и сушку.</p>
-     <div class="resource-line-links">${dryLines.map(line=>link(line.tier,line.path)).join('')}</div></div>
-    </article>
-    <article>
-     <a class="resource-equipment-image" href="${washLine.path}" aria-label="Линия горячей мойки">${lineImage(washLine)}</a>
-     <div><h3>Линия горячей мойки</h3><p>Глубокая очистка, обезвоживание и выбор вида готовой продукции.</p>
-     ${link('Смотреть линию',washLine.path)}</div>
-    </article>
-    <article>
-     <a class="resource-equipment-image" href="/catalog/equipment" aria-label="Отдельные узлы">${image(responsiveImage(rotor.file,rotor.smallFile,'Каталожный рендер роторного распушителя ЭРА'))}</a>
-     <div><h3>Отдельные узлы</h3><p>Измельчение, разделение, распушение, мойка и обезвоживание.</p>
-     ${link('Смотреть узлы','/catalog/equipment')}</div>
-    </article>
+    <article><a class="resource-equipment-image" href="${dryCatalogue}" aria-label="Линии сухой сепарации">${lineImage(dry)}</a><div><p class="resource-equipment-kicker">01 / ПОДГОТОВКА СЫРЬЯ</p><h3>Линии сухой сепарации</h3><p>Три комплектации для очистки, сортировки и сушки загрязнённых плёночных отходов.</p><div class="resource-line-links">${dryLines.map(line=>link(line.tier,line.path)).join('')}</div></div></article>
+    <article><a class="resource-equipment-image" href="${washLine.path}" aria-label="Линия горячей мойки">${lineImage(washLine)}</a><div><p class="resource-equipment-kicker">02 / ГЛУБОКАЯ ОЧИСТКА</p><h3>Линия горячей мойки</h3><p>Удаление стойких загрязнений, обезвоживание и подготовка плёнки к дальнейшей переработке.</p>${link('Изучить линию',washLine.path)}</div></article>
+    <article><a class="resource-equipment-image" href="/catalog/equipment" aria-label="Отдельные узлы">${image(modules)}</a><div><p class="resource-equipment-kicker">03 / ТЕХНОЛОГИЧЕСКИЕ УЗЛЫ</p><h3>Отдельные узлы</h3><p>Оборудование для измельчения, разделения, распушения, мойки и обезвоживания.</p>${link('Смотреть оборудование','/catalog/equipment')}</div></article>
    </div>
-   ${link('Перейти в каталог оборудования','/catalog','button')}
-   <details class="resource-video-details" data-keep-open>
-    <summary>Видео проекта и работа оборудования</summary>
-    <div class="resource-video-grid">${resourceVideo('promo')}${resourceVideo('cleaningDemo')}</div>
-   </details>
+   <details class="resource-video-details" data-keep-open><summary>Видео проекта и работа оборудования</summary><div class="resource-video-grid">${resourceVideo('promo')}${resourceVideo('cleaningDemo')}</div></details>
   </div>
  </section>`;
 }
