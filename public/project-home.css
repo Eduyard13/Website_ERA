@@ -553,3 +553,162 @@
 @media(prefers-reduced-motion:reduce){
  .resource-page * {transition:none!important;animation:none!important}
 }
+
+
+/* ERA: approved homepage refinements 01–12 (22 Nov 2026). */
+
+/* A deployed technology is presented as a proven result, not an R&D intention. */
+.resource-page .resource-hero-claim {color:#efcc83;font-weight:600;}
+.resource-page .resource-hero-result {max-width:625px;color:#e0e6ef;font-size:clamp(15px,1.22vw,18px);line-height:1.57;margin:12px 0 23px;}
+
+/* Validated feedstock / opportunity: two linked commercial arguments. */
+.resource-problem-intro {grid-template-columns:minmax(0,1.48fr) minmax(350px,.95fr);align-items:center;gap:clamp(22px,3vw,52px);}
+.resource-page .resource-problem .resource-heading {max-width:820px;}
+.resource-page .resource-problem .resource-heading h2 {font-size:clamp(34px,3.65vw,57px);}
+.resource-trial {border:1px solid #cbb88e;border-radius:10px;background:#f5efe4;padding:clamp(20px,2.3vw,30px);align-self:stretch;display:grid;align-content:center;gap:13px;}
+.resource-page .resource-trial-kicker {font-size:11px;font-weight:700;letter-spacing:.11em;color:#836432;margin:0;}
+.resource-trial-values {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;}
+.resource-trial-values>div+div {padding-left:18px;border-left:1px solid #cab68c;}
+.resource-page .resource-trial-values strong {font-size:clamp(37px,4.6vw,64px);white-space:nowrap;letter-spacing:-.06em;}
+.resource-trial-values span {font-size:14px;line-height:1.38;}
+.resource-page .resource-trial small {font-size:12px;line-height:1.4;margin:0;}
+.resource-challenge-comparison {display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,2.5vw,36px);margin:36px 0 17px;}
+.resource-challenge-group {min-width:0;padding:clamp(18px,2vw,25px);background:#f9f7f2;border-radius:10px;border:1px solid #e1dacd;}
+.resource-challenge-group--potential {background:#f2ead9;border-color:#d7bb85;}
+.resource-page .resource-challenge-group .eyebrow {color:#957039;font-size:11px;letter-spacing:.12em;font-weight:700;margin:0 0 11px;}
+.resource-challenge-group>h3 {font-size:clamp(20px,2.2vw,28px);line-height:1.25;letter-spacing:-.025em;margin:0 0 19px;}
+.resource-challenges {grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
+.resource-challenges>article {padding:15px 9px 4px 0;border-top:1px solid #cdbd9e;}
+.resource-page .resource-challenges h3 {font-size:clamp(17px,1.55vw,22px);line-height:1.22;}
+.resource-page .resource-challenges p {font-size:clamp(13px,1.16vw,15px);line-height:1.53;}
+
+/* The research basis remains expandable; the conclusion is now a concise CTA-quality statement. */
+.feedstock-opportunity {margin-top:34px;padding:clamp(22px,3vw,39px);border-top:2px solid #ac8b54;background:#f7f1e7;border-radius:0 0 8px 8px;}
+.feedstock-opportunity .eyebrow {font-size:11px;color:#85612f;letter-spacing:.12em;font-weight:700;margin:0 0 11px;}
+.resource-page .feedstock-opportunity h4 {font-size:clamp(25px,2.8vw,38px);font-weight:500;letter-spacing:-.04em;line-height:1.13;margin:0 0 13px;max-width:940px;}
+.resource-page .feedstock-opportunity>p:not(.eyebrow) {font-size:clamp(15px,1.3vw,18px);line-height:1.55;color:var(--home-muted);max-width:920px;margin:0;}
+.feedstock-details article {align-content:start;}
+.feedstock-ring-text small {display:none;}
+.feedstock-ring-text {line-height:1.18;}
+
+/* Three connected engineering steps, one result highlighted. */
+.resource-page .resource-process .resource-heading {max-width:1120px;}
+.resource-steps {position:relative;gap:clamp(10px,1.6vw,23px);}
+.resource-steps::before {content:'';position:absolute;top:18px;left:5%;right:5%;height:1px;background:#bd9f67;pointer-events:none;}
+.resource-steps>li {position:relative;display:flex;flex-direction:column;min-height:300px;border:1px solid #e1d9c8;border-radius:10px;background:#fffdf9;padding:clamp(14px,1.6vw,24px);gap:12px;transition:border-color .2s ease,transform .2s ease;}
+.resource-steps>li:last-child {border-color:#c8aa75;background:#f6efe2;}
+.resource-page .resource-step-phase {font-size:11px;color:#99733b;letter-spacing:.08em;font-weight:700;margin:0;}
+.resource-step-art {display:grid;place-items:center;width:170px;height:126px;align-self:center;max-width:68%;color:#aa8446;}
+.resource-step-art svg {display:block;width:100%;height:100%;}
+.resource-page .resource-steps h3 {font-size:clamp(20px,2vw,27px);line-height:1.17;margin:0;}
+.resource-page .resource-steps p {font-size:15px;line-height:1.48;margin:0;}
+
+/* Five legible principles, with gold graphic numbering and minimal prose. */
+.resource-page .resource-strengths .resource-heading {max-width:1000px;}
+.resource-strength-grid>article {padding:18px 14px 3px 0;}
+.resource-strength-number {display:block;font-size:clamp(39px,3.8vw,55px);line-height:1;color:#d9bb7e;font-weight:500;letter-spacing:-.05em;margin:0 0 20px;}
+.resource-page .resource-strength-grid h3 {font-size:clamp(19px,1.7vw,25px);line-height:1.16;}
+.resource-page .resource-strength-grid p {font-size:clamp(15px,1.24vw,18px);line-height:1.44;margin-top:11px;}
+
+/* Unified editorial cards, including the long "Альтернативные направления" heading. */
+.resource-products-grid>article {display:flex;flex-direction:column;}
+.resource-products-grid>article>div {flex:1;}
+.resource-page .resource-products-grid h3 {font-size:clamp(18px,1.72vw,25px);line-height:1.2;letter-spacing:-.035em;text-wrap:balance;}
+.resource-products-grid {align-items:stretch;}
+
+/* Modularity is an investment path, visually distinct from the technology route. */
+.resource-page .resource-integration .resource-heading {max-width:1080px;}
+.resource-page .resource-integration .resource-heading h2::first-line {color:#ad864a;}
+.resource-launch-grid {gap:clamp(11px,1.7vw,23px);}
+.resource-launch-grid>li {position:relative;border:1px solid #e1d7c5;border-radius:10px;background:#fdfaf4;padding:clamp(17px,2vw,27px);display:flex;flex-direction:column;gap:15px;min-height:240px;}
+.resource-launch-grid>li:nth-child(2) {background:#f9f4ea;}
+.resource-launch-grid>li:last-child {background:#f4ead7;border-color:#c9ac73;}
+.resource-launch-top {display:flex;justify-content:space-between;gap:14px;align-items:center;}
+.resource-page .resource-launch-phase {font-size:11px;font-weight:700;letter-spacing:.09em;color:#916c37;margin:0;}
+.resource-launch-index {color:#a17e49;font-size:27px;line-height:1;font-weight:500;}
+.resource-module-progress {display:flex;gap:6px;}
+.resource-module-progress span {height:5px;border-radius:4px;background:#e5dfd3;flex:1;}
+.resource-module-progress span.active {background:#b99a60;}
+.resource-page .resource-launch-grid h3 {font-size:clamp(21px,2vw,28px);margin:4px 0 0;line-height:1.19;}
+.resource-page .resource-launch-grid p {font-size:clamp(15px,1.26vw,18px);line-height:1.52;margin:0;}
+.resource-launch-conclusion {margin-top:clamp(24px,3vw,38px);border-top:2px solid #b79963;padding-top:24px;}
+.resource-page .resource-launch-conclusion h3 {font-size:clamp(22px,2.65vw,35px);line-height:1.16;margin:0 0 9px;}
+.resource-page .resource-launch-conclusion p {font-size:clamp(15px,1.43vw,19px);line-height:1.5;color:var(--home-muted);margin:0;}
+
+/* High fidelity product catalogue covers, uniformly cropped without letterbox bars. */
+.resource-equipment-grid>article {min-width:0;transition:transform .22s ease,box-shadow .22s ease;}
+.resource-equipment-grid>article:hover {transform:translateY(-3px);box-shadow:0 12px 36px #151f3720;}
+.resource-equipment-image {overflow:hidden;aspect-ratio:16/10;}
+.resource-equipment-image img {height:100%;width:100%;aspect-ratio:auto;object-fit:cover;object-position:center;transition:transform .3s ease;}
+.resource-equipment-grid>article:hover .resource-equipment-image img {transform:scale(1.025);}
+.resource-equipment-kicker {margin:0 0 12px;font-size:11px!important;line-height:1.3!important;font-weight:700;letter-spacing:.08em;color:#9f793e!important;}
+.resource-equipment-grid>article>div {flex:1;}
+.resource-page .resource-equipment-grid h3 {font-size:clamp(23px,2.1vw,29px);line-height:1.18;}
+.resource-page .resource-equipment-grid p:not(.resource-equipment-kicker) {font-size:15px;line-height:1.47;}
+.resource-line-links {gap:6px;align-items:center;}
+.resource-line-links .resource-link {margin:0!important;min-height:38px;padding:7px 11px;border:1px solid #c9b994;border-radius:5px;font-size:13px;}
+.resource-line-links .resource-link:last-child {border-color:#b5935b;background:#f9f2e5;}
+
+/* KAIR is the brain of the production line. Editorial content must not overlay the illustration. */
+.resource-control-grid {grid-template-columns:minmax(0,42fr) minmax(0,58fr);gap:clamp(22px,2.7vw,48px);align-items:center;}
+.resource-control-copy {min-width:0;}
+.resource-page .resource-control-copy>.eyebrow {color:#dfc17a;font-size:11px;letter-spacing:.1em;margin:0 0 19px;}
+.resource-page .resource-control-copy h2 {font-size:clamp(29px,3.35vw,51px);line-height:1.14;letter-spacing:-.047em;color:#fbf8ef;margin:0 0 22px;}
+.resource-control-copy h2 em {font-style:normal;color:#e9c681;}
+.resource-page .resource-kair-lead {font-size:clamp(15px,1.32vw,18px);line-height:1.56;color:#cbd2df;margin:0 0 28px;}
+.resource-kair-benefits {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,1.5vw,20px);border-top:1px solid #f1d69b55;border-bottom:1px solid #f1d69b55;padding:21px 0;}
+.resource-kair-benefits>div {min-width:0;}
+.resource-kair-benefits svg {width:28px;height:28px;color:#e6c683;margin-bottom:10px;}
+.resource-page .resource-kair-benefits h3 {font-size:clamp(14px,1.2vw,17px);line-height:1.2;color:#f7f2e8;margin:0 0 8px;}
+.resource-page .resource-kair-benefits p {font-size:12px;line-height:1.5;color:#c4cddd;margin:0;}
+.resource-kair-footer {display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap;padding-top:15px;}
+.resource-kair-footer small {color:#aeb8cd;font-size:11px;}
+.resource-control-grid .resource-kair-visual {min-width:0;align-self:center;border:0;background:transparent;padding:0;overflow:hidden;}
+.resource-kair-visual img {width:100%;height:auto;max-width:100%;object-fit:contain;}
+
+/* Final CTA: wide typography, just two meaningful next actions. */
+.resource-page .resource-contact {background:#eae0ce;}
+.resource-contact-panel {border:0;border-radius:0;background:transparent;padding:clamp(42px,5vw,80px) clamp(8px,2vw,26px);max-width:1200px;}
+.resource-page .resource-contact-kicker {margin:0 0 24px;font-size:12px;letter-spacing:.13em;color:#96713b;font-weight:700;}
+.resource-page .resource-contact-panel h2 {font-size:clamp(38px,5.6vw,79px);line-height:1.09;letter-spacing:-.055em;max-width:1120px;margin:0 0 25px;text-wrap:balance;}
+.resource-contact-panel h2 em {font-style:normal;color:#a47d44;}
+.resource-page .resource-contact-lead {font-size:clamp(17px,1.6vw,22px);line-height:1.48;color:#4c5870;margin:0 0 25px;max-width:990px;}
+.resource-contact-actions {border-top:1px solid #cdb78b;padding-top:24px;}
+.resource-page .resource-contact-meta {font-size:12px;letter-spacing:.04em;color:#857d6c;margin:16px 0 0;}
+
+@media(max-width:1100px){
+ .resource-problem-intro {grid-template-columns:minmax(0,1fr);}
+ .resource-trial {max-width:770px;}
+ .resource-challenge-comparison {grid-template-columns:1fr 1fr;}
+ .resource-challenges {grid-template-columns:minmax(0,1fr);}
+ .resource-kair-benefits {grid-template-columns:repeat(3,minmax(0,1fr));}
+}
+@media(max-width:899px){
+ .resource-control-grid {grid-template-columns:minmax(0,1fr);gap:26px;}
+ .resource-control-copy {max-width:790px;}
+ .resource-control-grid .resource-kair-visual {width:min(100%,780px);justify-self:center;}
+ .resource-kair-benefits {grid-template-columns:repeat(3,minmax(0,1fr));}
+}
+@media(max-width:760px){
+ .resource-challenge-comparison {grid-template-columns:1fr;}
+ .resource-challenges {grid-template-columns:repeat(2,minmax(0,1fr));}
+ .resource-trial-values strong {font-size:clamp(34px,7.5vw,52px);}
+ .resource-steps::before {top:12px;bottom:12px;left:21px;right:auto;width:1px;height:auto;}
+ .resource-steps>li {min-height:0;}
+ .resource-step-art {height:110px;}
+ .resource-launch-grid>li {min-height:0;}
+ .resource-page .resource-contact-panel h2 {font-size:clamp(35px,7vw,55px);}
+}
+@media(max-width:480px){
+ .resource-trial-values {gap:8px;}
+ .resource-trial-values>div+div {padding-left:9px;}
+ .resource-trial-values span {font-size:12px;}
+ .resource-challenges {grid-template-columns:1fr;}
+ .resource-kair-benefits {grid-template-columns:1fr;gap:16px;}
+ .resource-kair-benefits>div {display:grid;grid-template-columns:30px 1fr;column-gap:12px;}
+ .resource-kair-benefits svg {grid-row:span 2;margin:0;}
+ .resource-kair-benefits h3 {margin:0;}
+ .resource-kair-benefits p {grid-column:2;}
+ .resource-page .resource-contact-actions {flex-direction:column;align-items:stretch;}
+ .resource-contact-actions .button {width:100%;}
+}
