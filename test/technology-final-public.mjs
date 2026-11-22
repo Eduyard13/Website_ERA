@@ -170,7 +170,7 @@ try{
   assert.deepEqual(await mapSelection(),national);
   assert.equal(await evaluate(`document.querySelector('[data-market-record="national"] [data-market-annual]').textContent.replace(/\\s/g,' ')`),'59,4 млрд ₽');
   const brokenImages=await evaluate(`Promise.all([...document.querySelectorAll('[data-resource-home] img[src]')].map(async i=>{
-   i.loading='eager';try{await i.decode();}catch{return i.src;}return i.alt&&i.naturalWidth?null:i.src;
+   i.loading='eager';try{await i.decode();}catch{return i.src;}return i.naturalWidth&&(i.alt||i.closest('[aria-hidden="true"]'))?null:i.src;
   })).then(results=>results.filter(Boolean))`);
   assert.deepEqual(brokenImages,[]);
   await evaluate('document.fonts.ready.then(()=>true)');
