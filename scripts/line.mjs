@@ -5,6 +5,7 @@ import {mediaAttributes} from './media.mjs';
 import {pdfViewerDialog} from './documents.mjs';
 import {lineDocuments,lineDocumentCards} from './line-page-media.mjs';
 import {renderDrySeparationHero} from './dry-separation-hero.mjs';
+import {renderDrySeparationPurpose} from './dry-separation-purpose.mjs';
 import {linePower,dryLineProduction} from './line-power.mjs';
 import {lineDimensions} from './line-dimensions.mjs';
 import {interactiveLineDiagram} from './line-diagram.mjs';
@@ -42,9 +43,7 @@ export function renderFilmSeparation(line){
   ],metricNote:'750 кг/ч — рабочий ориентир при засоре около 50%. Выпуск зависит от состава сырья, влажности и режима.',documentHref:'#documents',documentText:'Техническое описание · PDF, 32 страницы'})}
  <nav class="anchor-nav line-anchor-nav" aria-label="Разделы линии"><a href="#purpose">Назначение</a><a href="#raw-materials">Сырьё</a><a href="#specs">Характеристики</a><a href="#process">Процесс</a><a href="#composition">Схема линии</a><a href="#quality">Продукт</a><a href="#placement">Габариты</a><a href="#kair">КАИР</a><a href="#photos">Фото</a><a href="#documents">Документы</a><a href="#equipment">Состав узлов</a></nav>
 
- <section class="section" id="purpose"><div class="line-section-heading"><div><p class="eyebrow">НАЗНАЧЕНИЕ</p><h2>Отделить лишнее.<br>Сохранить полезную плёнку.</h2></div><p>Линия удаляет основную массу крупных, твёрдых, мелких и микровключений. Раскрывает пакеты и слипшиеся слои, освобождает загрязнения и подготавливает материал к следующему переделу.</p></div>
-  <div class="line-purpose-grid">${[['Меньше посторонней массы','Песок, земля, стекло, камни и другие отделяемые включения выводятся из потока до мойки и перевозки.'],['Выше ценность партии','Ручной отбор помогает разделять плёнку по цвету, известному полимерному составу и виду материала.'],['Удобнее хранить и перевозить','Пять накопителей и общий пресс формируют раздельные, автоматически увязанные тюки.']].map(([title,text])=>`<article><h3>${title}</h3><p>${text}</p></article>`).join('')}</div>
- </section>
+ ${renderDrySeparationPurpose(line.slug)}
 
  <section class="section line-soft" id="raw-materials"><p class="eyebrow">С ЧЕМ РАБОТАЕМ</p><h2>Плёнка разного происхождения.<br>Настройки под вашу партию.</h2><div class="line-raw-grid">${lineRawMaterials.map(([key,title,text])=>`<article>${picture(key,{caption:title})}<h3>${title}</h3><p>${text}</p></article>`).join('')}</div>
   <div class="line-input-band"><div><strong>до 80<small>%</small></strong><span>Загрязнённость испытанного сырья</span></div><div><strong>до 30<small>%</small></strong><span>Влажность испытанного сырья</span></div><p>Засор и влажность определяют раздельно. По испытаниям и морфологическим анализам ЭРА типичный засор полигонной и сельскохозяйственной плёнки составлял 50–55%. Показатели входа не являются нормами качества готового продукта.</p></div>

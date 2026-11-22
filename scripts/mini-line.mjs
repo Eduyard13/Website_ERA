@@ -5,6 +5,7 @@ import {mediaAttributes} from './media.mjs';
 import {pdfViewerDialog} from './documents.mjs';
 import {lineDocuments,lineDocumentCards} from './line-page-media.mjs';
 import {renderDrySeparationHero} from './dry-separation-hero.mjs';
+import {renderDrySeparationPurpose} from './dry-separation-purpose.mjs';
 import {linePower,dryLineProduction} from './line-power.mjs';
 import {equipmentCardImages} from '../content/equipment-card-images.mjs';
 import {interactiveLineDiagram} from './line-diagram.mjs';
@@ -43,9 +44,7 @@ export function renderMiniFilmSeparation(line){
   ],metricNote:'750 кг/ч — расчёт при засоре около 50%. Паспорт базового распушителя указывает 600–700 кг/ч. Выпуск подтверждаем на выбранном сырье и комплектации.',documentHref:'#documents',documentText:'Техническое описание · PDF, 14 страниц'})}
  <nav class="anchor-nav line-anchor-nav" aria-label="Разделы линии BASE"><a href="#purpose">Назначение</a><a href="#raw-materials">Сырьё</a><a href="#specs">Характеристики</a><a href="#process">Процесс</a><a href="#composition">Схема линии</a><a href="#quality">Продукт</a><a href="#placement">Габариты</a><a href="#kair">КАИР</a><a href="#photos">Фото</a><a href="#documents">Документы</a><a href="#equipment">Состав узлов</a></nav>
 
- <section class="section" id="purpose"><div class="line-section-heading"><div><p class="eyebrow">НАЗНАЧЕНИЕ</p><h2>Подготовить плёнку.<br>Убрать основную массу примесей.</h2></div><p>Базовая комплектация объединяет раскрытие сырья, разделение по форме и размеру и финальную роторную очистку. Отделение загрязнений до мойки снижает нагрузку на следующий участок.</p></div>
-  <div class="line-purpose-grid">${[['Раскрыть материал','Растюковщик освобождает плёнку из плотных тюков и комков, подготавливая её к равномерной подаче.'],['Последовательно очистить','Баллистика отводит просев и объёмные предметы. Ротор раскрывает слипшиеся слои и удаляет оставшиеся микровключения.'],['Выдать подготовленный продукт','Очищенный плёночный микс поступает пневмотранспортом на согласованный участок приёма.']].map(([title,text])=>`<article><h3>${title}</h3><p>${text}</p></article>`).join('')}</div>
- </section>
+ ${renderDrySeparationPurpose(line.slug)}
 
  <section class="section line-soft" id="raw-materials"><div class="line-section-heading"><div><p class="eyebrow">ВХОДНОЕ СЫРЬЁ</p><h2>Пакеты и плёнки.<br>Насыпью или в тюках.</h2></div><p>Режим подбирают под происхождение, толщину и влажность плёнки, состав включений и степень уплотнения. Для расчёта выпуска в ТО принят средний засор около 50%.</p></div>
   <div class="mini-raw-source">${picture('raw',{full:true,caption:'Исходная плёнка на площадках в Китае и Нидерландах'})}</div>
