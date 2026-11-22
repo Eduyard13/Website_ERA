@@ -197,7 +197,7 @@ try{
   })()`);
   assert.equal(hero.title,'От нефти к полимерам. От полимеров — снова к нефти.');
   assert.equal(hero.subtitle,'Отходы одного цикла — сырьё для следующего.');
-  assert.equal(hero.lead,'ЭРА разрабатывает технологию и оборудование, которые возвращают загрязнённые плёночные отходы в промышленный цикл — в виде очищенной плёнки, капсулята, гранулы, топливных фракций и энергии.');
+  assert.equal(hero.lead,'ЭРА разработала, успешно испытала и ввела в промышленную эксплуатацию технологию и оборудование для переработки загрязнённых плёночных отходов.');
   assert.equal(hero.faces,2);
   assert.ok(hero.italicLine&&hero.artwork&&hero.mask&&(width<1024?hero.below:hero.fullHeight),'Homepage hero at '+width);
   await click('[data-market-mode="regions"]');
@@ -218,8 +218,8 @@ try{
   await click('[data-feedstock-choice="construction"]');
   assert.equal(await evaluate(`document.querySelector('[data-feedstock-chart]').dataset.view`),'construction');
   assert.deepEqual(await mapSelection(),national);
-  await click('[data-feedstock-choice="all"]');
-  await click('.market-method-link');
+  await click('[data-feedstock-choice="construction"]');
+  await click('#feedstock-methodology summary');
   assert.ok(await evaluate(`document.querySelector('#feedstock-methodology').open`));
   assert.ok(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),'Homepage overflow at '+width);
  }
