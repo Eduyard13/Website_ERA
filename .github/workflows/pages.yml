@@ -1,7 +1,7 @@
 name: Test and deploy ERA preview
 on:
   push:
-    branches: [main]
+    branches: [main, 'review/homepage-13-approved-20261122']
   workflow_dispatch:
 permissions:
   contents: read
