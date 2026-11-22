@@ -42,6 +42,15 @@ test('Карта, кольцевая диаграмма и экономика и
  assert.equal((html.match(/data-market-feature="[^" ]+" data-market-group="districts"/g)||[]).length,8);
  assert.equal((html.match(/data-market-feature="[^" ]+" data-market-group="regions"/g)||[]).length,10);
  assert.equal((html.match(/data-market-record=/g)||[]).length,19);
+ // All eight federal districts and ten priority regions use compact rounded display units.
+ for(const row of [...marketDistricts,...marketRegions]){
+  const expected=row.tonnes>=1_000_000
+   ? [new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(row.tonnes/1_000_000),'млн т/год']
+   : [new Intl.NumberFormat('ru-RU',{maximumFractionDigits:1}).format(row.tonnes/1000),'тыс. т/год'];
+  const record=html.split(`data-market-record="${row.id}"`)[1]?.split('</article>')[0];
+  assert.ok(record&&record.includes(`<span class="market-metric-number">${expected[0]}</span> <small class="market-metric-unit">${expected[1]}</small>`),'Rounded metric: '+row.name);
+ }
+
  assert.match(html,/data-market-record="national">/);
  assert.equal((html.match(/data-market-select=/g)||[]).length,2);
  assert.equal((html.match(/class="resource-district-contour"/g)||[]).length,2);
