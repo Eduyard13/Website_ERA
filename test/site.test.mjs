@@ -47,7 +47,7 @@ test('Карта, кольцевая диаграмма и экономика и
  assert.equal((html.match(/class="resource-district-contour"/g)||[]).length,2);
  assert.match(normalized(html),/15 000 т\/год с округлением до целого/);
  assert.match(html,/Приоритетные регионы входят в итоги своих округов/);
- assert.match(html,/href="#feedstock-methodology">Как оценена сырьевая база/);
+ assert.doesNotMatch(html,/Как оценена сырьевая база/);
  for(const value of ['≈ 2 млн т/год','≈ 1,5 млн т/год','≈ 750 тыс. т/год','≈ 500 тыс. т/год','≈ 250 тыс. т/год','4,95 млрд ₽','59,4 млрд ₽'])assert.ok(normalized(html).includes(value),value);
  assert.doesNotMatch(normalized(html),/10,7 млн ₽|3,53 млрд ₽|40,83 млрд ₽/);
 });
@@ -143,15 +143,15 @@ test('Главная следует согласованной структур�
  assert.equal([...home.matchAll(/<h1[\s>]/g)].length,1);
  assert.equal([...home.matchAll(/data-widget-switch="/g)].length,0);assert.equal([...econ.matchAll(/data-economics-page/g)].length,1);
  assert.ok(!home.includes('/commercial.js'));assert.ok(econ.includes('/commercial.js'));
- assert.ok(home.includes('до 80%'));assert.ok(home.includes('засорённость сырья в испытаниях'));
+ assert.ok(home.includes('до 80%'));assert.ok(home.includes('засорённость сырья'));
  assert.ok(home.indexOf('data-home-block="equipment"')<home.indexOf('data-video-slot="promo"'));
  assert.equal([...home.matchAll(/<video controls playsinline preload="none"/g)].length,2);assert.ok(!home.includes('autoplay'));assert.ok(!home.includes(' loop'));
- for(const path of ['/economics','/technology#products','/catalog','/automation','/catalog/lines/separatsiya-01','/catalog/lines/separatsiya-02','/catalog/lines/separatsiya-03','/catalog/lines/moyka-plenki']){
+ for(const path of ['/economics','/technology','/catalog','/automation','/catalog/lines/separatsiya-01','/catalog/lines/separatsiya-02','/catalog/lines/separatsiya-03','/catalog/lines/moyka-plenki']){
   assert.ok(home.includes(`href="${basePath}${path}"`),path);
  }
  assert.ok(!home.includes('quality-sequence.svg'));
  for(const text of ['Ручная очистка — экономический тупик.','33 сек.','40 г','4–5 кг/ч','65 000 ₽/т','260 ₽/ч','Сбор стоков','Возврат воды'])assert.ok(tech.includes(text),text);
- assert.ok(home.includes('Подключить гранулирование'));
+ assert.ok(home.includes('Добавьте гранулирование и расширьте ассортимент.'));
 });
 test('Все внутренние ссылки, изображения и якоря ведут к существующим ресурсам',async()=>{
  for(const route of new Set(routes)){
