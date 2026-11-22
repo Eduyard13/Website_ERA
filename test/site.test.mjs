@@ -48,7 +48,8 @@ test('Карта, кольцевая диаграмма и экономика и
  assert.match(normalized(html),/15 000 т\/год с округлением до целого/);
  assert.match(html,/Приоритетные регионы входят в итоги своих округов/);
  assert.doesNotMatch(html,/Как оценена сырьевая база/);
- for(const value of ['≈ 2 млн т/год','≈ 1,5 млн т/год','≈ 750 тыс. т/год','≈ 500 тыс. т/год','≈ 250 тыс. т/год','4,95 млрд ₽','59,4 млрд ₽'])assert.ok(normalized(html).includes(value),value);
+ const visibleText=normalized(html.replace(/<[^>]*>/g,''));
+ for(const value of ['≈ 2 млн т/год','≈ 1,5 млн т/год','≈ 750 тыс. т/год','≈ 500 тыс. т/год','≈ 250 тыс. т/год','4,95 млрд ₽','59,4 млрд ₽'])assert.ok(normalized(html).includes(value)||visibleText.includes(value),value);
  assert.doesNotMatch(normalized(html),/10,7 млн ₽|3,53 млрд ₽|40,83 млрд ₽/);
 });
 test('Все 12 материалов владельца подключены, размеры и контрольные суммы веб-файлов совпадают',async()=>{
