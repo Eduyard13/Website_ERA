@@ -224,7 +224,7 @@ test('В каталоге четыре линии по порядку; откр�
  assert.equal(ready.slug,'separatsiya-02');assert.equal(ready.status,'source-checked');
  const page=await readFile('dist'+ready.path+'/index.html','utf8');
  assert.ok(page.includes(`<title>${dryLineNames[ready.slug].title} — ЭРА</title>`));
- assert.ok(page.includes('PRO / ГОТОВАЯ ЛИНИЯ ЭРА'));
+ assert.ok(page.includes('ЭРА / ПРОМЫШЛЕННАЯ ЛИНИЯ / PRO'));
  assert.ok(page.includes(`href="${basePath}/documents/${ready.documents[0].file}"`));
  assert.ok(page.includes(`data-product="${basePath}${ready.path}"`));
  for(const m of Object.values(filmSeparationMedia)){
@@ -250,7 +250,7 @@ test('Мини-линия 01 использует своё ТО, показат�
  const parse=value=>value==='—'?0:Number(value.replace(',','.'));
  assert.ok(Math.abs(miniSpecification.reduce((sum,row)=>sum+parse(row[3]),0)-225)<1e-9);
  assert.ok(Math.abs(miniSpecification.reduce((sum,row)=>sum+parse(row[4]),0)-157.5)<1e-9);
- assert.ok(page.includes('BASE / ЛС-1500'));
+ assert.ok(page.includes('ЭРА / ПРОМЫШЛЕННАЯ ЛИНИЯ / BASE'));
  for(const text of ['157,5 кВт','225 кВт','17,75 × 11,75 м','600–700 кг/ч','70% установленной мощности','3–5%','80% → ≤10%','Конвейеры 07–10','3 человека в смену','Отдельные протоколы испытаний'])assert.ok(page.includes(text),text);
  assert.ok(page.includes('отдельная сортировка плёнок по видам в базовую поставку не входит'));
  assert.ok(page.includes('Сортировочный бокс, мойка и пресс не входят'));
