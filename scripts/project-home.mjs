@@ -211,7 +211,7 @@ function integration(){
 
 function equipment(){
  const modules=responsiveImage('covers/catalog-nodes-close.webp','covers/catalog-nodes-close-768.webp','Три технологических узла ЭРА на выставочных пьедесталах');
- const dryHero=responsiveImage('covers/catalog-lines-exhibition.webp','covers/catalog-lines-exhibition-768.webp','Премиальная визуализация линии сухой сепарации ЭРА');
+ const dryHero=responsiveImage('covers/catalog-lines-compact.webp','covers/catalog-lines-compact-768.webp','Премиальная визуализация линии сухой сепарации ЭРА');
  const washHero={file:'project-home/equipment/hot-wash-cover-premium-final.webp',width:1448,height:1086,alt:'Линия горячей мойки плёнки ЭРА в премиальном индустриальном оформлении'};
  return `<section class="resource-section resource-equipment" id="manufacturing" aria-labelledby="resource-evidence-title" data-home-block="equipment" data-page-progress-label="Оборудование">
   <div class="resource-container">
