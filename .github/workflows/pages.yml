@@ -1,7 +1,7 @@
 name: Test and deploy ERA preview
 on:
   push:
-    branches: [main, 'review/era-five-visual-refinements-20261122']
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
