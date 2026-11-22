@@ -915,8 +915,8 @@
  display:block;width:100%;max-width:none;height:auto;object-fit:contain;
  border:0;border-radius:0;box-shadow:none;
  opacity:1;filter:none;mix-blend-mode:normal;
- -webkit-mask-image:radial-gradient(ellipse 70% 69% at 50% 50%,#000 0 63%,transparent 72%);
- mask-image:radial-gradient(ellipse 70% 69% at 50% 50%,#000 0 63%,transparent 72%);
+ -webkit-mask-image:radial-gradient(ellipse 78% 90% at 50% 50%,#000 0 74%,transparent 96%);
+ mask-image:radial-gradient(ellipse 78% 90% at 50% 50%,#000 0 74%,transparent 96%);
 }
 .resource-page .resource-control .resource-kair-benefits {
  position:relative;z-index:2;
