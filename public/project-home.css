@@ -939,3 +939,19 @@
   max-width:none;margin-inline:calc(-1 * var(--home-gutter));
  }
 }
+
+
+/* Complete industrial equipment in a common native 3:2 landscape frame:
+   avoids cropping either end of the dry-separation and equipment-node line. */
+.resource-page .resource-equipment-grid .resource-equipment-image {
+ aspect-ratio:3/2;
+}
+.resource-page .resource-equipment-grid .resource-equipment-image img {
+ aspect-ratio:3/2;object-fit:cover;object-position:50% 50%;
+}
+.resource-page .resource-equipment-grid>article>div {
+ min-height:260px;
+}
+@media(max-width:639px){
+ .resource-page .resource-equipment-grid>article>div {min-height:0;}
+}
