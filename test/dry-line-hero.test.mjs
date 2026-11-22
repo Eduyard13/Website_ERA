@@ -38,7 +38,7 @@ test('BASE: один поток, нет штатной сортировки по
  const html=render(line.path);
  const hero=html.slice(html.indexOf('data-dry-line-hero="separatsiya-01"'),html.indexOf('</section>',html.indexOf('data-dry-line-hero="separatsiya-01"')));
  assert.ok(hero.includes('Один поток плёнки'));
- assert.ok(!hero.includes('автоматический пресс')&&!hero.includes('Пять раздельных потоков'));
+ assert.ok(!hero.includes('автоматический пресс')&&!hero.includes('5 раздельных потоков'));
  for(const metric of miniLineMetrics)assert.ok(html.includes(metric[0]),metric[2]);
  assert.ok(hero.includes('225<small>кВт</small>'));
  assert.ok(hero.includes('3<small>чел./смена</small>'));
@@ -49,7 +49,7 @@ test('PRO: пять бункеров и тюк, все KPI происходят 
  const line=lines.find(item=>item.slug==='separatsiya-02');
  const html=render(line.path);
  const hero=html.slice(html.indexOf('data-dry-line-hero="separatsiya-02"'),html.indexOf('</section>',html.indexOf('data-dry-line-hero="separatsiya-02"')));
- assert.ok(hero.includes('Пять раздельных потоков'));
+ assert.ok(hero.includes('5 раздельных потоков'));
  for(const [index,[value,unit]] of lineMetrics.entries()){
   if(index<2)assert.ok(hero.includes(value+'<small>'+unit+'</small>'));
  }
