@@ -8,7 +8,7 @@ export function contextNavigationData(path){
  const node=nodes.find(n=>n.path===path);
  if(node)return {parent:'/catalog/equipment/',crumbs:[{title:'Каталог',href:'/catalog/'},{title:'Отдельные узлы',href:'/catalog/equipment/'},{title:node.title}]};
  const line=lines.find(l=>l.enabled&&l.path===path);
- if(line)return {parent:'/catalog/lines/',crumbs:[{title:'Каталог',href:'/catalog/'},{title:'Линии и комплексы',href:'/catalog/lines/'},{title:line.title}]};
+ if(line)return {parent:'/catalog/lines/',crumbs:[{title:'Каталог',href:'/catalog/'},{title:'Линии и комплексы',href:'/catalog/lines/'},{title:line.tier?(line.slug==='separatsiya-03'?'Сухая сепарация и сушка · '+line.tier:'Сухая сепарация · '+line.tier):line.title}]};
  return null;
 }
 export function contextNavigation(path){

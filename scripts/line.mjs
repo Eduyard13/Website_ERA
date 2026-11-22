@@ -3,7 +3,8 @@ import {nodes} from '../content/catalog.mjs';
 import {filmSeparationMedia as pictures,lineMetrics,lineRawMaterials,lineStages,lineUnits,linePositions,lineSpecs,lineQuality} from '../content/film-separation.mjs';
 import {mediaAttributes} from './media.mjs';
 import {pdfViewerDialog} from './documents.mjs';
-import {lineDocuments,lineDocumentCards,lineHeroImage} from './line-page-media.mjs';
+import {lineDocuments,lineDocumentCards} from './line-page-media.mjs';
+import {renderDrySeparationHero} from './dry-separation-hero.mjs';
 import {linePower,dryLineProduction} from './line-power.mjs';
 import {lineDimensions} from './line-dimensions.mjs';
 import {interactiveLineDiagram} from './line-diagram.mjs';
@@ -33,11 +34,12 @@ export function renderFilmSeparation(line){
  const drawing=documents.find(d=>d.id==='separatsiya-02-dimensions-a0');
  return `<div class="film-line film-line--full">
 
- <section class="section line-hero">
-  <div class="line-hero-copy"><p class="eyebrow">${line.tier} / ГОТОВАЯ ЛИНИЯ ЭРА</p><h1>${escape(line.title)}</h1><p class="line-slogan">Из загрязнённой плёнки —<br>в партии очищенной плёнки.</p><p class="line-lead">Раскрытие пакетов, многоступенчатая очистка, ручной отбор и прессование. Подготовленная плёнка для продажи переработчикам или дальнейшей мойки.</p><div class="actions">${button('Обсудить линию',email)}${button('Схема и состав','#composition',true)}</div><a class="text-link line-document-shortcut" href="#documents">Техническое описание · PDF, 32 страницы ↓</a></div>
-  <div class="line-hero-visual">${lineHeroImage(line)}<div class="line-hero-tags"><span>Сухая очистка</span><span>5 раздельных потоков</span><span>Автоматическая увязка</span></div></div>
-  <div class="line-metrics"><dl>${lineMetrics.map(([value,unit,label])=>`<div><dt>${label}</dt><dd>${value}<small>${unit}</small></dd></div>`).join('')}</dl><p>750 кг/ч — рабочий ориентир при среднем засоре около 50%. Фактический выпуск зависит от состава сырья, влажности и режима.</p></div>
- </section>
+ ${renderDrySeparationHero({line,email,metrics:[
+   {value:lineMetrics[0][0],unit:lineMetrics[0][1],label:'Входное сырьё',detail:'С учётом загрязнений'},
+   {value:lineMetrics[1][0],unit:lineMetrics[1][1],label:'Очищенная плёнка',detail:'При засорённости около 50%'},
+   {value:lineMetrics[2][0].split(' × ')[0],unit:'потоков',label:'Раздельное накопление',detail:lineMetrics[2][0]+' '+lineMetrics[2][1]+' · пять бункеров'},
+   {value:lineMetrics[3][0],unit:lineMetrics[3][1],label:'Масса тюка',detail:'Ориентир по проектной схеме'}
+  ],metricNote:'750 кг/ч — рабочий ориентир при засоре около 50%. Выпуск зависит от состава сырья, влажности и режима.',documentHref:'#documents',documentText:'Техническое описание · PDF, 32 страницы'})}
  <nav class="anchor-nav line-anchor-nav" aria-label="Разделы линии"><a href="#purpose">Назначение</a><a href="#raw-materials">Сырьё</a><a href="#specs">Характеристики</a><a href="#process">Процесс</a><a href="#composition">Схема линии</a><a href="#quality">Продукт</a><a href="#placement">Габариты</a><a href="#kair">КАИР</a><a href="#photos">Фото</a><a href="#documents">Документы</a><a href="#equipment">Состав узлов</a></nav>
 
  <section class="section" id="purpose"><div class="line-section-heading"><div><p class="eyebrow">НАЗНАЧЕНИЕ</p><h2>Отделить лишнее.<br>Сохранить полезную плёнку.</h2></div><p>Линия удаляет основную массу крупных, твёрдых, мелких и микровключений. Раскрывает пакеты и слипшиеся слои, освобождает загрязнения и подготавливает материал к следующему переделу.</p></div>

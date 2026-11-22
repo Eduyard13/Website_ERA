@@ -3,7 +3,8 @@ import {nodes} from '../content/catalog.mjs';
 import {miniFilmSeparationMedia,miniLineMetrics,miniRawMaterials,miniInclusions,miniStages,miniSpecification,miniUnits,miniSpecs,miniQuality,miniService} from '../content/mini-film-separation.mjs';
 import {mediaAttributes} from './media.mjs';
 import {pdfViewerDialog} from './documents.mjs';
-import {lineDocuments,lineDocumentCards,lineHeroImage} from './line-page-media.mjs';
+import {lineDocuments,lineDocumentCards} from './line-page-media.mjs';
+import {renderDrySeparationHero} from './dry-separation-hero.mjs';
 import {linePower,dryLineProduction} from './line-power.mjs';
 import {equipmentCardImages} from '../content/equipment-card-images.mjs';
 import {interactiveLineDiagram} from './line-diagram.mjs';
@@ -34,11 +35,12 @@ export function renderMiniFilmSeparation(line){
  const drawing=documents.find(d=>d.id==='separatsiya-01-dimensions');
  return `<div class="film-line mini-line">
 
- <section class="section line-hero">
-  <div class="line-hero-copy"><p class="eyebrow">${line.tier} / ЛС-1500</p><h1>${escape(line.title)}</h1><p class="line-slogan">Основные ступени очистки.<br>В компактной комплектации.</p><p class="line-lead">Линия вскрывает тюки, отделяет крупные примеси и очищает плёнку в роторном распушителе. На выходе — один поток очищенной плёнки для продажи переработчику или подачи на мойку.</p><div class="actions">${button('Обсудить мини-линию',email)}${button('Схема и состав','#composition',true)}</div><a class="text-link line-document-shortcut" href="#documents">Техническое описание · PDF, 14 страниц ↓</a></div>
-  <div class="line-hero-visual">${lineHeroImage(line)}<div class="line-hero-tags"><span>Очистка без воды</span><span>Один поток плёнки</span><span>13 позиций</span></div></div>
-  <div class="line-metrics"><dl>${miniLineMetrics.map(([value,unit,label])=>`<div><dt>${label}</dt><dd>${value}<small>${unit}</small></dd></div>`).join('')}</dl><p>750 кг/ч — расчёт при засоре около 50%. Паспорт базового распушителя указывает 600–700 кг/ч. Целевой выпуск подтверждаем на выбранной комплектации и сырье заказчика.</p></div>
- </section>
+ ${renderDrySeparationHero({line,email,metrics:[
+   {value:miniLineMetrics[0][0],unit:miniLineMetrics[0][1],label:'Входное сырьё',detail:'С учётом загрязнений'},
+   {value:miniLineMetrics[1][0],unit:miniLineMetrics[1][1],label:'Очищенная плёнка',detail:'Расчёт при засорённости около 50%'},
+   {value:miniLineMetrics[2][0],unit:miniLineMetrics[2][1],label:miniLineMetrics[2][2]},
+   {value:miniLineMetrics[3][0],unit:'чел./смена',label:'Рабочий персонал'}
+  ],metricNote:'750 кг/ч — расчёт при засоре около 50%. Паспорт базового распушителя указывает 600–700 кг/ч. Выпуск подтверждаем на выбранном сырье и комплектации.',documentHref:'#documents',documentText:'Техническое описание · PDF, 14 страниц'})}
  <nav class="anchor-nav line-anchor-nav" aria-label="Разделы линии BASE"><a href="#purpose">Назначение</a><a href="#raw-materials">Сырьё</a><a href="#specs">Характеристики</a><a href="#process">Процесс</a><a href="#composition">Схема линии</a><a href="#quality">Продукт</a><a href="#placement">Габариты</a><a href="#kair">КАИР</a><a href="#photos">Фото</a><a href="#documents">Документы</a><a href="#equipment">Состав узлов</a></nav>
 
  <section class="section" id="purpose"><div class="line-section-heading"><div><p class="eyebrow">НАЗНАЧЕНИЕ</p><h2>Подготовить плёнку.<br>Убрать основную массу примесей.</h2></div><p>Базовая комплектация объединяет раскрытие сырья, разделение по форме и размеру и финальную роторную очистку. Отделение загрязнений до мойки снижает нагрузку на следующий участок.</p></div>

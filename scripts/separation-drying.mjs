@@ -4,7 +4,8 @@ import {separation03Diagram} from '../content/separation-03-diagram.mjs';
 import {interactiveLineDiagram} from './line-diagram.mjs';
 import {mediaAttributes} from './media.mjs';
 import {pdfViewerDialog} from './documents.mjs';
-import {lineDocuments,lineDocumentCards,lineHeroImage} from './line-page-media.mjs';
+import {lineDocuments,lineDocumentCards} from './line-page-media.mjs';
+import {renderDrySeparationHero} from './dry-separation-hero.mjs';
 import {linePower,dryLineProduction} from './line-power.mjs';
 import {nodes} from '../content/catalog.mjs';
 import {equipmentCardImages} from '../content/equipment-card-images.mjs';
@@ -35,7 +36,12 @@ export function renderSeparationDrying(line){
  const {primary,operators,forkliftDrivers,sorters,total}=separation03Staff;
  const email=`mailto:${siteContacts.email}?subject=`+encodeURIComponent('Запрос ЭРА: '+line.cardTitle);
  return `<div class="film-line film-line--full film-line--drying" data-separation03-line>
- <section class="section line-hero"><div class="line-hero-copy"><p class="eyebrow">${line.tier} / ГОТОВАЯ ЛИНИЯ ЭРА</p><h1>${escape(line.cardTitle)}</h1><p class="line-slogan">Глубокая сухая очистка.<br>Раздельные партии плёнки.</p><p class="line-lead">Компоновка для глубокой сухой очистки загрязнённых плёночных отходов с роторной сушкой, второй ступенью баллистической сепарации, ручным отбором плёнки по видам, доочисткой основного цветного микса и прессованием очищенной плёнки в тюки.</p><div class="actions">${button('Оценить моё сырьё',email)}${button('Перейти к схеме линии','#composition',true)}</div><a class="text-link line-document-shortcut" href="/documents/${doc.file}" data-pdf-open="${doc.id}">Открыть техническое описание · PDF, 28 страниц ↓</a></div><div class="line-hero-visual">${lineHeroImage(line)}<div class="line-hero-tags"><span>Две баллистические ступени</span><span>Роторная сушка</span><span>5 раздельных потоков</span></div></div><div class="line-metrics"><dl>${[['1 500','кг/ч','Входное сырьё с включениями'],['750','кг/ч','Выход очищенной плёнки'],['до 5','%','Остаточная влажность после сушилки'],['540','т / 30 суток','Расчётный выпуск очищенной плёнки']].map(([value,unit,label])=>`<div><dt>${label}</dt><dd>${value}<small>${unit}</small></dd></div>`).join('')}</dl><p>750 кг/ч и 540 т за 30 суток — расчёт при засорённости около 50% и непрерывной работе. До 5% — влажность плёнки на выходе из сушилки; влажность отгружаемого тюка определяют по пробе.</p></div></section>
+ ${renderDrySeparationHero({line,email,metrics:[
+   {value:line.cardMetrics[0].value,unit:line.cardMetrics[0].unit,label:'Входное сырьё',detail:'С учётом загрязнений'},
+   {value:line.cardMetrics[1].value,unit:line.cardMetrics[1].unit,label:'Очищенная плёнка',detail:'При засорённости около 50%'},
+   {value:line.cardMetrics[2].value,unit:line.cardMetrics[2].unit,label:'Влажность после сушилки',detail:'Не норма влажности отгружаемых тюков'},
+   {value:line.cardMetrics[5].value,unit:'потоков',label:'Раздельное накопление',detail:'Пять бункеров по 4,7 м³'}
+  ],metricNote:'750 кг/ч — расчёт при засорённости около 50%. До 5% — влажность после сушилки; влажность готового тюка проверяют по пробе. Фактический выпуск зависит от сырья и режима.',documentHref:'/documents/'+doc.file,documentText:'Техническое описание · PDF, 28 страниц',documentAttributes:'data-pdf-open="'+doc.id+'"'})}
  <nav class="anchor-nav line-anchor-nav" aria-label="Разделы линии">${[['purpose','Назначение'],['raw-materials','Сырьё'],['specs','Характеристики'],['process','Процесс'],['composition','Схема линии'],['quality','Продукт'],['placement','Размещение'],['kair','КАИР'],['photos','Фото'],['documents','Документы'],['equipment','Состав узлов']].map(([id,label])=>`<a href="#${id}">${label}</a>`).join('')}</nav>
 
  <section class="section" id="purpose">${heading('НАЗНАЧЕНИЕ','От раскрытия тюков<br>до очищенной плёнки.','Линия удаляет основную массу крупных, мелких и микровключений, раскрывает пакеты и спрессованные слои, подсушивает влажную плёнку между двумя баллистическими ступенями.')}<div class="line-purpose-grid">${[['Баллистика до и после сушки','Первая ступень снимает основные включения. После роторной сушки ослабляется удержание мелкого абразива, а вторая баллистика доочищает поток.'],['Ручной отбор и доочистка микса','До четырёх выбранных видов плёнки отбирают на сортировке. Основной цветной микс дополнительно проходит роторную, дисковую и воздушную очистку.'],['Раздельное накопление и пресс','Пять бункеров накапливают фракции отдельно и поочерёдно подают их на общий автоматический пресс. Тюки маркируют и хранят раздельно.']].map(([title,text])=>`<article><h3>${title}</h3><p>${text}</p></article>`).join('')}</div></section>

@@ -76,3 +76,133 @@
  .film-line .line-document-grid.line-document-grid--complete{grid-template-columns:minmax(0,1fr)}
  .film-line .line-power-energy,.film-line .line-production-table{margin-inline:0}
 }
+
+
+
+/* Identical premium top-section language across BASE / PRO / PREMIUM.
+   Underlying artwork, engineering numbers, calculations and PDFs stay source-specific. */
+.film-line .line-hero--commercial{
+ grid-template-columns:minmax(0,44fr) minmax(0,56fr);
+ align-items:center;gap:clamp(22px,2.8vw,46px);
+ padding-top:clamp(32px,4vw,60px);padding-bottom:clamp(26px,3vw,42px);
+}
+.film-line .line-hero--commercial .line-hero-copy{align-self:center;min-width:0}
+.film-line .line-hero--commercial .line-hero-copy>.eyebrow{
+ color:var(--era-gold-dark);font-size:12px;letter-spacing:.11em;
+ margin-bottom:20px;
+}
+.film-line .line-hero--commercial h1{
+ max-width:620px;margin:0 0 23px;
+ font-size:clamp(34px,3.55vw,57px);line-height:1.08;
+ letter-spacing:-.049em;text-wrap:balance;
+}
+.film-line .line-hero--commercial .line-slogan{
+ max-width:600px;margin:0 0 18px;
+ font-size:clamp(22px,2.1vw,31px);line-height:1.26;
+ color:var(--era-gold-dark);text-wrap:balance;
+}
+.film-line .line-hero--commercial .line-lead{
+ max-width:590px;font-size:clamp(15px,1.17vw,18px);line-height:1.6;margin:0;
+}
+.film-line .line-hero--commercial .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:27px}
+.film-line .line-hero--commercial .actions .button{
+ white-space:normal;text-align:center;min-height:52px;
+ display:inline-flex;align-items:center;justify-content:center;
+}
+.film-line .line-hero--commercial .line-hero-visual{
+ align-self:center;min-width:0;max-width:none;width:100%;
+}
+.film-line .line-hero--commercial [data-line-catalog-cover]{
+ border:0;border-radius:0;box-shadow:none;overflow:visible;background:transparent;
+}
+.film-line .line-hero--commercial [data-line-catalog-cover] .media-open{
+ aspect-ratio:3/2;border-radius:10px;
+ background:#061337;overflow:hidden;box-shadow:0 12px 30px #111a3320;
+}
+.film-line .line-hero--commercial [data-line-catalog-cover] img{
+ object-fit:contain;object-position:center;padding:0;
+}
+.film-line .line-hero--commercial [data-line-catalog-cover] figcaption{
+ padding:9px 3px 0;background:transparent;border:0;
+ font-size:12px;color:var(--muted);
+}
+.film-line .line-hero--commercial .line-hero-tags{margin-top:13px;gap:7px}
+.film-line .line-hero--commercial .line-hero-tags span{
+ padding:6px 11px;border-radius:30px;background:transparent;
+ border:1px solid var(--line);font-size:12px;
+}
+.film-line .line-hero--commercial .line-metrics--commercial{
+ grid-column:1/-1;min-width:0;margin-top:5px;
+ border:1px solid #d8ccba;border-radius:9px;
+ padding:clamp(22px,2.5vw,34px);
+ background:linear-gradient(120deg,#fbfaf7 0%,#f7f1e8 100%);
+}
+.film-line .line-hero--commercial .line-metrics-eyebrow{
+ max-width:none;margin:0 0 26px;
+ font-size:12px;font-weight:600;letter-spacing:.12em;color:var(--era-gold-dark);
+ display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.film-line .line-hero--commercial .line-metrics-eyebrow span{
+ font-size:12px;letter-spacing:.1em;
+}
+.film-line .line-hero--commercial .line-metrics dl{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin:0;
+}
+.film-line .line-hero--commercial .line-metrics dl>div{
+ min-width:0;display:flex;flex-direction:column;padding:0 clamp(12px,1.55vw,25px);
+ border-left:1px solid #d9cdbb;
+}
+.film-line .line-hero--commercial .line-metrics dl>div:first-child{border-left:0;padding-left:0}
+.film-line .line-hero--commercial .line-metrics dd{
+ order:0;margin:0 0 10px;min-width:0;font-variant-numeric:tabular-nums;
+ color:var(--ink);font-size:clamp(27px,3.2vw,47px);line-height:1.16;
+ letter-spacing:-.045em;white-space:normal;overflow-wrap:normal;word-break:normal;
+}
+.film-line .line-hero--commercial .line-metrics dl>div:nth-child(2) dd{color:var(--era-gold-dark)}
+.film-line .line-hero--commercial .line-metrics dd small{
+ display:inline-block;white-space:nowrap;font-size:clamp(13px,1.17vw,18px);
+ font-weight:400;letter-spacing:0;margin-left:7px;vertical-align:baseline;
+}
+.film-line .line-hero--commercial .line-metrics dt{
+ order:1;max-width:none;margin:0;font-size:15px;line-height:1.35;
+ font-weight:550;color:var(--ink);
+}
+.film-line .line-hero--commercial .line-metric-detail{
+ order:2;display:block;color:var(--muted);
+ font-size:12px;line-height:1.5;margin-top:7px;
+}
+.film-line .line-hero--commercial .line-metrics-note{
+ max-width:950px;margin:24px 0 0;font-size:12px;line-height:1.55;color:var(--muted);
+}
+.film-line .line-hero--commercial .line-document-shortcut{
+ display:inline-flex;margin:14px 0 0;font-size:13px;color:var(--era-gold-dark);
+ text-decoration:none;
+}
+@media(max-width:1080px){
+ .film-line .line-hero--commercial{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:26px}
+ .film-line .line-hero--commercial h1{font-size:clamp(34px,3.8vw,46px)}
+ .film-line .line-hero--commercial .line-metrics dd{font-size:clamp(26px,3.1vw,38px)}
+}
+@media(max-width:850px){
+ .film-line .line-hero--commercial{grid-template-columns:minmax(0,1fr);gap:22px}
+ .film-line .line-hero--commercial .line-hero-visual{max-width:780px;justify-self:center}
+ .film-line .line-hero--commercial .line-metrics dl{
+  grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 0;
+ }
+ .film-line .line-hero--commercial .line-metrics dl>div:nth-child(3){
+  border-left:0;padding-left:0;
+ }
+ .film-line .line-hero--commercial .line-metrics dd{font-size:clamp(28px,5vw,44px)}
+}
+@media(max-width:560px){
+ .film-line .line-hero--commercial h1{font-size:clamp(32px,8vw,44px)}
+ .film-line .line-hero--commercial .line-slogan{font-size:clamp(22px,6vw,27px)}
+ .film-line .line-hero--commercial .actions .button{width:100%}
+ .film-line .line-hero--commercial .line-metrics--commercial{padding:20px 16px}
+ .film-line .line-hero--commercial .line-metrics dl>div{padding-inline:10px}
+ .film-line .line-hero--commercial .line-metrics dd{font-size:clamp(26px,7vw,36px)}
+ .film-line .line-hero--commercial .line-metrics dd small{font-size:13px;margin-left:4px}
+ .film-line .line-hero--commercial .line-metrics dt{font-size:13px}
+ .film-line .line-hero--commercial .line-metric-detail{font-size:11px}
+ .film-line .line-hero--commercial .line-hero-tags span{font-size:11px}
+}
