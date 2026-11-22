@@ -66,7 +66,7 @@ function recordPanel(row,group){
    <h3 data-market-name tabindex="-1">${esc(row.name)}</h3>
    <div class="market-figure market-figure-pair">
     <div><p>Сырьевая база в год</p><strong data-market-volume><span class="market-metric-number">${volume}</span><small class="market-metric-unit">${unit}</small></strong></div>
-    <div><p>Целевая чистая прибыль в год</p><strong data-market-annual><span class="market-metric-number">${annualValue}</span><small class="market-metric-unit">${esc(annualUnit)}</small></strong></div>
+    <div><p>Целевая чистая прибыль в год</p><strong data-market-annual><span class="market-metric-number">${annualValue}</span> <small class="market-metric-unit">${esc(annualUnit)}</small></strong></div>
    </div>
    <dl class="market-record-grid">
     <div><dt>${national?'Расчётный масштаб сети':'Расчётное число комплексов'}</dt><dd data-market-complexes>${marketNumber(row.complexes)}${national?' <small>комплексов</small>':''}</dd></div>
