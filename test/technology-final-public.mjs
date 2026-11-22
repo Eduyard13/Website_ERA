@@ -219,8 +219,9 @@ try{
   assert.equal(await evaluate(`document.querySelector('[data-feedstock-chart]').dataset.view`),'construction');
   assert.deepEqual(await mapSelection(),national);
   await click('[data-feedstock-choice="construction"]');
+  const methodologyWasOpen=await evaluate(`document.querySelector('#feedstock-methodology').open`);
   await click('#feedstock-methodology summary');
-  assert.ok(await evaluate(`document.querySelector('#feedstock-methodology').open`));
+  assert.equal(await evaluate(`document.querySelector('#feedstock-methodology').open`),!methodologyWasOpen,'Methodology summary must toggle its disclosure state');
   assert.ok(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),'Homepage overflow at '+width);
  }
  assert.deepEqual(errors,[],'Homepage console errors');
