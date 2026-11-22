@@ -58,12 +58,15 @@ function recordPanel(row,group){
  const national=group==='national';
  const [volume,unit]=national?[`≈ ${marketNationalTonnes}`,'млн т/год']:[marketNumber(row.tonnes),'т/год'];
  const source=national?'Бытовые отходы, упаковка, сельское хозяйство, промышленность':row.comment;
+ const moneyParts=marketMoney(row.annual,1).split('\u00a0');
+ const annualValue=moneyParts.shift();
+ const annualUnit=moneyParts.join('\u00a0');
  return `<article class="market-record" data-market-record="${row.id}"${national?'':' hidden'}>
    <p class="market-record-scope">${scopesByRecord[group]}</p>
    <h3 data-market-name tabindex="-1">${esc(row.name)}</h3>
    <div class="market-figure market-figure-pair">
-    <div><p>Сырьевая база в год</p><strong data-market-volume>${volume} <small>${unit}</small></strong></div>
-    <div><p>Целевая чистая прибыль в год</p><strong data-market-annual>${marketMoney(row.annual,1)}</strong></div>
+    <div><p>Сырьевая база в год</p><strong data-market-volume><span class="market-metric-number">${volume}</span><small class="market-metric-unit">${unit}</small></strong></div>
+    <div><p>Целевая чистая прибыль в год</p><strong data-market-annual><span class="market-metric-number">${annualValue}</span><small class="market-metric-unit">${esc(annualUnit)}</small></strong></div>
    </div>
    <dl class="market-record-grid">
     <div><dt>${national?'Расчётный масштаб сети':'Расчётное число комплексов'}</dt><dd data-market-complexes>${marketNumber(row.complexes)}${national?' <small>комплексов</small>':''}</dd></div>

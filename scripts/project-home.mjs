@@ -120,7 +120,7 @@ function process(){
  ];
  return `<section class="resource-section resource-process" id="process" aria-labelledby="resource-process-title" data-home-block="process"><div class="resource-container">
    ${heading('resource-process-title','Технология преобразует трудноочищаемую плёнку в готовую продукцию.')}
-   <ol class="resource-steps">${resourceStages.map((stage,index)=>`<li data-process-step="0${index+1}"><span class="resource-step-phase">0${index+1} / ${['ПОДГОТОВКА','ОЧИСТКА','РЕЗУЛЬТАТ'][index]}</span><div class="resource-step-art">${image(icons[index])}</div><h3>${esc(stage.title)}</h3><p>${esc(stage.text)}</p></li>`).join('')}</ol>
+   <ol class="resource-steps">${resourceStages.map((stage,index)=>`<li data-process-step="0${index+1}"><span class="resource-step-phase">0${index+1} / ${['ПОДГОТОВКА','ОЧИСТКА','РЕЗУЛЬТАТ'][index]}</span><div class="resource-step-art" aria-hidden="true">${image({...icons[index],alt:""})}</div><div class="resource-step-body"><h3>${esc(stage.title)}</h3><p>${esc(stage.text)}</p></div></li>`).join('')}</ol>
    <div class="resource-links">${link('Изучить технологию ЭРА','/technology')}${link('Линии сухой сепарации',dryCatalogue)}${link('Линия горячей мойки',washLine.path)}</div>
   </div></section>`;
 }
@@ -211,8 +211,8 @@ function integration(){
 
 function equipment(){
  const modules=responsiveImage('covers/catalog-nodes-close.webp','covers/catalog-nodes-close-768.webp','Три технологических узла ЭРА на выставочных пьедесталах');
- const dryHero=responsiveImage('lines/separatsiya-01/hero-titanium.webp','lines/separatsiya-01/hero-titanium-768.webp','Премиальная визуализация линии сухой сепарации ЭРА');
- const washHero={file:'project-home/equipment/hot-wash-cover-approved.webp',width:1100,height:733,alt:'Линия горячей мойки плёнки ЭРА в премиальном индустриальном оформлении'};
+ const dryHero=responsiveImage('covers/catalog-lines-exhibition.webp','covers/catalog-lines-exhibition-768.webp','Премиальная визуализация линии сухой сепарации ЭРА');
+ const washHero={file:'project-home/equipment/hot-wash-cover-premium-final.webp',width:1448,height:1086,alt:'Линия горячей мойки плёнки ЭРА в премиальном индустриальном оформлении'};
  return `<section class="resource-section resource-equipment" id="manufacturing" aria-labelledby="resource-evidence-title" data-home-block="equipment" data-page-progress-label="Оборудование">
   <div class="resource-container">
    ${heading('resource-evidence-title','Технология ЭРА. Воплощённая в оборудовании.',{lead:'Три комплектации сухой сепарации, линия горячей мойки и отдельные технологические узлы — готовые решения под задачи вашего производства.'})}

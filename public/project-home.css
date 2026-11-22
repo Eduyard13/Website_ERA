@@ -736,3 +736,126 @@
 .resource-equipment-image img{object-position:center center;}
 .resource-kair-visual img{object-fit:contain;width:100%;height:auto;}
 @media(max-width:760px){.resource-step-art{height:125px;max-width:60%;}}
+
+
+
+/* 2026-11-22 visual polish: five owner-approved fixes; all breakpoints. */
+
+/* Balanced two-line technical causes in the Problem / Potential comparison. */
+.resource-challenge-group .resource-challenges>article {display:flex;flex-direction:column;}
+.resource-challenge-group .resource-challenges h3 {min-height:2.42em;line-height:1.21;margin-bottom:11px;text-wrap:balance;}
+.resource-challenge-group .resource-challenges p {margin:0;}
+
+/* Soft full-card technological artwork: text and illustration become one composition. */
+.resource-page .resource-steps {align-items:stretch;}
+.resource-page .resource-steps>li {
+ isolation:isolate;overflow:hidden;min-height:355px;
+ display:flex;flex-direction:column;justify-content:center;align-items:center;
+ text-align:center;padding:28px clamp(21px,2vw,32px);
+ background:linear-gradient(146deg,#fcfaf6 0%,#f4eee2 100%);
+}
+.resource-page .resource-steps>li:last-child {background:linear-gradient(145deg,#f7efdf,#ece0c6);}
+.resource-page .resource-steps>li::before {
+ content:"";position:absolute;z-index:-1;inset:0;
+ background:linear-gradient(0deg,#fcfaf7f5 5%,#fcfaf7a8 48%,#fcfaf77a 100%);
+ pointer-events:none;
+}
+.resource-page .resource-steps>li:last-child::before {background:linear-gradient(0deg,#f4ead7ed 0%,#f4ead7a9 55%,#f4ead77a 100%);}
+.resource-page .resource-steps>li .resource-step-phase {
+ position:absolute;top:21px;left:23px;z-index:2;
+ color:#916c38;font-size:12px;line-height:1.35;
+}
+.resource-page .resource-steps .resource-step-art {
+ position:absolute;z-index:-2;inset:0;
+ display:block;width:100%;height:100%;max-width:none;
+ border:0;opacity:.36;overflow:hidden;pointer-events:none;
+}
+.resource-page .resource-steps .resource-step-art img {
+ position:absolute;inset:0;width:100%;height:100%;
+ display:block;object-fit:cover;object-position:center 40%;
+ filter:saturate(.68) contrast(.94);
+}
+.resource-page .resource-steps .resource-step-body {
+ position:relative;z-index:2;display:flex;flex-direction:column;
+ justify-content:center;align-items:center;gap:14px;
+ max-width:390px;width:100%;margin:auto;
+}
+.resource-page .resource-steps .resource-step-body h3 {
+ font-size:clamp(25px,2.2vw,34px);line-height:1.14;margin:0;
+ color:#121b34;letter-spacing:-.04em;
+}
+.resource-page .resource-steps .resource-step-body p {
+ font-size:clamp(16px,1.22vw,18px);line-height:1.52;margin:0;
+ color:#35415c;max-width:360px;text-wrap:pretty;
+}
+
+/* Tight, predictable two-line market values; never split "млрд ₽". */
+.resource-page .market-figure-pair strong {
+ font-size:inherit;letter-spacing:normal;overflow-wrap:normal;word-break:normal;
+ display:block;min-width:0;
+}
+.resource-page .market-figure-pair .market-metric-number {
+ font-size:clamp(25px,2.45vw,39px);line-height:1.15;letter-spacing:-.045em;
+ display:block;white-space:nowrap;font-variant-numeric:tabular-nums;
+}
+.resource-page .market-figure-pair .market-metric-unit {
+ font-size:clamp(14px,1.16vw,17px);font-weight:500;line-height:1.34;
+ letter-spacing:0;display:block;white-space:nowrap;margin-top:4px;
+}
+.market-figure-pair>div {min-width:0;}
+.market-figure-pair>div+div {padding-left:clamp(10px,1.25vw,20px);}
+.resource-equipment-image {aspect-ratio:16/10;background:#0c172d;overflow:hidden;}
+.resource-equipment-image img {object-fit:cover;object-position:center;}
+
+/* KAIR as an integrated indigo industrial interface, not a framed picture. */
+.resource-page .resource-control {
+ background:radial-gradient(ellipse at 74% 41%,#293758 0%,#1b2544 33%,#11172f 77%,#0d1228 100%);
+ overflow:hidden;
+}
+.resource-page .resource-control-grid {
+ grid-template-columns:minmax(0,42fr) minmax(0,58fr);
+ gap:clamp(2px,.9vw,15px);align-items:center;
+}
+.resource-control-grid .resource-kair-visual {
+ position:relative;margin:0 -2.5vw 0 -1vw;
+ border:0;border-radius:0;box-shadow:none;background:transparent;
+ padding:0;overflow:visible;min-width:0;isolation:auto;
+}
+.resource-control-grid .resource-kair-visual img {
+ display:block;width:100%;height:auto;max-width:none;
+ object-fit:contain;border:0;border-radius:0;box-shadow:none;
+ mix-blend-mode:screen;
+ -webkit-mask-image:radial-gradient(ellipse 81% 77% at 50% 50%,#000 52%,#000b 68%,transparent 100%);
+ mask-image:radial-gradient(ellipse 81% 77% at 50% 50%,#000 52%,#000b 68%,transparent 100%);
+}
+.resource-kair-benefits {gap:clamp(14px,1.7vw,24px);padding:25px 0;}
+.resource-kair-benefits svg {width:35px;height:35px;margin-bottom:12px;}
+.resource-page .resource-kair-benefits h3 {font-size:clamp(16px,1.35vw,20px);line-height:1.25;margin-bottom:8px;}
+.resource-page .resource-kair-benefits p {font-size:clamp(13px,1.08vw,15px);line-height:1.55;}
+.resource-page .resource-kair-footer .resource-link {font-size:16px;}
+
+@media(max-width:1100px){
+ .resource-page .resource-steps>li{min-height:330px;}
+ .resource-page .resource-steps .resource-step-body h3{font-size:clamp(23px,2.35vw,31px);}
+ .resource-page .market-figure-pair .market-metric-number{font-size:clamp(23px,2.8vw,34px);}
+}
+@media(max-width:899px){
+ .resource-page .resource-control-grid{grid-template-columns:1fr;gap:14px;}
+ .resource-control-grid .resource-kair-visual{margin:0 auto;width:100%;max-width:860px;}
+ .resource-page .resource-steps>li{min-height:325px;}
+}
+@media(max-width:760px){
+ .resource-challenge-group .resource-challenges h3{min-height:0;}
+ .resource-page .resource-steps::before{display:none;}
+ .resource-page .resource-steps>li{min-height:295px;}
+ .resource-page .resource-steps .resource-step-art img{object-position:center;}
+ .resource-page .market-figure-pair .market-metric-number{font-size:clamp(22px,4.5vw,31px);}
+}
+@media(max-width:480px){
+ .resource-page .resource-steps>li{min-height:270px;}
+ .resource-page .market-figure-pair{gap:9px;}
+ .resource-page .market-figure-pair>div+div{padding-left:9px;}
+ .resource-page .market-figure-pair .market-metric-number{font-size:clamp(21px,5.3vw,26px);}
+ .resource-page .market-figure-pair .market-metric-unit{font-size:14px;}
+ .resource-kair-benefits svg{width:32px;height:32px;margin:0;}
+}
