@@ -114,13 +114,13 @@ function feedstocks(){
 
 function process(){
  const icons=[
-  '<svg viewBox="0 0 84 76" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M7 41h70l-7 17H14L7 41Zm7-17h56v17H14zM22 17l16-9 27 11-18 10zM20 41V24m28 17V29M5 61h74M16 61v7m52-7v7"/><path d="M26 29l10-8m3 9 8-8M24 50h38" stroke-opacity=".6"/></g></svg>',
-  '<svg viewBox="0 0 84 76" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M8 34h68v24H8zM20 34V18h18v16m9 0V11h18v23M14 44c10-7 18 7 28 0s18 7 28 0M14 52c10-7 18 7 28 0s18 7 28 0M7 62h70M22 62v7m40-7v7"/><circle cx="56" cy="24" r="5"/></g></svg>',
-  '<svg viewBox="0 0 84 76" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 23h60v32H12zM18 15h48v8H18zM25 55v9m34-9v9M10 64h64"/><path d="M20 35c10 0 10-8 20-8s10 8 20 8 10-8 14-8M19 44l7-4 7 4 7-4 7 4 7-4 7 4" stroke-opacity=".65"/><circle cx="43" cy="48" r="3"/></g></svg>'
+  {file:'project-home/process/stage-separation-approved.webp',width:600,height:600,alt:'Сухая сепарация плёнки — контурная промышленная иллюстрация'},
+  {file:'project-home/process/stage-hot-wash-approved.webp',width:600,height:600,alt:'Горячая мойка и обезвоживание плёнки — промышленная иллюстрация'},
+  {file:'project-home/process/stage-granulation-approved.webp',width:600,height:600,alt:'Грануляция и готовая полимерная продукция — промышленная иллюстрация'}
  ];
  return `<section class="resource-section resource-process" id="process" aria-labelledby="resource-process-title" data-home-block="process"><div class="resource-container">
    ${heading('resource-process-title','Технология преобразует трудноочищаемую плёнку в готовую продукцию.')}
-   <ol class="resource-steps">${resourceStages.map((stage,index)=>`<li data-process-step="0${index+1}"><span class="resource-step-phase">0${index+1} / ${['ПОДГОТОВКА','ОЧИСТКА','РЕЗУЛЬТАТ'][index]}</span><div class="resource-step-art">${icons[index]}</div><h3>${esc(stage.title)}</h3><p>${esc(stage.text)}</p></li>`).join('')}</ol>
+   <ol class="resource-steps">${resourceStages.map((stage,index)=>`<li data-process-step="0${index+1}"><span class="resource-step-phase">0${index+1} / ${['ПОДГОТОВКА','ОЧИСТКА','РЕЗУЛЬТАТ'][index]}</span><div class="resource-step-art">${image(icons[index])}</div><h3>${esc(stage.title)}</h3><p>${esc(stage.text)}</p></li>`).join('')}</ol>
    <div class="resource-links">${link('Изучить технологию ЭРА','/technology')}${link('Линии сухой сепарации',dryCatalogue)}${link('Линия горячей мойки',washLine.path)}</div>
   </div></section>`;
 }
@@ -211,13 +211,14 @@ function integration(){
 
 function equipment(){
  const modules=responsiveImage('covers/catalog-nodes-close.webp','covers/catalog-nodes-close-768.webp','Три технологических узла ЭРА на выставочных пьедесталах');
- const dry=lines.find(line=>line.slug==='separatsiya-02');
+ const dryHero=responsiveImage('lines/separatsiya-01/hero-titanium.webp','lines/separatsiya-01/hero-titanium-768.webp','Премиальная визуализация линии сухой сепарации ЭРА');
+ const washHero={file:'project-home/equipment/hot-wash-cover-approved.webp',width:1100,height:733,alt:'Линия горячей мойки плёнки ЭРА в премиальном индустриальном оформлении'};
  return `<section class="resource-section resource-equipment" id="manufacturing" aria-labelledby="resource-evidence-title" data-home-block="equipment" data-page-progress-label="Оборудование">
   <div class="resource-container">
    ${heading('resource-evidence-title','Технология ЭРА. Воплощённая в оборудовании.',{lead:'Три комплектации сухой сепарации, линия горячей мойки и отдельные технологические узлы — готовые решения под задачи вашего производства.'})}
    <div class="resource-equipment-grid">
-    <article><a class="resource-equipment-image" href="${dryCatalogue}" aria-label="Линии сухой сепарации">${lineImage(dry)}</a><div><p class="resource-equipment-kicker">01 / ПОДГОТОВКА СЫРЬЯ</p><h3>Линии сухой сепарации</h3><p>Три комплектации для очистки, сортировки и сушки загрязнённых плёночных отходов.</p><div class="resource-line-links">${dryLines.map(line=>link(line.tier,line.path)).join('')}</div></div></article>
-    <article><a class="resource-equipment-image" href="${washLine.path}" aria-label="Линия горячей мойки">${lineImage(washLine)}</a><div><p class="resource-equipment-kicker">02 / ГЛУБОКАЯ ОЧИСТКА</p><h3>Линия горячей мойки</h3><p>Удаление стойких загрязнений, обезвоживание и подготовка плёнки к дальнейшей переработке.</p>${link('Изучить линию',washLine.path)}</div></article>
+    <article><a class="resource-equipment-image" href="${dryCatalogue}" aria-label="Линии сухой сепарации">${image(dryHero)}</a><div><p class="resource-equipment-kicker">01 / ПОДГОТОВКА СЫРЬЯ</p><h3>Линии сухой сепарации</h3><p>Три комплектации для очистки, сортировки и сушки загрязнённых плёночных отходов.</p><div class="resource-line-links">${dryLines.map(line=>link(line.tier,line.path)).join('')}</div></div></article>
+    <article><a class="resource-equipment-image" href="${washLine.path}" aria-label="Линия горячей мойки">${image(washHero)}</a><div><p class="resource-equipment-kicker">02 / ГЛУБОКАЯ ОЧИСТКА</p><h3>Линия горячей мойки</h3><p>Удаление стойких загрязнений, обезвоживание и подготовка плёнки к дальнейшей переработке.</p>${link('Изучить линию',washLine.path)}</div></article>
     <article><a class="resource-equipment-image" href="/catalog/equipment" aria-label="Отдельные узлы">${image(modules)}</a><div><p class="resource-equipment-kicker">03 / ТЕХНОЛОГИЧЕСКИЕ УЗЛЫ</p><h3>Отдельные узлы</h3><p>Оборудование для измельчения, разделения, распушения, мойки и обезвоживания.</p>${link('Смотреть оборудование','/catalog/equipment')}</div></article>
    </div>
    <details class="resource-video-details" data-keep-open><summary>Видео проекта и работа оборудования</summary><div class="resource-video-grid">${resourceVideo('promo')}${resourceVideo('cleaningDemo')}</div></details>
@@ -226,7 +227,7 @@ function equipment(){
 }
 
 function kair(){
- const source=media.kairScreen;
+ const source={file:"project-home/kair/kair-integrated-approved.webp",width:1400,height:788,alt:"КАИР — центр управления: слева сухая сепарация ЭРА, справа горячая мойка ЭРА, оператор контролирует обе линии"};
  const items=[
   ['Согласованная работа','Все участки действуют по заданной логике.','flow'],
   ['Память режимов','Сохранение настроек для повторных партий.','settings'],
@@ -247,7 +248,7 @@ function kair(){
     <div class="resource-kair-footer">${link('Изучить систему КАИР','/automation')}<small>Функции — по комплектации</small></div>
    </div>
    <figure class="resource-kair-visual">
-    ${image(responsiveImage(source.file,'kair/01-768.webp',source.alt),{slot:'kairScreen',sizes:'(max-width:899px) calc(100vw - 40px), 58vw'})}
+    ${image(source,{slot:"kairHero",sizes:"(max-width:899px) calc(100vw - 40px), 58vw"})}
     <figcaption class="sr-only">Система КАИР связывает технологические узлы, режимы и оператора.</figcaption>
    </figure>
   </div></section>`;
