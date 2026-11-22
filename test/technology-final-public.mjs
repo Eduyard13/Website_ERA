@@ -173,6 +173,26 @@ try{
    i.loading='eager';try{await i.decode();}catch{return i.src;}return i.naturalWidth&&(i.alt||i.closest('[aria-hidden="true"]'))?null:i.src;
   })).then(results=>results.filter(Boolean))`);
   assert.deepEqual(brokenImages,[]);
+  const visualState=await evaluate(`(()=>{
+   const covers=[...document.querySelectorAll('.resource-equipment-grid .resource-equipment-image')];
+   const coverRatios=covers.map(card=>({
+    frame:card.getBoundingClientRect().width/card.getBoundingClientRect().height,
+    asset:card.querySelector('img').naturalWidth/card.querySelector('img').naturalHeight,
+    height:card.getBoundingClientRect().height
+   }));
+   const kair=document.querySelector('.resource-control .resource-kair-visual img');
+   return {coverRatios,kairBlend:getComputedStyle(kair).mixBlendMode,kairMask:getComputedStyle(kair).maskImage,
+     kairFigurePosition:getComputedStyle(kair.closest('.resource-kair-visual')).position};
+  })()`);
+  assert.equal(visualState.coverRatios.length,3);
+  for(const cover of visualState.coverRatios){
+   assert.ok(Math.abs(cover.frame-4/3)<.035,'Product cover 4:3 frame at '+width);
+   assert.ok(Math.abs(cover.frame-cover.asset)<.035,'Industrial line must not be cropped at '+width);
+  }
+  assert.ok(Math.max(...visualState.coverRatios.map(c=>c.height))-Math.min(...visualState.coverRatios.map(c=>c.height))<2,'Uniform three product covers at '+width);
+  assert.equal(visualState.kairBlend,'normal','KAIR scene must preserve its original midnight-blue palette');
+  assert.notEqual(visualState.kairMask,'none','KAIR art must blend into the surrounding native background');
+  assert.equal(visualState.kairFigurePosition,width>=1101?'absolute':'relative');
   await evaluate('document.fonts.ready.then(()=>true)');
   const hero=await evaluate(`(()=>{
    const root=document.querySelector('#resource');
@@ -202,15 +222,15 @@ try{
   assert.ok(hero.italicLine&&hero.artwork&&hero.mask&&(width<1024?hero.below:hero.fullHeight),'Homepage hero at '+width);
   await click('[data-market-mode="regions"]');
   await evaluate(`(()=>{const select=document.querySelector('[data-market-select="regions"]');select.value='moscow';select.dispatchEvent(new Event('change',{bubbles:true}));})()`);
-  assert.deepEqual(await mapSelection(),{name:'Москва',volume:'441 833 т/год',active:'moscow'});
+  assert.deepEqual(await mapSelection(),{name:'Москва',volume:'441,8 тыс. т/год',active:'moscow'});
   await evaluate(`document.querySelector('[data-market-feature="moscow-oblast"]').dispatchEvent(new MouseEvent('click',{bubbles:true}))`);
-  assert.deepEqual(await mapSelection(),{name:'Московская область',volume:'302 796 т/год',active:'moscow-oblast'});
+  assert.deepEqual(await mapSelection(),{name:'Московская область',volume:'302,8 тыс. т/год',active:'moscow-oblast'});
   await click('[data-market-mode="districts"]');
   assert.deepEqual(await mapSelection(),national);
   const finance=await evaluate(`document.querySelector('.resource-finance-grid').textContent`);
   assert.equal(await evaluate(`document.querySelectorAll('[data-home-economics]').length`),5);
   await click('[data-market-district-link="volga"]');
-  assert.deepEqual(await mapSelection(),{name:'Приволжский ФО',volume:'999 250 т/год',active:'volga'});
+  assert.deepEqual(await mapSelection(),{name:'Приволжский ФО',volume:'999,3 тыс. т/год',active:'volga'});
   assert.equal(await evaluate(`document.querySelector('.resource-finance-grid').textContent`),finance);
   await click('[data-market-reset]');
   assert.deepEqual(await mapSelection(),national);
