@@ -370,7 +370,7 @@ test('Адаптивные изображения и презентационн�
  }
  assert.match(technology,/Полный цикл переработки плёнки:/);
  assert.match(technology,/очистить, переработать, использовать снова/);
- assert.ok(html.includes(`href="${basePath}/technology#dry-separation"`));
+ assert.ok(html.includes(`href="${basePath}/technology"`));
  assert.ok(html.includes(`href="${basePath}/contacts#project-form"`));
  assert.ok(html.includes('mailto:info@era-cycle.ru'));
  assert.ok(!html.includes('eduard@ros-um.ru'));
