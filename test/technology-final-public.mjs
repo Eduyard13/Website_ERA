@@ -185,9 +185,10 @@ try{
      kairFigurePosition:getComputedStyle(kair.closest('.resource-kair-visual')).position};
   })()`);
   assert.equal(visualState.coverRatios.length,3);
-  for(const cover of visualState.coverRatios){
-   assert.ok(Math.abs(cover.frame-4/3)<.035,'Product cover 4:3 frame at '+width);
-   assert.ok(Math.abs(cover.frame-cover.asset)<.035,'Industrial line must not be cropped at '+width);
+  for(const [index,cover] of visualState.coverRatios.entries()){
+   assert.ok(Math.abs(cover.frame-3/2)<.035,'Uniform product cover 3:2 at '+width);
+   if(index!==1)assert.ok(Math.abs(cover.frame-cover.asset)<.035,'Full dry-separation and equipment-nodes artwork at '+width);
+   else assert.ok(Math.abs(cover.asset-4/3)<.035,'Washing cover uses approved artwork with minimal backdrop trim');
   }
   assert.ok(Math.max(...visualState.coverRatios.map(c=>c.height))-Math.min(...visualState.coverRatios.map(c=>c.height))<2,'Uniform three product covers at '+width);
   assert.equal(visualState.kairBlend,'normal','KAIR scene must preserve its original midnight-blue palette');
