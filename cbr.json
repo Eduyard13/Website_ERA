@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "source": "CBR",
-  "sourceUrl": "https://www.cbr.ru/scripts/XML_daily.asp?date_req=22%2F11%2F2026",
-  "requestedDate": "2026-11-22",
+  "sourceUrl": "https://www.cbr.ru/scripts/XML_daily.asp?date_req=23%2F11%2F2026",
+  "requestedDate": "2026-11-23",
   "effectiveDate": "2026-11-21",
-  "fetchedAt": "2026-11-22T17:37:47.714Z",
+  "fetchedAt": "2026-11-22T23:16:06.916Z",
   "rates": {
     "USD": {
       "nominal": 1,
