@@ -154,6 +154,9 @@ test('Главная следует согласованной структур�
  assert.equal([...home.matchAll(/data-widget-switch="/g)].length,0);assert.equal([...econ.matchAll(/data-economics-page/g)].length,1);
  assert.ok(!home.includes('/commercial.js'));assert.ok(econ.includes('/commercial.js'));
  assert.ok(home.includes('до 80%'));assert.ok(home.includes('засорённость сырья'));
+ assert.ok(home.includes('<span class="resource-contact-title-line resource-contact-title-line--fixed">Следующий шаг —</span>'));
+ assert.ok(home.includes('<span class="resource-contact-title-line">ваше производство.</span>'));
+ assert.ok(home.includes('resource-kair-benefits') && home.includes('kair-integrated-approved.webp'));
  assert.ok(home.indexOf('data-home-block="equipment"')<home.indexOf('data-video-slot="promo"'));
  assert.equal([...home.matchAll(/<video controls playsinline preload="none"/g)].length,2);assert.ok(!home.includes('autoplay'));assert.ok(!home.includes(' loop'));
  for(const path of ['/economics','/technology','/catalog','/automation','/catalog/lines/separatsiya-01','/catalog/lines/separatsiya-02','/catalog/lines/separatsiya-03','/catalog/lines/moyka-plenki']){
