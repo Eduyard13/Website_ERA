@@ -71,7 +71,7 @@ export function resourceHeroSection(){
     <p class="eyebrow">${esc(resourceHero.kicker)}</p>
     <h1 id="resource-title"><span>${esc(opening)}</span> <span>${esc(turn)} <em>${esc(accent)}</em></span></h1>
     <p class="resource-hero-subtitle">${esc(resourceHero.subtitle)}</p>
-    <p class="resource-hero-lead">${esc(resourceHero.lead)}</p>
+    <p class="resource-hero-lead"><strong class="resource-hero-claim">ЭРА разработала, успешно испытала и ввела в промышленную эксплуатацию</strong> технологию и оборудование для переработки загрязнённых плёночных отходов.</p><p class="resource-hero-result">${esc(resourceHero.result)}</p>
     <div class="resource-hero-actions">
      ${link('Изучить технологию','/technology','button resource-primary')}
      ${request('Связаться с нами','Проект переработки плёночного сырья','button secondary')}
@@ -84,18 +84,23 @@ export function resourceHeroSection(){
 }
 
 function problem(){
+ const card=item=>`<article><h3>${esc(item.title)}</h3><p>${esc(item.text)}</p></article>`;
  return `<section class="resource-section resource-problem" id="raw-material" aria-labelledby="resource-problem-title" data-home-block="problem">
   <div class="resource-container">
    <div class="resource-problem-intro">
-    ${heading('resource-problem-title','Плёночные отходы трудно очистить от включений.',{lead:'Загрязнения удерживаются в складках и на поверхности. Стоимость подготовки и доступность сбыта зависят от того, насколько последовательно их отделяют.'})}
-    <div class="resource-trial"><strong>до 80%</strong><span>засорённость сырья в испытаниях</span><small>Режим и выпуск подбирают по конкретной партии.</small></div>
+    ${heading('resource-problem-title','Трудноочищаемые плёночные отходы сегодня почти не перерабатываются.',{lead:'Загрязнения удерживаются в складках и на поверхности, а слипшиеся слои затрудняют доступ к включениям. Именно поэтому такие отходы в большинстве случаев остаются невостребованными — несмотря на большой объём и низкую стоимость сырья.'})}
+    <aside class="resource-trial"><p class="resource-trial-kicker">ПОДТВЕРЖДЕНО ИСПЫТАНИЯМИ</p>
+     <div class="resource-trial-values"><div><strong>до 80%</strong><span>засорённость сырья</span></div><div><strong>до 30%</strong><span>входящая влажность</span></div></div>
+     <small>Режим работы и выпуск подбирают под конкретную партию сырья.</small></aside>
    </div>
-   <div class="resource-challenges">${resourceChallenges.map(item=>`<article><h3>${esc(item.title)}</h3><p>${esc(item.text)}</p></article>`).join('')}</div>
-   ${link('Как удаляют загрязнения','/technology#raw-material')}
+   <div class="resource-challenge-comparison">
+    <section class="resource-challenge-group"><p class="eyebrow">ПРОБЛЕМА</p><h3>Почему это проблемное сырьё</h3><div class="resource-challenges">${resourceChallenges.filter(x=>x.group==='problem').map(card).join('')}</div></section>
+    <section class="resource-challenge-group resource-challenge-group--potential"><p class="eyebrow">ПОТЕНЦИАЛ</p><h3>Почему это ценное сырьё для бизнеса</h3><div class="resource-challenges">${resourceChallenges.filter(x=>x.group==='potential').map(card).join('')}</div></section>
+   </div>
+   ${link('Как работает технология ЭРА','/technology')}
   </div>
  </section>`;
 }
-
 function feedstocks(){
  return `<section class="resource-section resource-feedstocks" id="feedstocks" aria-labelledby="resource-feedstocks-title" data-home-block="feedstocks" data-page-progress-label="Виды сырья">
   <div class="resource-container">
@@ -108,28 +113,23 @@ function feedstocks(){
 }
 
 function process(){
- return `<section class="resource-section resource-process" id="process" aria-labelledby="resource-process-title" data-home-block="process">
-  <div class="resource-container">
-   ${heading('resource-process-title','Технология превращает трудноочищаемую плёнку в готовую продукцию.')}
-   <ol class="resource-steps">${resourceStages.map((stage,index)=>`<li data-process-step="0${index+1}"><span aria-hidden="true">0${index+1}</span><h3>${esc(stage.title)}</h3><p>${esc(stage.text)}</p>${link('Открыть этап','/technology#'+stage.id)}</li>`).join('')}</ol>
-   <div class="resource-links">
-    ${link('Подробнее о технологии','/technology')}
-    ${link('Линии сухой сепарации',dryCatalogue)}
-    ${link('Линия горячей мойки',washLine.path)}
-   </div>
-  </div>
- </section>`;
+ const icons=[
+  '<svg viewBox="0 0 84 76" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M7 41h70l-7 17H14L7 41Zm7-17h56v17H14zM22 17l16-9 27 11-18 10zM20 41V24m28 17V29M5 61h74M16 61v7m52-7v7"/><path d="M26 29l10-8m3 9 8-8M24 50h38" stroke-opacity=".6"/></g></svg>',
+  '<svg viewBox="0 0 84 76" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M8 34h68v24H8zM20 34V18h18v16m9 0V11h18v23M14 44c10-7 18 7 28 0s18 7 28 0M14 52c10-7 18 7 28 0s18 7 28 0M7 62h70M22 62v7m40-7v7"/><circle cx="56" cy="24" r="5"/></g></svg>',
+  '<svg viewBox="0 0 84 76" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 23h60v32H12zM18 15h48v8H18zM25 55v9m34-9v9M10 64h64"/><path d="M20 35c10 0 10-8 20-8s10 8 20 8 10-8 14-8M19 44l7-4 7 4 7-4 7 4 7-4 7 4" stroke-opacity=".65"/><circle cx="43" cy="48" r="3"/></g></svg>'
+ ];
+ return `<section class="resource-section resource-process" id="process" aria-labelledby="resource-process-title" data-home-block="process"><div class="resource-container">
+   ${heading('resource-process-title','Технология преобразует трудноочищаемую плёнку в готовую продукцию.')}
+   <ol class="resource-steps">${resourceStages.map((stage,index)=>`<li data-process-step="0${index+1}"><span class="resource-step-phase">0${index+1} / ${['ПОДГОТОВКА','ОЧИСТКА','РЕЗУЛЬТАТ'][index]}</span><div class="resource-step-art">${icons[index]}</div><h3>${esc(stage.title)}</h3><p>${esc(stage.text)}</p></li>`).join('')}</ol>
+   <div class="resource-links">${link('Изучить технологию ЭРА','/technology')}${link('Линии сухой сепарации',dryCatalogue)}${link('Линия горячей мойки',washLine.path)}</div>
+  </div></section>`;
 }
-
 function strengths(){
  return `<section class="resource-section resource-strengths era-indigo-surface" id="engineering" aria-labelledby="resource-strengths-title" data-home-block="strengths" data-page-progress-label="Принципы ЭРА">
-  <div class="resource-container">
-   ${heading('resource-strengths-title','Инженерная логика ЭРА',{lead:'Состав сырья, последовательность очистки и требования к продукту определяют комплектацию.'})}
-   <div class="resource-strength-grid">${resourceStrengths.map(item=>`<article><h3>${esc(item.title)}</h3><p>${esc(item.text)}</p></article>`).join('')}</div>
-  </div>
- </section>`;
+  <div class="resource-container">${heading('resource-strengths-title','Инженерная логика ЭРА',{lead:'От трудноочищаемого сырья до готового продукта — каждый этап технологии подчинён результату.'})}
+   <div class="resource-strength-grid">${resourceStrengths.map((item,index)=>`<article><span class="resource-strength-number">0${index+1}</span><h3>${esc(item.title)}</h3><p>${esc(item.text)}</p></article>`).join('')}</div>
+  </div></section>`;
 }
-
 function products(){
  return `<section class="resource-section resource-products" id="products" aria-labelledby="resource-products-title" data-home-block="products">
   <div class="resource-container">
@@ -138,7 +138,7 @@ function products(){
     <figure>${galleryImage(item)}</figure><div><h3>${esc(item.title)}</h3><p>${esc(item.text)}</p></div>
    </article>`).join('')}</div>
    <p class="resource-note">Иллюстрации форм материала и возможных направлений применения.</p>
-   ${link('Подробнее о технологических маршрутах','/technology#products')}
+   
   </div>
  </section>`;
 }
