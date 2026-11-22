@@ -184,10 +184,6 @@
    if(event.detail===0)requestAnimationFrame(()=>recordById.get(id).querySelector('[data-market-name]').focus({preventScroll:true}));
   });
  }
- document.querySelector('.market-method-link').addEventListener('click',event=>{
-  methodology.open=true;
-  if(event.detail===0)requestAnimationFrame(()=>methodology.querySelector('summary').focus({preventScroll:true}));
- });
  const showMethodology=()=>{if(location.hash==='#feedstock-methodology')methodology.open=true;};
  showMethodology();
  window.addEventListener('hashchange',showMethodology);
