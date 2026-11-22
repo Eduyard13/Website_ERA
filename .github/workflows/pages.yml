@@ -1,7 +1,7 @@
 name: Test and deploy ERA preview
 on:
   push:
-    branches: [main]
+    branches: [main, 'review/three-separation-heroes-20261122']
   workflow_dispatch:
 permissions:
   contents: read
