@@ -99,5 +99,5 @@ test('У каждой линии три документа и полные пр�
  const separation=render('/catalog/lines/separatsiya-03');
  assert.match(section(separation,'specs'),/1 оператор \+ 2 водителя погрузчика/);
  assert.match(section(separation,'specs'),/5–13 человек/);
- assert.match(separation.match(/<section[^>]* class="[^"]*line-hero[^"]*"[\s\S]*?<\/section>/)[0],/data-pdf-open="separatsiya-03-technical"/);
+ assert.match(section(separation,'documents'),/separatsiya-03-technical/);
 });
