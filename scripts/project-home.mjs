@@ -257,7 +257,7 @@ function kair(){
 function contact(){
  return `<section class="resource-section resource-contact" id="discuss" aria-labelledby="discuss-title" data-home-block="contact"><div class="resource-container resource-contact-panel">
   <p class="resource-contact-kicker">ВАШ СЛЕДУЮЩИЙ ШАГ</p>
-  <h2 id="discuss-title">Технология готова. <em>Следующий шаг — ваше производство.</em></h2>
+  <h2 id="discuss-title"><span class="resource-contact-title-line">Технология готова.</span><em class="resource-contact-title-accent"><span class="resource-contact-title-line resource-contact-title-line--fixed">Следующий шаг —</span><span class="resource-contact-title-line">ваше производство.</span></em></h2>
   <p class="resource-contact-lead">Планируете переработку плёнки, расширение производства или инвестиции в отрасль? Обсудим ваше сырьё, задачи и масштаб проекта — от базовой линии сепарации до полного цикла.</p>
   <div class="resource-contact-actions">${request('Обсудить проект','Подбор оборудования / запуск производства','button')}${request('Инвестиции и партнёрство','Инвестиции / партнёрство','button secondary')}</div>
   <p class="resource-contact-meta">Оборудование · Технологии · Промышленные проекты</p>
