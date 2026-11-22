@@ -194,6 +194,22 @@ try{
   assert.equal(visualState.kairBlend,'normal','KAIR scene must preserve its original midnight-blue palette');
   assert.notEqual(visualState.kairMask,'none','KAIR art must blend into the surrounding native background');
   assert.equal(visualState.kairFigurePosition,width>=1101?'absolute':'relative');
+  const spacing=await evaluate(`(()=>{
+    const lead=document.querySelector('.resource-control .resource-kair-lead');
+    const perks=document.querySelector('.resource-control .resource-kair-benefits');
+    const title=document.querySelector('#discuss-title');
+    const lines=[...title.querySelectorAll('.resource-contact-title-line')];
+    return {leadWidth:lead.getBoundingClientRect().width,perksMargin:getComputedStyle(perks).marginTop,
+      perkWidth:perks.getBoundingClientRect().width,ctaLines:lines.map(line=>({top:line.getBoundingClientRect().top}))};
+  })()`);
+  assert.equal(spacing.ctaLines.length,3,'Closing CTA uses three intentional title lines');
+  assert.ok(spacing.ctaLines[0].top<spacing.ctaLines[1].top && spacing.ctaLines[1].top<spacing.ctaLines[2].top,
+    'Closing CTA line arrangement at '+width);
+  if(width>=1101){
+    assert.ok(spacing.leadWidth<=485,'KAIR lead restrained from machinery overlay at '+width);
+    assert.ok(spacing.perkWidth<=515,'KAIR benefits restrained from artwork at '+width);
+    assert.ok(parseFloat(spacing.perksMargin)>=20,'KAIR benefits lowered under the lead');
+  }
   await evaluate('document.fonts.ready.then(()=>true)');
   const hero=await evaluate(`(()=>{
    const root=document.querySelector('#resource');
