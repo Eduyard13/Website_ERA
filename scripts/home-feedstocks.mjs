@@ -23,8 +23,8 @@ function ring(){
    ${sectors.join('')}
   </svg>
   <div class="feedstock-ring-text" aria-hidden="true">
-   <div data-feedstock-center="all"><strong>≈ ${marketNationalTonnes} млн</strong><span>тонн в год</span><small>Россия · оценка ЭРА</small></div>
-   ${marketFeedstocks.map(row=>`<div data-feedstock-center="${row.id}" hidden><strong>${row.share}%</strong><span>${volume(row)}</span><small>Доля в модели ЭРА</small></div>`).join('')}
+   <div data-feedstock-center="all"><strong>≈ ${marketNationalTonnes} млн</strong><span>тонн в год</span></div>
+   ${marketFeedstocks.map(row=>`<div data-feedstock-center="${row.id}" hidden><strong>${row.share}%</strong><span>${volume(row)}</span></div>`).join('')}
   </div>
  </div>`;
 }
@@ -89,7 +89,6 @@ export function homeFeedstockEstimate(){
    ${ring()}
    <div class="feedstock-breakdown">
     <div class="feedstock-legend" role="group" aria-label="Виды сырья">${marketFeedstocks.map(category).join('')}</div>
-    <button class="feedstock-reset" data-feedstock-choice="all" aria-pressed="true" aria-controls="feedstock-details" type="button" disabled>Все виды сырья</button>
     <div class="feedstock-details" id="feedstock-details">
      <article data-feedstock-detail="all" data-active>
       <h4>Вся сырьевая база</h4><p>Выберите сектор или строку, чтобы увидеть состав сырья и где оно образуется.</p>
@@ -99,8 +98,7 @@ export function homeFeedstockEstimate(){
     </div>
    </div>
   </div>
-  <p class="feedstock-caption">Ориентировочная структура сырьевой базы по модели ЭРА. Доли заданы в расчётном сценарии. Объёмы категорий приведены с округлением.</p>
-  <p class="feedstock-caveat">Базовая оценка по доступным данным охватывает потоки, которые можно описать количественно. Часть разрозненных источников трудно оценить. По оценке ЭРА, фактический потенциал может быть существенно выше. Его уточняют по регионам, составу отходов и возможностям сбора.</p>
-  ${methodology()}
+  <div class="feedstock-opportunity"><p class="eyebrow">ПРОМЫШЛЕННЫЙ ПОТЕНЦИАЛ</p><h4>Даже расчётная оценка — это сырьевая база промышленного масштаба.</h4><p>Оценка ЭРА основана на открытых статистических данных и отраслевых ориентирах. Однако значительная часть разрозненных потоков плёночных отходов не поддаётся точному учёту. По опыту нашей команды, фактический потенциал сырьевой базы может быть существенно выше.</p></div>
+   ${methodology()}
  </div>`;
 }
