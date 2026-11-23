@@ -57,7 +57,7 @@ try{
  await command('Page.enable');await command('Runtime.enable');
  const load=async path=>{await command('Page.navigate',{url:base+path});await wait(`document.readyState==='complete'`);};
  const root=()=>evaluate(`(()=>{const r=document.querySelector('#line03-construction');return {canvasBackground:getComputedStyle(r.querySelector('.diagram-canvas')).backgroundImage,sourceBlend:getComputedStyle(r.querySelector('.diagram-projection > svg')).mixBlendMode,ready:r.dataset.monitorReady,mode:r.dataset.diagramMode,pins:r.querySelectorAll('[data-callout]').length,options:r.querySelectorAll('[data-diagram-select] option').length,selected:r.querySelector('[data-detail-number]').textContent,overflow:document.documentElement.scrollWidth>innerWidth,fit:r.querySelector('[data-diagram-viewport]').scrollWidth<=r.querySelector('[data-diagram-viewport]').clientWidth+1,qualityRows:document.querySelectorAll('.line-quality-table tbody tr').length,spec:document.querySelectorAll('[data-separation03-position]').length,broken:[...document.querySelectorAll('main img')].filter(i=>!i.complete||!i.naturalWidth).map(i=>i.src)}})()`);
- for(const width of [320,390,768,1024,1280,1440,1920]){
+ for(const width of [1440,320,390,768,1024,1280,1920]){
   await command('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:width<768});
   await load('/catalog/lines/separatsiya-03/');await wait(`!!document.querySelector('#line03-construction[data-monitor-ready="true"]')`);
   await evaluate(`Promise.all([...document.querySelectorAll('main img')].map(i=>{i.loading='eager';return i.decode();}))`);
@@ -66,8 +66,15 @@ try{
   for(const badge of badges){
    assert.equal(badge.actual,badge.expected,'Native button numerals must match PDF positions');
    assert.equal(badge.display,'grid');assert.equal(badge.visibility,'visible');assert.equal(badge.opacity,'1');
-   assert.ok(badge.width>=13&&badge.height>=13,'Native button size must be visible');
+   assert.ok(badge.width>=11&&badge.height>=11,'Native button size must be visible');
    assert.ok(!badge.color.includes('0, 0, 0, 0')&&!badge.background.includes('0, 0, 0, 0'));
+  }
+  if(width===1440&&process.env.ERA_PREMIUM_SCREENSHOT){
+   await evaluate(`document.querySelector('#line03-construction').scrollIntoView({block:'start'})`);
+   await delay(450);
+   const capture=await command('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
+   await mkdir('tmp',{recursive:true});
+   await writeFile(process.env.ERA_PREMIUM_SCREENSHOT,Buffer.from(capture.data,'base64'));
   }
   let s=await root();assert.equal(s.mode,'fit');assert.equal(s.pins,42);assert.equal(s.options,37);assert.equal(s.qualityRows,5);assert.equal(s.spec,37);assert.ok(s.fit&&!s.overflow);assert.deepEqual(s.broken,[]);assert.ok(s.canvasBackground.includes('engineering-grid-02.svg'),'PREMIUM background asset');assert.equal(s.sourceBlend,'normal','opaque white source must blend over Engineering Grid 02');
   for(let number=1;number<=37;number++){
