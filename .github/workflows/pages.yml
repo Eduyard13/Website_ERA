@@ -335,11 +335,6 @@ jobs:
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
         run: node test/economics-public.mjs
-      - name: Verify published company page in Chrome
-        env:
-          ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
-          ERA_VERIFY_FACTORY_TOUR: '1'
-        run: node test/about-us-public.mjs
       - name: Verify published technology and homepage in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
@@ -361,3 +356,8 @@ jobs:
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
         run: node test/separation-03-public.mjs
+      - name: Verify published company page in Chrome
+        env:
+          ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
+          ERA_VERIFY_FACTORY_TOUR: '1'
+        run: node test/about-us-public.mjs
