@@ -93,6 +93,16 @@ test('Новая страница использует общий fit-монит
  const offsets=ids.map(id=>html.indexOf(`id="${id}"`));assert.ok(offsets.every((n,i)=>n>0&&(!i||n>offsets[i-1])));
  assert.equal((html.match(/data-diagram-mode="fit"/g)||[]).length,1);assert.equal((html.match(/data-part-guide="/g)||[]).length,36);
  assert.equal((html.match(/data-hotwash-position="/g)||[]).length,37);assert.equal((html.match(/data-hotwash-select="/g)||[]).length,36);
+ const composition=html.slice(html.indexOf('id="composition"'),html.indexOf('id="process"'));
+ assert.ok(composition.includes('Каждый узел на своём месте.')&&composition.includes('Каждая функция — на результат.'));
+ assert.ok(composition.includes('От подготовленной плёнки через горячую мойку'));
+ assert.ok(composition.includes('data-architecture-list')&&composition.includes('dry-architecture-layout'));
+ assert.ok(composition.includes('Каждая позиция на схеме — часть единого технологического маршрута.'));
+ assert.equal((composition.match(/data-architecture-part="/g)||[]).length,36);
+ assert.ok(composition.includes('href="#placement"')&&composition.includes('См. раздел размещения'));
+ assert.ok(composition.includes('lines/moyka-plenki/layout-numbered.webp'));
+ assert.ok(!composition.includes('Документация ↓'));
+ assert.ok(html.includes('/dry-architecture.css?v='));
  assert.equal((html.match(/id="pdf-viewer"/g)||[]).length,1);assert.equal((html.match(/data-library-document="moyka-plenki-technical"/g)||[]).length,1);
  assert.ok(html.includes(`href="${basePath}/documents/${hotWashDocument.file}"`)&&html.includes('download="'+hotWashDocument.downloadName+'"'));
  assert.ok(html.includes('/line-monitor.js?v=')&&html.includes('/line-documents.js?v=')&&html.includes('/hot-film-washing.js?v='));

@@ -55,12 +55,12 @@ try{
  const click=selector=>evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
  await command('Page.enable');await command('Runtime.enable');
  const load=async path=>{await command('Page.navigate',{url:base+path});await wait(`document.readyState==='complete'`);};
- const root=()=>evaluate(`(()=>{const r=document.querySelector('#hotwash-construction');return {ready:r.dataset.monitorReady,mode:r.dataset.diagramMode,pins:r.querySelectorAll('[data-callout]').length,options:r.querySelectorAll('[data-diagram-select] option').length,selected:r.querySelector('[data-detail-number]').textContent,overflow:document.documentElement.scrollWidth>innerWidth,fit:r.querySelector('[data-diagram-viewport]').scrollWidth<=r.querySelector('[data-diagram-viewport]').clientWidth+1,products:document.querySelectorAll('.hw-product-grid>article').length,spec:document.querySelectorAll('[data-hotwash-position]').length,broken:[...document.querySelectorAll('main img')].filter(i=>!i.complete||!i.naturalWidth).map(i=>i.src)}})()`);
+ const root=()=>evaluate(`(()=>{const r=document.querySelector('#hotwash-construction');return {grid:getComputedStyle(r.querySelector('.diagram-canvas')).backgroundImage,sourceBlend:getComputedStyle(r.querySelector('.diagram-projection > svg')).mixBlendMode,navigation:r.querySelectorAll('[data-architecture-part]').length,unmappedLink:r.querySelector('.dry-architecture-item--link')?.getAttribute('href'),ready:r.dataset.monitorReady,mode:r.dataset.diagramMode,pins:r.querySelectorAll('[data-callout]').length,options:r.querySelectorAll('[data-diagram-select] option').length,selected:r.querySelector('[data-detail-number]').textContent,overflow:document.documentElement.scrollWidth>innerWidth,fit:r.querySelector('[data-diagram-viewport]').scrollWidth<=r.querySelector('[data-diagram-viewport]').clientWidth+1,products:document.querySelectorAll('.hw-product-grid>article').length,spec:document.querySelectorAll('[data-hotwash-position]').length,broken:[...document.querySelectorAll('main img')].filter(i=>!i.complete||!i.naturalWidth).map(i=>i.src)}})()`);
  for(const width of [320,390,768,1024,1280,1440,1920]){
   await command('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:width<768});
   await load('/catalog/lines/moyka-plenki/');await wait(`!!document.querySelector('#hotwash-construction[data-monitor-ready="true"]')`);
   await evaluate(`Promise.all([...document.querySelectorAll('main img')].map(i=>{i.loading='eager';return i.decode();}))`);
-  let s=await root();assert.equal(s.mode,'fit');assert.equal(s.pins,44);assert.equal(s.options,36);assert.equal(s.products,3);assert.equal(s.spec,37);assert.ok(s.fit&&!s.overflow);assert.deepEqual(s.broken,[]);
+  let s=await root();assert.equal(s.mode,'fit');assert.equal(s.pins,44);assert.equal(s.options,36);assert.equal(s.products,3);assert.equal(s.spec,37);assert.ok(s.fit&&!s.overflow);assert.deepEqual(s.broken,[]);assert.equal(s.navigation,36);assert.equal(s.unmappedLink,'#placement');assert.ok(s.grid.includes('engineering-grid-02.svg'));assert.equal(s.sourceBlend,'multiply');
   for(let number=1;number<=36;number++){
    await evaluate(`(()=>{const s=document.querySelector('[data-diagram-select]');s.value='${number}';s.dispatchEvent(new Event('change',{bubbles:true}));})()`);
    assert.equal((await root()).selected,String(number).padStart(2,'0'));
@@ -69,11 +69,18 @@ try{
  }
  await command('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
  await load('/catalog/lines/moyka-plenki/');await wait(`!!document.querySelector('[data-monitor-ready]')`);
+ const sidebarSelect=await evaluate(`(()=>{
+   const root=document.querySelector('#hotwash-construction'),row=root.querySelector('[data-architecture-part="18"]');row.click();
+   const pin=root.querySelector('button[data-part="18"]');
+   return {row:row.getAttribute('aria-pressed'),pin:pin.getAttribute('aria-pressed'),selected:root.querySelector('[data-detail-number]').textContent};
+ })()`);
+ assert.deepEqual(sidebarSelect,{row:'true',pin:'true',selected:'18'});
  const callouts=await evaluate(`[...document.querySelectorAll('#hotwash-construction [data-callout]')].map(p=>({id:p.dataset.callout,number:p.dataset.part}))`);
  for(const c of callouts){
   await evaluate(`(()=>{const p=document.querySelector('[data-callout="${c.id}"]');p.focus();p.click();})()`);
   assert.equal((await root()).selected,c.number.padStart(2,'0'));
   assert.equal(await evaluate(`document.querySelector('#hotwash-construction').dataset.selectedCallout`),c.id);
+  assert.equal(await evaluate(`document.querySelector('#hotwash-construction [data-architecture-part="${Number(c.number)}"]').getAttribute('aria-pressed')`),'true');
  }
  // The specification uses the same selection owner, and position 37 is a real placement link.
  await evaluate(`document.querySelector('.hw-specification').closest('details').open=true`);

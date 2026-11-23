@@ -101,7 +101,7 @@
 
 /* Higher specificity than the older source-image engineering grid style.
    The approved grid is a vector recreation of Engineering Grid 02 for responsive rendering. */
-.film-line :is(#line01-construction,#line02-construction,#line03-construction).dry-architecture .diagram-canvas{
+.film-line :is(#line01-construction,#line02-construction,#line03-construction,#hotwash-construction).dry-architecture .diagram-canvas{
  background:#e7eff8 url('assets/lines/shared/engineering-grid-02.svg') center/cover no-repeat;
  border-color:#b5c6db;
  box-shadow:inset 0 0 32px #233d5710,0 5px 24px #19334a12;
@@ -116,4 +116,22 @@
    behind white pixels, while preserving the original artwork, leaders and markers. */
 .film-line #line03-construction.dry-architecture .diagram-projection > svg{
   mix-blend-mode:multiply;
+}
+
+
+/* Hot washing shares Engineering Grid 02. Its original VP8 WebP is opaque,
+   so the source SVG uses multiply blending to show the approved grid beneath
+   white pixels. No source image, callout geometry, or technical labels change. */
+.film-line--hot-wash #hotwash-construction.dry-architecture .diagram-projection > svg{
+  mix-blend-mode:multiply;
+}
+.film-line--hot-wash #hotwash-construction.dry-architecture .dry-architecture-item--link{
+  color:#1b2a48;
+  opacity:1;
+  cursor:pointer;
+  text-decoration:none;
+}
+.film-line--hot-wash #hotwash-construction.dry-architecture .dry-architecture-item--link:hover{
+  background:#f5ebd5;
+  border-color:#d5bd80;
 }

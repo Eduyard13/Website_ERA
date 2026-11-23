@@ -1,4 +1,4 @@
-// Presentation-only navigation and copy for dry separation schemes.
+// Presentation-only navigation and copy for line schemes (dry separation and hot washing).
 // All marker geometry, SVG leaders and descriptions still come from source technical documents.
 const escape=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 
@@ -23,12 +23,19 @@ const tiers={
   facts:[['37','проектных позиций'],['2','баллистические ступени'],['Роторная','сушка между ступенями'],['Тюки','очищенная плёнка на выходе']],
   groups:[[1,6,'Подготовка сырья'],[7,12,'Баллистика и роторная сушка'],[13,16,'Сортировка и роторная очистка'],[17,24,'Накопление и выдача тюков'],[25,33,'Отвод включений'],[34,37,'Инженерная инфраструктура']],
   unmapped:[]
+ },
+ 'moyka-plenki':{
+  label:'ГОРЯЧАЯ МОЙКА',count:37,
+  lead:'От подготовленной плёнки через горячую мойку — к тюкам чистой плёнки, капсуляту или грануле.',
+  facts:[['37','проектных позиций'],['2','ветки мокрой резки, поочерёдно'],['2','флотатора и 3 центрифуги'],['3','альтернативные формы продукта']],
+  groups:[[1,4,'Раскрытие и защитная сепарация'],[5,9,'Отвод включений'],[10,15,'Подача и мокрая резка'],[16,19,'Мойка, флотация и отжим'],[20,29,'Выдача готовой продукции'],[30,35,'Водооборот и управление'],[36,37,'Логистика и размещение']],
+  unmapped:[[37,'Помещение цеха','#placement']]
  }
 };
 
 export function renderDryArchitectureHeading(slug){
  const tier=tiers[slug];
- if(!tier)throw Error('Unknown dry configuration '+slug);
+ if(!tier)throw Error('Unknown line configuration '+slug);
  return '<div class="dry-architecture-intro">'+
   '<p class="eyebrow">АРХИТЕКТУРА ЛИНИИ <span>/ '+tier.label+'</span></p>'+
   '<div class="dry-architecture-intro-layout"><div><h2>Каждый узел на своём месте.<br>Каждая функция — на результат.</h2>'+
@@ -44,7 +51,7 @@ export function dryArchitectureGroup(slug,number){
 }
 
 export function renderDryArchitectureNavigator(diagram){
- const tier=tiers[diagram.slug];if(!tier)throw Error('Unknown dry diagram '+diagram.slug);
+ const tier=tiers[diagram.slug];if(!tier)throw Error('Unknown line diagram '+diagram.slug);
  const selected=diagram.defaultPart;
  const indexed=new Map(diagram.parts.map(p=>[p.number,p]));
  const content=tier.groups.map(([from,to,title])=>{
@@ -56,9 +63,14 @@ export function renderDryArchitectureNavigator(diagram){
       '<span class="dry-architecture-item-label">'+escape(p.label)+'</span></button>');
     else{
      const additional=tier.unmapped.find(([n])=>n===number);
-     if(additional)items.push('<div class="dry-architecture-item dry-architecture-item--reference" title="Нет отдельной выноски на исходной компоновке">'+
-       '<span class="dry-architecture-item-index">'+String(number).padStart(2,'0')+'</span>'+
-       '<span class="dry-architecture-item-label">'+escape(additional[1])+'<small>Позиция без выноски</small></span></div>');
+     if(additional){
+       const label='<span class="dry-architecture-item-index">'+String(number).padStart(2,'0')+'</span>'+
+         '<span class="dry-architecture-item-label">'+escape(additional[1])+
+         '<small>'+(additional[2]?'См. раздел размещения':'Позиция без выноски')+'</small></span>';
+       items.push(additional[2]?
+         '<a class="dry-architecture-item dry-architecture-item--reference dry-architecture-item--link" href="'+escape(additional[2])+'" title="Открыть данные о размещении">'+label+'</a>':
+         '<div class="dry-architecture-item dry-architecture-item--reference" title="Нет отдельной выноски на исходной компоновке">'+label+'</div>');
+     }
     }
    }
    return '<div class="dry-architecture-group"><h4>'+escape(title)+' <span>'+from+'–'+to+'</span></h4>'+items.join('')+'</div>';
