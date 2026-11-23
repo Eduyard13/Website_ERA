@@ -109,3 +109,11 @@
 .film-line .dry-architecture .dry-architecture-zone{grid-column:2;grid-row:2;margin-top:-5px}
 .film-line .dry-architecture .diagram-details{row-gap:5px}
 @media(max-width:620px){.film-line .dry-architecture .dry-architecture-zone{grid-column:2}}
+
+
+/* PREMIUM has an opaque source WebP (white background, unlike transparent BASE / PRO).
+   Restore the original SVG multiply blending so Engineering Grid 02 remains visible
+   behind white pixels, while preserving the original artwork, leaders and markers. */
+.film-line #line03-construction.dry-architecture .diagram-projection > svg{
+  mix-blend-mode:multiply;
+}
