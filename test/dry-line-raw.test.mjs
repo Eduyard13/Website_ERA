@@ -8,7 +8,13 @@ const photos=['raw-agricultural','raw-packaging','raw-bales'];
 test('Все три страницы используют общие реальные фотографии и шесть групп сухих включений',()=>{
  for(const slug of slugs){
   const block=renderDrySeparationRaw(slug),page=render('/catalog/lines/'+slug);
-  assert.ok(page.includes(block),slug);
+  const sectionStart=page.indexOf('<section class="section line-soft dry-raw-section" id="raw-materials"');
+  assert.ok(sectionStart>=0,slug+' section present');
+  const published=page.slice(sectionStart,page.indexOf('</section>',sectionStart)+10);
+  assert.ok(published.includes('data-dry-raw="'+slug+'"'),slug+' correct configuration');
+  assert.equal((published.match(/data-raw-photo="/g)||[]).length,3,slug+' same photos in published HTML');
+  assert.equal((published.match(/data-contaminant="/g)||[]).length,6,slug+' same categories in published HTML');
+  for(const key of photos)assert.ok(published.includes('/assets/'+filmSeparationMedia[key].file),slug+' '+key);
   assert.equal((block.match(/data-raw-photo="/g)||[]).length,3);
   assert.equal((block.match(/data-contaminant="/g)||[]).length,6);
   for(const key of photos)assert.ok(block.includes('/assets/'+filmSeparationMedia[key].file),key);
