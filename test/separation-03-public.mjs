@@ -70,9 +70,13 @@ try{
    assert.ok(!badge.color.includes('0, 0, 0, 0')&&!badge.background.includes('0, 0, 0, 0'));
   }
   if(width===1440&&process.env.ERA_PREMIUM_SCREENSHOT){
-   await evaluate(`document.querySelector('#line03-construction').scrollIntoView({block:'start'})`);
-   await delay(450);
-   const capture=await command('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
+   const clip=await evaluate(`(()=>{
+     const rect=document.querySelector('#line03-construction .dry-architecture-layout').getBoundingClientRect();
+     return {y:Math.max(0,Math.round(rect.y+scrollY-160)),height:Math.min(960,Math.round(rect.height+200))};
+   })()`);
+   console.log('PREMIUM visual QA document clip',JSON.stringify(clip));
+   const capture=await command('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,
+     clip:{x:0,y:clip.y,width:1440,height:clip.height,scale:1}});
    await mkdir('tmp',{recursive:true});
    await writeFile(process.env.ERA_PREMIUM_SCREENSHOT,Buffer.from(capture.data,'base64'));
   }
@@ -85,13 +89,7 @@ try{
  }
  await command('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
  await load('/catalog/lines/separatsiya-03/');await wait(`!!document.querySelector('[data-monitor-ready]')`);
- if(process.env.ERA_PREMIUM_SCREENSHOT){
-  await evaluate(`document.querySelector('#line03-construction').scrollIntoView({block:'start'})`);
-  await delay(450);
-  const screenshot=await command('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
-  await mkdir('tmp',{recursive:true});
-  await writeFile(process.env.ERA_PREMIUM_SCREENSHOT,Buffer.from(screenshot.data,'base64'));
- }
+
  const imageResponse=await fetch(base+'/assets/lines/separatsiya-03/layout-native.webp',{cache:'no-store'});
  assert.equal(imageResponse.status,200,'published cleaned assembly image must load');
  assert.equal(imageResponse.headers.get('content-type'),'image/webp');
