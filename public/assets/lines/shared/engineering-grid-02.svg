@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" fill="none">
+<defs>
+ <linearGradient id="base" x1="0" y1="0" x2="1600" y2="900" gradientUnits="userSpaceOnUse"><stop stop-color="#dce5f2"/><stop offset=".32" stop-color="#edf3f9"/><stop offset=".57" stop-color="#f9f9f8"/><stop offset=".82" stop-color="#e9f0f8"/><stop offset="1" stop-color="#d3e0ef"/></linearGradient>
+ <radialGradient id="bright" cx="0" cy="0" r="1" gradientTransform="translate(820 470) rotate(90) scale(600 1000)" gradientUnits="userSpaceOnUse"><stop stop-color="#fff" stop-opacity=".78"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="1550" y2="900" gradientUnits="userSpaceOnUse"><stop stop-color="#b78d30"/><stop offset=".5" stop-color="#efd58f"/><stop offset="1" stop-color="#ba9039"/></linearGradient>
+ <pattern id="grid" width="96" height="96" patternUnits="userSpaceOnUse"><path d="M96 0H0V96" stroke="#6f8daa" stroke-opacity=".12" stroke-width=".75"/><circle cx="0" cy="0" r="1.5" fill="#7d93aa" fill-opacity=".23"/></pattern>
+ <pattern id="dots" width="15" height="15" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r="1.1" fill="#8198b7" fill-opacity=".36"/></pattern>
+ <filter id="blur"><feGaussianBlur stdDeviation="24"/></filter>
+</defs>
+<rect width="1600" height="900" fill="url(#base)"/>
+<rect width="1600" height="900" fill="url(#bright)"/>
+<rect width="1600" height="900" fill="url(#grid)"/>
+<rect x="20" y="110" width="168" height="115" fill="url(#dots)" opacity=".66"/>
+<rect x="1340" y="690" width="200" height="145" fill="url(#dots)" opacity=".5"/>
+<path d="M0 42H122Q145 42 166 19L244-55M0 73H128Q157 73 177 50L302-70M0 113H180Q212 113 237 90L350-24M0 167H243Q280 167 308 139L387 60Q404 44 435 44H746Q776 44 802 17L863-47" stroke="#fff" stroke-opacity=".8" stroke-width="2"/>
+<path d="M-18 271H112Q149 271 180 242L363 65Q390 39 428 39H674Q708 39 734 13" stroke="#6887ac" stroke-opacity=".28" stroke-width="1.1"/>
+<path d="M-20 240H94Q124 240 154 212L307 62Q333 37 371 37H450Q484 37 508 12" stroke="url(#gold)" stroke-width="1.5" opacity=".77"/>
+<path d="M940 -70L1060 38Q1090 67 1125 67H1402Q1436 67 1461 40L1554-60M1025-40L1120 66Q1146 94 1183 94H1450Q1490 94 1528 60L1620 -36" stroke="#fff" stroke-opacity=".68" stroke-width="1.5"/>
+<path d="M0 580H92Q124 580 147 604L341 802Q365 828 404 828H610Q637 828 665 857L720 920M0 620H66Q93 620 115 644L290 810Q320 840 350 840H584Q621 840 653 872" stroke="#fff" stroke-opacity=".78" stroke-width="1.5"/>
+<path d="M955 920L1010 869Q1040 840 1085 840H1288Q1327 840 1363 807L1532 640Q1562 614 1600 614M902 915L981 841Q1004 816 1048 816H1203Q1252 816 1281 787L1455 620Q1484 591 1511 591H1616" stroke="#fff" stroke-opacity=".8" stroke-width="2"/>
+<path d="M931 907L1003 844Q1034 821 1081 821H1193Q1245 821 1274 793L1433 639Q1461 613 1498 613H1607" stroke="url(#gold)" stroke-opacity=".75" stroke-width="1.5"/>
+<path d="M-30 360L210 120M1343 0L1570 240M1570 375L1290 655M495 915L140 560" stroke="#fff" stroke-opacity=".58" stroke-width="1"/>
+<path d="M164 130h25m-12.5-12.5v25M1430 205h22m-11-11v22M350 746h22m-11-11v22M1360 716h18m-9-9v18" stroke="#c6a457" stroke-width="1.5" opacity=".8"/>
+<ellipse cx="420" cy="86" rx="40" ry="7" fill="#d7b771" opacity=".5" filter="url(#blur)"/>
+<ellipse cx="1400" cy="806" rx="40" ry="8" fill="#d7b771" opacity=".46" filter="url(#blur)"/>
+</svg>

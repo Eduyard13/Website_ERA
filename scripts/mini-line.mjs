@@ -10,6 +10,7 @@ import {renderDrySeparationRaw} from './dry-separation-raw.mjs';
 import {linePower,dryLineProduction} from './line-power.mjs';
 import {equipmentCardImages} from '../content/equipment-card-images.mjs';
 import {interactiveLineDiagram} from './line-diagram.mjs';
+import {renderDryArchitectureHeading} from './dry-line-architecture.mjs';
 import {lineDimensions} from './line-dimensions.mjs';
 import {miniLineDiagram} from '../content/line-diagrams.mjs';
 import {imageSize} from './image-size.mjs';
@@ -49,11 +50,10 @@ export function renderMiniFilmSeparation(line){
 
  ${renderDrySeparationRaw(line.slug)}
 
- <section class="section line-soft" id="composition"><div class="line-section-heading"><div><p class="eyebrow">СХЕМА ЛИНИИ BASE</p><h2>13 позиций.<br>Единая линия сухой очистки.</h2></div><p>Основные рабочие узлы связаны конвейерами, пневмотранспортом и аспирацией. На компоновке показаны позиции 01–11; пылеулавливание 12 и управление 13 размещаются при привязке к площадке.</p></div>
-  ${interactiveLineDiagram(miniLineDiagram,{fit:true})}
+ <section class="section line-soft" id="composition">${renderDryArchitectureHeading(line.slug)}
+  ${interactiveLineDiagram(miniLineDiagram,{fit:true,architecture:true})}
   <p class="line-note">Позиции 12 — пылеулавливание и 13 — шкаф управления входят в базовую спецификацию. На общей компоновке они не показаны: размещение уточняют при привязке линии к площадке.</p>
   <details class="line-more" data-keep-open data-line-source-diagram><summary>Оригинальная схема из техописания</summary><div class="line-layout">${picture('layout',{full:true})}</div></details>
-  <details class="line-more" data-keep-open><summary>Все 13 позиций базовой комплектации</summary><div><ol class="line-position-list">${miniSpecification.map(([number,title])=>`<li><span>${number}</span>${title}</li>`).join('')}</ol></div></details>
  </section>
 
  <section class="section" id="process"><div class="line-section-heading"><div><p class="eyebrow">ТЕХНОЛОГИЧЕСКИЙ ПРОЦЕСС</p><h2>Один маршрут плёнки.<br>Раздельный отвод примесей.</h2></div><p>В базовой комплектации плёнка проходит общим потоком. На контрольном конвейере отбирают доступные загрязнения; отдельная сортировка плёнок по видам в базовую поставку не входит.</p></div>

@@ -18,6 +18,8 @@ for(const root of document.querySelectorAll(':is(#line01-construction,#line02-co
    .getAttribute('d').split(/[ML]/).filter(point=>point.trim())
    .map(point=>point.trim().split(/\s+/).map(Number)))
  ]));
+ const architectureList=root.querySelector('[data-architecture-list]');
+ const architectureItems=[...root.querySelectorAll('[data-architecture-part]')];
  let selected=select.value,activePin=pins.find(p=>p.dataset.part===selected),tipPin=null,pinned=false;
  let modal=null,placeholder=null,drag=null,previousOverflow='',expanded=false,fitBase=1;
  function nearestPin(number){
@@ -33,6 +35,16 @@ for(const root of document.querySelectorAll(':is(#line01-construction,#line02-co
   root.querySelector('[data-detail-number]').textContent=selected.padStart(2,'0');
   root.querySelector('[data-detail-label]').textContent=pin.dataset.label;
   root.querySelector('[data-detail-description]').textContent=pin.dataset.description;
+  for(const item of architectureItems)item.setAttribute('aria-pressed',String(item.dataset.architecturePart===selected));
+  const group=root.querySelector('[data-architecture-part="'+selected+'"]')?.closest('.dry-architecture-group');
+  const zone=root.querySelector('[data-architecture-zone]');
+  if(zone&&group)zone.textContent=group.querySelector('h4')?.firstChild?.textContent?.trim()||'';
+  const activeItem=architectureItems.find(item=>item.dataset.architecturePart===selected);
+  if(architectureList&&activeItem){
+   const top=activeItem.offsetTop-architectureList.offsetTop;
+   if(top<architectureList.scrollTop+8)architectureList.scrollTop=Math.max(0,top-12);
+   else if(top+activeItem.offsetHeight>architectureList.scrollTop+architectureList.clientHeight-8)architectureList.scrollTop=top+activeItem.offsetHeight-architectureList.clientHeight+15;
+  }
  }
  function hideTip(){
   tipPin?.removeAttribute('aria-describedby');tipPin=null;pinned=false;tooltip.hidden=true;
@@ -106,6 +118,15 @@ for(const root of document.querySelectorAll(':is(#line01-construction,#line02-co
   hideTip();
  });
  select.addEventListener('change',()=>{hideTip();choose(nearestPin(select.value));revealPin(activePin);});
+ for(const item of architectureItems){
+  item.addEventListener('click',()=>{hideTip();choose(nearestPin(item.dataset.architecturePart));revealPin(activePin);});
+  item.addEventListener('keydown',event=>{
+   if(!['ArrowDown','ArrowUp','Home','End'].includes(event.key))return;
+   event.preventDefault();const index=architectureItems.indexOf(item);
+   const next=event.key==='Home'?0:event.key==='End'?architectureItems.length-1:(index+(event.key==='ArrowDown'?1:-1)+architectureItems.length)%architectureItems.length;
+   architectureItems[next]?.focus({preventScroll:true});architectureItems[next]?.click();
+  });
+ }
  function applyZoom(){
   const scale=zoom.value==='fit'?1:zoom.value==='detail'?Math.max(1,1200/fitBase):Number(zoom.value);
   root.style.setProperty('--diagram-zoom',scale);root.dataset.zoomed=String(scale>1);
@@ -167,5 +188,6 @@ for(const root of document.querySelectorAll(':is(#line01-construction,#line02-co
  viewport.addEventListener('scroll',positionTip,{passive:true});window.addEventListener('scroll',positionTip,{passive:true});window.addEventListener('resize',positionTip);
  new ResizeObserver(fitWidth).observe(canvas);
  window.addEventListener('pagehide',()=>{end();hideTip();closeModal();});
+ if(architectureItems.length)choose(activePin);
  root.dataset.monitorReady='true';
 }

@@ -10,6 +10,7 @@ import {renderDrySeparationRaw} from './dry-separation-raw.mjs';
 import {linePower,dryLineProduction} from './line-power.mjs';
 import {lineDimensions} from './line-dimensions.mjs';
 import {interactiveLineDiagram} from './line-diagram.mjs';
+import {renderDryArchitectureHeading} from './dry-line-architecture.mjs';
 import {fullLineDiagram} from '../content/line-diagrams.mjs';
 import {equipmentCardImages} from '../content/equipment-card-images.mjs';
 import {imageSize} from './image-size.mjs';
@@ -48,10 +49,8 @@ export function renderFilmSeparation(line){
 
  ${renderDrySeparationRaw(line.slug)}
 
- <section class="section line-soft" id="composition"><div class="line-section-heading"><div><p class="eyebrow">СОСТАВ ЛИНИИ</p><h2>От загрузки тюка<br>до двух выходных потоков.</h2></div><p>Плёнка выходит в тюках, отделённые включения — в биг-бэгах. Транспортёры, пневматические трассы, пылеудаление и управление связывают узлы в одну линию.</p></div>
-  ${interactiveLineDiagram(fullLineDiagram,{fit:true})}
-
-  <details class="line-more"><summary>Все позиции на схеме — 1–27</summary><div><ol class="line-position-list">${linePositions.map(([number,label])=>`<li><span>${number}</span>${label}</li>`).join('')}</ol><p class="line-note">Номера обозначают позиции схемы; одна позиция может включать несколько одинаковых агрегатов. Количество единиц поставки закрепляется в спецификации. Сортировочный бокс (28) и помещение цеха (29) описаны отдельно в разделе размещения.</p></div></details>
+ <section class="section line-soft" id="composition">${renderDryArchitectureHeading(line.slug)}
+  ${interactiveLineDiagram(fullLineDiagram,{fit:true,architecture:true})}
 
  </section>
 

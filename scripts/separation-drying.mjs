@@ -2,6 +2,7 @@ import {siteContacts} from '../content/contact.mjs';
 import {separation03Media as media,separation03Specification as specification,separation03Staff,separation03Stages,separation03Units} from '../content/separation-03.mjs';
 import {separation03Diagram} from '../content/separation-03-diagram.mjs';
 import {interactiveLineDiagram} from './line-diagram.mjs';
+import {renderDryArchitectureHeading} from './dry-line-architecture.mjs';
 import {mediaAttributes} from './media.mjs';
 import {pdfViewerDialog} from './documents.mjs';
 import {lineDocuments,lineDocumentCards} from './line-page-media.mjs';
@@ -50,12 +51,12 @@ export function renderSeparationDrying(line){
 
  ${renderDrySeparationRaw(line.slug)}
 
- <section class="section line-soft" id="composition">${heading('СОСТАВ ЛИНИИ','От подачи сырья<br>до раздельных тюков.','Одна исходная компоновка с номерами 1–37. Наведите на номер или выберите позицию из списка — карточка объяснит назначение узла. Повторяющиеся номера сохраняют обозначения исходного рисунка.')}<div class="line-layout-views" data-line-layout-views>
+ <section class="section line-soft" id="composition">${renderDryArchitectureHeading(line.slug)}<div class="line-layout-views" data-line-layout-views>
   <div class="line-dimensions-tabs" role="tablist" aria-label="Ракурс компоновки">
    <button type="button" role="tab" id="line03-view-main-tab" aria-controls="line03-view-main" aria-selected="true">Основной вид</button>
    <button type="button" role="tab" id="line03-view-reverse-tab" aria-controls="line03-view-reverse" tabindex="-1" aria-selected="false">Другой ракурс</button>
   </div>
-  <div id="line03-view-main" role="tabpanel" aria-labelledby="line03-view-main-tab" data-source-numbered-diagram>${interactiveLineDiagram(separation03Diagram,{fit:true})}</div>
+  <div id="line03-view-main" role="tabpanel" aria-labelledby="line03-view-main-tab" data-source-numbered-diagram>${interactiveLineDiagram(separation03Diagram,{fit:true,architecture:true})}</div>
   <div id="line03-view-reverse" role="tabpanel" aria-labelledby="line03-view-reverse-tab" hidden>${picture('layout-reverse',{caption:'Исходная компоновка с противоположной стороны'})}</div>
  </div>${specificationTables()}${more('Как устроены ключевые узлы',`<div class="sd-key-units">${separation03Units.map(([position,key,title,text,value])=>`<article>${picture(key)}<div><p class="eyebrow">ПОЗИЦИЯ ${position}</p><h3>${title}</h3><p>${text}</p><strong>${value}</strong></div></article>`).join('')}</div>`)}<noscript><p class="line-note">Исходная схема, полная спецификация и PDF доступны без JavaScript. Интерактивный выбор позиций работает при включённом JavaScript.</p></noscript></section>
 

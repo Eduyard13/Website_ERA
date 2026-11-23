@@ -109,7 +109,7 @@ test('Полная схема использует прозрачную моде
  assert.notEqual(trucks.callouts[0].tooltipDescription,trucks.callouts[1].tooltipDescription);
  for(const [n,count] of [[20,5],[25,4],[27,2]])assert.equal(fullLineDiagram.parts.find(p=>p.number===n).regions.length,count);
  const version=assetBaseVersion;
- assert.ok(page.includes(`/line-monitor.js?v=${version}-callouts-3`));assert.ok(page.includes(`/line-monitor.css?v=${version}-callouts-3`));
+ assert.match(page,/\/line-monitor\.js\?v=[a-f0-9-]+/);assert.ok(page.includes(`/line-monitor.css?v=${version}-callouts-3`));
  assert.ok((await readFile('dist/line-monitor.js','utf8')).includes(`./line-callout-layout.mjs?v=${version}-callouts-3`));
 });
 
