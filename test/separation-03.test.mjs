@@ -76,7 +76,9 @@ test('Один монитор содержит 37 позиций и все 42 т
    assert.ok(c.badge[0]>0&&c.badge[0]<1000&&c.badge[1]>0&&c.badge[1]<d.height/d.width*1000);
    const original=markers.positions.find(m=>m.number===p.number).instances.find(m=>m.id===c.id);
    assert.ok(Math.abs(c.badge[0]/1000*d.width-original.badge[0])<.01);assert.ok(Math.abs(c.badge[1]/1000*d.width-original.badge[1])<.01);
-   assert.equal(c.pdfLeader.length,0);assert.ok(c.tooltipDescription);
+   assert.equal(c.pdfLeader.length,1,'42 original PDF vector leaders are rebuilt natively');assert.ok(c.tooltipDescription);
+   assert.notDeepEqual(c.target,c.badge,'endpoint cannot be the numbered badge');
+   assert.deepEqual(c.pdfLeader[0],c.target,'native leader must end exactly at the highlighted machine');
   }
  }
  assert.ok(d.parts.find(p=>p.number===37).callouts[0].tooltipDescription.includes('Подача сырья'));
@@ -87,6 +89,12 @@ test('Детальная страница повторяет порядок эт
  const offsets=ids.map(id=>html.indexOf(`id="${id}"`));assert.ok(offsets.every(i=>i>0));assert.deepEqual(offsets,[...offsets].sort((a,b)=>a-b));
  assert.equal((html.match(/data-diagram-mode="fit"/g)||[]).length,1);assert.equal((html.match(/data-part-guide="/g)||[]).length,37);
  assert.equal((html.match(/data-callout="/g)||[]).length,42);assert.equal((html.match(/data-separation03-position="/g)||[]).length,37);
+ const nativeBlock=html.slice(html.indexOf('id="line03-construction"'),html.indexOf('id="process"'));
+ assert.ok(nativeBlock.includes('/assets/lines/separatsiya-03/layout-native.webp'));
+ assert.ok(!nativeBlock.includes('layout-numbered.webp'));
+ assert.equal((nativeBlock.match(/class="diagram-target-spot"/g)||[]).length,42);
+ assert.equal((nativeBlock.match(/data-line-leader="/g)||[]).length,42);
+ assert.equal((nativeBlock.match(/data-callout-hit="/g)||[]).length,42);
  assert.equal((html.match(/data-catalogue-image="/g)||[]).length,6);assert.equal((html.match(/id="pdf-viewer"/g)||[]).length,1);
  for(const text of ['при испытаниях отдельные партии имели засорённость до 80%','до 5%','639,77','447,84','298,56','597,12','540','6 570','4К','55″','Siemens','Пневмотранспорт на позициях 18 и 19 учтён один раз','data-dimension-tab="top"','data-dimension-tab="side"','data-hero-finish="titanium-gallery"'])assert.ok(html.includes(text),text);
  assert.ok(html.includes(`href="${basePath}/documents/${separation03Document.file}"`));assert.ok(html.includes(`data-pdf-open="${separation03Document.id}"`));

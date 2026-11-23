@@ -30,8 +30,7 @@
 .film-line .dry-architecture .dry-architecture-zone{display:block;margin-top:12px;color:#947126;font-size:12px;font-weight:600}
 .film-line .dry-architecture .diagram-pin span{box-shadow:0 1px 8px #112b4c30;background:#fffdf8}
 .film-line .dry-architecture .diagram-pin[aria-pressed=true] span{background:#b68c27;color:#fff;border-color:#f3ddb1;box-shadow:0 0 0 4px #cea04e42,0 3px 12px #252f5b44}
-.film-line--drying #line03-construction.dry-architecture .diagram-pin span{background:transparent;color:transparent}
-.film-line--drying #line03-construction.dry-architecture .diagram-pin[aria-pressed=true] span{background:transparent;color:transparent;border-color:#b68c27;box-shadow:0 0 0 4px #cea04e42}
+/* PREMIUM now uses clean artwork: native numbered controls are visible like BASE / PRO. */
 
 .film-line .dry-architecture-navigation{position:sticky;top:155px;display:flex;flex-direction:column;min-width:0;max-height:min(750px,calc(100dvh - 180px));min-height:450px;border:1px solid #c7d0dc;background:#fffdfa;border-radius:10px;box-shadow:0 7px 24px #1d30470b;overflow:hidden}
 .film-line .dry-architecture-navigation-header{flex:none;padding:22px 21px 16px;background:linear-gradient(155deg,#fffdf9,#eff4fa);border-bottom:1px solid #dbe0e6}
@@ -111,11 +110,17 @@
 @media(max-width:620px){.film-line .dry-architecture .dry-architecture-zone{grid-column:2}}
 
 
-/* PREMIUM has an opaque source WebP (white background, unlike transparent BASE / PRO).
-   Restore the original SVG multiply blending so Engineering Grid 02 remains visible
-   behind white pixels, while preserving the original artwork, leaders and markers. */
+/* PREMIUM native diagram is transparent: keep Engineering Grid 02 visible at
+   native alpha, without darkening the colored machinery. */
 .film-line #line03-construction.dry-architecture .diagram-projection > svg{
-  mix-blend-mode:multiply;
+  mix-blend-mode:normal;
+}
+.film-line #line03-construction.dry-architecture .diagram-target-spot{
+  pointer-events:none;opacity:0;fill:#d6ae3c13;stroke:#b18b32;stroke-width:1.3;
+  vector-effect:non-scaling-stroke;transition:opacity .15s ease;
+}
+.film-line #line03-construction.dry-architecture [data-active=true] .diagram-target-spot{
+  opacity:1;stroke:#b18b32;stroke-width:1.7;fill:#d6ae3c29;
 }
 
 

@@ -61,7 +61,7 @@ try{
   await command('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:width<768});
   await load('/catalog/lines/separatsiya-03/');await wait(`!!document.querySelector('#line03-construction[data-monitor-ready="true"]')`);
   await evaluate(`Promise.all([...document.querySelectorAll('main img')].map(i=>{i.loading='eager';return i.decode();}))`);
-  let s=await root();assert.equal(s.mode,'fit');assert.equal(s.pins,42);assert.equal(s.options,37);assert.equal(s.qualityRows,5);assert.equal(s.spec,37);assert.ok(s.fit&&!s.overflow);assert.deepEqual(s.broken,[]);assert.ok(s.canvasBackground.includes('engineering-grid-02.svg'),'PREMIUM background asset');assert.equal(s.sourceBlend,'multiply','opaque white source must blend over Engineering Grid 02');
+  let s=await root();assert.equal(s.mode,'fit');assert.equal(s.pins,42);assert.equal(s.options,37);assert.equal(s.qualityRows,5);assert.equal(s.spec,37);assert.ok(s.fit&&!s.overflow);assert.deepEqual(s.broken,[]);assert.ok(s.canvasBackground.includes('engineering-grid-02.svg'),'PREMIUM background asset');assert.equal(s.sourceBlend,'normal','opaque white source must blend over Engineering Grid 02');
   for(let number=1;number<=37;number++){
    await evaluate(`(()=>{const s=document.querySelector('[data-diagram-select]');s.value='${number}';s.dispatchEvent(new Event('change',{bubbles:true}));})()`);
    assert.equal((await root()).selected,String(number).padStart(2,'0'));
@@ -70,7 +70,13 @@ try{
  }
  await command('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
  await load('/catalog/lines/separatsiya-03/');await wait(`!!document.querySelector('[data-monitor-ready]')`);
+ const imageResponse=await fetch(base+'/assets/lines/separatsiya-03/layout-native.webp',{cache:'no-store'});
+ assert.equal(imageResponse.status,200,'published cleaned assembly image must load');
+ assert.equal(imageResponse.headers.get('content-type'),'image/webp');
  const callouts=await evaluate(`[...document.querySelectorAll('#line03-construction [data-callout]')].map(p=>({id:p.dataset.callout,number:p.dataset.part}))`);
+ const nativeLeaders=await evaluate(`[...document.querySelectorAll('#line03-construction [data-line-leader]')].map(p=>({id:p.dataset.lineLeader,path:p.getAttribute('d')}))`);
+ assert.equal(nativeLeaders.length,42);
+ assert.ok(nativeLeaders.every(l=>l.path.includes(' L ')),'42 full vector leaders must connect to real equipment targets');
  for(const c of callouts){
   await evaluate(`(()=>{const p=document.querySelector('[data-callout="${c.id}"]');p.focus();p.click();})()`);
   assert.equal((await root()).selected,c.number.padStart(2,'0'));
