@@ -152,7 +152,7 @@ jobs:
                   indices = [full_line.index('id="' + section_id + '"') for section_id in section_ids]
                   if indices != sorted(indices) or full_line.count('data-diagram-mode="fit"') != 1 or 'data-line-source-diagram' in full_line or 'id="line02-workshop"' in full_line:
                       raise RuntimeError('Separation 02 section order or single fit monitor is missing')
-                  monitor_asset = re.search(r'src="([^"]*/line-monitor\\.js\\?v=[^"]+)"', full_line)
+                  monitor_asset = re.search(r'src="([^"]*/line-monitor\.js\?v=[^"]+)"', full_line)
                   if not monitor_asset or f'/line-documents.js?v={version}' not in full_line:
                       raise RuntimeError('Separation 02 viewer assets are stale')
                   monitor_type, monitor_source = fetch(monitor_asset.group(1))
