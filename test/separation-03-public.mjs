@@ -3,15 +3,18 @@ import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {spawn} from 'node:child_process';
 import {existsSync} from 'node:fs';
-import {mkdtemp,readFile,rm,mkdir,writeFile} from 'node:fs/promises';
+import {mkdtemp,readFile,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {setTimeout as delay} from 'node:timers/promises';
+import {auditNativeDiagram,captureNativeDiagram,verifyNativeAsset} from './native-diagram-audit.mjs';
 const base=(process.env.ERA_PREVIEW_URL||process.env.ERA_SITE_URL||'http://127.0.0.1:3161').replace(/\/$/,'');
-const url=base+'/catalog/lines/separatsiya-03/';
+const compositionPath=`/catalog/lines/separatsiya-03/?v=${process.env.ERA_BUILD_COMMIT||'preview'}#composition`;
+const url=base+compositionPath;
 const response=await fetch(url,{cache:'no-store'});assert.equal(response.status,200);
 const html=await response.text();assert.ok(html.includes('data-separation03-line'));
 const version=html.match(/separation-drying\.css\?v=([^"&]+)/)?.[1];assert.ok(version);
+await verifyNativeAsset(base,html,'separatsiya-03','49c2dc8809257195269265638cee51ca2b400b5dac00dbf0d313a98e5a20b325');
 const document=JSON.parse(html.match(/<script type="application\/json" id="line-document-data">(.*?)<\/script>/s)[1]).find(entry=>entry.id==='separatsiya-03-technical');
 assert.equal(document.pages,28);assert.equal(document.bytes,5397658);assert.equal(document.sha256,'2b399241ee41e5a792d87ab051f1d764f65faa1071b27bc1950a75024a5b52f6');
 const pdf=await fetch(base+'/documents/'+document.file,{cache:'no-store'});assert.equal(pdf.status,200);assert.equal(pdf.headers.get('content-type'),'application/pdf');
@@ -55,11 +58,12 @@ try{
  const wait=async expression=>{for(let i=0;i<300;i++){if(await evaluate(expression))return;await delay(100);}throw new Error('Public separation-03 line condition failed: '+expression);};
  const click=selector=>evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
  await command('Page.enable');await command('Runtime.enable');
+ await command('Page.addScriptToEvaluateOnNewDocument',{source:"localStorage.setItem('era-map-consent-v1','deny')"});
  const load=async path=>{await command('Page.navigate',{url:base+path});await wait(`document.readyState==='complete'`);};
  const root=()=>evaluate(`(()=>{const r=document.querySelector('#line03-construction');return {canvasBackground:getComputedStyle(r.querySelector('.diagram-canvas')).backgroundImage,sourceBlend:getComputedStyle(r.querySelector('.diagram-projection > svg')).mixBlendMode,ready:r.dataset.monitorReady,mode:r.dataset.diagramMode,pins:r.querySelectorAll('[data-callout]').length,options:r.querySelectorAll('[data-diagram-select] option').length,selected:r.querySelector('[data-detail-number]').textContent,overflow:document.documentElement.scrollWidth>innerWidth,fit:r.querySelector('[data-diagram-viewport]').scrollWidth<=r.querySelector('[data-diagram-viewport]').clientWidth+1,qualityRows:document.querySelectorAll('.line-quality-table tbody tr').length,spec:document.querySelectorAll('[data-separation03-position]').length,broken:[...document.querySelectorAll('main img')].filter(i=>!i.complete||!i.naturalWidth).map(i=>i.src)}})()`);
  for(const width of [1440,320,390,768,1024,1280,1920]){
   await command('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:width<768});
-  await load('/catalog/lines/separatsiya-03/');await wait(`!!document.querySelector('#line03-construction[data-monitor-ready="true"]')`);
+  await load(compositionPath);await wait(`!!document.querySelector('#line03-construction[data-monitor-ready="true"]')`);
   await evaluate(`Promise.all([...document.querySelectorAll('main img')].map(i=>{i.loading='eager';return i.decode();}))`);
   const badges=await evaluate(`[...document.querySelectorAll('#line03-construction button.diagram-pin')].map(pin=>{const text=pin.querySelector('span'),style=getComputedStyle(text),size=text.getBoundingClientRect();return {expected:pin.dataset.part.padStart(2,'0'),actual:text.textContent.trim(),display:style.display,visibility:style.visibility,opacity:style.opacity,color:style.color,background:style.backgroundColor,width:size.width,height:size.height};})`);
   assert.equal(badges.length,42,'All 42 numbered buttons must exist');
@@ -70,17 +74,10 @@ try{
    assert.ok(!badge.color.includes('0, 0, 0, 0')&&!badge.background.includes('0, 0, 0, 0'));
   }
   if(width===1440&&process.env.ERA_PREMIUM_SCREENSHOT){
-   const clip=await evaluate(`(()=>{
-     const rect=document.querySelector('#line03-construction .dry-architecture-layout').getBoundingClientRect();
-     return {y:Math.max(0,Math.round(rect.y+scrollY-160)),height:Math.min(960,Math.round(rect.height+200))};
-   })()`);
-   console.log('PREMIUM visual QA document clip',JSON.stringify(clip));
-   const capture=await command('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,
-     clip:{x:0,y:clip.y,width:1440,height:clip.height,scale:1}});
-   await mkdir('tmp',{recursive:true});
-   await writeFile(process.env.ERA_PREMIUM_SCREENSHOT,Buffer.from(capture.data,'base64'));
+   await captureNativeDiagram(evaluate,command,'line03-construction',process.env.ERA_PREMIUM_SCREENSHOT);
   }
   let s=await root();assert.equal(s.mode,'fit');assert.equal(s.pins,42);assert.equal(s.options,37);assert.equal(s.qualityRows,5);assert.equal(s.spec,37);assert.ok(s.fit&&!s.overflow);assert.deepEqual(s.broken,[]);assert.ok(s.canvasBackground.includes('engineering-grid-02.svg'),'PREMIUM background asset');assert.equal(s.sourceBlend,'normal','opaque white source must blend over Engineering Grid 02');
+  if(width===390||width===1440)await auditNativeDiagram(evaluate,'line03-construction',{count:42,branches:42});
   for(let number=1;number<=37;number++){
    await evaluate(`(()=>{const s=document.querySelector('[data-diagram-select]');s.value='${number}';s.dispatchEvent(new Event('change',{bubbles:true}));})()`);
    assert.equal((await root()).selected,String(number).padStart(2,'0'));
@@ -88,20 +85,7 @@ try{
   await click('[data-dimension-tab="top"]');assert.equal(await evaluate(`document.querySelector('#sd-dimension-view-top').hidden`),false);
  }
  await command('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
- await load('/catalog/lines/separatsiya-03/');await wait(`!!document.querySelector('[data-monitor-ready]')`);
-
- const imageResponse=await fetch(base+'/assets/lines/separatsiya-03/layout-native.webp',{cache:'no-store'});
- assert.equal(imageResponse.status,200,'published cleaned assembly image must load');
- assert.equal(imageResponse.headers.get('content-type'),'image/webp');
- const callouts=await evaluate(`[...document.querySelectorAll('#line03-construction [data-callout]')].map(p=>({id:p.dataset.callout,number:p.dataset.part}))`);
- const nativeLeaders=await evaluate(`[...document.querySelectorAll('#line03-construction [data-line-leader]')].map(p=>({id:p.dataset.lineLeader,path:p.getAttribute('d')}))`);
- assert.equal(nativeLeaders.length,42);
- assert.ok(nativeLeaders.every(l=>l.path.includes(' L ')),'42 full vector leaders must connect to real equipment targets');
- for(const c of callouts){
-  await evaluate(`(()=>{const p=document.querySelector('[data-callout="${c.id}"]');p.focus();p.click();})()`);
-  assert.equal((await root()).selected,c.number.padStart(2,'0'));
-  assert.equal(await evaluate(`document.querySelector('#line03-construction').dataset.selectedCallout`),c.id);
- }
+ await load(compositionPath);await wait(`!!document.querySelector('[data-monitor-ready]')`);
  // All 37 specification rows use the same native monitor selection owner.
  await evaluate(`document.querySelector('.sd-specification').closest('details').open=true`);
  await click('[data-separation03-select="33"]');assert.equal((await root()).selected,'33');
@@ -120,7 +104,7 @@ try{
  assert.equal(await evaluate(`new URL(location.href).searchParams.get('group')`),'Сепарация');
  await load('/documents/technical/');assert.ok(await evaluate(`!!document.querySelector('[data-library-document="separatsiya-03-technical"]')`));
  assert.deepEqual(errors,[],'Published separation-03 console errors');
- console.log(`::notice title=Published separation 03 verified::Release ${version}, 37 source positions, 37 monitor selections and 42 printed badges, 7 widths, ${images.size} WebP SHA-256 checks, original 28-page PDF (5397658 bytes and SHA-256), live PDF viewer, specification, dimensions, catalogue filter and Back passed. ${url}`);
+ console.log(`::notice title=Published separation 03 verified::42/42 badges, leaders and equipment contours at 390 and 1440 px, 37 monitor selections, 7 widths, ${images.size+1} WebP SHA-256 checks, original 28-page PDF (5397658 bytes and SHA-256), live PDF viewer, specification, dimensions, catalogue filter and Back passed. ${url}`);
 }finally{
  socket?.close();chrome.kill('SIGTERM');await delay(250);await rm(profile,{recursive:true,force:true});
 }

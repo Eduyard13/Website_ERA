@@ -50,7 +50,7 @@ test('Горячая мойка использует единый дизайн, 
  assert.ok(section.includes('id="hotwash-construction"'));
  assert.equal((section.match(/data-architecture-part="/g)||[]).length,36);
  assert.ok(section.includes('href="#placement"'));
- assert.ok(section.includes('lines/moyka-plenki/layout-numbered.webp'));
+ assert.ok(section.includes('lines/moyka-plenki/layout-native-v2.webp'));
  assert.ok(html.includes('id="water-circulation"'));
  assert.ok(html.includes('moyka-plenki-technical'));
 });

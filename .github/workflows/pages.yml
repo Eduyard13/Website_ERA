@@ -21,13 +21,6 @@ jobs:
           node-version: '24'
       - name: Install local viewer and archive dependencies
         run: npm ci --omit=optional
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Generate clean PREMIUM image from source drawing
-        run: |
-          python -m pip install --quiet numpy==1.26.4 opencv-python-headless==4.10.0.84
-          python scripts/prepare-separation03-native.py
       - name: Test root deployment
         run: npm test
       - name: Test project deployment
@@ -327,6 +320,7 @@ jobs:
             test/catalog-public.mjs
             test/hot-wash-public.mjs
             test/separation-03-public.mjs
+            test/native-diagram-audit.mjs
             docs/separation-03-assets.json
             docs/moyka-plenki-assets.json
             test/fixtures/catalog-preserved.json
@@ -358,18 +352,21 @@ jobs:
       - name: Verify published hot-wash line in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
+          ERA_BUILD_COMMIT: ${{ github.sha }}
+          ERA_HOT_WASH_SCREENSHOT: tmp/era-hot-wash-native-check.png
         run: node test/hot-wash-public.mjs
       - name: Verify published Separation 03 in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
+          ERA_BUILD_COMMIT: ${{ github.sha }}
           ERA_PREMIUM_SCREENSHOT: tmp/era-premium-native-check.png
         run: node test/separation-03-public.mjs
-      - name: Upload PREMIUM visual QA screenshot
+      - name: Upload native diagram screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: era-premium-native-qa
-          path: tmp/era-premium-native-check.png
+          name: era-native-diagrams-qa
+          path: tmp/era-*-native-check.png
           if-no-files-found: ignore
       - name: Verify published company page in Chrome
         env:

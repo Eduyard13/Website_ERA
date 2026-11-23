@@ -68,19 +68,21 @@ test('Ведомость, календарные величины и энерг�
  for(const text of ['70%','1 271,70','890,19','77,5','37,6','700–1 200','240–250','0,003–0,007%','190 °C / 2,16 кг','30 суток','720 часов','6 570'])assert.ok(html.includes(text),text);
  assert.ok(html.includes('номинал одного гранулятора')&&html.includes('потери плёнки 1–2%'));
 });
-test('Монитор имеет 36 уникальных позиций, реальные исходные badges и безопасный fallback 31/32',()=>{
+test('Монитор связывает 44 номера и 47 ветвей выносок с контурами 36 позиций',()=>{
  const d=hotWashDiagram,height=d.height/d.width*1000;
- assert.equal(d.width,2053);assert.equal(d.height,1305);assert.ok(d.file.endsWith('layout-numbered.webp'));
+ assert.equal(d.width,2053);assert.equal(d.height,1305);assert.ok(d.file.endsWith('layout-native-v2.webp'));
  assert.deepEqual(d.parts.map(p=>p.number),Array.from({length:36},(_,i)=>i+1));
  const callouts=d.parts.flatMap(p=>p.callouts);assert.equal(callouts.length,44);assert.equal(new Set(callouts.map(c=>c.id)).size,44);
  for(const p of d.parts){
   assert.equal(p.label,hotWashSpecification[p.number-1].name);
-  for(const [x,y] of [...p.regions.flat(),...p.callouts.flatMap(c=>[c.badge,c.target,...c.pdfLeader])])assert.ok(x>=0&&x<=1000&&y>=0&&y<=height,[p.number,x,y].join(':'));
+  for(const c of p.callouts){
+   assert.ok(c.regions.length&&c.regions.every(polygon=>polygon.length>=3));
+   assert.ok(c.leaders.every(leader=>leader.length>=2));
+   for(const [x,y] of [c.badge,...c.leaders.flat(),...c.regions.flat()])assert.ok(x>=0&&x<=1000&&y>=0&&y<=height,[c.id,x,y].join(':'));
+  }
  }
- for(const number of [31,32]){
-  const p=d.parts.find(p=>p.number===number);assert.deepEqual(p.regions,[]);
-  for(const c of p.callouts){assert.deepEqual(c.target,c.badge);assert.deepEqual(c.pdfLeader,[]);}
- }
+ assert.deepEqual(callouts.filter(c=>c.leaders.length===2).map(c=>c.id),['09-2','12-1','13-1']);
+ assert.equal(callouts.reduce((sum,c)=>sum+c.leaders.length,0),47);
  assert.equal(d.parts.find(p=>p.number===16).callouts.length,3);
  for(const number of [10,17,18,19])assert.equal(d.parts.find(p=>p.number===number).callouts.length,2);
  assert.ok(d.occupancy.occupiedTilesBase64&&d.occupancy.sourceSha256);
@@ -91,7 +93,7 @@ test('Новая страница использует общий fit-монит
  const nav=html.match(/<nav class="anchor-nav line-anchor-nav"[^>]*>(.*?)<\/nav>/s)[1];
  assert.deepEqual([...nav.matchAll(/href="#([^"]+)"/g)].map(m=>m[1]),ids);
  const offsets=ids.map(id=>html.indexOf(`id="${id}"`));assert.ok(offsets.every((n,i)=>n>0&&(!i||n>offsets[i-1])));
- assert.equal((html.match(/data-diagram-mode="fit"/g)||[]).length,1);assert.equal((html.match(/data-part-guide="/g)||[]).length,36);
+ assert.equal((html.match(/data-diagram-mode="fit"/g)||[]).length,1);assert.equal((html.match(/data-part-guide="/g)||[]).length,44);
  assert.equal((html.match(/data-hotwash-position="/g)||[]).length,37);assert.equal((html.match(/data-hotwash-select="/g)||[]).length,36);
  const composition=html.slice(html.indexOf('id="composition"'),html.indexOf('id="process"'));
  assert.ok(composition.includes('Каждый узел на своём месте.')&&composition.includes('Каждая функция — на результат.'));
@@ -100,7 +102,8 @@ test('Новая страница использует общий fit-монит
  assert.ok(composition.includes('Каждая позиция на схеме — часть единого технологического маршрута.'));
  assert.equal((composition.match(/data-architecture-part="/g)||[]).length,36);
  assert.ok(composition.includes('href="#placement"')&&composition.includes('См. раздел размещения'));
- assert.ok(composition.includes('lines/moyka-plenki/layout-numbered.webp'));
+ assert.ok(composition.includes('lines/moyka-plenki/layout-native-v2.webp'));
+ assert.equal((composition.match(/data-callout-region="/g)||[]).length,44);
  assert.ok(!composition.includes('Документация ↓'));
  assert.ok(html.includes('/dry-architecture.css?v='));
  assert.equal((html.match(/id="pdf-viewer"/g)||[]).length,1);assert.equal((html.match(/data-library-document="moyka-plenki-technical"/g)||[]).length,1);

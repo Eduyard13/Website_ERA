@@ -1,8 +1,10 @@
 import { findCalloutPosition, readOccupancy } from './line-callout-layout.mjs';
 
-// Both line pages opt in explicitly; node and other legacy diagrams stay separate.
+// The fit diagrams opt in explicitly; equipment node diagrams stay separate.
 for(const root of document.querySelectorAll(':is(#line01-construction,#line02-construction,#line03-construction,#hotwash-construction)[data-diagram-mode="fit"]')){
  const pins=[...root.querySelectorAll('button[data-part]')],guides=[...root.querySelectorAll('[data-part-guide]')];
+ const nativeInstances=root.hasAttribute('data-native-instances');
+ const regions=nativeInstances?[...root.querySelectorAll('[data-callout-region]')]:[];
  const byCallout=new Map(pins.map(pin=>[pin.dataset.callout,pin]));
  const select=root.querySelector('[data-diagram-select]'),expand=root.querySelector('[data-diagram-fullscreen]');
  const zoom=root.querySelector('[data-diagram-zoom]'),zoomLabel=root.querySelector('[data-fullscreen-zoom]');
@@ -12,17 +14,20 @@ for(const root of document.querySelectorAll(':is(#line01-construction,#line02-co
  const viewBox=projection.querySelector('svg').viewBox.baseVal;
  const [columns,rows,encoded]=root.dataset.calloutMask.split(',');
  const occupancy=readOccupancy(Number(columns),Number(rows),encoded);
- const leaderPoints=new Map(guides.map(guide=>[
-  guide.dataset.partGuide,
-  [...guide.querySelectorAll('[data-line-leader]')].map(path=>path
-   .getAttribute('d').split(/[ML]/).filter(point=>point.trim())
-   .map(point=>point.trim().split(/\s+/).map(Number)))
- ]));
+ const leaderPoints=new Map();
+ for(const guide of guides){
+  const paths=[...guide.querySelectorAll('[data-line-leader]')].flatMap(path=>path
+   .getAttribute('d').split('M').filter(segment=>segment.trim()).map(segment=>segment
+    .split('L').map(point=>point.trim().split(/\s+/).map(Number))));
+  const part=guide.dataset.partGuide;
+  leaderPoints.set(part,[...(leaderPoints.get(part)||[]),...paths]);
+ }
  const architectureList=root.querySelector('[data-architecture-list]');
  const architectureItems=[...root.querySelectorAll('[data-architecture-part]')];
  let selected=select.value,activePin=pins.find(p=>p.dataset.part===selected),tipPin=null,pinned=false;
  let modal=null,placeholder=null,drag=null,previousOverflow='',expanded=false,fitBase=1;
- function nearestPin(number){
+ function pinForPart(number){
+  if(nativeInstances&&activePin?.dataset.part===String(number))return activePin;
   const candidates=pins.filter(p=>p.dataset.part===String(number)),v=viewport.getBoundingClientRect();
   const distance=pin=>{const p=pin.getBoundingClientRect();return Math.hypot(p.left+p.width/2-v.left-v.width/2,p.top+p.height/2-v.top-v.height/2);};
   return candidates.reduce((best,pin)=>!best||distance(pin)<distance(best)?pin:best,null);
@@ -30,8 +35,9 @@ for(const root of document.querySelectorAll(':is(#line01-construction,#line02-co
  function choose(pin){
   if(!pin)return;if(tipPin&&tipPin!==pin)hideTip();
   activePin=pin;selected=pin.dataset.part;select.value=selected;root.dataset.selectedCallout=pin.dataset.callout;
-  for(const p of pins)p.setAttribute('aria-pressed',String(p.dataset.part===selected));
-  for(const g of guides)g.dataset.active=String(g.dataset.partGuide===selected);
+  for(const p of pins)p.setAttribute('aria-pressed',String(nativeInstances?p===pin:p.dataset.part===selected));
+  for(const g of guides)g.dataset.active=String(nativeInstances?g.dataset.instanceGuide===pin.dataset.callout:g.dataset.partGuide===selected);
+  for(const region of regions)region.dataset.active=String(region.dataset.calloutRegion===pin.dataset.callout);
   root.querySelector('[data-detail-number]').textContent=selected.padStart(2,'0');
   root.querySelector('[data-detail-label]').textContent=pin.dataset.label;
   root.querySelector('[data-detail-description]').textContent=pin.dataset.description;
@@ -105,7 +111,7 @@ for(const root of document.querySelectorAll(':is(#line01-construction,#line02-co
   pin.addEventListener('keydown',event=>{
    const values=[...select.options].map(o=>o.value),index=values.indexOf(selected);
    const next=['ArrowRight','ArrowDown'].includes(event.key)?(index+1)%values.length:['ArrowLeft','ArrowUp'].includes(event.key)?(index+values.length-1)%values.length:event.key==='Home'?0:event.key==='End'?values.length-1:null;
-   if(next===null)return;event.preventDefault();nearestPin(values[next]).focus({preventScroll:true});
+   if(next===null)return;event.preventDefault();pinForPart(values[next]).focus({preventScroll:true});
   });
  });
  for(const hit of root.querySelectorAll('[data-callout-hit]')){
@@ -117,9 +123,9 @@ for(const root of document.querySelectorAll(':is(#line01-construction,#line02-co
   if(root.contains(event.target)&&event.target.closest('button[data-part],[data-callout-hit],[role="tooltip"]'))return;
   hideTip();
  });
- select.addEventListener('change',()=>{hideTip();choose(nearestPin(select.value));revealPin(activePin);});
+ select.addEventListener('change',()=>{hideTip();choose(pinForPart(select.value));revealPin(activePin);});
  for(const item of architectureItems){
-  item.addEventListener('click',()=>{hideTip();choose(nearestPin(item.dataset.architecturePart));revealPin(activePin);});
+  item.addEventListener('click',()=>{hideTip();choose(pinForPart(item.dataset.architecturePart));revealPin(activePin);});
   item.addEventListener('keydown',event=>{
    if(!['ArrowDown','ArrowUp','Home','End'].includes(event.key))return;
    event.preventDefault();const index=architectureItems.indexOf(item);
@@ -177,7 +183,7 @@ for(const root of document.querySelectorAll(':is(#line01-construction,#line02-co
    else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus({preventScroll:true});}
   }
  });
- zoom.addEventListener('change',()=>{if(!expanded)return;hideTip();applyZoom();choose(nearestPin(selected));revealPin(activePin);});
+ zoom.addEventListener('change',()=>{if(!expanded)return;hideTip();applyZoom();choose(pinForPart(selected));revealPin(activePin);});
  viewport.addEventListener('pointerdown',event=>{
   if(!expanded||root.dataset.zoomed!=='true'||event.pointerType!=='mouse'||event.button!==0||event.target.closest('button,[data-callout-hit]'))return;
   drag={x:event.clientX,y:event.clientY,left:viewport.scrollLeft,top:viewport.scrollTop};viewport.setPointerCapture(event.pointerId);root.dataset.diagramDragging='';hideTip();

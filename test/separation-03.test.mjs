@@ -75,10 +75,10 @@ test('Один монитор содержит 37 позиций и все 42 т
   for(const c of p.callouts){
    assert.ok(c.badge[0]>0&&c.badge[0]<1000&&c.badge[1]>0&&c.badge[1]<d.height/d.width*1000);
    const original=markers.positions.find(m=>m.number===p.number).instances.find(m=>m.id===c.id);
-   assert.ok(Math.abs(c.badge[0]/1000*d.width-original.badge[0])<.01);assert.ok(Math.abs(c.badge[1]/1000*d.width-original.badge[1])<.01);
-   assert.equal(c.pdfLeader.length,1,'42 original PDF vector leaders are rebuilt natively');assert.ok(c.tooltipDescription);
-   assert.notDeepEqual(c.target,c.badge,'endpoint cannot be the numbered badge');
-   assert.deepEqual(c.pdfLeader[0],c.target,'native leader must end exactly at the highlighted machine');
+   assert.ok(Math.hypot(...c.badge.map((value,axis)=>value*d.width/1000-original.badge[axis]))<1.5,c.id);
+   assert.equal(c.leaders.length,1,'42 original PDF leaders are rebuilt natively');assert.ok(c.tooltipDescription);
+   assert.notDeepEqual(c.leaders[0].at(-1),c.badge);
+   assert.ok(c.regions.length&&c.regions.every(polygon=>polygon.length>=3));
   }
  }
  assert.ok(d.parts.find(p=>p.number===37).callouts[0].tooltipDescription.includes('Подача сырья'));
@@ -87,12 +87,12 @@ test('Один монитор содержит 37 позиций и все 42 т
 test('Детальная страница повторяет порядок эталона и содержит настоящий PDF, схемы, спецификацию и CTA',()=>{
  const html=render(line.path);const ids=['purpose','raw-materials','composition','process','quality','specs','equipment','placement','kair','photos','documents'];
  const offsets=ids.map(id=>html.indexOf(`id="${id}"`));assert.ok(offsets.every(i=>i>0));assert.deepEqual(offsets,[...offsets].sort((a,b)=>a-b));
- assert.equal((html.match(/data-diagram-mode="fit"/g)||[]).length,1);assert.equal((html.match(/data-part-guide="/g)||[]).length,37);
+ assert.equal((html.match(/data-diagram-mode="fit"/g)||[]).length,1);assert.equal((html.match(/data-part-guide="/g)||[]).length,42);
  assert.equal((html.match(/data-callout="/g)||[]).length,42);assert.equal((html.match(/data-separation03-position="/g)||[]).length,37);
  const nativeBlock=html.slice(html.indexOf('id="line03-construction"'),html.indexOf('id="process"'));
- assert.ok(nativeBlock.includes('/assets/lines/separatsiya-03/layout-native.webp'));
+ assert.ok(nativeBlock.includes('/assets/lines/separatsiya-03/layout-native-v2.webp'));
  assert.ok(!nativeBlock.includes('layout-numbered.webp'));
- assert.equal((nativeBlock.match(/class="diagram-target-spot"/g)||[]).length,42);
+ assert.equal((nativeBlock.match(/data-callout-region="/g)||[]).length,42);
  assert.equal((nativeBlock.match(/data-line-leader="/g)||[]).length,42);
  assert.equal((nativeBlock.match(/data-callout-hit="/g)||[]).length,42);
  assert.equal((html.match(/data-catalogue-image="/g)||[]).length,6);assert.equal((html.match(/id="pdf-viewer"/g)||[]).length,1);

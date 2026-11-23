@@ -47,7 +47,12 @@ function assetRevision(file,fallback=version){
 }
 // Preserve the published 0.48.1 legal HTML byte for byte.
 const legalShellRevisions = {'legal.css':'35839ab08f58', 'cookie-consent.js':'be334a6d6754'};
-const revisionedMarkup=(html,path)=>html.replace(/((?:src|href)="\/([^"?]+)\?v=)([^"&]+)/g,(_,prefix,file,key)=>prefix+((legalPages[path] ? legalShellRevisions[file] : undefined) ?? assetRevision(file,key)));
+// The shared monitor retains its existing behavior on these reference pages.
+const referenceLineRoutes=new Set(['/catalog/lines/separatsiya-01','/catalog/lines/separatsiya-02']);
+const revisionedMarkup=(html,path)=>html.replace(/((?:src|href)="\/([^"?]+)\?v=)([^"&]+)/g,(_,prefix,file,key)=>{
+ if(file==='line-monitor.js'&&referenceLineRoutes.has(path))return prefix+'2b2b6fa70bfa';
+ return prefix+((legalPages[path] ? legalShellRevisions[file] : undefined) ?? assetRevision(file,key));
+});
 const lineDiagramVersion=version+'-callouts-3';
 const linePresentationPage=path=>['/catalog/lines/separatsiya-01','/catalog/lines/separatsiya-02','/catalog/lines/separatsiya-03','/catalog/lines/moyka-plenki'].includes(path);
 const withBase=(html,path)=>revisionedMarkup(html,path).replace(/(href|src|poster|data-product|data-image|data-video|data-poster|data-gallery-base|value)="\/(?!\/)/g,`$1="${basePath}/`).replace(/srcset="([^"]+)"/g,(_,sources)=>`srcset="${sources.replace(/(^|,)(\s*)\/(?!\/)/g,`$1$2${basePath}/`)}"`);

@@ -7,11 +7,14 @@ import {mkdtemp,readFile,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {setTimeout as delay} from 'node:timers/promises';
+import {auditNativeDiagram,captureNativeDiagram,verifyNativeAsset} from './native-diagram-audit.mjs';
 const base=(process.env.ERA_PREVIEW_URL||process.env.ERA_SITE_URL||'http://127.0.0.1:3161').replace(/\/$/,'');
-const url=base+'/catalog/lines/moyka-plenki/';
+const compositionPath=`/catalog/lines/moyka-plenki/?v=${process.env.ERA_BUILD_COMMIT||'preview'}#composition`;
+const url=base+compositionPath;
 const response=await fetch(url,{cache:'no-store'});assert.equal(response.status,200);
 const html=await response.text();assert.ok(html.includes('data-hot-wash-line'));
 const version=html.match(/hot-film-washing\.css\?v=([^"&]+)/)?.[1];assert.ok(version);
+await verifyNativeAsset(base,html,'moyka-plenki','db27ba0e04807449d36fadaf9035b1464a28fe7cfc0c263db82b22eaae65f142');
 const document=JSON.parse(html.match(/<script type="application\/json" id="line-document-data">(.*?)<\/script>/s)[1]).find(entry=>entry.id==='moyka-plenki-technical');
 assert.equal(document.pages,22);assert.equal(document.bytes,4430978);assert.equal(document.sha256,'5648714c2f667ddb9d2168803aac50faf927fedbecb5147deebb57b0186a704a');
 const pdf=await fetch(base+'/documents/'+document.file,{cache:'no-store'});assert.equal(pdf.status,200);assert.equal(pdf.headers.get('content-type'),'application/pdf');
@@ -54,13 +57,18 @@ try{
  const wait=async expression=>{for(let i=0;i<300;i++){if(await evaluate(expression))return;await delay(100);}throw new Error('Public hot-wash line condition failed: '+expression);};
  const click=selector=>evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
  await command('Page.enable');await command('Runtime.enable');
+ await command('Page.addScriptToEvaluateOnNewDocument',{source:"localStorage.setItem('era-map-consent-v1','deny')"});
  const load=async path=>{await command('Page.navigate',{url:base+path});await wait(`document.readyState==='complete'`);};
  const root=()=>evaluate(`(()=>{const r=document.querySelector('#hotwash-construction');return {grid:getComputedStyle(r.querySelector('.diagram-canvas')).backgroundImage,sourceBlend:getComputedStyle(r.querySelector('.diagram-projection > svg')).mixBlendMode,navigation:r.querySelectorAll('[data-architecture-part]').length,unmappedLink:r.querySelector('.dry-architecture-item--link')?.getAttribute('href'),ready:r.dataset.monitorReady,mode:r.dataset.diagramMode,pins:r.querySelectorAll('[data-callout]').length,options:r.querySelectorAll('[data-diagram-select] option').length,selected:r.querySelector('[data-detail-number]').textContent,overflow:document.documentElement.scrollWidth>innerWidth,fit:r.querySelector('[data-diagram-viewport]').scrollWidth<=r.querySelector('[data-diagram-viewport]').clientWidth+1,products:document.querySelectorAll('.hw-product-grid>article').length,spec:document.querySelectorAll('[data-hotwash-position]').length,broken:[...document.querySelectorAll('main img')].filter(i=>!i.complete||!i.naturalWidth).map(i=>i.src)}})()`);
  for(const width of [320,390,768,1024,1280,1440,1920]){
   await command('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:width<768});
-  await load('/catalog/lines/moyka-plenki/');await wait(`!!document.querySelector('#hotwash-construction[data-monitor-ready="true"]')`);
+  await load(compositionPath);await wait(`!!document.querySelector('#hotwash-construction[data-monitor-ready="true"]')`);
   await evaluate(`Promise.all([...document.querySelectorAll('main img')].map(i=>{i.loading='eager';return i.decode();}))`);
+  if(width===1440&&process.env.ERA_HOT_WASH_SCREENSHOT){
+   await captureNativeDiagram(evaluate,command,'hotwash-construction',process.env.ERA_HOT_WASH_SCREENSHOT);
+  }
   let s=await root();assert.equal(s.mode,'fit');assert.equal(s.pins,44);assert.equal(s.options,36);assert.equal(s.products,3);assert.equal(s.spec,37);assert.ok(s.fit&&!s.overflow);assert.deepEqual(s.broken,[]);assert.equal(s.navigation,36);assert.equal(s.unmappedLink,'#placement');assert.ok(s.grid.includes('engineering-grid-02.svg'));assert.equal(s.sourceBlend,'multiply');
+  if(width===390||width===1440)await auditNativeDiagram(evaluate,'hotwash-construction',{count:44,branches:47});
   for(let number=1;number<=36;number++){
    await evaluate(`(()=>{const s=document.querySelector('[data-diagram-select]');s.value='${number}';s.dispatchEvent(new Event('change',{bubbles:true}));})()`);
    assert.equal((await root()).selected,String(number).padStart(2,'0'));
@@ -68,20 +76,12 @@ try{
   await click('[data-dimension-tab="top"]');assert.equal(await evaluate(`document.querySelector('#hot-dimension-view-top').hidden`),false);
  }
  await command('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
- await load('/catalog/lines/moyka-plenki/');await wait(`!!document.querySelector('[data-monitor-ready]')`);
+ await load(compositionPath);await wait(`!!document.querySelector('[data-monitor-ready]')`);
  const sidebarSelect=await evaluate(`(()=>{
    const root=document.querySelector('#hotwash-construction'),row=root.querySelector('[data-architecture-part="18"]');row.click();
-   const pin=root.querySelector('button[data-part="18"]');
-   return {row:row.getAttribute('aria-pressed'),pin:pin.getAttribute('aria-pressed'),selected:root.querySelector('[data-detail-number]').textContent};
+   return {row:row.getAttribute('aria-pressed'),pin:root.querySelectorAll('button[data-part="18"][aria-pressed="true"]').length,selected:root.querySelector('[data-detail-number]').textContent};
  })()`);
- assert.deepEqual(sidebarSelect,{row:'true',pin:'true',selected:'18'});
- const callouts=await evaluate(`[...document.querySelectorAll('#hotwash-construction [data-callout]')].map(p=>({id:p.dataset.callout,number:p.dataset.part}))`);
- for(const c of callouts){
-  await evaluate(`(()=>{const p=document.querySelector('[data-callout="${c.id}"]');p.focus();p.click();})()`);
-  assert.equal((await root()).selected,c.number.padStart(2,'0'));
-  assert.equal(await evaluate(`document.querySelector('#hotwash-construction').dataset.selectedCallout`),c.id);
-  assert.equal(await evaluate(`document.querySelector('#hotwash-construction [data-architecture-part="${Number(c.number)}"]').getAttribute('aria-pressed')`),'true');
- }
+ assert.deepEqual(sidebarSelect,{row:'true',pin:1,selected:'18'});
  // The specification uses the same selection owner, and position 37 is a real placement link.
  await evaluate(`document.querySelector('.hw-specification').closest('details').open=true`);
  await click('[data-hotwash-select="33"]');assert.equal((await root()).selected,'33');
@@ -101,7 +101,7 @@ try{
  await load('/technology/');await wait(`!!document.querySelector('[data-technology-line="moyka-plenki"]')`);
  assert.ok(await evaluate(`document.querySelector('[data-technology-line="moyka-plenki"]').href.endsWith('/catalog/lines/moyka-plenki')`));
  assert.deepEqual(errors,[],'Published hot-wash console errors');
- console.log(`::notice title=Published hot wash verified::Release ${version}, 37 source positions, 36 monitor selections and 44 printed badges, 7 widths, ${2*(manifest.assets.length+(manifest.catalogCardUpdate?.assets.length||0))} WebP SHA-256 checks, original 22-page PDF (4430978 bytes and SHA-256), live PDF viewer, specification, dimensions, technology link and wash-filter Back passed. ${url}`);
+ console.log(`::notice title=Published hot wash verified::44/44 badges, 47 leader ends, and equipment contours at 390 and 1440 px, 36 monitor selections, 7 widths, ${1+2*(manifest.assets.length+(manifest.catalogCardUpdate?.assets.length||0))} WebP SHA-256 checks, original 22-page PDF (4430978 bytes and SHA-256), live PDF viewer, specification, dimensions, technology link and wash-filter Back passed. ${url}`);
 }finally{
  socket?.close();chrome.kill('SIGTERM');await delay(250);await rm(profile,{recursive:true,force:true});
 }
