@@ -14,7 +14,7 @@ import miniMask from '../content/separatsiya-01-occupancy.json' with {type:'json
 
 test('Мини-линия сохраняет свои исходники, 11 точных выносок, 13 позиций и синюю каталожную заставку',async()=>{
  const page=render('/catalog/lines/separatsiya-01');
- const ids=['purpose','raw-materials','specs','process','composition','quality','placement','kair','photos','documents','equipment'];
+ const ids=['purpose','raw-materials','composition','process','quality','specs','equipment','placement','kair','photos','documents'];
  const order=ids.map(id=>page.indexOf(`id="${id}"`));
  assert.ok(order.every((position,index)=>position>=0&&(!index||position>order[index-1])));
  assert.deepEqual([...page.match(/<nav class="anchor-nav line-anchor-nav"[^>]*>(.*?)<\/nav>/s)[1].matchAll(/href="#([^"]+)"/g)].map(m=>m[1]),ids);
@@ -39,13 +39,13 @@ test('Мини-линия сохраняет свои исходники, 11 т�
   for(let n=0;n<4;n++)assert.ok(Math.abs(actual[n]-sourcePoints[index][n])<.002);
   assert.deepEqual(callout.pdfLeader.at(-1),callout.target);assert.ok(callout.tooltipDescription.length>35);
  }
- const composition=page.slice(page.indexOf('id="composition"'),page.indexOf('id="quality"'));
+ const composition=page.slice(page.indexOf('id="composition"'),page.indexOf('id="process"'));
  for(const attribute of ['data-line-leader','data-callout-hit'])assert.equal([...composition.matchAll(new RegExp(attribute+'="','g'))].length,11);
  assert.equal([...composition.matchAll(/class="guide-end"/g)].length,11);
  assert.ok(!composition.includes('pin-masks'));assert.ok(composition.includes('layout-native.webp'));
  assert.ok(!composition.includes('line-unit-grid'));
  assert.ok(page.indexOf('id="options"')>page.indexOf('id="quality"')&&page.indexOf('id="options"')<page.indexOf('id="placement"'));
- const documents=page.slice(page.indexOf('id="documents"'),page.indexOf('id="equipment"'));
+ const documents=page.slice(page.indexOf('id="documents"'),page.indexOf('class="section contact line-request"'));
  assert.equal([...documents.matchAll(/data-library-document="/g)].length,3);
  assert.ok(documents.includes('data-pdf-open="separatsiya-01-mini-technical"'));
  assert.equal([...page.matchAll(/id="pdf-viewer"/g)].length,1);
@@ -76,7 +76,7 @@ test('Titanium Gallery использует полное изображение 
 
 test('Полная схема использует прозрачную модель, 28 полных выносок и отдельные подсказки погрузчиков',async()=>{
  const manifest=JSON.parse(await readFile('content/era-separatsiya-02-markers.json','utf8'));
- const page=render('/catalog/lines/separatsiya-02'),diagram=page.slice(page.indexOf('id="line02-construction"'),page.indexOf('id="quality"'));
+ const page=render('/catalog/lines/separatsiya-02'),diagram=page.slice(page.indexOf('id="line02-construction"'),page.indexOf('id="process"'));
  assert.ok(diagram.includes('data-construction-finish="light-engineering"'));assert.ok(diagram.includes('Линия изнутри. В деталях.'));
  assert.ok(diagram.includes(`href="${basePath}/assets/lines/separatsiya-02/${manifest.asset.file}"`));
  assert.ok(!diagram.includes('layout-interactive.webp'));assert.ok(!diagram.includes('data-leader-join'));assert.ok(!fullLineDiagram.annotationJoins);

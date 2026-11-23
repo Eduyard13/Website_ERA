@@ -27,18 +27,18 @@ test('Исходный A0 зарегистрирован у комплектац
 });
 test('Полная линия сохраняет показатели, один fit-монитор и новый порядок разделов с тремя документами',async()=>{
  const page=render('/catalog/lines/separatsiya-02');
- const ids=['purpose','raw-materials','specs','process','composition','quality','placement','kair','photos','documents','equipment'];
+ const ids=['purpose','raw-materials','composition','process','quality','specs','equipment','placement','kair','photos','documents'];
  let previous=-1;
  for(const id of ids){const index=page.indexOf(`id="${id}"`);assert.ok(index>previous,id);previous=index;}
  const nav=page.match(/<nav class="anchor-nav line-anchor-nav"[^>]*>(.*?)<\/nav>/s)[1];
  assert.deepEqual([...nav.matchAll(/href="#([^"]+)"/g)].map(m=>m[1]),ids);
  assert.equal((page.match(/data-diagram data-diagram-mode="fit"/g)||[]).length,1);
- const composition=page.slice(page.indexOf('id="composition"'),page.indexOf('id="quality"'));
+ const composition=page.slice(page.indexOf('id="composition"'),page.indexOf('id="process"'));
  assert.equal((composition.match(/data-part-guide="/g)||[]).length,27);
  assert.equal((composition.match(/data-line-leader="/g)||[]).length,28);assert.equal((composition.match(/class="guide-end"/g)||[]).length,28);assert.ok(!composition.includes('pin-masks'));
  assert.ok(!page.includes('data-line-source-diagram'));assert.ok(!page.includes('id="line02-workshop"'));
  assert.ok(!composition.includes('line-unit-grid'));assert.ok(page.includes('line-flow-diagram'));
- const documents=page.slice(page.indexOf('id="documents"'),page.indexOf('id="equipment"'));
+ const documents=page.slice(page.indexOf('id="documents"'),page.indexOf('class="section contact line-request"'));
  assert.equal((documents.match(/data-library-document="/g)||[]).length,3);
  for(const id of ['separatsiya-02-overview','separatsiya-02-technical','separatsiya-02-dimensions-a0'])assert.ok(documents.includes(`data-pdf-open="${id}"`));
  assert.equal((page.match(/id="pdf-viewer"/g)||[]).length,1);assert.ok(page.includes('/line-documents.js?v='));

@@ -245,8 +245,8 @@ test('Мини-линия 01 использует своё ТО, показат�
  assert.equal(miniSpecification.length,13);
  assert.ok(page.includes('id="line01-construction" data-diagram data-diagram-mode="fit"'));
  assert.equal([...page.matchAll(/data-line-leader="/g)].length,11);
- assert.ok(page.indexOf('id="specs"')<page.indexOf('id="process"'));
- assert.ok(page.indexOf('id="documents"')<page.indexOf('id="equipment"'));
+ assert.ok(page.indexOf('id="specs"')>page.indexOf('id="quality"'));
+ assert.ok(page.indexOf('id="documents"')>page.indexOf('id="equipment"'));
  const parse=value=>value==='—'?0:Number(value.replace(',','.'));
  assert.ok(Math.abs(miniSpecification.reduce((sum,row)=>sum+parse(row[3]),0)-225)<1e-9);
  assert.ok(Math.abs(miniSpecification.reduce((sum,row)=>sum+parse(row[4]),0)-157.5)<1e-9);
