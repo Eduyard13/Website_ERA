@@ -140,7 +140,15 @@ jobs:
                           raise RuntimeError('Context navigation is missing or duplicated: ' + nested)
                   print('::notice title=Technical Archive verified::Five compact categories, preserved landing library, steel PDF cards and shared safe back navigation are published.')
                   _, full_line = fetch('catalog/lines/separatsiya-02/')
-                  section_ids = ('purpose', 'raw-materials', 'specs', 'process', 'composition', 'quality', 'placement', 'kair', 'photos', 'documents', 'equipment')
+                  section_ids = ('purpose', 'raw-materials', 'composition', 'process', 'quality', 'specs', 'equipment', 'placement', 'kair', 'photos', 'documents')
+                  for dry_slug in ('separatsiya-01', 'separatsiya-02', 'separatsiya-03'):
+                      checked_line = full_line if dry_slug == 'separatsiya-02' else fetch('catalog/lines/' + dry_slug + '/')[1]
+                      checked_indices = [checked_line.index('id="' + section_id + '"') for section_id in section_ids]
+                      navigation = re.search(r'<nav class="anchor-nav line-anchor-nav"[^>]*>(.*?)</nav>', checked_line, re.S)
+                      if (checked_indices != sorted(checked_indices) or
+                              navigation is None or
+                              tuple(re.findall(r'href="#([^"]+)"', navigation.group(1))) != section_ids):
+                          raise RuntimeError('Approved section order or navigation is missing: ' + dry_slug)
                   indices = [full_line.index('id="' + section_id + '"') for section_id in section_ids]
                   if indices != sorted(indices) or full_line.count('data-diagram-mode="fit"') != 1 or 'data-line-source-diagram' in full_line or 'id="line02-workshop"' in full_line:
                       raise RuntimeError('Separation 02 section order or single fit monitor is missing')
