@@ -47,18 +47,20 @@ def main():
             if not (0 <= target[0] < w and 0 <= target[1] < h):
                 raise ValueError("Out-of-bounds endpoint "+id_)
             cv2.circle(badge_mask,circle,22,255,-1,lineType=cv2.LINE_AA)
-            cv2.line(leader_mask,circle,target,255,5,lineType=cv2.LINE_AA)
+            start=reference["lineStarts"].get(id_)
+            if start is None: raise ValueError("Missing exact PDF leader origin "+id_)
+            cv2.line(leader_mask,tuple(round(v) for v in start),target,255,7,lineType=cv2.LINE_AA)
     if len(seen)!=42 or len(leaders)!=42:raise ValueError("Expected 42 matched PDF callouts")
     union=cv2.bitwise_or(leader_mask,badge_mask)
     hsv=cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
-    # Preserve fine machinery edges where a PDF leader crosses the equipment.
-    # Only inpaint the numbered discs; blank-background leaders become transparent.
-    trustworthy=(hsv[:,:,1]>55)&(union==0)
-    near=cv2.dilate(trustworthy.astype(np.uint8),
-                    cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(13,13))).astype(bool)
+    # Unlike the old algorithm, erase the COMPLETE original leader line even
+    # near the equipment, where stale grey annotation strokes survived.
     result=cv2.inpaint(img,badge_mask,3,cv2.INPAINT_TELEA)
-    result[(badge_mask!=0)&(~near)]=255
-    result[(leader_mask!=0)&(badge_mask==0)&(~near)]=255
+    grayscale=(hsv[:,:,1]<45)
+    result[(badge_mask!=0)&grayscale]=255
+    machinery=cv2.inpaint(result,leader_mask,2,cv2.INPAINT_TELEA)
+    result[(leader_mask!=0)&(~grayscale)]=machinery[(leader_mask!=0)&(~grayscale)]
+    result[(leader_mask!=0)&grayscale]=255
     alpha=np.uint8(np.clip((255-result.min(axis=2).astype(np.float32))/20.0,0.0,1.0)*255)
     pixels=np.dstack((result,alpha))
     if not cv2.imwrite(str(OUTPUT),pixels,[cv2.IMWRITE_WEBP_QUALITY,94]):

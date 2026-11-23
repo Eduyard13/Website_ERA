@@ -362,7 +362,15 @@ jobs:
       - name: Verify published Separation 03 in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
+          ERA_PREMIUM_SCREENSHOT: tmp/era-premium-native-check.png
         run: node test/separation-03-public.mjs
+      - name: Upload PREMIUM visual QA screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: era-premium-native-qa
+          path: tmp/era-premium-native-check.png
+          if-no-files-found: ignore
       - name: Verify published company page in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}

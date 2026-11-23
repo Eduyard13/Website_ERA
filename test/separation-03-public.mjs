@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {spawn} from 'node:child_process';
 import {existsSync} from 'node:fs';
-import {mkdtemp,readFile,rm} from 'node:fs/promises';
+import {mkdtemp,readFile,rm,mkdir,writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {setTimeout as delay} from 'node:timers/promises';
@@ -61,6 +61,14 @@ try{
   await command('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:width<768});
   await load('/catalog/lines/separatsiya-03/');await wait(`!!document.querySelector('#line03-construction[data-monitor-ready="true"]')`);
   await evaluate(`Promise.all([...document.querySelectorAll('main img')].map(i=>{i.loading='eager';return i.decode();}))`);
+  const badges=await evaluate(`[...document.querySelectorAll('#line03-construction button.diagram-pin')].map(pin=>{const text=pin.querySelector('span'),style=getComputedStyle(text),size=text.getBoundingClientRect();return {expected:pin.dataset.part.padStart(2,'0'),actual:text.textContent.trim(),display:style.display,visibility:style.visibility,opacity:style.opacity,color:style.color,background:style.backgroundColor,width:size.width,height:size.height};})`);
+  assert.equal(badges.length,42,'All 42 numbered buttons must exist');
+  for(const badge of badges){
+   assert.equal(badge.actual,badge.expected,'Native button numerals must match PDF positions');
+   assert.equal(badge.display,'grid');assert.equal(badge.visibility,'visible');assert.equal(badge.opacity,'1');
+   assert.ok(badge.width>=13&&badge.height>=13,'Native button size must be visible');
+   assert.ok(!badge.color.includes('0, 0, 0, 0')&&!badge.background.includes('0, 0, 0, 0'));
+  }
   let s=await root();assert.equal(s.mode,'fit');assert.equal(s.pins,42);assert.equal(s.options,37);assert.equal(s.qualityRows,5);assert.equal(s.spec,37);assert.ok(s.fit&&!s.overflow);assert.deepEqual(s.broken,[]);assert.ok(s.canvasBackground.includes('engineering-grid-02.svg'),'PREMIUM background asset');assert.equal(s.sourceBlend,'normal','opaque white source must blend over Engineering Grid 02');
   for(let number=1;number<=37;number++){
    await evaluate(`(()=>{const s=document.querySelector('[data-diagram-select]');s.value='${number}';s.dispatchEvent(new Event('change',{bubbles:true}));})()`);
@@ -70,6 +78,13 @@ try{
  }
  await command('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
  await load('/catalog/lines/separatsiya-03/');await wait(`!!document.querySelector('[data-monitor-ready]')`);
+ if(process.env.ERA_PREMIUM_SCREENSHOT){
+  await evaluate(`document.querySelector('#line03-construction').scrollIntoView({block:'start'})`);
+  await delay(450);
+  const screenshot=await command('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
+  await mkdir('tmp',{recursive:true});
+  await writeFile(process.env.ERA_PREMIUM_SCREENSHOT,Buffer.from(screenshot.data,'base64'));
+ }
  const imageResponse=await fetch(base+'/assets/lines/separatsiya-03/layout-native.webp',{cache:'no-store'});
  assert.equal(imageResponse.status,200,'published cleaned assembly image must load');
  assert.equal(imageResponse.headers.get('content-type'),'image/webp');
