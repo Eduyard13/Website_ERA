@@ -152,8 +152,20 @@ jobs:
                   indices = [full_line.index('id="' + section_id + '"') for section_id in section_ids]
                   if indices != sorted(indices) or full_line.count('data-diagram-mode="fit"') != 1 or 'data-line-source-diagram' in full_line or 'id="line02-workshop"' in full_line:
                       raise RuntimeError('Separation 02 section order or single fit monitor is missing')
-                  if f'/line-monitor.js?v={version}' not in full_line or f'/line-documents.js?v={version}' not in full_line:
+                  monitor_asset = re.search(r'src="([^"]*/line-monitor\\.js\\?v=[^"]+)"', full_line)
+                  if not monitor_asset or f'/line-documents.js?v={version}' not in full_line:
                       raise RuntimeError('Separation 02 viewer assets are stale')
+                  monitor_type, monitor_source = fetch(monitor_asset.group(1))
+                  if 'javascript' not in monitor_type or 'data-architecture-part' not in monitor_source:
+                      raise RuntimeError('Published numbered navigation controller is unavailable')
+                  svg_type, svg = fetch('assets/lines/shared/engineering-grid-02.svg')
+                  if 'svg' not in svg_type or '<svg' not in svg:
+                      raise RuntimeError('Approved Engineering Grid 02 source is not published')
+                  for dry_slug in ('separatsiya-01', 'separatsiya-02', 'separatsiya-03'):
+                      checked_page = full_line if dry_slug == 'separatsiya-02' else fetch('catalog/lines/' + dry_slug + '/')[1]
+                      if ('dry-architecture-layout' not in checked_page or 'data-architecture-list' not in checked_page or
+                              'Каждый узел на своём месте.' not in checked_page or 'dry-architecture.css?v=' not in checked_page):
+                          raise RuntimeError('Approved interactive architecture is missing on: ' + dry_slug)
                   if 'data-hero-finish="titanium-gallery"' not in full_line or 'data-construction-finish="light-engineering"' not in full_line or 'Линия изнутри. В деталях.' not in full_line:
                       raise RuntimeError('Titanium Gallery or light construction display is missing')
                   if full_line.count('data-line-leader="') != 28 or 'data-leader-join="' in full_line or 'assets/lines/separatsiya-02/era-separatsiya-02-layout.webp' not in full_line:
