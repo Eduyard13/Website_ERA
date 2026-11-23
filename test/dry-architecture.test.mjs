@@ -41,9 +41,16 @@ test('BASE не рекламирует готовые тюки, а PRO и PREMIU
  assert.ok(block('separatsiya-01').includes('Позиция без выноски'));
  assert.equal((block('separatsiya-01').match(/class="dry-architecture-item dry-architecture-item--reference"/g)||[]).length,2);
 });
-test('Горячая мойка не использует новый дизайн сухой сепарации',()=>{
+test('Горячая мойка использует единый дизайн, сохраняя собственные узлы, продукты и техдокументы',()=>{
  const html=render('/catalog/lines/moyka-plenki');
- assert.ok(!html.includes('dry-architecture-layout'));
- assert.ok(!html.includes('dry-architecture.css'));
- assert.ok(html.includes('id="hotwash-construction"'));
+ const section=html.slice(html.indexOf('id="composition"'),html.indexOf('id="process"'));
+ assert.ok(section.includes('dry-architecture-layout'));
+ assert.ok(section.includes('data-architecture-list'));
+ assert.ok(html.includes('/dry-architecture.css?v='));
+ assert.ok(section.includes('id="hotwash-construction"'));
+ assert.equal((section.match(/data-architecture-part="/g)||[]).length,36);
+ assert.ok(section.includes('href="#placement"'));
+ assert.ok(section.includes('lines/moyka-plenki/layout-numbered.webp'));
+ assert.ok(html.includes('id="water-circulation"'));
+ assert.ok(html.includes('moyka-plenki-technical'));
 });
