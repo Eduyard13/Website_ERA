@@ -6,6 +6,7 @@ import {pdfViewerDialog} from './documents.mjs';
 import {lineDocuments,lineDocumentCards} from './line-page-media.mjs';
 import {renderDrySeparationHero} from './dry-separation-hero.mjs';
 import {renderDrySeparationPurpose} from './dry-separation-purpose.mjs';
+import {renderDrySeparationRaw} from './dry-separation-raw.mjs';
 import {linePower,dryLineProduction} from './line-power.mjs';
 import {equipmentCardImages} from '../content/equipment-card-images.mjs';
 import {interactiveLineDiagram} from './line-diagram.mjs';
@@ -46,12 +47,7 @@ export function renderMiniFilmSeparation(line){
 
  ${renderDrySeparationPurpose(line.slug)}
 
- <section class="section line-soft" id="raw-materials"><div class="line-section-heading"><div><p class="eyebrow">ВХОДНОЕ СЫРЬЁ</p><h2>Пакеты и плёнки.<br>Насыпью или в тюках.</h2></div><p>Режим подбирают под происхождение, толщину и влажность плёнки, состав включений и степень уплотнения. Для расчёта выпуска в ТО принят средний засор около 50%.</p></div>
-  <div class="mini-raw-source">${picture('raw',{full:true,caption:'Исходная плёнка на площадках в Китае и Нидерландах'})}</div>
-  <div class="line-raw-grid">${miniRawMaterials.map(([title,text])=>`<article><h3>${title}</h3><p>${text}</p></article>`).join('')}</div>
-  <div class="line-input-band"><div><strong>до 80<small>%</small></strong><span>Засорённость сырья на испытаниях</span></div><div><strong>до 30<small>%</small></strong><span>Допустимая влажность входного сырья</span></div><p>Предельные значения испытаний не заменяют рабочий расчёт. Засорённость и влажность измеряются отдельно; фактическая производительность зависит от конкретной партии.</p></div>
-  <details class="line-more" data-keep-open><summary>Какие включения удаляет линия</summary><div class="line-inclusions">${miniInclusions.map(([title,text])=>`<div><h3>${title}</h3><p>${text}</p></div>`).join('')}</div></details>
- </section>
+ ${renderDrySeparationRaw(line.slug)}
 
  <section class="section" id="specs"><div class="line-section-heading"><div><p class="eyebrow">ПОКАЗАТЕЛИ И РЕСУРСЫ</p><h2>Производительность.<br>Мощность. Персонал.</h2></div><p>Показатели линии BASE приведены по техническому описанию от 3 ноября 2026 года. Входной поток включает полезную плёнку и все примеси.</p></div>
   <div class="line-specs-layout"><div><div class="table-wrap"><table class="line-spec-table"><caption>Базовая комплектация</caption><tbody>${rows(miniSpecs)}</tbody></table></div><p class="line-note">750 кг/ч — расчётный ориентир, а не паспортная производительность отдельного распушителя. Для базового узла в ТО указаны 600–700 кг/ч; выпуск линии подтверждают на выбранном исполнении и пробной партии сырья.</p></div><aside class="line-output-panel era-indigo-surface"><p class="eyebrow">РАСЧЁТ ПРИ 750 КГ/Ч</p><h3>Выпуск очищенной плёнки</h3><dl><div><dt>За час работы</dt><dd>0,75 <small>т</small></dd></div><div><dt>За сутки / 24 часа</dt><dd>18 <small>т</small></dd></div><div><dt>За 30 суток</dt><dd>540 <small>т</small></dd></div><div><dt>За год / 365 суток</dt><dd>6 570 <small>т</small></dd></div></dl><p>При непрерывной работе, без вычета остановок. Фактический выпуск зависит от сырья, доступности оборудования и организации смен.</p></aside></div>

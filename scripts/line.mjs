@@ -6,6 +6,7 @@ import {pdfViewerDialog} from './documents.mjs';
 import {lineDocuments,lineDocumentCards} from './line-page-media.mjs';
 import {renderDrySeparationHero} from './dry-separation-hero.mjs';
 import {renderDrySeparationPurpose} from './dry-separation-purpose.mjs';
+import {renderDrySeparationRaw} from './dry-separation-raw.mjs';
 import {linePower,dryLineProduction} from './line-power.mjs';
 import {lineDimensions} from './line-dimensions.mjs';
 import {interactiveLineDiagram} from './line-diagram.mjs';
@@ -45,10 +46,7 @@ export function renderFilmSeparation(line){
 
  ${renderDrySeparationPurpose(line.slug)}
 
- <section class="section line-soft" id="raw-materials"><p class="eyebrow">С ЧЕМ РАБОТАЕМ</p><h2>Плёнка разного происхождения.<br>Настройки под вашу партию.</h2><div class="line-raw-grid">${lineRawMaterials.map(([key,title,text])=>`<article>${picture(key,{caption:title})}<h3>${title}</h3><p>${text}</p></article>`).join('')}</div>
-  <div class="line-input-band"><div><strong>до 80<small>%</small></strong><span>Загрязнённость испытанного сырья</span></div><div><strong>до 30<small>%</small></strong><span>Влажность испытанного сырья</span></div><p>Засор и влажность определяют раздельно. По испытаниям и морфологическим анализам ЭРА типичный засор полигонной и сельскохозяйственной плёнки составлял 50–55%. Показатели входа не являются нормами качества готового продукта.</p></div>
-  <details class="line-more"><summary>Какие включения отделяются и что остаётся для мойки</summary><div><div class="line-inclusions"><p><strong>Баллистика:</strong> объёмные предметы, часть песка, земли и просева.</p><p><strong>Ручной отбор:</strong> бумага, картон и другие отбираемые примеси.</p><p><strong>Ротор, диски и воздух:</strong> освобождённая мелочь, пенопласт и другие лёгкие микровключения.</p><p><strong>Пылеудаление:</strong> пыль и летучие частицы у роторного узла и во всех пяти бункерах.</p></div><p class="line-note">Этикетки, прилипшие жиры, масла и стойкие клеевые остатки удаляются на следующей стадии — горячей мойке.</p></div></details>
- </section>
+ ${renderDrySeparationRaw(line.slug)}
 
  <section class="section" id="specs"><div class="line-section-heading"><div><p class="eyebrow">ПРОИЗВОДИТЕЛЬНОСТЬ И РЕСУРСЫ</p><h2>Параметры<br>представленной комплектации.</h2></div><p>Входной поток учитывает плёнку вместе с загрязнениями. Выпуск очищенного продукта и энергозатраты приведены для принятого в ТО рабочего режима.</p></div>
   <div class="line-specs-layout"><div class="table-wrap"><table class="line-spec-table"><caption>Основные показатели линии</caption><tbody>${rows([...lineSpecs,...staffing])}</tbody></table></div><aside class="line-output-panel era-indigo-surface"><p class="eyebrow">РАБОТА 24/7</p><h3>Выпуск очищенной плёнки</h3><dl><div><dt>За сутки / 24 часа</dt><dd>18 <small>т</small></dd></div><div><dt>За месяц / 30 суток</dt><dd>540 <small>т</small></dd></div><div><dt>За год / 365 суток</dt><dd>6 570 <small>т</small></dd></div></dl><p>Расчёт при 750 кг/ч и непрерывной работе, без вычета остановок. Фактический выпуск зависит от сырья, доступности оборудования и организации смен.</p></aside></div>
