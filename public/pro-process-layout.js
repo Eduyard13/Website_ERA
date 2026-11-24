@@ -1,4 +1,4 @@
-// PRO process map only. Cards retain natural height, and the SVG tracks actual card bounds.
+// PRO process map only. Each row fits its tallest card; the SVG tracks actual card bounds.
 const grid=document.querySelector('#process [data-pro-process-map] .pro-flow-grid');
 if(grid){
  const svg=grid.querySelector('.pro-flow-edges');
