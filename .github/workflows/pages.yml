@@ -202,7 +202,7 @@ jobs:
                   print('::notice title=Titanium Gallery verified::Titanium hero and responsive WebP, light 01-27 construction display, six compact equipment cards and five unchanged catalogue images are published. Line and both catalogue routes return HTTP 200.')
                   line_checks = {
                       'separatsiya-01': (('separatsiya-01-brochure', 'separatsiya-01-mini-technical', 'separatsiya-01-dimensions'), ('225', '157,5'), 'A4', 2),
-                      'separatsiya-02': (('separatsiya-02-overview', 'separatsiya-02-technical', 'separatsiya-02-dimensions-a0'), ('402,67', '281,87'), 'A0', 4),
+                      'separatsiya-02': (('separatsiya-02-overview', 'separatsiya-02-technical', 'separatsiya-02-dimensions-a0'), ('405,2', '283,64'), 'A0', 4),
                       'separatsiya-03': (('separatsiya-03-brochure', 'separatsiya-03-technical', 'separatsiya-03-dimensions'), ('639,77', '447,84'), 'A0', 3),
                       'moyka-plenki': (('moyka-plenki-brochure', 'moyka-plenki-technical', 'moyka-plenki-dimensions'), ('1 271,70', '890,19'), 'A0', 4),
                   }

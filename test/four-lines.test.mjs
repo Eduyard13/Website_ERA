@@ -10,7 +10,7 @@ import {imageSize} from '../scripts/image-size.mjs';
 
 const expected={
  'separatsiya-01':{power:[225,157.5],belts:6,tabs:2,dimensions:['17,75','11,75','208,56'],format:'A4'},
- 'separatsiya-02':{power:[402.67,281.87],belts:13,tabs:4,dimensions:['45','18','810'],format:'A0'},
+ 'separatsiya-02':{power:[405.2,283.64],belts:13,tabs:4,dimensions:['45','18','810'],format:'A0'},
  'separatsiya-03':{power:[639.77,447.84],belts:28,tabs:3,dimensions:['56,2','43,4','2 439,08'],format:'A0'},
  'moyka-plenki':{power:[1271.7,890.19],belts:15,tabs:4,dimensions:['68','33','2 244'],format:'A0'},
 };
@@ -51,10 +51,10 @@ test('Электрические ведомости совпадают с сум
   for(const {hours,kwh} of data.periods){
    assert.equal(kwh,cents(totals.calculated)*hours/100,slug);
    const display=hours===1?`${formatLineNumber(kwh,true)} кВт·ч`:`${formatLineNumber(kwh/1000,true)} МВт·ч`;
-   if(slug!=='separatsiya-01')assert.ok(specs.includes(`data-energy-hours="${hours}"`)&&specs.includes(display),slug);
+   if(!['separatsiya-01','separatsiya-02'].includes(slug))assert.ok(specs.includes(`data-energy-hours="${hours}"`)&&specs.includes(display),slug);
   }
   assert.equal((specs.match(/data-power-position="/g)||[]).length,data.rows.length,slug);
-  if(slug==='separatsiya-01')assert.match(specs,/data-base-output-hours="8760"><dt>За год<\/dt><dd>6 570 <small>т<\/small>/);
+  if(['separatsiya-01','separatsiya-02'].includes(slug))assert.match(specs,/data-base-output-hours="8760"><dt>За год<\/dt><dd>6 570 <small>т<\/small>/);
   else if(slug!=='moyka-plenki')assert.match(specs,/13 140<\/td><td>6 570<\/td>/);
  }
  assert.equal(linePowerData['separatsiya-03'].rows.find(row=>row.position===29).quantity,5);

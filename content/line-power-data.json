@@ -170,14 +170,14 @@
       ]
     },
     "separatsiya-02": {
-      "installed_kw": 402.67,
-      "calculated_kw": 281.87,
+      "installed_kw": 405.2,
+      "calculated_kw": 283.64,
       "load_factor": 0.7,
       "groups": {
         "equipment": {
           "quantity": 12,
-          "installed_kw": 356.17,
-          "calculated_kw": 249.32
+          "installed_kw": 358.7,
+          "calculated_kw": 251.09
         },
         "belt": {
           "quantity": 13,
@@ -188,19 +188,19 @@
       "periods": [
         {
           "hours": 1,
-          "kwh": 281.87
+          "kwh": 283.64
         },
         {
           "hours": 24,
-          "kwh": 6764.88
+          "kwh": 6807.36
         },
         {
           "hours": 720,
-          "kwh": 202946.4
+          "kwh": 204220.8
         },
         {
           "hours": 8760,
-          "kwh": 2469181.2
+          "kwh": 2484686.4
         }
       ],
       "rows": [
@@ -209,10 +209,10 @@
           "name": "Предварительный измельчитель",
           "quantity": 1,
           "group": "equipment",
-          "installed_unit_kw": 47.2,
-          "installed_total_kw": 47.2,
-          "calculated_unit_kw": 33.04,
-          "calculated_total_kw": 33.04
+          "installed_unit_kw": 47,
+          "installed_total_kw": 47,
+          "calculated_unit_kw": 32.9,
+          "calculated_total_kw": 32.9
         },
         {
           "position": 2,
@@ -239,10 +239,10 @@
           "name": "Сепаратор баллистический",
           "quantity": 1,
           "group": "equipment",
-          "installed_unit_kw": 24.9,
-          "installed_total_kw": 24.9,
-          "calculated_unit_kw": 17.43,
-          "calculated_total_kw": 17.43
+          "installed_unit_kw": 25,
+          "installed_total_kw": 25,
+          "calculated_unit_kw": 17.5,
+          "calculated_total_kw": 17.5
         },
         {
           "position": 5,
@@ -279,8 +279,8 @@
           "name": "Площадка сортировки плёнок",
           "quantity": 1,
           "group": "equipment",
-          "installed_unit_kw": 5.0,
-          "installed_total_kw": 5.0,
+          "installed_unit_kw": 5,
+          "installed_total_kw": 5,
           "calculated_unit_kw": 3.5,
           "calculated_total_kw": 3.5
         },
@@ -319,10 +319,10 @@
           "name": "Роторный Распушитель",
           "quantity": 1,
           "group": "equipment",
-          "installed_unit_kw": 123.9,
-          "installed_total_kw": 123.9,
-          "calculated_unit_kw": 86.73,
-          "calculated_total_kw": 86.73
+          "installed_unit_kw": 124,
+          "installed_total_kw": 124,
+          "calculated_unit_kw": 86.8,
+          "calculated_total_kw": 86.8
         },
         {
           "position": 16,
@@ -359,20 +359,20 @@
           "name": "Рама - наполнитель для биг-бэгов",
           "quantity": 1,
           "group": "equipment",
-          "installed_unit_kw": 0.37,
-          "installed_total_kw": 0.37,
-          "calculated_unit_kw": 0.26,
-          "calculated_total_kw": 0.26
+          "installed_unit_kw": 0.4,
+          "installed_total_kw": 0.4,
+          "calculated_unit_kw": 0.28,
+          "calculated_total_kw": 0.28
         },
         {
           "position": 20,
           "name": "Бункер-накопитель",
           "quantity": 5,
           "group": "equipment",
-          "installed_unit_kw": 25.5,
-          "installed_total_kw": 127.5,
-          "calculated_unit_kw": 17.85,
-          "calculated_total_kw": 89.25
+          "installed_unit_kw": 26,
+          "installed_total_kw": 130,
+          "calculated_unit_kw": 18.2,
+          "calculated_total_kw": 91
         },
         {
           "position": 22,
@@ -399,8 +399,8 @@
           "name": "Автоматический пресс",
           "quantity": 1,
           "group": "equipment",
-          "installed_unit_kw": 27.0,
-          "installed_total_kw": 27.0,
+          "installed_unit_kw": 27,
+          "installed_total_kw": 27,
           "calculated_unit_kw": 18.9,
           "calculated_total_kw": 18.9
         },

@@ -259,3 +259,15 @@ test('BASE production passport: one closed combined technical and power specific
  assert.doesNotMatch(page,/600–700 кг\/ч/);
  for(const slug of ['separatsiya-02','separatsiya-03','moyka-plenki'])assert.ok(!render('/catalog/lines/'+slug).includes('data-base-specs'));
 });
+
+test('PRO production passport uses updated 30-position specification and consistent 70% power calculation',()=>{
+ const page=render('/catalog/lines/separatsiya-02'),a=page.indexOf('id="specs"'),b=page.indexOf('</section>',a),block=page.slice(a,b);
+ assert.ok(block.includes('data-pro-specs')&&block.includes('Производственные характеристики'));
+ assert.deepEqual([...block.matchAll(/data-base-spec-kpi="([^"]+)"/g)].map(m=>m[1]),['input','output','power','gauge']);
+ assert.deepEqual([...block.matchAll(/data-pro-spec-position="([^"]+)"/g)].map(m=>Number(m[1])),Array.from({length:30},(_,i)=>i+1));
+ assert.equal((block.match(/<details\b/g)||[]).length,1);
+ for(const value of ['405,2 <small>кВт</small>','283,64 <small>кВт</small>','189,09 <small>кВт·ч/т</small>','378,19 <small>кВт·ч/т</small>','26 × 5 = 130','18,2 × 5 = 91','5–13 человек','2–10 · Сортировщиков','36 единиц','3–5%','61,4 м²','283,6 кВт','Установленная мощность, кВт','Потребляемая мощность, кВт'])assert.ok(block.includes(value),value);
+ assert.ok(block.includes('Итого по линии</th><td>36</td><td>405,2</td><td>283,64</td>'));
+ assert.doesNotMatch(block,/line-production-table|line-specs-layout|402,67|281,87/);
+ for(const slug of ['separatsiya-01','separatsiya-03','moyka-plenki'])assert.ok(!render('/catalog/lines/'+slug).includes('data-pro-specs'));
+});

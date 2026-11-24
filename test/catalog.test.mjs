@@ -72,7 +72,7 @@ test('Сравнение закрыто и включает только три 
  assert.equal((html.match(/data-line-comparison/g)||[]).length,1);
  assert.ok(!html.slice(0,html.indexOf('<summary>')).includes(' open'));
  assert.ok(html.includes('data-keep-open')&&html.includes('<caption>')&&html.includes('scope="col"')&&html.includes('scope="row"'));
- for(const value of ['225 кВт','402,67 кВт','157,5 кВт','281,87 кВт','5 × 4,7 м³','Дополнительная опция, по согласованию','Не входят в базовую комплектацию','Не входит в базовую комплектацию'])assert.ok(html.includes(value),value);
+ for(const value of ['225 кВт','405,2 кВт','157,5 кВт','283,64 кВт','5 × 4,7 м³','Дополнительная опция, по согласованию','Не входят в базовую комплектацию','Не входит в базовую комплектацию'])assert.ok(html.includes(value),value);
  assert.equal((html.match(/5 × 4,7 м³/g)||[]).length,2);
  assert.deepEqual([...html.matchAll(/data-comparison-line="([^"]+)"/g)].map(match=>match[1]),['separatsiya-01','separatsiya-02','separatsiya-03']);
  assert.ok(!html.includes('moyka-plenki'));

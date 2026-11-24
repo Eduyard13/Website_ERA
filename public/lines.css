@@ -801,3 +801,12 @@
 @media(max-width:850px){.film-line .base-spec-lower{grid-template-columns:1fr;gap:16px}}
 @media(max-width:560px){.film-line .base-spec-kpis{gap:8px}.film-line .base-spec-kpi{padding:12px}.film-line .base-spec-kpi>strong{font-size:clamp(23px,6.8vw,33px)}.film-line .base-spec-kpi h3{font-size:13px;overflow-wrap:anywhere}.film-line .base-spec-kpi p{font-size:12px}.film-line .base-spec-output dl{gap:8px}.film-line .base-spec-output dl>div{padding-left:9px}.film-line .base-spec-output dd{font-size:clamp(18px,5.4vw,33px)}.film-line .base-spec-output dt{font-size:12px}.film-line .base-spec-facts{grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px}.film-line .base-spec-facts>.base-spec-fact:nth-child(n+3){border-top:1px solid var(--bs-border)}.film-line .base-spec-summary-icon{width:43px;height:43px}.film-line .base-spec-summary-copy small{font-size:11px}.film-line .base-spec-energy-grid .base-spec-fact>strong{white-space:normal}}
 @media(prefers-reduced-motion:reduce){.film-line .base-specs .line-power-details>summary{transition:none}}
+
+/* PRO uses the same production passport as BASE, adding quantity and sorting. */
+.film-line [data-pro-specs] .pro-spec-table{min-width:850px}
+.film-line [data-pro-specs] .pro-spec-table thead th:nth-last-child(-n+2){white-space:normal;min-width:135px}
+.film-line [data-pro-specs] .pro-spec-table :is(th,td):nth-child(4){text-align:center}
+.film-line [data-pro-specs] .pro-staff-total{margin-top:16px}
+.film-line [data-pro-specs] .base-spec-staff-role:last-child{grid-column:1/-1}
+.film-line [data-pro-specs] .base-spec-kpi>strong{font-size:clamp(26px,3.05vw,48px)}
+@media(max-width:560px){.film-line [data-pro-specs] .base-spec-kpi>strong{font-size:clamp(22px,6.3vw,31px)}}

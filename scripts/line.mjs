@@ -1,16 +1,16 @@
+import {renderBaseSpecs} from './base-specs.mjs';
 import {renderDryKair} from './dry-kair.mjs';
 import {renderDryProductRoutes} from './dry-product-routes.mjs';
 import {renderDryProductCollage} from './dry-product-collage.mjs';
 import {siteContacts} from '../content/contact.mjs';
 import {nodes} from '../content/catalog.mjs';
-import {filmSeparationMedia as pictures,lineMetrics,lineRawMaterials,lineStages,lineUnits,linePositions,lineSpecs} from '../content/film-separation.mjs';
+import {filmSeparationMedia as pictures,lineMetrics,lineRawMaterials,lineStages,lineUnits,linePositions} from '../content/film-separation.mjs';
 import {mediaAttributes} from './media.mjs';
 import {pdfViewerDialog} from './documents.mjs';
 import {lineDocuments,lineDocumentCards} from './line-page-media.mjs';
 import {renderDrySeparationHero} from './dry-separation-hero.mjs';
 import {renderDrySeparationPurpose} from './dry-separation-purpose.mjs';
 import {renderDrySeparationRaw} from './dry-separation-raw.mjs';
-import {linePower,dryLineProduction} from './line-power.mjs';
 import {lineDimensions} from './line-dimensions.mjs';
 import {interactiveLineDiagram} from './line-diagram.mjs';
 import {renderDryArchitectureHeading} from './dry-line-architecture.mjs';
@@ -37,7 +37,6 @@ function unitCard([position,title,text,value,slug,key]){
 export function renderFilmSeparation(line){
  const email=`mailto:${siteContacts.email}?subject=`+encodeURIComponent(`Запрос ЭРА: ${line.title}`);
  const documents=lineDocuments(line);
- const staffing=line.cardMetrics.filter(m=>['Основной персонал','Сортировщики'].includes(m.label)).map(m=>[m.label,`${m.value} ${m.unit} · ${m.note}`]);
  const drawing=documents.find(d=>d.id==='separatsiya-02-dimensions-a0');
  return `<div class="film-line film-line--full">
 
@@ -66,11 +65,7 @@ export function renderFilmSeparation(line){
 
  <section class="section line-kair-section" data-page-progress-label="КАИР" id="kair">${renderDryKair()}</section>
 
- <section class="section" id="specs"><div class="line-section-heading"><div><p class="eyebrow">ПРОИЗВОДИТЕЛЬНОСТЬ И РЕСУРСЫ</p><h2>Параметры<br>представленной комплектации.</h2></div><p>Входной поток учитывает плёнку вместе с загрязнениями. Выпуск очищенного продукта и энергозатраты приведены для принятого в ТО рабочего режима.</p></div>
-  <div class="line-specs-layout"><div class="table-wrap"><table class="line-spec-table"><caption>Основные показатели линии</caption><tbody>${rows([...lineSpecs,...staffing])}</tbody></table></div><aside class="line-output-panel era-indigo-surface"><p class="eyebrow">РАБОТА 24/7</p><h3>Выпуск очищенной плёнки</h3><dl><div><dt>За сутки / 24 часа</dt><dd>18 <small>т</small></dd></div><div><dt>За месяц / 30 суток</dt><dd>540 <small>т</small></dd></div><div><dt>За год / 365 суток</dt><dd>6 570 <small>т</small></dd></div></dl><p>Расчёт при 750 кг/ч и непрерывной работе, без вычета остановок. Фактический выпуск зависит от сырья, доступности оборудования и организации смен.</p></aside></div>
-  ${linePower(line,{note:'Пневмотранспорт учтён один раз в мощности пяти бункеров: по 25,5 кВт на единицу. Пусковые режимы, вентиляцию и инфраструктуру учитывают в проекте электроснабжения.'})}
-  ${dryLineProduction(line)}
- </section>
+ <section class="section" id="specs">${renderBaseSpecs(line)}</section>
 
  <section class="section" id="placement"><div class="line-section-heading"><div><p class="eyebrow">ГАБАРИТЫ И РАЗМЕЩЕНИЕ</p><h2>Компоновка под цех.<br>Точность в каждом размере.</h2></div><p>Для площадки заказчика выполняется проектная привязка: расстановка узлов, подключения, проезды погрузчиков и доступ для обслуживания.</p></div>
  ${lineDimensions(drawing)}
@@ -85,7 +80,7 @@ export function renderFilmSeparation(line){
 
  <section class="section line-soft" id="equipment"><div class="line-section-heading"><div><p class="eyebrow">ОБОРУДОВАНИЕ В СОСТАВЕ ЛИНИИ</p><h2>Изучите каждый узел.</h2></div><p>Назначение, рабочие показатели и прямые переходы на страницы машин представленной комплектации.</p></div>
   <div class="line-unit-grid">${lineUnits.map(unitCard).join('')}</div>
-  <aside class="line-option"><div><p class="eyebrow">ДОПОЛНИТЕЛЬНЫЙ МОДУЛЬ</p><h3>Предварительный распушитель</h3><p>Устанавливается между измельчителем и баллистикой. Разрыхляет комки и разделяет слои, улучшая освобождение включений и сохранение полезной плёнки.</p></div><div><strong>37 кВт</strong><p>Учитываются дополнительно к 402,67 кВт представленной комплектации.</p><a class="text-link" href="/catalog/equipment/predvaritelnyy-raspushitel">Подробнее об узле ↗</a></div></aside>
+  <aside class="line-option"><div><p class="eyebrow">ДОПОЛНИТЕЛЬНЫЙ МОДУЛЬ</p><h3>Предварительный распушитель</h3><p>Устанавливается между измельчителем и баллистикой. Разрыхляет комки и разделяет слои, улучшая освобождение включений и сохранение полезной плёнки.</p></div><div><strong>37 кВт</strong><p>Учитываются дополнительно к 405,2 кВт представленной комплектации.</p><a class="text-link" href="/catalog/equipment/predvaritelnyy-raspushitel">Подробнее об узле ↗</a></div></aside>
  </section>
  <script type="application/json" id="line-document-data">${JSON.stringify(documents).replaceAll('<','\\u003c')}</script>${pdfViewerDialog()}
  </div>`;
