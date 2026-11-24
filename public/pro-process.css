@@ -218,3 +218,7 @@
  .film-line--full #process .pro-flow-waste>div{flex:1;min-width:0}
  .film-line--full #process .pro-flow-waste span{overflow-wrap:anywhere}
 }
+
+@media(max-width:560px){
+ .film-line--full #process .pro-flow-waste h4{overflow-wrap:anywhere;word-break:normal}
+}
