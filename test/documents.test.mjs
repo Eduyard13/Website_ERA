@@ -27,7 +27,7 @@ test('Исходный A0 зарегистрирован у комплектац
 });
 test('Полная линия сохраняет показатели, один fit-монитор и новый порядок разделов с тремя документами',async()=>{
  const page=render('/catalog/lines/separatsiya-02');
- const ids=['purpose','raw-materials','composition','process','quality','specs','equipment','placement','kair','photos','documents'];
+ const ids=['purpose','raw-materials','composition','process','quality','kair','specs','placement','photos','documents','request','equipment'];
  let previous=-1;
  for(const id of ids){const index=page.indexOf(`id="${id}"`);assert.ok(index>previous,id);previous=index;}
  const nav=page.match(/<nav class="anchor-nav line-anchor-nav"[^>]*>(.*?)<\/nav>/s)[1];
