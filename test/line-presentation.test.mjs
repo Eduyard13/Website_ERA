@@ -14,7 +14,7 @@ import miniMask from '../content/separatsiya-01-occupancy.json' with {type:'json
 
 test('Мини-линия сохраняет свои исходники, 11 точных выносок, 13 позиций и синюю каталожную заставку',async()=>{
  const page=render('/catalog/lines/separatsiya-01');
- const ids=['purpose','raw-materials','composition','process','quality','specs','equipment','placement','kair','photos','documents'];
+ const ids=['purpose','raw-materials','composition','process','quality','kair','specs','placement','photos','documents','request','equipment'];
  const order=ids.map(id=>page.indexOf(`id="${id}"`));
  assert.ok(order.every((position,index)=>position>=0&&(!index||position>order[index-1])));
  assert.deepEqual([...page.match(/<nav class="anchor-nav line-anchor-nav"[^>]*>(.*?)<\/nav>/s)[1].matchAll(/href="#([^"]+)"/g)].map(m=>m[1]),ids);
@@ -115,7 +115,7 @@ test('Полная схема использует прозрачную моде
 
 test('Шесть компактных карточек сохраняют данные и ссылки, используя точные изображения каталога',()=>{
  const page=render('/catalog/lines/separatsiya-02');
- const section=page.slice(page.indexOf('id="equipment"'),page.indexOf('class="section contact line-request"'));
+ const start=page.indexOf('id="equipment"');const section=page.slice(start,page.indexOf('</section>',start));
  const cards=[...section.matchAll(/<article class="line-unit-card[^>]*>([\s\S]*?)<\/article>/g)];assert.equal(cards.length,lineUnits.length);
  lineUnits.forEach(([position,title,text,value,slug,key],i)=>{
   const card=cards[i][0];for(const expected of [`Поз. ${position}`,title,text,value])assert.ok(card.includes(expected),expected);
@@ -170,7 +170,7 @@ test('BASE, PRO and PREMIUM share exactly the same four full-source dry product 
  const photos=['lines/separatsiya-01-mini/before.webp','lines/separatsiya-01-mini/after.webp','lines/separatsiya-03/product-before.webp','lines/separatsiya-03/product-after.webp'];
  let common;
  for(const slug of ['separatsiya-01','separatsiya-02','separatsiya-03']){
-  const page=render('/catalog/lines/'+slug),part=page.slice(page.indexOf('id="quality"'),page.indexOf('id="specs"'));
+  const page=render('/catalog/lines/'+slug),part=page.slice(page.indexOf('id="quality"'),page.indexOf('id="kair"'));
   const block=part.slice(part.indexOf('<div class="dry-product-showcase"'),part.indexOf('<p class="dry-product-model-note"'));
   assert.ok(block.includes('data-dry-product-showcase'),slug);
   assert.equal((block.match(/data-dry-product-pair="/g)||[]).length,2);

@@ -101,3 +101,15 @@ test('У каждой линии три документа и полные пр�
  assert.match(section(separation,'specs'),/5–13 человек/);
  assert.match(separation.match(/<section[^>]* class="[^"]*line-hero[^"]*"[\s\S]*?<\/section>/)[0],/data-pdf-open="separatsiya-03-technical"/);
 });
+
+test('Все четыре линии: единая утверждённая последовательность разделов и навигации',()=>{
+ const expected=['purpose','raw-materials','composition','process','quality','kair','specs','placement','photos','documents','request','equipment'];
+ for(const slug of Object.keys({"separatsiya-01":1,"separatsiya-02":1,"separatsiya-03":1,"moyka-plenki":1})){
+  const html=render('/catalog/lines/'+slug);
+  const order=[...html.matchAll(/<section\b[^>]*\bid="([^"]+)"[^>]*>/g)].map(m=>m[1]).filter(id=>expected.includes(id));
+  assert.deepEqual(order,expected,slug+' DOM order');
+  const nav=html.match(/<nav class="anchor-nav line-anchor-nav"[^>]*>(.*?)<\/nav>/s)[1];
+  assert.deepEqual([...nav.matchAll(/href="#([^"]+)"/g)].map(m=>m[1]),expected,slug+' navigation order');
+  assert.equal((html.match(/<section class="section contact line-request" id="request">/g)||[]).length,1,slug);
+ }
+});

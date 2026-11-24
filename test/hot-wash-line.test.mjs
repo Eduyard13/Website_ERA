@@ -89,7 +89,7 @@ test('Монитор связывает 44 номера и 47 ветвей вы�
 });
 test('Новая страница использует общий fit-монитор, документы и порядок секций эталона',()=>{
  const html=render(line.path);
- const ids=['purpose','raw-materials','composition','process','quality','specs','equipment','placement','kair','photos','documents'];
+ const ids=['purpose','raw-materials','composition','process','quality','kair','specs','placement','photos','documents','request','equipment'];
  const nav=html.match(/<nav class="anchor-nav line-anchor-nav"[^>]*>(.*?)<\/nav>/s)[1];
  assert.deepEqual([...nav.matchAll(/href="#([^"]+)"/g)].map(m=>m[1]),ids);
  const offsets=ids.map(id=>html.indexOf(`id="${id}"`));assert.ok(offsets.every((n,i)=>n>0&&(!i||n>offsets[i-1])));

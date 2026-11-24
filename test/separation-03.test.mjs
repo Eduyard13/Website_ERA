@@ -85,7 +85,7 @@ test('Один монитор содержит 37 позиций и все 42 т
  assert.ok(d.parts.find(p=>p.number===37).callouts[1].tooltipDescription.includes('Выдача тюков'));
 });
 test('Детальная страница повторяет порядок эталона и содержит настоящий PDF, схемы, спецификацию и CTA',()=>{
- const html=render(line.path);const ids=['purpose','raw-materials','composition','process','quality','specs','equipment','placement','kair','photos','documents'];
+ const html=render(line.path);const ids=['purpose','raw-materials','composition','process','quality','kair','specs','placement','photos','documents','request','equipment'];
  const offsets=ids.map(id=>html.indexOf(`id="${id}"`));assert.ok(offsets.every(i=>i>0));assert.deepEqual(offsets,[...offsets].sort((a,b)=>a-b));
  assert.equal((html.match(/data-diagram-mode="fit"/g)||[]).length,1);assert.equal((html.match(/data-part-guide="/g)||[]).length,42);
  assert.equal((html.match(/data-callout="/g)||[]).length,42);assert.equal((html.match(/data-separation03-position="/g)||[]).length,0);
