@@ -56,10 +56,11 @@ test('Все четыре проекции имеют происхождение
   const source=manifest.views.find(e=>e.id===v.id);assert.deepEqual(v.clipPt,source.clipPt);
   assert.ok(v.width>=3200);assert.ok(v.height>600);
   const bytes=await readFile('public/assets/'+v.file);assert.equal(bytes.length,v.bytes);assert.equal(createHash('sha256').update(bytes).digest('hex'),v.sha256);
-  assert.ok(page.includes(`src="${basePath}/assets/${v.file}"`));assert.ok(page.includes(`data-dimension-tab="${v.id}"`));
+  assert.ok(page.includes(`data-engineering-src="${basePath}/assets/${v.file}"`));assert.ok(page.includes(`data-dimension-tab="${v.id}"`));
  }
- assert.ok(page.includes('id="dimension-tab-top" aria-controls="dimension-view-top" aria-selected="true"'));
- assert.ok(page.includes('Точная привязка выполняется под площадку заказчика.'));
+ const top=page.match(/<button[^>]*id="dimension-tab-top"[^>]*>/s)?.[0];
+ assert.ok(top?.includes('aria-controls="pro-engineering-stage"')&&top.includes('aria-pressed="true"'));
+ assert.ok(page.includes('Складские запасы, проезды, безопасные зоны и коммуникации учитывают при проектной привязке.'));
 });
 test('Единая библиотека регистрирует все оригинальные PDF без дубликатов и с проверенными обложками',async()=>{
  const result=await validateDocumentLibrary();assert.equal(result.publicCount,publicLibraryDocuments.length);assert.ok(result.publicCount>=27);assert.deepEqual(result.unregistered,[]);

@@ -147,18 +147,18 @@ with sync_playwright() as p:
   assert expand.evaluate('(e)=>document.activeElement===e')
   assert page.locator('body').evaluate('(e)=>getComputedStyle(e).overflow')!='hidden'
   # A0 tabs switch actual source projections and support keyboard navigation.
-  tabs=page.locator('[data-dimension-tab]');stage=page.locator('.line-dimensions-stage');stage_height=stage.bounding_box()['height']
-  for i,view in enumerate(['top','side-1','side-2','sheet']):
+  page.locator('[data-engineering-tab=drawings]').click()
+  stage=page.locator('#pro-engineering-stage');stage_height=stage.bounding_box()['height']
+  for view in ['top','side-1','side-2','sheet']:
    page.locator('[data-dimension-tab='+view+']').click()
-   panel=page.locator('#dimension-view-'+view);assert panel.is_visible()
-   assert page.locator('[role=tabpanel]:visible').count()==1
-   panel.locator('img').wait_for();panel.locator('img').evaluate('(e)=>e.decode()')
-   assert panel.locator('img').evaluate('(e)=>e.naturalWidth>=3200&&getComputedStyle(e).objectFit==="contain"')
+   assert page.locator('#placement [role=tabpanel]:visible').count()==1
+   image=stage.locator('[data-engineering-loaded-view='+view+']');image.wait_for();image.evaluate('(e)=>e.decode()')
+   assert image.evaluate('(e)=>e.naturalWidth>=3200&&getComputedStyle(e).objectFit==="contain"')
    assert stage.bounding_box()['height']==stage_height
-  page.locator('[data-dimension-tab=sheet]').press('Home');assert page.locator('[data-dimension-tab=top]').get_attribute('aria-selected')=='true'
-  page.keyboard.press('ArrowRight');assert page.locator('[data-dimension-tab=side-1]').get_attribute('aria-selected')=='true'
+  page.locator('[data-dimension-tab=sheet]').press('Home');assert page.locator('[data-dimension-tab=top]').get_attribute('aria-pressed')=='true'
+  page.keyboard.press('ArrowRight');assert page.locator('[data-dimension-tab=side-1]').get_attribute('aria-pressed')=='true'
   # Existing shared PDF viewer: a real A0 page, zoom, fit, SHA-checked download, focus and Escape.
-  opener=page.locator('.line-dimensions-actions [data-pdf-open]');opener.click()
+  opener=page.locator('#placement .pec-document-actions [data-pdf-open]');opener.click()
   page.wait_for_function('document.querySelector("[data-pdf-status]").textContent==="Страница 1 из 1"',timeout=30000)
   pdf=page.locator('#pdf-viewer');assert pdf.locator('[data-pdf-next]').is_disabled()
   assert pdf.locator('[data-pdf-canvas]').evaluate('(e)=>e.getBoundingClientRect().width<=document.querySelector("[data-pdf-stage]").clientWidth')
@@ -196,9 +196,9 @@ with sync_playwright() as p:
  context.close()
  # No-JS PDF fallbacks remain genuine links and downloads.
  context=browser.new_context(java_script_enabled=False,viewport={'width':390,'height':844});page=context.new_page();page.goto(base+'/catalog/lines/separatsiya-02/')
- assert page.locator('#dimension-view-top').is_visible()
+ assert page.locator('#pro-engineering-stage [data-engineering-loaded-view=v01]').is_visible()
  assert page.locator('#documents [download]').count()==3
- assert page.locator('.line-dimensions-actions [download]').get_attribute('href').endswith('/drawings/era-separatsiya-02-dimensions-a0.pdf')
+ assert page.locator('#placement .pec-no-script [download]').get_attribute('href').endswith('/drawings/era-separatsiya-02-dimensions-a0.pdf')
  context.close();browser.close()
 assert not errors,errors
 assert not failures,failures

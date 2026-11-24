@@ -1,0 +1,663 @@
+{
+  "schemaVersion": 1,
+  "source": "ЛСП Фрагменты.zip",
+  "processing": "PDF rendered at 4500 px longest page edge; outer whitespace cropped; original geometry/colors retained; lossless WebP; opaque white background retained.",
+  "views": [
+    {
+      "id": "v01",
+      "source": "source-pdf/v01.pdf",
+      "originalName": "В1.PDF",
+      "sourceSha256": "52ab409f2cec9b0af2fc5fe8b1abf81c007b2344df03795ee53225fcdb189382",
+      "page": 1,
+      "group": "overview",
+      "title": "Размещение линии в цехе",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        215,
+        157,
+        4306,
+        3037
+      ],
+      "full": {
+        "file": "views/v01-full.webp",
+        "width": 4091,
+        "height": 2880,
+        "bytes": 1880010,
+        "sha256": "19e7d38e9d166907736201210688b68c8c861c1d5f9b3c48f22515745153b959"
+      },
+      "display": {
+        "file": "views/v01-display.webp",
+        "width": 2200,
+        "height": 1549,
+        "bytes": 1081516,
+        "sha256": "3a6febc532baf2d269224b2b09d9e8cd3f1ad0fcda7c35c9c5cb96969185976f"
+      },
+      "thumb": {
+        "file": "views/v01-thumb.webp",
+        "width": 400,
+        "height": 282,
+        "bytes": 71248,
+        "sha256": "6cbdc84b9abf78796d33a66547e2b20ea99228d317337368d302be43802f0ff8"
+      },
+      "shortLabel": "В цехе"
+    },
+    {
+      "id": "v02",
+      "source": "source-pdf/v02.pdf",
+      "originalName": "В2.PDF",
+      "sourceSha256": "8a250f43c4eb66d25f458c2080d2b73bdf750a3a79de620c949eec17face5099",
+      "page": 1,
+      "group": "overview",
+      "title": "Общий ракурс 1 — со стороны загрузки",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        590,
+        290,
+        4167,
+        2710
+      ],
+      "full": {
+        "file": "views/v02-full.webp",
+        "width": 3577,
+        "height": 2420,
+        "bytes": 1564630,
+        "sha256": "88ae6a229d0623b9840fb06519dc23b780af551d0c1bc2654ae68f2526ddb1d4"
+      },
+      "display": {
+        "file": "views/v02-display.webp",
+        "width": 2200,
+        "height": 1488,
+        "bytes": 1142854,
+        "sha256": "01b1d7d09af07914f5570208ffe03867f98f084a0422ef86f8985e3d505acd16"
+      },
+      "thumb": {
+        "file": "views/v02-thumb.webp",
+        "width": 400,
+        "height": 271,
+        "bytes": 72424,
+        "sha256": "8f90555d02ab5debb91f49357f21a5166c9a7ff8a4b9738ed117736155da3ff7"
+      },
+      "shortLabel": "Ракурс 1"
+    },
+    {
+      "id": "v03",
+      "source": "source-pdf/v03.pdf",
+      "originalName": "В3.PDF",
+      "sourceSha256": "bc4205cf6bdad7a05785a09517f0478830f966ddd3c791922db71ea2306dc68b",
+      "page": 1,
+      "group": "overview",
+      "title": "Общий ракурс 2 — со стороны выдачи",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        241,
+        262,
+        4339,
+        3103
+      ],
+      "full": {
+        "file": "views/v03-full.webp",
+        "width": 4098,
+        "height": 2841,
+        "bytes": 2120184,
+        "sha256": "652082d0b1170fecbc6e7b88201419e337305b87cb2707a4249609836582e41a"
+      },
+      "display": {
+        "file": "views/v03-display.webp",
+        "width": 2200,
+        "height": 1525,
+        "bytes": 1159338,
+        "sha256": "6b62379085ce472badce21a1c48c8cb972e54420a2e749c5c61396d9d610e234"
+      },
+      "thumb": {
+        "file": "views/v03-thumb.webp",
+        "width": 400,
+        "height": 277,
+        "bytes": 70934,
+        "sha256": "cdff48db9587f83c2da27afe3517c096a67bf22e7a6cbca98bd45e4f7cc7ac92"
+      },
+      "shortLabel": "Ракурс 2"
+    },
+    {
+      "id": "v04",
+      "source": "source-pdf/v04.pdf",
+      "originalName": "В4.PDF",
+      "sourceSha256": "947c9858e56400ba485e8b714c90f28659a05c636f1fcd98bd1015ea54c222aa",
+      "page": 1,
+      "group": "overview",
+      "title": "Общий ракурс 3 — сортировка и накопление",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        83,
+        183,
+        4442,
+        2988
+      ],
+      "full": {
+        "file": "views/v04-full.webp",
+        "width": 4359,
+        "height": 2805,
+        "bytes": 2138216,
+        "sha256": "a6b73297478cbfa17396babba0a7c9b05d527e868aaea84d6f4561a05c63af02"
+      },
+      "display": {
+        "file": "views/v04-display.webp",
+        "width": 2200,
+        "height": 1416,
+        "bytes": 1162228,
+        "sha256": "0ce4e0dd7e2205e0d5a6f4e87f36750a8abcbd53f0239caffea7a59336d1e35c"
+      },
+      "thumb": {
+        "file": "views/v04-thumb.webp",
+        "width": 400,
+        "height": 257,
+        "bytes": 75582,
+        "sha256": "14d9372e308062976a74c0b5fb9208e0667e887149a658392a6d67af84c64df3"
+      },
+      "shortLabel": "Ракурс 3"
+    },
+    {
+      "id": "v14",
+      "source": "source-pdf/v14.pdf",
+      "originalName": "В14.PDF",
+      "sourceSha256": "6237e596f7e1b62a01a27814689a85fc9ea7eb84bfeb2bc0595c583424732036",
+      "page": 1,
+      "group": "overview",
+      "title": "Общий ракурс 4 — противоположная сторона",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        468,
+        284,
+        4187,
+        2667
+      ],
+      "full": {
+        "file": "views/v14-full.webp",
+        "width": 3719,
+        "height": 2383,
+        "bytes": 1661132,
+        "sha256": "8c131c8e0ccdd56c7c94f022ec9dc738784f104de8b0c0d0961f2c093b4f4a8f"
+      },
+      "display": {
+        "file": "views/v14-display.webp",
+        "width": 2200,
+        "height": 1410,
+        "bytes": 1116860,
+        "sha256": "3a3b106b2917f496d5d851feac249ec1bcf76409ab7517bc954a79e88a464584"
+      },
+      "thumb": {
+        "file": "views/v14-thumb.webp",
+        "width": 400,
+        "height": 256,
+        "bytes": 66596,
+        "sha256": "965acdc17311df18586b06c5a90f58d436902550021e5901d1a8d7a711396aa1"
+      },
+      "shortLabel": "Ракурс 4"
+    },
+    {
+      "id": "v05",
+      "source": "source-pdf/v05.pdf",
+      "originalName": "В5.PDF",
+      "sourceSha256": "4bdeda2c1ba1f7ba6cf7bda86835b874a8f84641709559c8697dd4c0780859ce",
+      "page": 1,
+      "group": "overview",
+      "title": "Вид сверху",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        160,
+        946,
+        4214,
+        2477
+      ],
+      "full": {
+        "file": "views/v05-full.webp",
+        "width": 4054,
+        "height": 1531,
+        "bytes": 509730,
+        "sha256": "11cb778a5b47d100451280696619d33965ec06745742d9d4e1c88aadc1ecc9bf"
+      },
+      "display": {
+        "file": "views/v05-display.webp",
+        "width": 2200,
+        "height": 831,
+        "bytes": 326226,
+        "sha256": "7f2645ea6c3fde364c4b8999b46f0e9ec2e719a691f82478e0e1546ba821b063"
+      },
+      "thumb": {
+        "file": "views/v05-thumb.webp",
+        "width": 400,
+        "height": 151,
+        "bytes": 35626,
+        "sha256": "b2056fcdd5df96d05806c68405969f7ebbe0e015e80e01c70d42da4087fa1209"
+      },
+      "shortLabel": "Сверху"
+    },
+    {
+      "id": "v06",
+      "source": "source-pdf/v06.pdf",
+      "originalName": "В6.PDF",
+      "sourceSha256": "eb1b8b9c6b8ee3cbaecac836c2ff9b6a66df50155d1dc4479354ab7558b70150",
+      "page": 1,
+      "group": "overview",
+      "title": "Боковой вид 1",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        274,
+        988,
+        4326,
+        1764
+      ],
+      "full": {
+        "file": "views/v06-full.webp",
+        "width": 4052,
+        "height": 776,
+        "bytes": 605592,
+        "sha256": "16af3b5b8ae7d3c21fb36fd6df699984ce37dc6b5f3edcf9f86950472f16641a"
+      },
+      "display": {
+        "file": "views/v06-display.webp",
+        "width": 2200,
+        "height": 421,
+        "bytes": 319714,
+        "sha256": "b6b758abe3eb847403143605c1f5bfd1e83afaf52c8d6de25f4207e5acb24bc2"
+      },
+      "thumb": {
+        "file": "views/v06-thumb.webp",
+        "width": 400,
+        "height": 77,
+        "bytes": 26810,
+        "sha256": "17cdf3b7079dabc346cb58bb729912c11efcf1480bce315174bb19438129615d"
+      },
+      "shortLabel": "Сбоку 1"
+    },
+    {
+      "id": "v07",
+      "source": "source-pdf/v07.pdf",
+      "originalName": "В7.PDF",
+      "sourceSha256": "b20067f1abcae6f3a707a7f2e2cc1642374ad91846c7d8fa19abba3d72616ea3",
+      "page": 1,
+      "group": "overview",
+      "title": "Боковой вид 2",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        143,
+        1032,
+        4196,
+        1807
+      ],
+      "full": {
+        "file": "views/v07-full.webp",
+        "width": 4053,
+        "height": 775,
+        "bytes": 579634,
+        "sha256": "88340147a8ac3b10dd2aae0f088e409f9aae19b948cba6332acb0de9ab079014"
+      },
+      "display": {
+        "file": "views/v07-display.webp",
+        "width": 2200,
+        "height": 421,
+        "bytes": 302806,
+        "sha256": "eea29c7106c21d45a52dba9f6b493537fe71155d9c3ae4e33167d9b02d8faf73"
+      },
+      "thumb": {
+        "file": "views/v07-thumb.webp",
+        "width": 400,
+        "height": 76,
+        "bytes": 26652,
+        "sha256": "fbaddd390d9ba1d4ba9e9f60882bab955b0120f363a2d76377c8fb77af29dfaf"
+      },
+      "shortLabel": "Сбоку 2"
+    },
+    {
+      "id": "v08",
+      "source": "source-pdf/v08.pdf",
+      "originalName": "В8.PDF",
+      "sourceSha256": "4d884eeb7b03917de51cf4f383bc1093e63ace65ba4062b6dcb3cda635ccc736",
+      "page": 1,
+      "group": "overview",
+      "title": "Торцевой вид — зона выдачи",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        731,
+        610,
+        3676,
+        2049
+      ],
+      "full": {
+        "file": "views/v08-full.webp",
+        "width": 2945,
+        "height": 1439,
+        "bytes": 632274,
+        "sha256": "227db829af16fd200ba93c05c1f8a19686ffbc2dd0cfc4d2eac5a9058d70f032"
+      },
+      "display": {
+        "file": "views/v08-display.webp",
+        "width": 2200,
+        "height": 1075,
+        "bytes": 508530,
+        "sha256": "7edfa2c239f19bd9ff5c771c1851c3e7a1a2fcc9bbaf6c3d2c6d8725eade8dea"
+      },
+      "thumb": {
+        "file": "views/v08-thumb.webp",
+        "width": 400,
+        "height": 195,
+        "bytes": 42696,
+        "sha256": "39ee1c8c0a01256eb0e640f7a5faa7d113db7dbc0a808e5abe749f6aff24a9a4"
+      },
+      "shortLabel": "Выдача"
+    },
+    {
+      "id": "v09",
+      "source": "source-pdf/v09.pdf",
+      "originalName": "В9.PDF",
+      "sourceSha256": "a8e412cb7e163f229bc91d9a65401a3df9f17034a90af839b6b84523b522b41c",
+      "page": 1,
+      "group": "overview",
+      "title": "Торцевой вид — зона загрузки",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        733,
+        806,
+        3678,
+        2244
+      ],
+      "full": {
+        "file": "views/v09-full.webp",
+        "width": 2945,
+        "height": 1438,
+        "bytes": 724102,
+        "sha256": "970e57a930948df6b7d7b97ad05c4b698b0d081d159529421015b72543693102"
+      },
+      "display": {
+        "file": "views/v09-display.webp",
+        "width": 2200,
+        "height": 1074,
+        "bytes": 591118,
+        "sha256": "aa39819ee26f92115f8c021f9a24c48506fa161426a0424445f26b4888575c9c"
+      },
+      "thumb": {
+        "file": "views/v09-thumb.webp",
+        "width": 400,
+        "height": 195,
+        "bytes": 51826,
+        "sha256": "9a0405c2bfc0f5cdaeeed8421515798a77c6662bd809940e40fee20815fb9704"
+      },
+      "shortLabel": "Загрузка"
+    },
+    {
+      "id": "v10",
+      "source": "source-pdf/v10.pdf",
+      "originalName": "В10.PDF",
+      "sourceSha256": "0bebc5317c3d5d47dae1b21a40e4cb2250f0213d2cb99a9a44d2402881c799ac",
+      "page": 1,
+      "group": "detail",
+      "title": "Роторный распушитель и воздушный контур",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        1085,
+        490,
+        3977,
+        2963
+      ],
+      "full": {
+        "file": "views/v10-full.webp",
+        "width": 2892,
+        "height": 2473,
+        "bytes": 1490890,
+        "sha256": "eed509e1d3b5fe90e1a8ac7bf573519b05229db1870b9753f6ac01ee1a734205"
+      },
+      "display": {
+        "file": "views/v10-display.webp",
+        "width": 2200,
+        "height": 1881,
+        "bytes": 1653784,
+        "sha256": "cd21a330ddfd97909a603d56a1b6e40d13b895c43fabd449c098231b081d5aa9"
+      },
+      "thumb": {
+        "file": "views/v10-thumb.webp",
+        "width": 400,
+        "height": 342,
+        "bytes": 132812,
+        "sha256": "049a470be9de9ad31e41a1422f4ecf88037a9d8e1152d455ebf9b0d9c4645995"
+      },
+      "shortLabel": "Распушитель"
+    },
+    {
+      "id": "v11",
+      "source": "source-pdf/v11.pdf",
+      "originalName": "В11.PDF",
+      "sourceSha256": "14b4ece8fb56f51604cb33ee41f9beb4a6018d2b29004c67033d592ea2a6d5e0",
+      "page": 1,
+      "group": "detail",
+      "title": "Изолированный сортировочный бокс",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        538,
+        346,
+        4164,
+        2895
+      ],
+      "full": {
+        "file": "views/v11-full.webp",
+        "width": 3626,
+        "height": 2549,
+        "bytes": 2133742,
+        "sha256": "ef4f8c10780bd5853a96d08b207524980b8c0a4a1fcc1a1000b89d092a84d0ad"
+      },
+      "display": {
+        "file": "views/v11-display.webp",
+        "width": 2200,
+        "height": 1547,
+        "bytes": 1734946,
+        "sha256": "377d5d6f08990f1bc423fb978d6645a62335adace90dbbbe0ba128e5df759550"
+      },
+      "thumb": {
+        "file": "views/v11-thumb.webp",
+        "width": 400,
+        "height": 281,
+        "bytes": 121468,
+        "sha256": "16d777045d2f6be6dc66db8785899295b0feb2f6d91f0b0d57963a84aca2ea49"
+      },
+      "shortLabel": "Сортировочный бокс"
+    },
+    {
+      "id": "v12",
+      "source": "source-pdf/v12.pdf",
+      "originalName": "В12.PDF",
+      "sourceSha256": "b3ea65215e95fbcb0b61f0cf3a0a9a99180d3f96f82f82e570c53fd52734ab58",
+      "page": 1,
+      "group": "detail",
+      "title": "Воздушная система роторного распушителя",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        971,
+        634,
+        3768,
+        2735
+      ],
+      "full": {
+        "file": "views/v12-full.webp",
+        "width": 2797,
+        "height": 2101,
+        "bytes": 1243916,
+        "sha256": "0f44757244f6d72e1856fcb4998cae948099099bdedcce5b6cfb3f20215f3ee5"
+      },
+      "display": {
+        "file": "views/v12-display.webp",
+        "width": 2200,
+        "height": 1653,
+        "bytes": 1503418,
+        "sha256": "5568e1f85cab092065e9c1e217351afa0b68a7b96c4e269dad806f84b4fd68ee"
+      },
+      "thumb": {
+        "file": "views/v12-thumb.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 123608,
+        "sha256": "4dfa1aefafdd246b4f5f908b6f7752ef77d6d008de895fc420e3ab8a861cb2eb"
+      },
+      "shortLabel": "Воздушный контур"
+    },
+    {
+      "id": "v13",
+      "source": "source-pdf/v13.pdf",
+      "originalName": "В13.PDF",
+      "sourceSha256": "c145c14128c5a14ca0e95c43a8d40ae0d8e51c72f4d208008921fb6f73a808f4",
+      "page": 1,
+      "group": "detail",
+      "title": "Пневмотранспорт и бункеры-накопители",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        388,
+        285,
+        4209,
+        3091
+      ],
+      "full": {
+        "file": "views/v13-full.webp",
+        "width": 3821,
+        "height": 2806,
+        "bytes": 2003514,
+        "sha256": "2a2d5606cc9b07a9c050fe9ed1d9f5b117048dd096dea17f8dfbe6b8e769a0b2"
+      },
+      "display": {
+        "file": "views/v13-display.webp",
+        "width": 2200,
+        "height": 1616,
+        "bytes": 1612042,
+        "sha256": "2ee6546f93fa973b56bef850a585235109d5800e7119a3a0bfcb83837a71fc81"
+      },
+      "thumb": {
+        "file": "views/v13-thumb.webp",
+        "width": 400,
+        "height": 294,
+        "bytes": 123340,
+        "sha256": "5c6a01c319503bfa7b1975a66df35432e52d51cb033d9c9d57dd357aa30e2aa4"
+      },
+      "shortLabel": "Бункеры"
+    },
+    {
+      "id": "v15",
+      "source": "source-pdf/v15.pdf",
+      "originalName": "В15.PDF",
+      "sourceSha256": "81960851cf9d6e275d6b7fd06537e3a53a83faedefe3a5090c927f0c57fd77df",
+      "page": 1,
+      "group": "detail",
+      "title": "Баллистический сепаратор и сортировка",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        175,
+        233,
+        4196,
+        3047
+      ],
+      "full": {
+        "file": "views/v15-full.webp",
+        "width": 4021,
+        "height": 2814,
+        "bytes": 2688804,
+        "sha256": "70d4ab452d972226fc9e6dfa013348e34aeae7f0f706910d9ec6b7ea7c43e4de"
+      },
+      "display": {
+        "file": "views/v15-display.webp",
+        "width": 2200,
+        "height": 1540,
+        "bytes": 1730804,
+        "sha256": "4594e706d848451bf765f83981a2dfc33d6d934948d0a419992f81955f812e8b"
+      },
+      "thumb": {
+        "file": "views/v15-thumb.webp",
+        "width": 400,
+        "height": 280,
+        "bytes": 114264,
+        "sha256": "19850f8b4a9eb99344eeb01fd12cd873f5322993c73491ce939979fc30cd59da"
+      },
+      "shortLabel": "Сепаратор"
+    },
+    {
+      "id": "v16",
+      "source": "source-pdf/v16.pdf",
+      "originalName": "В16.PDF",
+      "sourceSha256": "d8acfc6925d9591533ae67eade23e85b6903b4717a0cfc3fd44f169ea88d2bce",
+      "page": 1,
+      "group": "detail",
+      "title": "Зона загрузки и предварительного измельчения",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        491,
+        428,
+        3850,
+        3090
+      ],
+      "full": {
+        "file": "views/v16-full.webp",
+        "width": 3359,
+        "height": 2662,
+        "bytes": 1550234,
+        "sha256": "237f7e6bcdc0cbf6bf62b4d351664db11e6c54b309eb301abffb0b3f5181add6"
+      },
+      "display": {
+        "file": "views/v16-display.webp",
+        "width": 2200,
+        "height": 1743,
+        "bytes": 1324632,
+        "sha256": "14996693e95a21966c6f490f1f85950e824295e49fa4307e970d5e895dd2e6e7"
+      },
+      "thumb": {
+        "file": "views/v16-thumb.webp",
+        "width": 400,
+        "height": 317,
+        "bytes": 94552,
+        "sha256": "e04862bf1c9510bae151903f3dc8dc88dae1a7be22173693f869159b2d5d19ca"
+      },
+      "shortLabel": "Измельчение"
+    }
+  ]
+}

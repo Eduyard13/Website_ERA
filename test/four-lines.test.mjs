@@ -86,7 +86,8 @@ test('У каждой линии три документа и полные пр�
     assert.equal(bytes.length,view.bytes,view.file);
     assert.equal(createHash('sha256').update(bytes).digest('hex'),view.sha256,view.file);
    }
-   assert.ok(placement.includes(`src="${basePath}/assets/${view.file}"`),view.file);
+   const imageAttribute=slug==='separatsiya-02'?'data-engineering-src':'src';
+   assert.ok(placement.includes(`${imageAttribute}="${basePath}/assets/${view.file}"`),view.file);
   }
   if(slug==='separatsiya-01'){
    assert.equal(drawing.kind,'raster-extract');

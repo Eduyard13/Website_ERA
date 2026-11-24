@@ -11,7 +11,7 @@ import {lineDocuments,lineDocumentCards} from './line-page-media.mjs';
 import {renderDrySeparationHero} from './dry-separation-hero.mjs';
 import {renderDrySeparationPurpose} from './dry-separation-purpose.mjs';
 import {renderDrySeparationRaw} from './dry-separation-raw.mjs';
-import {lineDimensions} from './line-dimensions.mjs';
+import {renderProEngineeringCenter} from './pro-engineering-center.mjs';
 import {interactiveLineDiagram} from './line-diagram.mjs';
 import {renderDryArchitectureHeading} from './dry-line-architecture.mjs';
 import {renderProProcess} from './pro-process.mjs';
@@ -67,9 +67,9 @@ export function renderFilmSeparation(line){
 
  <section class="section" id="specs">${renderBaseSpecs(line)}</section>
 
- <section class="section" id="placement"><div class="line-section-heading"><div><p class="eyebrow">ГАБАРИТЫ И РАЗМЕЩЕНИЕ</p><h2>Компоновка под цех.<br>Точность в каждом размере.</h2></div><p>Для площадки заказчика выполняется проектная привязка: расстановка узлов, подключения, проезды погрузчиков и доступ для обслуживания.</p></div>
- ${lineDimensions(drawing)}
- <div class="line-placement-notes"><dl class="line-placement-specs"><div><dt>Высота помещения по ТО</dt><dd>9 м</dd></div><div><dt>Высота оборудования по ТО</dt><dd>≈6,5 м</dd></div></dl><div><h3>Условия размещения</h3><p>Предусматривают электроснабжение и заземление, вентиляцию, пневмотранспорт и пылеудаление, доступ для обслуживания, склады сырья и тюков. В комплектации — два вилочных погрузчика; маршруты увязывают с рабочими местами и выдачей продукции.</p><p>45 × 18 м и 810 м² относятся к показанному прямоугольному контуру. Складские запасы, проезды, безопасные зоны и коммуникации учитывают при проектной привязке.</p></div><div><h3>Сортировочный бокс и помещение</h3><p>Закрытый сортировочный бокс (поз. 28) объединяет рабочие места ручной сортировки, вентиляцию и освещение. Помещение цеха (поз. 29) предусматривает подключение линии, проезды и обслуживание.</p><p class="line-note">На исходном A0 сохранены собственные обозначения и размерные цепочки; локальные размеры не являются нормативами для помещения.</p></div></div>
+ <section class="section" id="placement">
+  ${renderProEngineeringCenter(drawing)}
+  <div class="line-placement-notes pec-placement-notes"><div><h3>Условия размещения</h3><p>Предусматривают электроснабжение и заземление, вентиляцию, пневмотранспорт и пылеудаление, доступ для обслуживания, склады сырья и тюков. В комплектации — два вилочных погрузчика; маршруты увязывают с рабочими местами и выдачей продукции.</p><p>45 × 18 м и 810 м² относятся к показанному прямоугольному контуру. Складские запасы, проезды, безопасные зоны и коммуникации учитывают при проектной привязке.</p></div><div><h3>Сортировочный бокс и помещение</h3><p>Закрытый сортировочный бокс (поз. 28) объединяет рабочие места ручной сортировки, вентиляцию и освещение. Помещение цеха (поз. 29) предусматривает подключение линии, проезды и обслуживание.</p><p class="line-note">На исходном A0 сохранены собственные обозначения и размерные цепочки; локальные размеры не являются нормативами для помещения.</p></div></div>
  </section>
 
  <section class="section line-soft" id="photos"><div class="line-section-heading"><div><p class="eyebrow">ОБОРУДОВАНИЕ В РАБОТЕ</p><h2>Реальные площадки.<br>Масштаб и детали.</h2></div><p>Материалы из технического описания: сборка и испытания в Китае, размещение и работа с плёночным сырьём в Нидерландах. Нажмите на изображение, чтобы увеличить.</p></div><div class="line-photo-grid">${['china-assembly','china-ballistic','china-air-separation','netherlands-line','netherlands-rotor','netherlands-feed'].map(key=>picture(key,{label:pictures[key].topic})).join('')}</div><p class="line-note">На производственной съёмке отсутствует сортировочная площадка, предусмотренная в полной комплектации.</p></section>

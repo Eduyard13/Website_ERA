@@ -313,6 +313,9 @@ jobs:
         with:
           sparse-checkout: |
             test/line-diagram-public.mjs
+            test/pro-engineering-center-public.mjs
+            content/pro-engineering-views.json
+            content/separatsiya-02-dimensions-assets.json
             test/economics-public.mjs
             test/about-us-public.mjs
             test/technology-final-public.mjs
@@ -332,6 +335,19 @@ jobs:
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
         run: node test/line-diagram-public.mjs
+      - name: Verify the published PRO engineering center
+        env:
+          ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
+          ERA_BUILD_COMMIT: ${{ github.sha }}
+          ERA_PRO_ENGINEERING_SCREENSHOTS: tmp/pro-engineering
+        run: node test/pro-engineering-center-public.mjs
+      - name: Upload PRO engineering center screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: era-pro-engineering-center
+          path: tmp/pro-engineering/*.png
+          if-no-files-found: ignore
       - name: Verify published economics in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}

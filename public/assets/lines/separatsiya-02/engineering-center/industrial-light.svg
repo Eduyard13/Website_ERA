@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e1e5e8"/><stop offset=".48" stop-color="#f2f1ed"/><stop offset="1" stop-color="#e8e5de"/></linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#e0dfdc"/><stop offset="1" stop-color="#c8c9ca"/></linearGradient>
+    <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff" stop-opacity=".10"/><stop offset=".68" stop-color="#f8f6f1" stop-opacity=".48"/><stop offset="1" stop-color="#f8f6f1" stop-opacity=".58"/></linearGradient>
+    <radialGradient id="light" cx=".81" cy=".20" r=".82"><stop stop-color="#fff" stop-opacity=".88"/><stop offset=".58" stop-color="#fff" stop-opacity=".27"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="5"/></filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#wall)"/>
+  <g filter="url(#blur)">
+    <path d="M0 575L940 435 1600 530V900H0Z" fill="url(#floor)"/>
+    <path d="M0 80L950 160 1600 0V530L950 435 0 575Z" fill="#e8e9e7"/>
+    <path d="M0 0H1600L950 160 0 80Z" fill="#d6dce0"/>
+    <g stroke="#aeb7bd" stroke-width="12" opacity=".53" fill="none">
+      <path d="M0 45L950 160 1600 15M0 105L950 195 1600 90M0 210L950 255 1600 175"/>
+      <path d="M100 0L950 160M430 0L950 160M790 0L950 160M1120 0L950 160M1460 0L950 160"/>
+      <path d="M0 110V575M240 125V540M500 145V500M740 160V460M950 175V435M1150 130V465M1380 80V505M1590 20V530"/>
+    </g>
+    <g fill="#fff" stroke="#bdc5ca" stroke-width="6" opacity=".85">
+      <path d="M1020 210L1120 190V352L1020 346Z"/><path d="M1175 180L1340 145V367L1175 355Z"/><path d="M1400 132L1560 95V384L1400 373Z"/>
+      <path d="M1100 194V350M1255 164V360M1480 112V379M1020 282L1560 250" fill="none"/>
+    </g>
+    <g stroke="#b2b7b9" opacity=".38" fill="none" stroke-width="3"><path d="M950 435L0 900M950 435L440 900M950 435L1040 900M950 435L1600 900M0 710L1600 675"/></g>
+    <g stroke="#fff" stroke-width="9" opacity=".65"><path d="M85 67L410 102M560 106L850 145M1090 123L1480 35"/></g>
+  </g>
+  <rect width="1600" height="900" fill="url(#light)"/><rect width="1600" height="900" fill="url(#fade)"/>
+</svg>
