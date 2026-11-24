@@ -97,7 +97,7 @@ test('Детальная страница повторяет порядок эт
  assert.equal((nativeBlock.match(/data-line-leader="/g)||[]).length,42);
  assert.equal((nativeBlock.match(/data-callout-hit="/g)||[]).length,42);
  assert.equal((html.match(/data-catalogue-image="/g)||[]).length,6);assert.equal((html.match(/id="pdf-viewer"/g)||[]).length,1);
- for(const text of ['при испытаниях отдельные партии имели засорённость до 80%','до 5%','639,77','447,84','298,56','597,12','540','6 570','4К','55″','Siemens','Пневмотранспорт на позициях 18 и 19 учтён один раз','data-dimension-tab="top"','data-dimension-tab="side"','data-hero-finish="titanium-gallery"'])assert.ok(html.includes(text),text);
+ for(const text of ['при испытаниях отдельные партии имели засорённость до 80%','До 5%','639,77','447,84','298,56','597,12','540','6 570','4К','55″','Siemens','Пневмотранспорт на позициях 18 и 19 учтён один раз','data-dimension-tab="top"','data-dimension-tab="side"','data-hero-finish="titanium-gallery"'])assert.ok(html.includes(text),text);
  assert.ok(html.includes(`href="${basePath}/documents/${separation03Document.file}"`));assert.ok(html.includes(`data-pdf-open="${separation03Document.id}"`));
  assert.ok(html.includes('/separation-drying.js?v=')&&html.includes('/line-monitor.js?v='));
  assert.ok(html.includes(`href="${basePath}/catalog/lines/moyka-plenki"`));assert.ok(html.includes('data-project-request'));
