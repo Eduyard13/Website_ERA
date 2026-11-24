@@ -24,6 +24,7 @@ test('Инженерный центр PRO включает три вкладки
  assert.match(section,/data-engineering-group="overview" data-engineering-view="v01"/);
  assert.equal((section.match(/data-engineering-viewer>/g)||[]).length,1);
  assert.equal((section.match(/data-engineering-image\s/g)||[]).length,1);
+ assert.equal((section.match(/<template data-engineering-thumb>/g)||[]).length,10);
  assert.match(section,/v01-display\.webp" width="2200" height="1549" alt="Размещение линии в цехе"/);
  assert.match(section,/01 \/ 10/);
  for(const label of ['Длина зоны на чертеже','Ширина зоны на чертеже','Площадь прямоугольного контура','Высота помещения по ТО','Высота оборудования по ТО'])assert.ok(section.includes(label),label);

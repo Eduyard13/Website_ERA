@@ -48,14 +48,17 @@ try{
  const tabs=await(await fetch(`http://127.0.0.1:${port}/json/list`)).json();
  socket=new WebSocket(tabs.find(tab=>tab.type==='page').webSocketDebuggerUrl);
  await new Promise((resolve,reject)=>{socket.addEventListener('open',resolve,{once:true});socket.addEventListener('error',reject,{once:true});});
- const requests=new Map(),errors=[],imageRequests=new Set();
+ const requests=new Map(),errors=[],imageRequests=new Map();
  let id=0;
  socket.addEventListener('message',event=>{
   const message=JSON.parse(event.data);
   if(message.method==='Runtime.exceptionThrown')errors.push(message.params.exceptionDetails.text);
   if(message.method==='Network.requestWillBeSent'){
-   const path=message.params.request.url;
-   if(path.includes('/engineering-center/views/'))imageRequests.add(path.split('/').at(-1));
+   const {request,loaderId}=message.params;
+   if(request.url.includes('/engineering-center/views/')){
+    if(!imageRequests.has(loaderId))imageRequests.set(loaderId,new Set());
+    imageRequests.get(loaderId).add(new URL(request.url).pathname.split('/').at(-1));
+   }
   }
   const pending=requests.get(message.id);
   if(!pending)return;
@@ -90,14 +93,17 @@ try{
   detail:assembly.views.filter(view=>view.group==='detail').map(view=>view.id),
   drawings:projections.views.map(view=>view.id)
  };
+ const initialFiles=new Set(['v01-display.webp',...sets.overview.map(id=>id+'-thumb.webp')]);
  for(const width of [1440,768,390]){
-  imageRequests.clear();
   await command('Emulation.setDeviceMetricsOverride',{width,height:1100,deviceScaleFactor:1,mobile:width===390});
-  await command('Page.navigate',{url:url.replace('#placement','&width='+width+'#placement')});
+  const navigation=await command('Page.navigate',{url:url.replace('#placement','&width='+width+'#placement')});
+  assert.ok(navigation.loaderId&&!navigation.errorText,JSON.stringify(navigation));
   await wait(`!!${find('[data-engineering-ready="true"]')}`);
   await evaluate(find('.pec-stage')+".scrollIntoView({block:'center',behavior:'instant'})");
   await decoded('v01');
-  assert.ok(![...imageRequests].some(name=>name.endsWith('-full.webp')||name.endsWith('-display.webp')&&name!=='v01-display.webp'||name.startsWith('v10')),'Lazy initial engineering assets');
+  const early=[...(imageRequests.get(navigation.loaderId)||[])];
+  assert.ok(early.includes('v01-display.webp'),`Initial engineering view was requested at ${width} px`);
+  assert.deepEqual(early.filter(name=>!initialFiles.has(name)),[],`Lazy initial engineering assets at ${width} px`);
   assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'),true);
   const stage=await measure();
   for(const [group,ids] of Object.entries(sets)){

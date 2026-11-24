@@ -43,11 +43,12 @@ function filmstrip(group){
   ${group.views.map((view,index)=>{
    const drawing=group.id==='drawings';
    const [thumb,display,full]=['thumb','display','full'].map(kind=>drawing?view[kind]:packaged(view,kind));
+   const thumbnail=`<img src="${asset(thumb)}" width="${thumb.width}" height="${thumb.height}" alt="" loading="lazy" decoding="async">`;
    return `<li><button class="pec-thumb" type="button"${drawing?` id="${placement.idPrefix}-tab-${view.id}" data-dimension-tab="${view.id}"`:''}
     data-engineering-frame="${view.id}" data-engineering-src="${asset(display)}" data-engineering-full="${asset(full)}"
     data-engineering-size="${display.width} ${display.height}" data-engineering-full-size="${full.width} ${full.height}"
     aria-controls="${scope}-stage" aria-label="${escape(view.title)}" aria-pressed="${index===0}">
-    <img src="${asset(thumb)}" width="${thumb.width}" height="${thumb.height}" alt="" loading="lazy" decoding="async">
+    ${group.id==='overview'?thumbnail:`<template data-engineering-thumb>${thumbnail}</template>`}
     <span>${escape(view.shortLabel)}</span></button></li>`;
   }).join('')}
  </ul>`;

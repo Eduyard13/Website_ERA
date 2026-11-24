@@ -128,6 +128,7 @@ function initialize(root){
     item.tab.setAttribute('aria-selected',String(active));item.tab.tabIndex=active?0:-1;item.panel.hidden=!active;
    });
    group.slot.append(viewer);
+   for(const thumb of group.strip.querySelectorAll('template[data-engineering-thumb]'))thumb.replaceWith(thumb.content);
    resetZoom();syncSelection();loadFrame();
   }
   if(focus)target.tab.focus({preventScroll:true});
