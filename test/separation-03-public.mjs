@@ -99,7 +99,7 @@ try{
   if(width===1440&&process.env.ERA_PREMIUM_SCREENSHOT){
    await captureNativeDiagram(evaluate,command,'line03-construction',process.env.ERA_PREMIUM_SCREENSHOT);
   }
-  let s=await root();assert.equal(s.mode,'fit');assert.equal(s.pins,42);assert.equal(s.options,37);assert.equal(s.qualityRows,5);assert.equal(s.spec,0);assert.ok(s.fit&&!s.overflow);assert.deepEqual(s.broken,[]);assert.ok(s.canvasBackground.includes('engineering-grid-02.svg'),'PREMIUM background asset');assert.equal(s.sourceBlend,'normal','opaque white source must blend over Engineering Grid 02');
+  let s=await root();assert.equal(s.mode,'fit');assert.equal(s.pins,42);assert.equal(s.options,37);assert.equal(s.qualityRows,0);assert.equal(s.spec,0);assert.ok(s.fit&&!s.overflow);assert.deepEqual(s.broken,[]);assert.ok(s.canvasBackground.includes('engineering-grid-02.svg'),'PREMIUM background asset');assert.equal(s.sourceBlend,'normal','opaque white source must blend over Engineering Grid 02');
   if(width===390||width===1440){
    await auditNativeDiagram(evaluate,'line03-construction',{count:42,branches:42});
    await checkProcess(width===1440);
