@@ -61,6 +61,29 @@ try{
  await command('Page.addScriptToEvaluateOnNewDocument',{source:"localStorage.setItem('era-map-consent-v1','deny')"});
  const load=async path=>{await command('Page.navigate',{url:base+path});await wait(`document.readyState==='complete'`);};
  const root=()=>evaluate(`(()=>{const r=document.querySelector('#line03-construction');return {canvasBackground:getComputedStyle(r.querySelector('.diagram-canvas')).backgroundImage,sourceBlend:getComputedStyle(r.querySelector('.diagram-projection > svg')).mixBlendMode,ready:r.dataset.monitorReady,mode:r.dataset.diagramMode,pins:r.querySelectorAll('[data-callout]').length,options:r.querySelectorAll('[data-diagram-select] option').length,selected:r.querySelector('[data-detail-number]').textContent,overflow:document.documentElement.scrollWidth>innerWidth,fit:r.querySelector('[data-diagram-viewport]').scrollWidth<=r.querySelector('[data-diagram-viewport]').clientWidth+1,qualityRows:document.querySelectorAll('.line-quality-table tbody tr').length,spec:document.querySelectorAll('[data-separation03-position]').length,broken:[...document.querySelectorAll('main img')].filter(i=>!i.complete||!i.naturalWidth).map(i=>i.src)}})()`);
+ const checkProcess=async desktop=>{
+  await wait(`!!document.querySelector('#process [data-premium-flow-ready="true"]')`);
+  const map=await evaluate(`(()=>{
+   const stage=document.querySelector('#process');
+   const top=stage.querySelector('.premium-upstream'),bottom=stage.querySelector('.premium-downstream');
+   const lines=[...stage.querySelectorAll('[data-premium-route]')].filter(p=>p.getAttribute('d')&&p.getTotalLength()>0);
+   const rows=nodes=>new Set([...nodes].map(e=>Math.round(e.getBoundingClientRect().top))).size;
+   const image=stage.querySelector('.premium-map-render'), copy=stage.querySelector('.premium-map-copy');
+   const cards=[...top.children,...bottom.children];
+   return {
+    prior:stage.querySelectorAll('.premium-stages>li').length,
+    upper:top.children.length,lower:bottom.children.length,topRows:rows(top.children),bottomRows:rows(bottom.children),
+    streams:stage.querySelectorAll('.premium-fractions>li,.premium-mix').length,
+    routes:lines.length,image:image.naturalWidth,renderRight:image.getBoundingClientRect().left>=copy.getBoundingClientRect().right-1,
+    overflow:cards.some(card=>card.scrollWidth>card.clientWidth+1)
+   };
+  })()`);
+  assert.equal(map.prior,9);assert.equal(map.upper,5);assert.equal(map.lower,4);assert.equal(map.streams,5);
+  assert.equal(map.image,1369);assert.ok(!map.overflow);
+  assert.equal(map.routes,desktop?18:9);
+  assert.equal(map.topRows,desktop?1:5);assert.equal(map.bottomRows,desktop?1:4);
+  if(desktop)assert.ok(map.renderRight);
+ };
  for(const width of [1440,320,390,768,1024,1280,1920]){
   await command('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:width<768});
   await load(compositionPath);await wait(`!!document.querySelector('#line03-construction[data-monitor-ready="true"]')`);
@@ -77,7 +100,10 @@ try{
    await captureNativeDiagram(evaluate,command,'line03-construction',process.env.ERA_PREMIUM_SCREENSHOT);
   }
   let s=await root();assert.equal(s.mode,'fit');assert.equal(s.pins,42);assert.equal(s.options,37);assert.equal(s.qualityRows,5);assert.equal(s.spec,0);assert.ok(s.fit&&!s.overflow);assert.deepEqual(s.broken,[]);assert.ok(s.canvasBackground.includes('engineering-grid-02.svg'),'PREMIUM background asset');assert.equal(s.sourceBlend,'normal','opaque white source must blend over Engineering Grid 02');
-  if(width===390||width===1440)await auditNativeDiagram(evaluate,'line03-construction',{count:42,branches:42});
+  if(width===390||width===1440){
+   await auditNativeDiagram(evaluate,'line03-construction',{count:42,branches:42});
+   await checkProcess(width===1440);
+  }
   for(let number=1;number<=37;number++){
    await evaluate(`(()=>{const s=document.querySelector('[data-diagram-select]');s.value='${number}';s.dispatchEvent(new Event('change',{bubbles:true}));})()`);
    assert.equal((await root()).selected,String(number).padStart(2,'0'));

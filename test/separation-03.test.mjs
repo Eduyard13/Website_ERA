@@ -90,12 +90,29 @@ test('Детальная страница повторяет порядок эт
  assert.equal((html.match(/data-diagram-mode="fit"/g)||[]).length,1);assert.equal((html.match(/data-part-guide="/g)||[]).length,42);
  assert.equal((html.match(/data-callout="/g)||[]).length,42);assert.equal((html.match(/data-separation03-position="/g)||[]).length,0);
  const processBlock=html.slice(html.indexOf('id="process"'),html.indexOf('id="quality"'));
- assert.ok(processBlock.includes('data-premium-process-map'));
- assert.equal((processBlock.match(/class="line-index"/g)||[]).length,9);
- assert.equal((processBlock.match(/data-premium-node="press"/g)||[]).length,1);
- for(const id of ['prep','opener','ballistic1','dryer','ballistic2','sorting','rotor','fifth','fractions','four','press','mix','sorted','solids','dust','air','condensate'])assert.ok(processBlock.includes('data-premium-node="'+id+'"'),id);
- assert.ok(!/<(?:details|img)\b/.test(processBlock));
- assert.ok(processBlock.includes('Фракции не смешиваются'));
+ const [stages,map]=processBlock.split('data-premium-process-map');
+ assert.equal((stages.match(/class="line-index"/g)||[]).length,9);
+ assert.match(stages,/<\/ol>\s*<div class="premium-map" $/);
+ assert.deepEqual([...map.matchAll(/class="premium-stage-number">(\d+)</g)].map(match=>match[1]),
+  ['01','02','03','04','05','06','07','08','09']);
+ const positions=[...map.matchAll(/class="premium-positions">([^<]+)<\/p>/g)].map(match=>match[1]);
+ assert.deepEqual(positions,[
+  '37 → 1 → 2 → 3','3 → 4 → 5','5 → 6 → первый 7 → 8 → 9','9 → 10 + контур 34 → 11','11 → второй 6 → второй 7 → 12',
+  '12 → площадка 13 и лента 14 · ангар 35','14 → 15 → 16 → 19','4 выбранные фракции + основной микс → 5 бункеров 17','17 → 21 → 22 → 23 → 24 → 37'
+ ]);
+ assert.equal((map.match(/Фракция [1-4]<\/li>/g)||[]).length,4);
+ assert.match(map,/data-premium-stream="mix"/);
+ assert.equal((map.match(/data-premium-node="press"/g)||[]).length,1);
+ assert.match(map,/Один общий пресс принимает партии по очереди/);
+ assert.deepEqual([...map.matchAll(/data-premium-route="([^"]+)"/g)].map(match=>match[1]),[
+  'prep-opener','opener-ballistic1','ballistic1-dryer','dryer-ballistic2','ballistic2-sorting','sorting-rotor','sorting-fractions',
+  'rotor-mix','accumulation-press','ballistic1-solids','dryer-solids','ballistic2-solids','sorting-solids','rotor-solids',
+  'solids-header','solids-footer','mix-dust','dryer-condensate'
+ ]);
+ assert.match(map,/29 → 32 → рама 33 → биг-бэг/);
+ assert.match(map,/<img class="premium-map-render" src="[^"]*\/first-separation\.webp"/);
+ assert.equal((processBlock.match(/<img\b/g)||[]).length,1);
+ assert.doesNotMatch(processBlock,/<details\b|material-flow|drying-flow|premium-branches/);
  const nativeBlock=html.slice(html.indexOf('id="composition"'),html.indexOf('id="process"'));
  assert.doesNotMatch(nativeBlock,/data-line-layout-views|line03-view-reverse|Другой ракурс|Основной вид|Спецификация линии|Как устроены ключевые узлы/);
  assert.ok(nativeBlock.includes('/assets/lines/separatsiya-03/layout-native-v2.webp'));
