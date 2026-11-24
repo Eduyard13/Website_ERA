@@ -246,6 +246,9 @@ test('All three dry separation pages share the approved KAIR chip, slogan, six c
 test('BASE production passport: one closed combined technical and power specification',()=>{
  const page=render('/catalog/lines/separatsiya-01'),a=page.indexOf('id="specs"'),b=page.indexOf('</section>',a),block=page.slice(a,b);
  assert.ok(block.includes('data-base-specs')&&block.includes('Производственные характеристики'));
+ assert.ok(block.includes('<h3>Потребляемая мощность</h3><p>70% установленной мощности</p>'));
+ assert.ok(block.includes('>Установленная мощность, кВт</th>')&&block.includes('>Потребляемая мощность, кВт</th>'));
+ assert.doesNotMatch(block,/Расчётная потребляемая мощность|Уст\., кВт|Потр\., кВт/);
  assert.deepEqual([...block.matchAll(/data-base-spec-kpi="([^"]+)"/g)].map(m=>m[1]),['input','output','power','gauge']);
  for(const text of ['1 500 <small>кг/ч</small>','750 <small>кг/ч</small>','225 <small>кВт</small>','157,5 <small>кВт</small>','105 <small>кВт·ч/т</small>','210 <small>кВт·ч/т</small>','3–5%','Потери полезной плёнки на испытаниях','380 <small>В</small>','Допуск +10% / −15%','50 ± 1 <small>Гц</small>','1 · Оператор','2 · Производственных рабочих','управление погрузчиками','До 80%','До 30%'])assert.ok(block.includes(text),text);
  assert.equal((block.match(/<details\b/g)||[]).length,1);
