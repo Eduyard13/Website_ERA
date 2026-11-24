@@ -1,3 +1,4 @@
+import {renderDryProductRoutes} from './dry-product-routes.mjs';
 import {renderDryProductCollage} from './dry-product-collage.mjs';
 import {siteContacts} from '../content/contact.mjs';
 import {separation03Media as media,separation03Specification as specification,separation03Staff,separation03Stages,separation03Units} from '../content/separation-03.mjs';
@@ -60,7 +61,8 @@ export function renderSeparationDrying(line){
  <section class="section" id="process">${renderPremiumProcess(separation03Stages)}</section>
 
  <section class="section line-soft" id="quality">${renderDryProductCollage()}
-  <div class="sd-product-shipping">${picture('product-bales')}<div><h3>Тюк готов к хранению и перевозке</h3><p>Плотность, увязка и маркировка упрощают отгрузку и учёт товара. Перед подачей следующего вида плёнки освобождают общий транспортный тракт и пресс.</p><p>В полном цикле горячая мойка является второй стадией после сухой сепарации. После мойки и обезвоживания материал подготавливают к грануляции.</p><a class="text-link" href="/catalog/lines/moyka-plenki">Вторая стадия — горячая мойка ↗</a></div></div></section>
+  ${renderDryProductRoutes()}
+ </section>
 
  <section class="section line-kair-section" id="kair"><div class="line-control era-indigo-surface"><div><p class="eyebrow">УПРАВЛЕНИЕ КАИР</p><h2>Согласовать движение.<br>Сохранить рабочий режим.</h2><p>КАИР координирует пуск и остановку, регулирует подачу к измельчителю, распушителям, двум сепараторам, сушилке и накопителям. Оператор задаёт режим по сырью и следит за прохождением партии.</p><a class="text-link" href="/automation">Подробнее об управлении ↗</a></div><ul><li>Память режимов для повторяющихся партий</li><li>Согласование сушки и воздушного контура</li><li>Контроль вибрации, шума, перегрузки и температур</li><li>Защитная последовательная остановка</li><li>Журнал событий и удалённое наблюдение</li><li>Шкаф Siemens, камеры 4К, компьютер, мониторы 55″</li><li>Контроль температуры внутри силового шкафа</li></ul></div>${more('Настоящие экраны панели оператора из ТО',`<div class="line-comparison">${picture('kair-screen')}${picture('kair-overview')}</div><p class="line-note">Состав контролируемых сигналов и настройки нагрева задаются выбранной комплектацией.</p>`)}</section>
 

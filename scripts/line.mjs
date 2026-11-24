@@ -1,3 +1,4 @@
+import {renderDryProductRoutes} from './dry-product-routes.mjs';
 import {renderDryProductCollage} from './dry-product-collage.mjs';
 import {siteContacts} from '../content/contact.mjs';
 import {nodes} from '../content/catalog.mjs';
@@ -59,7 +60,7 @@ export function renderFilmSeparation(line){
  <section class="section" id="process">${renderProProcess(lineStages)}</section>
 
  <section class="section line-soft" id="quality">${renderDryProductCollage()}
-  <div class="line-next-process"><p class="eyebrow">ДАЛЬНЕЙШАЯ ПЕРЕРАБОТКА</p><ol><li><span>01</span><div><h3>Сухая сепарация</h3><p>Очищенная плёнка в раздельных тюках</p></div></li><li><span>02</span><div><h3>Горячая мойка и сушка</h3><p>Удаление остаточных этикеток, жиров, масел и клеёв; обезвоживание и уплотнение</p></div></li><li><span>03</span><div><h3>Грануляция</h3><p>Экструзия, дегазация и формование подготовленного полимера</p></div></li></ol></div>
+  ${renderDryProductRoutes()}
  </section>
 
  <section class="section line-kair-section" id="kair">  <div class="line-control era-indigo-surface"><div><p class="eyebrow">СИСТЕМА УПРАВЛЕНИЯ КАИР</p><h2>Видеть процесс.<br>Сохранять рабочие режимы.</h2><p>Согласование подачи, очистки и выгрузки накопителей. Удалённое наблюдение 24/7 и сохранённые настройки для повторяющегося сырья.</p><a class="text-link" href="/automation">Подробнее об управлении ↗</a></div><ul><li>Память режимов по поставщику и виду сырья</li><li>Контроль вибрации, шума и перегрузки</li><li>Журнал событий и действий оператора</li><li>Автоматическая последовательная защитная остановка</li><li>Видеоконтроль: камеры 4К и мониторы 55″</li><li>Управление на базе Siemens</li></ul></div></section>

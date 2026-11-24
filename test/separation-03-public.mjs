@@ -100,6 +100,8 @@ try{
    await captureNativeDiagram(evaluate,command,'line03-construction',process.env.ERA_PREMIUM_SCREENSHOT);
   }
   let s=await root();assert.equal(s.mode,'fit');assert.equal(s.pins,42);assert.equal(s.options,37);assert.equal(s.qualityRows,0);assert.equal(s.spec,0);assert.ok(s.fit&&!s.overflow);assert.deepEqual(s.broken,[]);assert.ok(s.canvasBackground.includes('engineering-grid-02.svg'),'PREMIUM background asset');assert.equal(s.sourceBlend,'normal','opaque white source must blend over Engineering Grid 02');
+  const routes=await evaluate(`(()=>{const r=document.querySelector('[data-dry-product-routes]');return {refs:[...r.querySelectorAll('[data-dry-route-reference]')].map(x=>x.dataset.dryRouteReference),lanes:[...r.querySelectorAll('[data-dry-route-lane]')].map(x=>x.dataset.dryRouteLane),stages:[...r.querySelectorAll('[data-dry-route-stage]')].map(x=>x.dataset.dryRouteStage),overflow:r.scrollWidth>r.clientWidth+1}})()`);
+  assert.deepEqual(routes.refs,['clear','sorted']);assert.deepEqual(routes.lanes,['sale','cycle']);assert.deepEqual(routes.stages,['bale','wash','pellets']);assert.ok(!routes.overflow);
   if(width===390||width===1440){
    await auditNativeDiagram(evaluate,'line03-construction',{count:42,branches:42});
    await checkProcess(width===1440);
