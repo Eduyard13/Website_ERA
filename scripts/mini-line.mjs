@@ -1,8 +1,9 @@
+import {renderDryKair} from './dry-kair.mjs';
 import {renderBaseProductRoutes} from './base-product-routes.mjs';
 import {renderDryProductCollage} from './dry-product-collage.mjs';
 import {siteContacts} from '../content/contact.mjs';
 import {nodes} from '../content/catalog.mjs';
-import {miniFilmSeparationMedia,miniLineMetrics,miniRawMaterials,miniInclusions,miniStages,miniSpecification,miniUnits,miniSpecs,miniService} from '../content/mini-film-separation.mjs';
+import {miniFilmSeparationMedia,miniLineMetrics,miniRawMaterials,miniInclusions,miniStages,miniSpecification,miniUnits,miniSpecs} from '../content/mini-film-separation.mjs';
 import {mediaAttributes} from './media.mjs';
 import {pdfViewerDialog} from './documents.mjs';
 import {lineDocuments,lineDocumentCards} from './line-page-media.mjs';
@@ -64,10 +65,7 @@ export function renderMiniFilmSeparation(line){
   ${renderBaseProductRoutes()}
  </section>
 
- <section class="section line-kair-section" id="kair"><div class="line-section-heading"><div><p class="eyebrow">СИСТЕМА УПРАВЛЕНИЯ</p><h2>Одна линия.<br>Согласованная работа.</h2></div><p>КАИР на базе Siemens управляет последовательностью операций и сохраняет режимы под сырьё. Настройка подачи и отбора, контроль состояния и защитная остановка — в едином интерфейсе.</p></div>
-  <div class="line-control era-indigo-surface"><div><p class="eyebrow">УПРАВЛЕНИЕ КАИР / SIEMENS</p><h3>Согласованная работа.<br>Понятный контроль.</h3><p>Система управляет движением материала, сохраняет настройки под сырьё и помогает контролировать состояние линии онлайн 24/7.</p><a class="text-link" href="/automation">Подробнее об управлении ↗</a></div><ul><li>Память режимов по поставщику и группе сырья</li><li>Последовательность пуска и останова, согласование подачи</li><li>Настройки наклона сепаратора и воздушного отбора</li><li>Журнал команд, предупреждений и защитных остановок</li><li>Контроль вибрации, шума и нагрузки механизмов</li><li>Видеоконтроль: камеры 4К и мониторы 55″, состав по согласованию</li></ul></div>
-  <details class="line-more" data-keep-open><summary>Обслуживание и доступ к сменным деталям</summary><div class="line-inclusions">${miniService.map(([title,text])=>`<div><h3>${title}</h3><p>${text}</p></div>`).join('')}<p class="line-note">Карту обслуживания сверяют с паспортами поставляемого исполнения и режимом работы.</p></div></details>
- </section>
+ <section class="section line-kair-section" data-page-progress-label="КАИР" id="kair">${renderDryKair()}</section>
 
  <section class="section" id="specs"><div class="line-section-heading"><div><p class="eyebrow">ПОКАЗАТЕЛИ И РЕСУРСЫ</p><h2>Производительность.<br>Мощность. Персонал.</h2></div><p>Показатели линии BASE приведены по техническому описанию от 3 ноября 2026 года. Входной поток включает полезную плёнку и все примеси.</p></div>
   <div class="line-specs-layout"><div><div class="table-wrap"><table class="line-spec-table"><caption>Базовая комплектация</caption><tbody>${rows(miniSpecs)}</tbody></table></div><p class="line-note">750 кг/ч — расчётный ориентир, а не паспортная производительность отдельного распушителя. Для базового узла в ТО указаны 600–700 кг/ч; выпуск линии подтверждают на выбранном исполнении и пробной партии сырья.</p></div><aside class="line-output-panel era-indigo-surface"><p class="eyebrow">РАСЧЁТ ПРИ 750 КГ/Ч</p><h3>Выпуск очищенной плёнки</h3><dl><div><dt>За час работы</dt><dd>0,75 <small>т</small></dd></div><div><dt>За сутки / 24 часа</dt><dd>18 <small>т</small></dd></div><div><dt>За 30 суток</dt><dd>540 <small>т</small></dd></div><div><dt>За год / 365 суток</dt><dd>6 570 <small>т</small></dd></div></dl><p>При непрерывной работе, без вычета остановок. Фактический выпуск зависит от сырья, доступности оборудования и организации смен.</p></aside></div>

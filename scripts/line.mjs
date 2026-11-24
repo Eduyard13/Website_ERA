@@ -1,3 +1,4 @@
+import {renderDryKair} from './dry-kair.mjs';
 import {renderDryProductRoutes} from './dry-product-routes.mjs';
 import {renderDryProductCollage} from './dry-product-collage.mjs';
 import {siteContacts} from '../content/contact.mjs';
@@ -63,7 +64,7 @@ export function renderFilmSeparation(line){
   ${renderDryProductRoutes()}
  </section>
 
- <section class="section line-kair-section" id="kair">  <div class="line-control era-indigo-surface"><div><p class="eyebrow">СИСТЕМА УПРАВЛЕНИЯ КАИР</p><h2>Видеть процесс.<br>Сохранять рабочие режимы.</h2><p>Согласование подачи, очистки и выгрузки накопителей. Удалённое наблюдение 24/7 и сохранённые настройки для повторяющегося сырья.</p><a class="text-link" href="/automation">Подробнее об управлении ↗</a></div><ul><li>Память режимов по поставщику и виду сырья</li><li>Контроль вибрации, шума и перегрузки</li><li>Журнал событий и действий оператора</li><li>Автоматическая последовательная защитная остановка</li><li>Видеоконтроль: камеры 4К и мониторы 55″</li><li>Управление на базе Siemens</li></ul></div></section>
+ <section class="section line-kair-section" data-page-progress-label="КАИР" id="kair">${renderDryKair()}</section>
 
  <section class="section" id="specs"><div class="line-section-heading"><div><p class="eyebrow">ПРОИЗВОДИТЕЛЬНОСТЬ И РЕСУРСЫ</p><h2>Параметры<br>представленной комплектации.</h2></div><p>Входной поток учитывает плёнку вместе с загрязнениями. Выпуск очищенного продукта и энергозатраты приведены для принятого в ТО рабочего режима.</p></div>
   <div class="line-specs-layout"><div class="table-wrap"><table class="line-spec-table"><caption>Основные показатели линии</caption><tbody>${rows([...lineSpecs,...staffing])}</tbody></table></div><aside class="line-output-panel era-indigo-surface"><p class="eyebrow">РАБОТА 24/7</p><h3>Выпуск очищенной плёнки</h3><dl><div><dt>За сутки / 24 часа</dt><dd>18 <small>т</small></dd></div><div><dt>За месяц / 30 суток</dt><dd>540 <small>т</small></dd></div><div><dt>За год / 365 суток</dt><dd>6 570 <small>т</small></dd></div></dl><p>Расчёт при 750 кг/ч и непрерывной работе, без вычета остановок. Фактический выпуск зависит от сырья, доступности оборудования и организации смен.</p></aside></div>

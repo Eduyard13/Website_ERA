@@ -226,3 +226,19 @@ test('BASE uses both full original trial photos, three discharge formats and nat
  assert.doesNotMatch(block,/line-next-process|mini-line-options|https?:\/\//);
  for(const slug of ['separatsiya-02','separatsiya-03','moyka-plenki'])assert.ok(!render('/catalog/lines/'+slug).includes('data-base-product-routes'));
 });
+
+test('All three dry separation pages share the approved KAIR chip, slogan, six cards and native link',()=>{
+ let common;
+ for(const slug of ['separatsiya-01','separatsiya-02','separatsiya-03']){
+  const page=render('/catalog/lines/'+slug),start=page.indexOf('id="kair"'),end=page.indexOf('</section>',start),block=page.slice(start,end);
+  assert.ok(start>0&&block.includes('data-dry-kair'));
+  assert.ok(block.includes('class="dry-kair-chip"')&&block.includes('class="dry-kair-wordmark">КАИР')&&block.includes('>SIEMENS</span>'));
+  assert.ok(block.includes('ИНТЕЛЛЕКТУАЛЬНАЯ СИСТЕМА УПРАВЛЕНИЯ'));
+  assert.ok(block.includes('Всё производство.<br><span>Под вашим контролем.</span>'));
+  assert.deepEqual([...block.matchAll(/data-dry-kair-feature="([^"]+)"/g)].map(m=>m[1]),['automation','memory','diagnostics','protection','monitoring','history']);
+  assert.ok(block.includes('href="'+basePath+'/automation"')&&block.includes('Подробнее о КАИР'));
+  assert.doesNotMatch(block,/<details|line-control|line-section-heading|Обслуживание и доступ|kair-screen|kair-overview/);
+  if(common)assert.equal(block,common);else common=block;
+ }
+ assert.ok(!render('/catalog/lines/moyka-plenki').includes('data-dry-kair'));
+});

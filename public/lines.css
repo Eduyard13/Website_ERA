@@ -702,3 +702,30 @@
 @media(max-width:1000px){.film-line .base-product-routes .dry-route-hero{grid-template-columns:1fr}}
 @media(max-width:560px){.film-line .base-output-gallery,.film-line .base-delivery-grid,.film-line .base-expansion-grid{grid-template-columns:1fr}.film-line .base-output-gallery [data-base-product-photo=after-close] .media-open{aspect-ratio:3/4;max-height:430px}.film-line .base-expansion{padding:16px}}
 @media(prefers-reduced-motion:reduce){.film-line .base-expansion-card{transition:none}}
+
+/* Approved shared KAIR showcase — BASE / PRO / PREMIUM only. */
+.film-line .dry-kair{--dk-gold:#e5c16b;--dk-light:#f5f4f9;--dk-muted:#c9cbd8;position:relative;min-width:0;isolation:isolate;padding:clamp(24px,3.1vw,48px);border:1px solid #b7954f;border-radius:16px;background:radial-gradient(ellipse at 100% 5%,#343852 0%,transparent 63%),linear-gradient(135deg,#15192f,#111427 78%);color:var(--dk-light)}
+.film-line .dry-kair-brand{display:flex;align-items:center;gap:clamp(12px,1.65vw,26px);padding-bottom:clamp(22px,2.7vw,40px);border-bottom:1px solid #ffffff30}
+.film-line .dry-kair-chip{display:block;width:clamp(58px,7.2vw,110px);height:auto;flex:none;color:var(--dk-gold)}
+.film-line .dry-kair-brand-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:9px}
+.film-line .dry-kair-wordmark{color:var(--dk-gold);font-size:clamp(29px,3.35vw,52px);font-weight:650;line-height:1;letter-spacing:.23em}
+.film-line .dry-kair-subtitle{color:var(--dk-muted);font-size:clamp(10px,1.12vw,17px);font-weight:400;line-height:1.4;letter-spacing:.035em}
+.film-line .dry-kair-siemens{flex:none;padding:clamp(9px,1vw,16px) clamp(12px,1.4vw,22px);border:1px solid #777b90;border-radius:9px;color:#fff;font-size:clamp(13px,1.5vw,22px);font-weight:500;line-height:1.3}
+.film-line .dry-kair-layout{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.2fr);gap:clamp(24px,3.8vw,58px);align-items:center;margin-top:clamp(24px,3.2vw,46px)}
+.film-line .dry-kair-copy{min-width:0}
+.film-line .dry-kair-copy h2{color:var(--dk-light);font-size:clamp(30px,3.25vw,51px);font-weight:400;letter-spacing:-.035em;line-height:1.15;margin:0 0 22px}
+.film-line .dry-kair-copy h2 span{color:var(--dk-gold)}
+.film-line .dry-kair-copy p{color:var(--dk-muted);font-size:clamp(15px,1.35vw,20px);line-height:1.65;margin:0 0 28px;max-width:530px}
+.film-line .dry-kair-link{display:inline-flex;align-items:center;justify-content:space-between;gap:24px;min-height:48px;padding:12px 20px;border:1px solid #e5c16b;border-radius:7px;background:linear-gradient(135deg,#e8c77c,#c6a055);color:#15192f;font-size:15px;font-weight:600;line-height:1.3;text-decoration:none;transition:background .2s,box-shadow .2s}
+.film-line .dry-kair-link:hover{background:#f1d58c;box-shadow:0 4px 18px #e5c16b25;color:#15192f}
+.film-line .dry-kair-link svg{display:block;width:16px;height:16px;flex:none}
+.film-line .dry-kair-features{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;min-width:0}
+.film-line .dry-kair-feature{min-width:0;padding:clamp(14px,1.5vw,23px);border:1px solid #ffffff23;border-radius:9px;background:#ffffff06;transition:background .2s,border-color .2s}
+.film-line .dry-kair-feature:hover{border-color:#e5c16b80;background:#ffffff0d}
+.film-line .dry-kair-feature>svg{display:block;width:27px;height:27px;color:var(--dk-gold);margin:0 0 12px}
+.film-line .dry-kair-feature h3{font-size:clamp(15px,1.42vw,21px);font-weight:550;color:var(--dk-light);line-height:1.3;letter-spacing:-.015em;margin:0 0 7px}
+.film-line .dry-kair-feature p{font-size:clamp(12px,1.05vw,15px);color:var(--dk-muted);line-height:1.5;margin:0}
+@media(max-width:960px){.film-line .dry-kair-layout{grid-template-columns:1fr;gap:24px}.film-line .dry-kair-copy p{max-width:750px;margin-bottom:20px}}
+@media(max-width:560px){.film-line .dry-kair{padding:18px;border-radius:12px}.film-line .dry-kair-brand{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;padding-bottom:20px}.film-line .dry-kair-chip{width:52px}.film-line .dry-kair-wordmark{font-size:25px;letter-spacing:.15em}.film-line .dry-kair-brand-copy{gap:6px}.film-line .dry-kair-subtitle{font-size:9px;letter-spacing:0}.film-line .dry-kair-siemens{font-size:11px;padding:8px 9px;border-radius:5px}.film-line .dry-kair-copy h2{font-size:clamp(28px,7.6vw,38px);margin-bottom:15px}.film-line .dry-kair-features{gap:9px}.film-line .dry-kair-feature{padding:12px}.film-line .dry-kair-feature h3{font-size:15px;overflow-wrap:anywhere}.film-line .dry-kair-feature p{font-size:12px}.film-line .dry-kair-feature>svg{width:23px;height:23px;margin-bottom:9px}}
+@media(max-width:360px){.film-line .dry-kair-brand{grid-template-columns:46px minmax(0,1fr);position:relative}.film-line .dry-kair-chip{width:46px}.film-line .dry-kair-siemens{grid-column:2;justify-self:start}.film-line .dry-kair-features{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.film-line .dry-kair-feature,.film-line .dry-kair-link{transition:none}}
