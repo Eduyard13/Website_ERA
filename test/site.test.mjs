@@ -251,7 +251,7 @@ test('Мини-линия 01 использует своё ТО, показат�
  assert.ok(Math.abs(miniSpecification.reduce((sum,row)=>sum+parse(row[3]),0)-225)<1e-9);
  assert.ok(Math.abs(miniSpecification.reduce((sum,row)=>sum+parse(row[4]),0)-157.5)<1e-9);
  assert.ok(page.includes('ЭРА / ПРОМЫШЛЕННАЯ ЛИНИЯ / BASE'));
- for(const text of ['157,5 кВт','225 кВт','17,75 × 11,75 м','600–700 кг/ч','70% установленной мощности','конвейерами 07–10','3 человека в смену'])assert.ok(page.includes(text),text);
+ for(const text of ['157,5 <small>кВт</small>','225 <small>кВт</small>','17,75 × 11,75 м','70% установленной мощности','конвейерами 07–10','человека в смену'])assert.ok(page.includes(text),text);
  assert.ok(page.includes('Отдельная сортировка по видам плёнки в базовую поставку не входит'));
  assert.ok(page.includes('Сортировочный бокс, мойка и пресс не входят'));
  assert.ok(page.includes('Рама-наполнитель 11 обеспечивает выгрузку в биг-бэг'));

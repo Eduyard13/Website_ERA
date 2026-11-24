@@ -1,16 +1,16 @@
+import {renderBaseSpecs} from './base-specs.mjs';
 import {renderDryKair} from './dry-kair.mjs';
 import {renderBaseProductRoutes} from './base-product-routes.mjs';
 import {renderDryProductCollage} from './dry-product-collage.mjs';
 import {siteContacts} from '../content/contact.mjs';
 import {nodes} from '../content/catalog.mjs';
-import {miniFilmSeparationMedia,miniLineMetrics,miniRawMaterials,miniInclusions,miniStages,miniSpecification,miniUnits,miniSpecs} from '../content/mini-film-separation.mjs';
+import {miniFilmSeparationMedia,miniLineMetrics,miniRawMaterials,miniInclusions,miniStages,miniUnits} from '../content/mini-film-separation.mjs';
 import {mediaAttributes} from './media.mjs';
 import {pdfViewerDialog} from './documents.mjs';
 import {lineDocuments,lineDocumentCards} from './line-page-media.mjs';
 import {renderDrySeparationHero} from './dry-separation-hero.mjs';
 import {renderDrySeparationPurpose} from './dry-separation-purpose.mjs';
 import {renderDrySeparationRaw} from './dry-separation-raw.mjs';
-import {linePower,dryLineProduction} from './line-power.mjs';
 import {equipmentCardImages} from '../content/equipment-card-images.mjs';
 import {interactiveLineDiagram} from './line-diagram.mjs';
 import {renderDryArchitectureHeading} from './dry-line-architecture.mjs';
@@ -47,7 +47,7 @@ export function renderMiniFilmSeparation(line){
    {value:miniLineMetrics[1][0],unit:miniLineMetrics[1][1],label:'Очищенная плёнка',detail:'Расчёт при засорённости около 50%'},
    {value:miniLineMetrics[2][0],unit:miniLineMetrics[2][1],label:miniLineMetrics[2][2]},
    {value:miniLineMetrics[3][0],unit:'чел./смена',label:'Рабочий персонал'}
-  ],metricNote:'750 кг/ч — расчёт при засоре около 50%. Паспорт базового распушителя указывает 600–700 кг/ч. Выпуск подтверждаем на выбранном сырье и комплектации.',documentHref:'#documents',documentText:'Техническое описание · PDF, 14 страниц'})}
+  ],metricNote:'750 кг/ч — расчёт при засоре около 50%. Выпуск подтверждаем на выбранном сырье и комплектации.',documentHref:'#documents',documentText:'Техническое описание · PDF, 14 страниц'})}
  <nav class="anchor-nav line-anchor-nav" aria-label="Разделы линии BASE"><a href="#purpose">Назначение</a><a href="#raw-materials">Сырьё</a><a href="#composition">Схема линии</a><a href="#process">Процесс</a><a href="#quality">Продукт</a><a href="#kair">КАИР</a><a href="#specs">Характеристики</a><a href="#placement">Габариты</a><a href="#photos">Фото</a><a href="#documents">Документы</a><a href="#request">Обратная связь</a><a href="#equipment">Состав узлов</a></nav>
 
  ${renderDrySeparationPurpose(line.slug)}
@@ -67,12 +67,7 @@ export function renderMiniFilmSeparation(line){
 
  <section class="section line-kair-section" data-page-progress-label="КАИР" id="kair">${renderDryKair()}</section>
 
- <section class="section" id="specs"><div class="line-section-heading"><div><p class="eyebrow">ПОКАЗАТЕЛИ И РЕСУРСЫ</p><h2>Производительность.<br>Мощность. Персонал.</h2></div><p>Показатели линии BASE приведены по техническому описанию от 3 ноября 2026 года. Входной поток включает полезную плёнку и все примеси.</p></div>
-  <div class="line-specs-layout"><div><div class="table-wrap"><table class="line-spec-table"><caption>Базовая комплектация</caption><tbody>${rows(miniSpecs)}</tbody></table></div><p class="line-note">750 кг/ч — расчётный ориентир, а не паспортная производительность отдельного распушителя. Для базового узла в ТО указаны 600–700 кг/ч; выпуск линии подтверждают на выбранном исполнении и пробной партии сырья.</p></div><aside class="line-output-panel era-indigo-surface"><p class="eyebrow">РАСЧЁТ ПРИ 750 КГ/Ч</p><h3>Выпуск очищенной плёнки</h3><dl><div><dt>За час работы</dt><dd>0,75 <small>т</small></dd></div><div><dt>За сутки / 24 часа</dt><dd>18 <small>т</small></dd></div><div><dt>За 30 суток</dt><dd>540 <small>т</small></dd></div><div><dt>За год / 365 суток</dt><dd>6 570 <small>т</small></dd></div></dl><p>При непрерывной работе, без вычета остановок. Фактический выпуск зависит от сырья, доступности оборудования и организации смен.</p></aside></div>
-  ${linePower(line,{note:'Для позиций 4, 11 и 13 отдельных значений в ведомости нет. Пусковые нагрузки и электроснабжение учитывают при проектировании площадки.'})}
-  ${dryLineProduction(line)}
-  <details class="line-more" data-keep-open><summary>Полная спецификация базовой комплектации</summary><div><div class="table-wrap"><table class="mini-specification-table"><caption>По одной единице на позицию</caption><thead><tr><th scope="col">№</th><th scope="col">Оборудование</th><th scope="col">Основные параметры</th></tr></thead><tbody>${miniSpecification.map(([position,name,parameter])=>`<tr><td>${position}</td><th scope="row">${escape(name)}</th><td>${escape(parameter)}</td></tr>`).join('')}</tbody></table></div></div></details>
- </section>
+ <section class="section" id="specs">${renderBaseSpecs(line)}</section>
 
  <section class="section" id="placement"><div class="line-section-heading"><div><p class="eyebrow">ГАБАРИТЫ И РАЗМЕЩЕНИЕ</p><h2>Компактная расстановка.<br>Доступ к каждому узлу.</h2></div><p>17,75 × 11,75 м — габарит механической части в плане. Проходы, загрузку, выгрузку и смену биг-бэгов учитывают дополнительно при привязке к площадке.</p></div>
   ${lineDimensions(drawing)}

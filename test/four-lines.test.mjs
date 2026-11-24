@@ -51,10 +51,11 @@ test('Электрические ведомости совпадают с сум
   for(const {hours,kwh} of data.periods){
    assert.equal(kwh,cents(totals.calculated)*hours/100,slug);
    const display=hours===1?`${formatLineNumber(kwh,true)} кВт·ч`:`${formatLineNumber(kwh/1000,true)} МВт·ч`;
-   assert.ok(specs.includes(`data-energy-hours="${hours}"`)&&specs.includes(display),slug);
+   if(slug!=='separatsiya-01')assert.ok(specs.includes(`data-energy-hours="${hours}"`)&&specs.includes(display),slug);
   }
   assert.equal((specs.match(/data-power-position="/g)||[]).length,data.rows.length,slug);
-  if(slug!=='moyka-plenki')assert.match(specs,/13 140<\/td><td>6 570<\/td>/);
+  if(slug==='separatsiya-01')assert.match(specs,/data-base-output-hours="8760"><dt>За год<\/dt><dd>6 570 <small>т<\/small>/);
+  else if(slug!=='moyka-plenki')assert.match(specs,/13 140<\/td><td>6 570<\/td>/);
  }
  assert.equal(linePowerData['separatsiya-03'].rows.find(row=>row.position===29).quantity,5);
 });

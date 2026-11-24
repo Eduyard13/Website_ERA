@@ -42,7 +42,7 @@ test('BASE: один поток, нет штатной сортировки по
  for(const metric of miniLineMetrics)assert.ok(html.includes(metric[0]),metric[2]);
  assert.ok(hero.includes('225<small>кВт</small>'));
  assert.ok(hero.includes('3<small>чел./смена</small>'));
- assert.ok(hero.includes('600–700 кг/ч'));
+ assert.ok(!hero.includes('600–700 кг/ч'));
  assert.ok(hero.includes('PDF, 14 страниц'));
 });
 test('PRO: пять бункеров и тюк, все KPI происходят из технического описания PRO',()=>{

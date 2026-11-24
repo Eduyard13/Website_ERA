@@ -242,3 +242,17 @@ test('All three dry separation pages share the approved KAIR chip, slogan, six c
  }
  assert.ok(!render('/catalog/lines/moyka-plenki').includes('data-dry-kair'));
 });
+
+test('BASE production passport: one closed combined technical and power specification',()=>{
+ const page=render('/catalog/lines/separatsiya-01'),a=page.indexOf('id="specs"'),b=page.indexOf('</section>',a),block=page.slice(a,b);
+ assert.ok(block.includes('data-base-specs')&&block.includes('Производственные характеристики'));
+ assert.deepEqual([...block.matchAll(/data-base-spec-kpi="([^"]+)"/g)].map(m=>m[1]),['input','output','power','gauge']);
+ for(const text of ['1 500 <small>кг/ч</small>','750 <small>кг/ч</small>','225 <small>кВт</small>','157,5 <small>кВт</small>','105 <small>кВт·ч/т</small>','210 <small>кВт·ч/т</small>','3–5%','Потери полезной плёнки на испытаниях','380 <small>В</small>','Допуск +10% / −15%','50 ± 1 <small>Гц</small>','1 · Оператор','2 · Производственных рабочих','управление погрузчиками','До 80%','До 30%'])assert.ok(block.includes(text),text);
+ assert.equal((block.match(/<details\b/g)||[]).length,1);
+ assert.ok(block.includes('<details class="line-more line-power-details" data-keep-open>'));
+ assert.deepEqual([...block.matchAll(/data-power-position="([^"]+)"/g)].map(m=>Number(m[1])),Array.from({length:13},(_,i)=>i+1));
+ assert.ok(block.includes('Итого по линии</th><td>225</td><td>157,5</td>'));
+ assert.doesNotMatch(block,/Расчёт выпуска по периодам|Полная спецификация базовой комплектации|line-production-table|line-specs-layout/);
+ assert.doesNotMatch(page,/600–700 кг\/ч/);
+ for(const slug of ['separatsiya-02','separatsiya-03','moyka-plenki'])assert.ok(!render('/catalog/lines/'+slug).includes('data-base-specs'));
+});
