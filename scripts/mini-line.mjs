@@ -1,7 +1,7 @@
 import {renderDryProductCollage} from './dry-product-collage.mjs';
 import {siteContacts} from '../content/contact.mjs';
 import {nodes} from '../content/catalog.mjs';
-import {miniFilmSeparationMedia,miniLineMetrics,miniRawMaterials,miniInclusions,miniStages,miniSpecification,miniUnits,miniSpecs,miniQuality,miniService} from '../content/mini-film-separation.mjs';
+import {miniFilmSeparationMedia,miniLineMetrics,miniRawMaterials,miniInclusions,miniStages,miniSpecification,miniUnits,miniSpecs,miniService} from '../content/mini-film-separation.mjs';
 import {mediaAttributes} from './media.mjs';
 import {pdfViewerDialog} from './documents.mjs';
 import {lineDocuments,lineDocumentCards} from './line-page-media.mjs';
@@ -59,10 +59,7 @@ export function renderMiniFilmSeparation(line){
 
  <section class="section" id="process">${renderBaseProcess(miniStages)}</section>
 
- <section class="section line-soft" id="quality">${renderDryProductCollage()}<p class="dry-product-model-note">BASE выдаёт очищенную плёнку одним общим потоком. Состав микса определяется исходной партией.</p>
-  <div class="mini-quality-results"><div><strong>80% → ≤10%</strong><span>Засор до и после очистки на испытаниях</span></div><div><strong>3–5%</strong><span>Потери полезной плёнки на испытаниях</span></div><p>Для партии заказчика отдельно измеряют засор, выход продукции, влажность и потери полезной плёнки.</p></div>
-  <div class="table-wrap"><table class="line-quality-table"><caption>Показатели продукта и контроль пробной партии</caption><thead><tr><th scope="col">Показатель</th><th scope="col">По техническому описанию</th><th scope="col">Как проверяют</th></tr></thead><tbody>${miniQuality.map(([label,claim,check])=>`<tr><th scope="row">${label}</th><td data-label="По техническому описанию">${claim}</td><td data-label="На пробной партии">${check}</td></tr>`).join('')}</tbody></table></div>
-  <div class="line-evidence"><div><p class="eyebrow">ЧЕМ ПОДТВЕРЖДАЕТСЯ РЕЗУЛЬТАТ</p><h3>Техописание, фотографии и пробная партия</h3><p>В документе приведены результаты испытаний и фотографии исходного сырья, очищенной плёнки и отделённых включений. Перед поставкой проверяют конкретное сырьё заказчика и фиксируют условия работы.</p></div><div><h3>Показатели для вашего производства</h3><p>Приёмку связывают с согласованными значениями и замерами партии: остаточным засором, влажностью, выпуском, потерями и составом плёночного микса.</p><p class="line-note">Отдельные протоколы испытаний в приложенном ТО не опубликованы. Фотографии показывают результат визуально; численное значение выходной влажности согласуется отдельно.</p></div></div>
+ <section class="section line-soft" id="quality">${renderDryProductCollage()}
   <div class="line-next-process"><p class="eyebrow">ДАЛЬНЕЙШИЙ ПУТЬ МАТЕРИАЛА</p><ol><li><span>01</span><div><h3>Сухая сепарация</h3><p>Подготовленная плёнка одним общим потоком</p></div></li><li><span>02</span><div><h3>Горячая мойка</h3><p>Удаление стойких жиров, масел, клея и этикеток; обезвоживание перед грануляцией</p></div></li><li><span>03</span><div><h3>Грануляция</h3><p>Получение гранулы из подготовленного полимера; применение зависит от состава и характеристик партии</p></div></li></ol></div>
 
  <div class="mini-line-options" id="options"><div class="line-section-heading"><div><p class="eyebrow">ВАРИАНТЫ ПРИЁМА И РАСШИРЕНИЯ</p><h3>Под вашу задачу.<br>С возможностью расширения.</h3></div><p>Базовая линия выдаёт общий плёночный микс. Дополнительные участки подбирают под нужный продукт, логистику и дальнейшую переработку.</p></div>  <aside class="line-option"><div><p class="eyebrow">ВЫДАЧА ПРОДУКТА</p><h3>Приёмная секция под вашу площадку</h3><p>На площадках в Китае и Нидерландах очищенную плёнку принимали в ограждённую сетчатую секцию. Её размер, точку подачи и доступ для выгрузки подбирают под организацию смены.</p></div><div><strong>1 поток плёнки</strong><p>Далее — накопление, продажа переработчику или подача на собственную мойку. Форма выдачи согласуется при подборе линии.</p></div></aside>

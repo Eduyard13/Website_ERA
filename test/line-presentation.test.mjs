@@ -171,7 +171,7 @@ test('BASE, PRO and PREMIUM share exactly the same four full-source dry product 
  let common;
  for(const slug of ['separatsiya-01','separatsiya-02','separatsiya-03']){
   const page=render('/catalog/lines/'+slug),part=page.slice(page.indexOf('id="quality"'),page.indexOf('id="kair"'));
-  const block=part.slice(part.indexOf('<div class="dry-product-showcase"'),part.indexOf('<p class="dry-product-model-note"'));
+  const block=part.slice(part.indexOf('<div class="dry-product-showcase"'),part.indexOf(slug==='separatsiya-03'?'<div class="sd-product-shipping"':'<div class="line-next-process">')).trim();
   assert.ok(block.includes('data-dry-product-showcase'),slug);
   assert.equal((block.match(/data-dry-product-pair="/g)||[]).length,2);
   assert.deepEqual([...block.matchAll(/<img src="([^"]+)" /g)].map(m=>m[1]),photos.map(p=>basePath+'/assets/'+p));
@@ -179,7 +179,14 @@ test('BASE, PRO and PREMIUM share exactly the same four full-source dry product 
   assert.equal((block.match(/data-dry-product-state="after"/g)||[]).length,2);
   assert.equal((block.match(/data-media-group="dry-product-results"/g)||[]).length,4);
   assert.ok(!block.includes('-thumb.webp'));
-  assert.ok(part.includes('line-quality-table'));
+  assert.doesNotMatch(part,/line-quality-table|line-evidence|mini-quality-results|dry-product-model-note|dry-product-photo-note/);
+  assert.ok(block.includes('Что вы получаете на выходе'));
+  const benefits=["Отделение основной массы посторонних включений","Очищенная плёночная фракция","Возможность реализации очищенного сырья (плёночной фракции)","Подготовка материала к дальнейшей мойке и переработке"];
+  const offsets=benefits.map(label=>block.indexOf('<span>'+label+'</span>'));
+  assert.ok(offsets.every((offset,i)=>offset>=0&&(!i||offset>offsets[i-1])),slug);
+  assert.doesNotMatch(block,/Что получает клиент|Визуально более чистая/);
+  assert.ok(part.includes(slug==='separatsiya-03'?'sd-product-shipping':'line-next-process'));
+  if(slug==='separatsiya-01')assert.ok(part.includes('id="options"'));
   if(common)assert.equal(block,common);else common=block;
  }
  assert.ok(!render('/catalog/lines/moyka-plenki').includes('data-dry-product-showcase'));

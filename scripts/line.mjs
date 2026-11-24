@@ -1,7 +1,7 @@
 import {renderDryProductCollage} from './dry-product-collage.mjs';
 import {siteContacts} from '../content/contact.mjs';
 import {nodes} from '../content/catalog.mjs';
-import {filmSeparationMedia as pictures,lineMetrics,lineRawMaterials,lineStages,lineUnits,linePositions,lineSpecs,lineQuality} from '../content/film-separation.mjs';
+import {filmSeparationMedia as pictures,lineMetrics,lineRawMaterials,lineStages,lineUnits,linePositions,lineSpecs} from '../content/film-separation.mjs';
 import {mediaAttributes} from './media.mjs';
 import {pdfViewerDialog} from './documents.mjs';
 import {lineDocuments,lineDocumentCards} from './line-page-media.mjs';
@@ -58,9 +58,7 @@ export function renderFilmSeparation(line){
 
  <section class="section" id="process">${renderProProcess(lineStages)}</section>
 
- <section class="section line-soft" id="quality">${renderDryProductCollage()}<p class="dry-product-model-note">PRO выдаёт плёнку в раздельных тюках: основной микс и выбранные виды плёнки.</p>
-  <div class="table-wrap"><table class="line-quality-table"><caption>Показатели готового продукта и критерии согласования партии</caption><thead><tr><th scope="col">Показатель</th><th scope="col">Что указано в техническом описании</th><th scope="col">Что оценивать для вашей партии</th></tr></thead><tbody>${lineQuality.map(([label,claim,check])=>`<tr><th scope="row">${label}</th><td data-label="По техническому описанию">${claim}</td><td data-label="Для вашей партии">${check}</td></tr>`).join('')}</tbody></table></div>
-  <div class="line-evidence"><div><p class="eyebrow">ОСНОВАНИЕ ПОКАЗАТЕЛЕЙ</p><h3>Испытания, морфология и материалы работы</h3><p>Техническое описание содержит результаты испытаний на загрязнённом сырье, данные морфологических анализов ЭРА, сведения о потерях, расчёты выпуска, фотографии плёнки до и после очистки и снимки оборудования на площадках.</p></div><div><h3>Критерии качества под ваш материал</h3><p>Целевые значения остаточного засора, влажности и состава партии согласуются под требования покупателя или следующего передела. Основанием для приёмки служат согласованные показатели и результаты проверки конкретного сырья.</p><p class="line-note">В приложенном ТО нет отдельных протоколов испытаний и численных норм остаточного засора и выходной влажности. Фотографии показывают результат визуально.</p></div></div>
+ <section class="section line-soft" id="quality">${renderDryProductCollage()}
   <div class="line-next-process"><p class="eyebrow">ДАЛЬНЕЙШАЯ ПЕРЕРАБОТКА</p><ol><li><span>01</span><div><h3>Сухая сепарация</h3><p>Очищенная плёнка в раздельных тюках</p></div></li><li><span>02</span><div><h3>Горячая мойка и сушка</h3><p>Удаление остаточных этикеток, жиров, масел и клеёв; обезвоживание и уплотнение</p></div></li><li><span>03</span><div><h3>Грануляция</h3><p>Экструзия, дегазация и формование подготовленного полимера</p></div></li></ol></div>
  </section>
 
