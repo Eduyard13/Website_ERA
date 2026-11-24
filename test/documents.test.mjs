@@ -37,7 +37,7 @@ test('Полная линия сохраняет показатели, один 
  assert.equal((composition.match(/data-part-guide="/g)||[]).length,27);
  assert.equal((composition.match(/data-line-leader="/g)||[]).length,28);assert.equal((composition.match(/class="guide-end"/g)||[]).length,28);assert.ok(!composition.includes('pin-masks'));
  assert.ok(!page.includes('data-line-source-diagram'));assert.ok(!page.includes('id="line02-workshop"'));
- assert.ok(!composition.includes('line-unit-grid'));assert.ok(page.includes('line-flow-diagram'));
+ assert.ok(!composition.includes('line-unit-grid'));assert.ok(page.includes('data-pro-process-map'));assert.ok(!page.includes('line-flow-diagram'));
  const documents=page.slice(page.indexOf('id="documents"'),page.indexOf('class="section contact line-request"'));
  assert.equal((documents.match(/data-library-document="/g)||[]).length,3);
  for(const id of ['separatsiya-02-overview','separatsiya-02-technical','separatsiya-02-dimensions-a0'])assert.ok(documents.includes(`data-pdf-open="${id}"`));

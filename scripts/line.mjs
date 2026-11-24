@@ -11,6 +11,7 @@ import {linePower,dryLineProduction} from './line-power.mjs';
 import {lineDimensions} from './line-dimensions.mjs';
 import {interactiveLineDiagram} from './line-diagram.mjs';
 import {renderDryArchitectureHeading} from './dry-line-architecture.mjs';
+import {renderProProcess} from './pro-process.mjs';
 import {fullLineDiagram} from '../content/line-diagrams.mjs';
 import {equipmentCardImages} from '../content/equipment-card-images.mjs';
 import {imageSize} from './image-size.mjs';
@@ -54,12 +55,7 @@ export function renderFilmSeparation(line){
 
  </section>
 
- <section class="section" id="process"><div class="line-section-heading"><div><p class="eyebrow">ДВИЖЕНИЕ МАТЕРИАЛА</p><h2>Шесть операций.<br>Связанная технология.</h2></div><p>Сначала плёнка освобождается от основной массы включений. Затем потоки разделяются, очищаются и накапливаются для поочерёдного прессования.</p></div>
-  <ol class="line-stages">${lineStages.map(([title,text],i)=>`<li><span class="line-index">${String(i+1).padStart(2,'0')}</span><h3>${title}</h3><p>${text}</p></li>`).join('')}</ol>
-  <div class="line-routing"><div class="line-routing-main"><span class="eyebrow">ОСНОВНОЙ ЦВЕТНОЙ МИКС</span><h3>Сортировка → ротор → пятый бункер</h3><p>Оставшийся на ленте материал проходит роторную, дисковую и воздушную очистку. Пневмотранспорт направляет плёнку в пятый накопитель.</p></div><div><span class="eyebrow">ЧЕТЫРЕ ВЫБРАННЫЕ ФРАКЦИИ</span><h3>Ручной отбор → четыре своих бункера</h3><p>На этом маршруте роторный узел ещё не пройден. Для дополнительной очистки накопленную по видам плёнку повторно подают в линию отдельной партией.</p></div><p class="line-routing-note">Все пять бункеров дополнительно отделяют пылевые включения. Перед сменой фракции очищают общие транспортёры; партии маркируют и хранят раздельно.</p></div>
-  <div class="line-process-views">${picture('sorting')}${picture('bunkers')}</div>
-  <details class="line-more"><summary>Открыть полную технологическую схему потоков</summary><div class="line-flow-diagram">${picture('flow',{full:true})}</div></details>
- </section>
+ <section class="section" id="process">${renderProProcess(lineStages)}</section>
 
  <section class="section line-soft" id="quality"><div class="line-section-heading"><div><p class="eyebrow">ПРОДУКТ И КАЧЕСТВО</p><h2>Очищенная плёнка.<br>Готовая к следующему шагу.</h2></div><p>Готовая продукция линии — подготовленная плёнка в раздельных тюках. Её можно продавать переработчикам или направлять на собственную линию мойки.</p></div>
   <div class="line-comparison">${picture('before',{label:'ДО СЕПАРАЦИИ',caption:'Плёнка с большой массой посторонних включений'})}${picture('after',{label:'ПОСЛЕ СЕПАРАЦИИ',caption:'Очищенный плёночный материал'})}</div>

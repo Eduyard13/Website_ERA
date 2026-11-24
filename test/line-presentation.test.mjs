@@ -148,3 +148,18 @@ test('BASE: always-visible native process map preserves equipment routes and oth
   assert.ok(!other.includes('data-base-process-map')&&!other.includes('/base-process.css?v='));
  }
 });
+
+test('PRO native flow preserves the single press, both useful routes and separate waste routes',()=>{
+ const page=render('/catalog/lines/separatsiya-02'),p=page.slice(page.indexOf('id="process"'),page.indexOf('id="quality"'));
+ assert.ok(p.includes('Как линия разделяет основной микс и выбранные фракции'));
+ assert.ok(p.includes('Закрытый сортировочный бокс с вакуумными отсосами'));
+ assert.ok(p.includes('Интенсивная очистка')&&p.includes('повторно подать в линию отдельной партией'));
+ assert.equal((p.match(/<li><span class="line-index"/g)||[]).length,6);
+ assert.equal((p.match(/data-pro-flow-node="/g)||[]).length,12);
+ assert.equal((p.match(/data-pro-flow-node="press"/g)||[]).length,1);
+ assert.equal((p.match(/data-pro-flow-outcome="/g)||[]).length,3);
+ for(const route of ['sorting-fractions','fractions-four','four-press','fifth-press','press-mix','press-sorted','rotor-solids','rotor-dust','four-dust','fifth-dust'])assert.ok(p.includes('data-pro-route="'+route+'"'),route);
+ assert.ok(!p.includes('<details')&&!p.includes('<img')&&!p.includes('line-process-views'));
+ assert.ok(page.includes('/pro-process.css?v='));
+ for(const slug of ['separatsiya-01','separatsiya-03','moyka-plenki']){const other=render('/catalog/lines/'+slug);assert.ok(!other.includes('data-pro-process-map')&&!other.includes('/pro-process.css?v='));}
+});
