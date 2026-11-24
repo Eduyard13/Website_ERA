@@ -125,3 +125,24 @@ test('Шесть компактных карточек сохраняют дан
  });
  assert.equal(lines.find(l=>l.slug==='separatsiya-02').cardFile,'lines/separatsiya-01/catalog-cover.webp');
 });
+
+
+test('BASE: always-visible native process map preserves equipment routes and other pages',()=>{
+ const page=render('/catalog/lines/separatsiya-01');
+ const block=page.slice(page.indexOf('id="process"'),page.indexOf('id="quality"'));
+ assert.ok(block.includes('Как линия разделяет плёнку, примеси и пыль'));
+ assert.ok(block.includes('Наглядная карта движения основного продукта и отходящих потоков.'));
+ assert.deepEqual([...block.matchAll(/data-base-flow-step="([^"]+)"/g)].map(m=>m[1]),['01–02','03','05','06','Выход']);
+ assert.deepEqual([...block.matchAll(/data-base-flow-from="([^"]+)"/g)].map(m=>m[1]),['03','05','06']);
+ assert.ok(block.includes('data-base-flow-dust="06"'));
+ assert.equal((block.match(/data-base-flow-branch="/g)||[]).length,2);
+ assert.equal((block.match(/data-base-flow-outcome="/g)||[]).length,3);
+ assert.equal((block.match(/<li><span class="line-index"/g)||[]).length,6);
+ assert.ok(!block.includes('<details')&&!block.includes('flow.webp')&&!block.includes('<img'));
+ assert.ok(block.includes('конвейерами 07–10')&&block.includes('Рама-наполнитель 11')&&block.includes('позиция 12'));
+ assert.ok(page.includes('/base-process.css?v='));
+ for(const slug of ['separatsiya-02','separatsiya-03','moyka-plenki']){
+  const other=render('/catalog/lines/'+slug);
+  assert.ok(!other.includes('data-base-process-map')&&!other.includes('/base-process.css?v='));
+ }
+});

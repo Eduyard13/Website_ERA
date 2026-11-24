@@ -1,0 +1,41 @@
+// BASE process: approved visual concept 03, rendered as live HTML and inline SVG.
+// Stage numbering (01–06) and equipment positions (01–13) are deliberately distinct.
+const art={
+ feed:'<path d="M25 8h38l-12 17v10H37V25zM37 39l-7 8m14-6 2 7m7-8 7 7"/><rect x="12" y="51" width="64" height="15" rx="7.5"/><circle cx="23" cy="58.5" r="2.7"/><circle cx="44" cy="58.5" r="2.7"/><circle cx="65" cy="58.5" r="2.7"/>',
+ ballistic:'<path d="M12 48 33 20h43L55 48zM24 54l-5 10m35-10-5 10M70 19l12-7m-4-2 5 1-2 6M70 34h13m-5-4 5 4-5 4M58 55l14 10m-1-6 1 6-6 1"/><g fill="currentColor" stroke="none"><circle cx="34" cy="29" r="1.8"/><circle cx="44" cy="29" r="1.8"/><circle cx="54" cy="29" r="1.8"/><circle cx="64" cy="29" r="1.8"/><circle cx="27" cy="40" r="1.8"/><circle cx="37" cy="40" r="1.8"/><circle cx="47" cy="40" r="1.8"/><circle cx="57" cy="40" r="1.8"/></g>',
+ control:'<rect x="12" y="51" width="64" height="15" rx="7.5"/><circle cx="23" cy="58.5" r="2.7"/><circle cx="44" cy="58.5" r="2.7"/><circle cx="65" cy="58.5" r="2.7"/><path d="M34 11h20v12H34zM34 27 20 45h48L54 27" fill="none"/><path d="M44 31v10" stroke-dasharray="2 4"/>',
+ rotor:'<path d="M9 62h8V48q0-8 8-8M65 40h7q7 0 7 7v4M57 14a28 28 0 0 1 15 19m-7-2 8 4 3-8"/><circle cx="44" cy="40" r="23"/><circle cx="44" cy="40" r="5"/><path d="M43 32c-9-9-4-15 0-15 7 0 10 10 5 16M51 38c12-5 16 1 14 6-3 7-13 5-16 0M40 47c-3 12-11 12-14 7-4-6 1-14 10-14M36 35c-12-1-15-8-11-12 5-5 13 1 15 9"/><g fill="currentColor" stroke="none"><circle cx="72" cy="55" r="1.6"/><circle cx="80" cy="60" r="1.7"/><circle cx="68" cy="64" r="1.5"/></g>',
+ film:'<path d="M12 39 33 20q6-5 16-3l19 1 9-4-23 25q-5 6-15 3l-18-3zM13 53l18-13m-9 8 16 8q10 4 16-2l23-23-14 4M15 58l20 8q10 3 17-3l24-23"/>',
+ stones:'<path d="M6 58 16 39 30 33 40 43 36 63 17 66zM33 35l8-23 16-5 16 19-11 17-22 1zM39 60l7-16 17-5 17 15-7 12-22 2zM16 39l8 16 12 8m5-51 9 16 23-2M46 44l12 13 15 9"/>',
+ dust:'<path d="M7 25h26q11 0 11-7t-10-7M5 37h36q10 0 10 8t-10 8M9 49h17M59 14h22v17L73 48v17h-6V48l-8-17zM59 31h22M64 10h12"/>'
+};
+const icon=name=>'<svg class="base-process-icon" viewBox="0 0 88 76" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+art[name]+'</svg>';
+const steps=[
+ ['01–02','Раскрытие и подача','feed'],
+ ['03','Баллистический сепаратор','ballistic'],
+ ['05','Конвейер контроля','control'],
+ ['06','Роторная очистка','rotor'],
+ ['Выход','Очищенная плёнка','film']
+];
+const outcomes=[
+ ['film','ПОЛЕЗНЫЙ ПРОДУКТ','Очищенная плёнка','После роторной, дисковой и воздушной очистки пневмотранспортёр направляет плёнку в приёмную секцию или на следующий участок переработки.'],
+ ['stones','ОТДЕЛЁННЫЕ ВКЛЮЧЕНИЯ','Твёрдые примеси в биг-бэге','Включения, отделённые при баллистической сепарации, ручном контроле и роторной очистке, собираются конвейерами 07–10. Рама-наполнитель 11 обеспечивает выгрузку в биг-бэг.'],
+ ['dust','ПЫЛЕВОЙ ПОТОК','Пылеулавливание','Отдельный контур аспирации отводит запылённый воздух и улавливает пыль. Система пылеулавливания (позиция 12) входит в базовую комплектацию.']
+];
+
+export function renderBaseProcess(stages){
+ return '<div class="line-section-heading base-process-intro"><div><p class="eyebrow">ТЕХНОЛОГИЧЕСКИЙ ПРОЦЕСС</p><h2>Один маршрут плёнки.<br>Отдельный отвод примесей.</h2></div><p>В базовой комплектации плёнка проходит единым технологическим маршрутом. Доступные загрязнения отбираются на контрольном конвейере и в узлах сухой очистки, а полезный продукт направляется в приёмную секцию. Отдельная сортировка по видам плёнки в базовую поставку не входит.</p></div>'+
+ '<ol class="line-stages base-process-stages" aria-label="Шесть этапов технологического процесса">'+stages.map(([title,description],i)=>'<li><span class="line-index">'+String(i+1).padStart(2,'0')+'</span><h3>'+title+'</h3><p>'+description+'</p></li>').join('')+'</ol>'+
+ '<div class="base-process-map" data-base-process-map aria-labelledby="base-flow-title">'+
+ '<header class="base-process-map-heading"><p class="eyebrow">МАРШРУТ ПОТОКОВ · BASE</p><h3 id="base-flow-title">Как линия разделяет плёнку, примеси и пыль</h3><p>Наглядная карта движения основного продукта и отходящих потоков.</p></header>'+
+ '<div class="base-flow-chart" aria-label="Технологическая карта по позициям оборудования">'+
+ '<div class="base-flow-legend"><span><i></i>Основной поток плёнки</span><span><i></i>Отвод твёрдых включений</span><span><i></i>Пылевоздушный поток</span></div>'+
+ '<ol class="base-flow-main" aria-label="Основной поток плёнки">'+steps.map(([number,label,symbol],i)=>'<li class="base-flow-step'+(i===4?' base-flow-step--output':'')+'" data-base-flow-step="'+number+'"><div class="base-flow-step-inner"><div class="base-flow-step-top"><span>'+number+'</span>'+icon(symbol)+'</div><strong>'+label+'</strong></div></li>').join('')+'</ol>'+
+ '<svg class="base-flow-connectors" viewBox="0 0 1000 92" preserveAspectRatio="none" aria-hidden="true" focusable="false">'+
+ '<g fill="none" stroke="#77808a" stroke-width="1.65" vector-effect="non-scaling-stroke" stroke-linejoin="round"><path data-base-flow-from="03" d="M300 0V28Q300 40 312 40H400V82"/><path data-base-flow-from="05" d="M500 0V28Q500 40 488 40H400"/><path data-base-flow-from="06" d="M665 0V28Q665 40 653 40H488"/></g>'+
+ '<path d="M393 79L400 92 407 79Z" fill="#9e792c"/><path data-base-flow-dust="06" d="M735 0V48Q735 60 747 60H788Q800 60 800 72V82" fill="none" stroke="#8998a9" stroke-width="1.5" stroke-dasharray="5 4" vector-effect="non-scaling-stroke"/><path d="M793 79L800 92 807 79Z" fill="#8998a9"/>'+
+ '<g fill="#b68b36"><circle cx="300" cy="2.5" r="3.5"/><circle cx="500" cy="2.5" r="3.5"/><circle cx="665" cy="2.5" r="3.5"/></g><circle cx="735" cy="2.5" r="3.5" fill="#8998a9"/></svg>'+
+ '<div class="base-flow-branches"><article class="base-flow-branch base-flow-branch--solids" data-base-flow-branch="solids">'+icon('stones')+'<div><span>07–11 · ТВЁРДЫЕ ВКЛЮЧЕНИЯ</span><h4>Конвейеры и биг-бэг</h4><p>Из позиций 03, 05 и 06</p></div></article>'+
+ '<article class="base-flow-branch base-flow-branch--dust" data-base-flow-branch="dust">'+icon('dust')+'<div><span>12 · ПЫЛЕВОЗДУШНЫЙ ПОТОК</span><h4>Пылеулавливание</h4><p>От роторного узла 06</p></div></article></div></div>'+
+ '<div class="base-flow-outcomes" aria-label="Результаты процесса">'+outcomes.map(([symbol,kicker,title,description],i)=>'<article class="base-flow-outcome'+(i===0?' base-flow-outcome--product':'')+'" data-base-flow-outcome="'+symbol+'"><div class="base-flow-outcome-head">'+icon(symbol)+'<div><span>'+kicker+'</span><h4>'+title+'</h4></div></div><p>'+description+'</p></article>').join('')+'</div></div>';
+}

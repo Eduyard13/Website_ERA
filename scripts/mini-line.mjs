@@ -11,6 +11,7 @@ import {linePower,dryLineProduction} from './line-power.mjs';
 import {equipmentCardImages} from '../content/equipment-card-images.mjs';
 import {interactiveLineDiagram} from './line-diagram.mjs';
 import {renderDryArchitectureHeading} from './dry-line-architecture.mjs';
+import {renderBaseProcess} from './base-process.mjs';
 import {lineDimensions} from './line-dimensions.mjs';
 import {miniLineDiagram} from '../content/line-diagrams.mjs';
 import {imageSize} from './image-size.mjs';
@@ -55,11 +56,7 @@ export function renderMiniFilmSeparation(line){
   <p class="line-note">Позиции 12 — пылеулавливание и 13 — шкаф управления входят в базовую спецификацию. На общей компоновке они не показаны: размещение уточняют при привязке линии к площадке.</p>
  </section>
 
- <section class="section" id="process"><div class="line-section-heading"><div><p class="eyebrow">ТЕХНОЛОГИЧЕСКИЙ ПРОЦЕСС</p><h2>Один маршрут плёнки.<br>Раздельный отвод примесей.</h2></div><p>В базовой комплектации плёнка проходит общим потоком. На контрольном конвейере отбирают доступные загрязнения; отдельная сортировка плёнок по видам в базовую поставку не входит.</p></div>
-  <ol class="line-stages">${miniStages.map(([title,text],i)=>`<li><span class="line-index">0${i+1}</span><h3>${title}</h3><p>${text}</p></li>`).join('')}</ol>
-  <details class="line-more" data-keep-open data-line-flow><summary>Полная схема потоков: плёнка, включения и пыль</summary><div class="mini-flow-diagram">${picture('flow',{full:true})}</div></details>
-  <div class="line-routing"><div class="line-routing-main"><span class="eyebrow">ПОЛЕЗНЫЙ ПРОДУКТ</span><h3>Распушитель → приём очищенной плёнки</h3><p>Пневмотранспортёр подаёт лёгкую плёночную фракцию в приёмную секцию. Направление подачи и способ дальнейшей передачи согласуют с заказчиком.</p></div><div><span class="eyebrow">ОТДЕЛЁННЫЕ ВКЛЮЧЕНИЯ</span><h3>Конвейеры 07–10 → биг-бэг</h3><p>Твёрдые примеси собираются отдельным конвейерным трактом. Рама на позиции 11 предназначена для мешка с этими включениями.</p></div><p class="line-routing-note">Пыль улавливается отдельным контуром аспирации. Система пылеулавливания и шкаф управления включены в базовую спецификацию; точки подключения уточняют при размещении.</p></div>
- </section>
+ <section class="section" id="process">${renderBaseProcess(miniStages)}</section>
 
  <section class="section line-soft" id="quality"><div class="line-section-heading"><div><p class="eyebrow">ПРОДУКТ И КАЧЕСТВО</p><h2>Очищенная плёнка.<br>Подготовленная к мойке.</h2></div><p>Продукт линии BASE — плёночная фракция после сухой очистки. Состав микса определяется исходной партией; параметры для продажи или дальнейшей переработки согласуют с покупателем и следующим участком.</p></div>
   <div class="line-comparison">${picture('before',{label:'ДО СЕПАРАЦИИ',caption:'Исходная плёнка с посторонними включениями'})}${picture('after',{label:'ПОСЛЕ СЕПАРАЦИИ',caption:'Очищенная плёночная фракция'})}</div>

@@ -94,12 +94,13 @@ with sync_playwright() as p:
   root.locator('[data-diagram-zoom]').select_option('2');exercise('fullscreen 200%')
   page.keyboard.press('Escape');page.wait_for_function('document.querySelector("#line01-construction").dataset.expanded==="false"')
   assert expand.evaluate('(e)=>e===document.activeElement')
-  # The original diagrams and source photos still use the site viewer.
+  # The approved process map is live HTML/SVG, not a collapsed bitmap.
   assert page.locator('[data-line-source-diagram]').count()==0
-  for summary,key in [('[data-line-flow] summary','flow')]:
-   page.locator(summary).click();link=page.locator('.mini-line [data-media][data-image$="/'+key+'.webp"] .media-open');link.click()
-   assert page.locator('#media-viewer').is_visible() and page.locator('#viewer-image').get_attribute('src').endswith('/'+key+'.webp')
-   page.keyboard.press('Escape')
+  flow=page.locator('#process [data-base-process-map]')
+  assert flow.is_visible() and flow.locator('[data-base-flow-step]').count()==5
+  assert flow.locator('[data-base-flow-branch]').count()==2 and flow.locator('[data-base-flow-outcome]').count()==3
+  assert page.locator('#process details,#process img').count()==0
+  assert flow.evaluate('(e)=>e.scrollWidth<=e.clientWidth+1')
   page.locator('#mini-dimension-view-top [data-pdf-open]').click()
   page.wait_for_function('document.querySelector("[data-pdf-status]").textContent==="Страница 1 из 1"',timeout=30000)
   page.keyboard.press('Escape')
