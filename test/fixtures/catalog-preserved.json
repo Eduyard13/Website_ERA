@@ -1,6 +1,6 @@
 {
   "base": "3ee697be21a242d7357f6e202cd7204b69ce1b4c",
-  "registry": "4f35beb83f574bfca005ae95668141b3e4ab88ad68fe695799d54c9759da3059",
+  "registry": "76ab9e3f408a5350f73cc15638e2bbf254e706bd6acef2038e95bfedb4b092db",
   "nodeCards": [
     {
       "slug": "predvaritelnyy-izmelchitel",
@@ -58,7 +58,7 @@
     },
     {
       "slug": "separatsiya-02",
-      "sha256": "6337749f1b94ae3f59f813415dcfaa2add973160da6ebe5841f9dfb3a7dca3c5"
+      "sha256": "0da4399f02aace0c209324e00430e5e7bfa4c803fa61fb024ce5aaece8b53962"
     }
   ],
   "details": {
