@@ -138,6 +138,8 @@ test('BASE: always-visible native process map preserves equipment routes and oth
  assert.equal((block.match(/data-base-flow-branch="/g)||[]).length,2);
  assert.equal((block.match(/data-base-flow-outcome="/g)||[]).length,3);
  assert.equal((block.match(/<li><span class="line-index"/g)||[]).length,6);
+ assert.ok(block.includes('<span class="line-index">04</span><h3>Интенсивная очистка</h3>'));
+ assert.equal((block.match(/class="base-product-film"/g)||[]).length,1);
  assert.ok(!block.includes('<details')&&!block.includes('flow.webp')&&!block.includes('<img'));
  assert.ok(block.includes('конвейерами 07–10')&&block.includes('Рама-наполнитель 11')&&block.includes('позиция 12'));
  assert.ok(page.includes('/base-process.css?v='));
