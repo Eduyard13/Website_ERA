@@ -152,7 +152,9 @@ test('BASE: always-visible native process map preserves equipment routes and oth
 test('PRO native flow preserves the single press, both useful routes and separate waste routes',()=>{
  const page=render('/catalog/lines/separatsiya-02'),p=page.slice(page.indexOf('id="process"'),page.indexOf('id="quality"'));
  assert.ok(p.includes('Как линия разделяет основной микс и выбранные фракции'));
- assert.ok(p.includes('Закрытый сортировочный бокс с вакуумными отсосами'));
+ assert.ok(p.includes('<span class="line-index">03</span><h3>Закрытый сортировочный бокс</h3>'));
+ assert.ok(p.includes('Вакуумные высосы направляют')&&p.includes('С вакуумными высосами')&&p.includes('Вакуумный высос из бокса'));
+ assert.doesNotMatch(p,/отсос/i);
  assert.ok(p.includes('Интенсивная очистка')&&p.includes('повторно подать в линию отдельной партией'));
  assert.equal((p.match(/<li><span class="line-index"/g)||[]).length,6);
  assert.equal((p.match(/data-pro-flow-node="/g)||[]).length,12);

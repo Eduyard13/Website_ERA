@@ -13,7 +13,7 @@ const art={
  stones:'<path d="M6 58 16 39 30 33 40 43 36 63 17 66zM33 35l8-23 16-5 16 19-11 17-22 1zM39 60l7-16 17-5 17 15-7 12-22 2zM16 39l8 16 12 8m5-51 9 16 23-2M46 44l12 13 15 9"/>',
  dust:'<path d="M7 25h26q11 0 11-7t-10-7M5 37h36q10 0 10 8t-10 8M9 49h17M59 14h22v17L73 48v17h-6V48l-8-17zM59 31h22M64 10h12"/>'
 };
-const icon=name=>'<svg class="base-process-icon" viewBox="0 0 88 76" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+art[name]+'</svg>';
+const icon=name=>'<svg class="base-process-icon" viewBox="0 0 88 76" fill="none" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+art[name]+'</svg>';
 
 const productFilm='<svg class="base-product-film" viewBox="0 0 320 240" aria-hidden="true" focusable="false"><defs><linearGradient id="pro-film-surface" x1="0" y1="1" x2=".9" y2="0"><stop stop-color="#d4e1f5" stop-opacity="0"/><stop offset=".35" stop-color="#e8eff9" stop-opacity=".10"/><stop offset=".78" stop-color="#edf4ff" stop-opacity=".30"/><stop offset="1" stop-color="#f8fbff" stop-opacity=".12"/></linearGradient><linearGradient id="pro-film-fold" x1="0" y1="1" x2=".8" y2=".1"><stop stop-color="#a2b8de" stop-opacity="0"/><stop offset=".54" stop-color="#b7c8e6" stop-opacity=".18"/><stop offset=".76" stop-color="#f1f5fd" stop-opacity=".52"/><stop offset="1" stop-color="#c8d7ee" stop-opacity=".12"/></linearGradient><linearGradient id="pro-film-edge" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#dce8ff" stop-opacity="0"/><stop offset=".5" stop-color="#e5edff" stop-opacity=".42"/><stop offset="1" stop-color="#fff" stop-opacity=".72"/></linearGradient></defs><path d="M0 240C73 226 119 194 162 142C205 91 237 38 320 10L320 101C247 108 205 151 161 194C131 223 104 234 79 240Z" fill="url(#pro-film-surface)"/><path d="M55 240C111 219 144 191 174 140C215 71 246 28 320 0L320 52C260 75 224 126 194 174C171 213 149 228 127 240Z" fill="url(#pro-film-fold)"/><path d="M82 240C132 211 167 161 206 134C250 102 281 95 320 84L320 139C269 153 235 175 192 207C170 224 150 235 137 240Z" fill="url(#pro-film-surface)"/><path d="M9 240C79 222 121 192 162 142C205 91 237 38 320 10M55 240C111 219 144 191 174 140C215 71 246 28 320 0M82 240C132 211 167 161 206 134C250 102 281 95 320 84M137 240C169 227 190 206 216 188C256 161 284 148 320 139" fill="none" stroke="url(#pro-film-edge)" stroke-width=".85"/><path d="M35 240C102 218 144 172 185 118C224 65 266 36 320 18M105 240C156 208 183 168 217 142C249 118 283 107 320 100M119 240C170 212 198 179 231 156C258 137 288 125 320 119" fill="none" stroke="url(#pro-film-edge)" stroke-opacity=".45" stroke-width=".6"/></svg>';
 
@@ -21,12 +21,12 @@ const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll
 const tiles=[
  ['prep','01–03','Подготовка сырья','feed','Вскрытие тюков и подача'],
  ['ballistic','04','Баллистическая сепарация','ballistic','Отделение объёмных включений и просева'],
- ['sorting','08–09','Закрытый сортировочный бокс','box','С вакуумными отсосами'],
+ ['sorting','08–09','Закрытый сортировочный бокс','box','С вакуумными высосами'],
  ['rotor','12–15','Интенсивная очистка','rotor','Ротор · диски · воздух'],
  ['fifth','20 · 1 из 5','Пятый бункер','bunker','Основной цветной микс'],
  ['press','22–25','Общий пресс','press','Поочерёдная подача партий'],
  ['mix','ВЫХОД','Тюки очищенной плёнки','bale','Основной цветной микс'],
- ['fractions','10','4 выбранные фракции','film','Вакуумный отбор из бокса'],
+ ['fractions','10','4 выбранные фракции','film','Вакуумный высос из бокса'],
  ['four','20 · 4 из 5','4 отдельных бункера','four','Раздельное накопление'],
  ['sorted','ВЫХОД','Тюки отсортированной плёнки','bale','Раздельно по видам']
 ];
@@ -34,24 +34,24 @@ const tile=([id,num,title,symbol,detail])=>'<article class="pro-flow-tile pro-fl
 // Connector coordinates follow the seven equal grid columns and fixed row heights.
 // Broken grey strokes at crossings distinguish independent routes (no junction).
 const edges=[
- ['prep','ballistic','M188 90H212','gold'],
- ['ballistic','sorting','M388 90H412','gold'],
- ['sorting','rotor','M588 90H612','gold'],
- ['rotor','fifth','M788 90H812','gold'],
- ['fifth','press','M988 90H1012','gold'],
- ['press','mix','M1188 90H1212','gold'],
- ['sorting','fractions','M500 180V252','gold'],
- ['fractions','four','M588 322H612','gold'],
- ['four','press','M988 322H1088Q1100 322 1100 310V180','gold'],
- ['press','sorted','M1188 135H1198Q1200 135 1200 145V310Q1200 322 1212 322','gold'],
- ['ballistic','solids','M300 180V205H100V420Q100 440 120 440H480Q500 440 500 460V470','solid'],
- ['sorting','solids','M450 180V205H300','solid','join'],
- ['rotor','solids','M650 180V205H509 M491 205H450','solid','join'],
- ['rotor','dust','M750 180V225H1020V313 M1020 331V430Q1020 440 1030 440H1090Q1100 440 1100 450V470','dust'],
- ['fifth','dust','M900 180V225H1020','dust','join'],
- ['four','dust','M800 392V430Q800 440 810 440H1030','dust','join']
+ ['prep','ballistic','M188 125H212','gold'],
+ ['ballistic','sorting','M388 125H412','gold'],
+ ['sorting','rotor','M588 125H612','gold'],
+ ['rotor','fifth','M788 125H812','gold'],
+ ['fifth','press','M988 125H1012','gold'],
+ ['press','mix','M1188 125H1212','gold'],
+ ['sorting','fractions','M500 250V322','gold'],
+ ['fractions','four','M588 430H612','gold'],
+ ['four','press','M988 430H1088Q1100 430 1100 418V250','gold'],
+ ['press','sorted','M1188 188H1198Q1200 188 1200 198V418Q1200 430 1212 430','gold'],
+ ['ballistic','solids','M300 250V275H100V566Q100 586 120 586H480Q500 586 500 606V616','solid'],
+ ['sorting','solids','M450 250V275H300','solid','join'],
+ ['rotor','solids','M650 250V275H509 M491 275H450','solid','join'],
+ ['rotor','dust','M750 250V295H1020V421 M1020 439V576Q1020 586 1030 586H1090Q1100 586 1100 596V616','dust'],
+ ['fifth','dust','M900 250V295H1020','dust','join'],
+ ['four','dust','M800 538V576Q800 586 810 586H1030','dust','join']
 ];
-const routeSVG=()=>'<svg class="pro-flow-edges" viewBox="0 0 1400 576" preserveAspectRatio="none" aria-hidden="true" focusable="false"><defs>'+[['gold','#ae842b'],['solid','#77808a'],['dust','#8998a9']].map(([key,color])=>'<marker id="pro-arrow-'+key+'" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="'+color+'"/></marker>').join('')+'</defs>'+edges.map(([from,to,path,kind,join])=>'<path class="pro-edge pro-edge--'+kind+'" data-pro-route="'+from+'-'+to+'" d="'+path+'"'+(join?'':' marker-end="url(#pro-arrow-'+kind+')"')+'/>').join('')+'</svg>';
+const routeSVG=()=>'<svg class="pro-flow-edges" viewBox="0 0 1400 742" preserveAspectRatio="none" aria-hidden="true" focusable="false"><defs>'+[['gold','#ae842b'],['solid','#77808a'],['dust','#8998a9']].map(([key,color])=>'<marker id="pro-arrow-'+key+'" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="'+color+'"/></marker>').join('')+'</defs>'+edges.map(([from,to,path,kind,join])=>'<path class="pro-edge pro-edge--'+kind+'" data-pro-route="'+from+'-'+to+'" d="'+path+'"'+(join?'':' marker-end="url(#pro-arrow-'+kind+')"')+'/>').join('')+'</svg>';
 const branch=(id,num,title,desc,symbol)=>'<article class="pro-flow-waste pro-flow-'+id+'" data-pro-flow-node="'+id+'">'+icon(symbol)+'<div><span>'+num+'</span><h4>'+title+'</h4><p>'+desc+'</p></div></article>';
 const outcomes=[
  ['film','ОСНОВНОЙ ЦВЕТНОЙ МИКС','Тюки очищенной плёнки','Оставшийся на ленте материал проходит интенсивную очистку, поступает в пятый бункер и прессуется в тюки.'],
@@ -59,11 +59,11 @@ const outcomes=[
  ['stones','ВКЛЮЧЕНИЯ И ПЫЛЬ','Раздельный отвод','Твёрдые включения идут по транспортёрам 06–07, 11, 16–18 к раме-наполнителю 19 и собираются в биг-бэг. Пыль отделяется в роторном узле и пяти бункерах системой пылеулавливания.']
 ];
 export function renderProProcess(stages){
- const copy=stages.map(([title,desc],i)=>i===2?['Закрытый сортировочный бокс с вакуумными отсосами','Операторы выделяют четыре согласованных вида плёнки. Вакуумные отсосы направляют выбранные фракции в отдельные бункеры; бумага, картон и другие отбираемые примеси поступают в отдельные шахты.']:i===3?['Интенсивная очистка',desc]:[title,desc]);
+ const copy=stages.map(([title,desc],i)=>i===2?['Закрытый сортировочный бокс','Операторы выделяют четыре согласованных вида плёнки. Вакуумные высосы направляют выбранные фракции в отдельные бункеры; бумага, картон и другие отбираемые примеси поступают в отдельные шахты.']:i===3?['Интенсивная очистка',desc]:[title,desc]);
  return '<div class="line-section-heading"><div><p class="eyebrow">ТЕХНОЛОГИЧЕСКИЙ ПРОЦЕСС</p><h2>Шесть операций.<br>Связанная технология.</h2></div><p>Сначала плёнка освобождается от основной массы включений. Затем потоки разделяются, очищаются и накапливаются для поочерёдного прессования.</p></div>'+
  '<ol class="line-stages base-process-stages" aria-label="Шесть этапов технологического процесса">'+copy.map(([title,desc],i)=>'<li><span class="line-index">'+String(i+1).padStart(2,'0')+'</span><h3>'+esc(title)+'</h3><p>'+esc(desc)+'</p></li>').join('')+'</ol>'+
  '<div class="base-process-map" data-pro-process-map aria-labelledby="pro-flow-title"><header class="base-process-map-heading"><p class="eyebrow">МАРШРУТ ПОТОКОВ · PRO</p><h3 id="pro-flow-title">Как линия разделяет основной микс и выбранные фракции</h3><p>Наглядная карта движения основного потока, четырёх выбранных фракций и отходящих включений.</p></header>'+
- '<div class="base-flow-chart"><div class="base-flow-legend"><span><i></i>Полезные потоки плёнки</span><span><i></i>Отвод твёрдых включений</span><span><i></i>Пылевоздушный поток</span></div><div class="pro-flow-grid" aria-label="Маршруты оборудования PRO">'+routeSVG()+tiles.map(tile).join('')+
+ '<div class="base-flow-chart"><div class="base-flow-legend"><span><i></i>Полезные потоки плёнки</span><span><i></i>Отвод твёрдых включений</span><span><i></i>Пылевоздушный поток</span></div><div class="pro-flow-grid" lang="ru" aria-label="Маршруты оборудования PRO">'+routeSVG()+tiles.map(tile).join('')+
  branch('solids','06–07 · 11 · 16–19','Конвейеры и биг-бэг','От баллистики, сортировочного бокса и роторного узла','stones')+
  branch('dust','14 · 20–21','Пылеулавливание','От роторного узла и всех пяти бункеров','dust')+
  '</div><p class="pro-flow-note"><strong>5 бункеров — один общий пресс.</strong> Все пять бункеров дополнительно отделяют пылевые включения. Перед сменой фракции очищают общие транспортёры; партии маркируют и хранят раздельно.</p></div>'+

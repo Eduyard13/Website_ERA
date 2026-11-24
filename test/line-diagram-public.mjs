@@ -58,7 +58,16 @@ try{
  if(scenario.slug==='separatsiya-02'){
   const result=await evaluate(`(()=>{const p=document.querySelector('#process'),map=p.querySelector('[data-pro-process-map]'),nodes=[...map.querySelectorAll('[data-pro-flow-node]')],heights=[...p.querySelectorAll('.base-process-stages>li')].map(x=>x.getBoundingClientRect().height);return {visible:map.getBoundingClientRect().height>0,nodes:nodes.length,press:nodes.filter(x=>x.dataset.proFlowNode==='press').length,outcomes:map.querySelectorAll('[data-pro-flow-outcome]').length,old:p.querySelectorAll('details,img').length,route:map.querySelectorAll('[data-pro-route]').length,equal:Math.max(...heights)-Math.min(...heights)<1.5,fit:map.scrollWidth<=map.clientWidth+1,edges:getComputedStyle(map.querySelector('.pro-flow-edges')).display};})()`);
   if(!result.visible||result.nodes!==12||result.press!==1||result.outcomes!==3||result.old||result.route!==16||!result.equal||!result.fit||result.edges==='none')throw new Error('PRO native process validation failed '+JSON.stringify(result));
-  console.log('PRO native process: 12 nodes, one shared press, 16 connectors, 3 outcomes, equal-height cards verified');
+  // Test rendered text runs, not just the outer map's dimensions. No clipping is accepted.
+  for(const width of [1640,1440,1366,1280,1024,768,560,390,320]){
+   await command('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:false});
+   await evaluate('new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve(true))))');
+   const layout=await evaluate(`(()=>{const p=document.querySelector('#process'),map=p.querySelector('[data-pro-process-map]'),cards=[...map.querySelectorAll('[data-pro-flow-node],[data-pro-flow-outcome]')],errors=[];for(const card of cards){const outer=card.getBoundingClientRect(),key=card.dataset.proFlowNode||card.dataset.proFlowOutcome;for(const el of card.querySelectorAll('h4,p,span,.base-process-icon')){const rect=el.getBoundingClientRect();if(rect.left<outer.left-1||rect.right>outer.right+1||rect.top<outer.top-1||rect.bottom>outer.bottom+1)errors.push(key+': element '+el.tagName);const walk=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);while(walk.nextNode()){if(!walk.currentNode.textContent.trim())continue;const range=document.createRange();range.selectNodeContents(walk.currentNode);for(const r of range.getClientRects()){if(r.left<outer.left+2||r.right>outer.right-2||r.top<outer.top+2||r.bottom>outer.bottom-2)errors.push(key+': '+walk.currentNode.textContent.slice(0,60));}}}}return {errors,fit:map.scrollWidth<=map.clientWidth+1,title:p.querySelectorAll('.base-process-stages h3')[2].textContent,correct:map.textContent.includes('Вакуумный высос из бокса')&&!p.textContent.toLowerCase().includes('отсос'),icon:map.querySelector('.pro-flow-prep .base-process-icon').getBoundingClientRect().width};})()`);
+   if(layout.errors.length||!layout.fit||layout.title!=='Закрытый сортировочный бокс'||!layout.correct||layout.icon<45)throw new Error('PRO text overflow or artwork at '+width+': '+JSON.stringify(layout));
+  }
+  await command('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
+  await evaluate('new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve(true))))');
+  console.log('PRO native process: all 12 nodes, 16 connectors, terminology, artwork and individual text bounds verified at 9 widths');
  }
  if(scenario.slug==='separatsiya-01'){
   const processCheck=await evaluate(`(()=>{
