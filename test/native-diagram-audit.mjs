@@ -28,7 +28,7 @@ export async function auditNativeDiagram(evaluate, id, {count, branches}){
  assert.deepEqual(report.failures,[],id+' instance audit');
 }
 
-function auditInBrowser(id){
+async function auditInBrowser(id){
  const root=document.getElementById(id);
  const svg=root.querySelector('.diagram-projection > svg');
  const pins=[...root.querySelectorAll('button[data-callout]')];
@@ -71,7 +71,12 @@ function auditInBrowser(id){
   }
   pin.click();
   if(!matchesSelection(pin))fail('badge does not synchronize equipment, list and details');
-  if(polygons.every(polygon=>getComputedStyle(polygon).fill==='rgba(198, 164, 59, 0)'))fail('selected contour has no fill');
+  // The contour has a 180 ms CSS fill transition. Check the settled visual
+  // state rather than the first frame, which can still be fully transparent.
+  const transparent=()=>polygons.every(polygon=>getComputedStyle(polygon).fill==='rgba(198, 164, 59, 0)');
+  if(transparent())await new Promise(resolve=>setTimeout(resolve,220));
+  if(transparent())fail('selected contour has no fill');
+  if(!matchesSelection(pin))fail('badge selection changed during contour transition');
   row.click();
   if(!matchesSelection(pin))fail('list does not preserve the selected instance');
   const other=pins.find(candidate=>candidate.dataset.part!==pin.dataset.part);
