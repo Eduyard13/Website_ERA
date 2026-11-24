@@ -1,7 +1,6 @@
 import source from '../content/pro-engineering-views.json' with {type:'json'};
 import {linePlacement} from '../content/line-placement.mjs';
 import {formatLineNumber} from '../content/line-engineering.mjs';
-import {documentFileMeta} from './documents.mjs';
 
 const assetRoot='lines/separatsiya-02/engineering-center/';
 const placement=linePlacement['separatsiya-02'];
@@ -79,18 +78,7 @@ function viewer(){
   </div>
  </div>`;
 }
-function drawingActions(drawing){
- const href='/documents/'+drawing.file;
- return `<div class="pec-documents">
-  <p>${documentFileMeta(drawing)}</p>
-  <div class="pec-document-actions">
-   <a class="button" href="${href}" target="_blank" rel="noopener" data-pdf-open="${drawing.id}">Открыть чертёж <span aria-hidden="true">⤢</span></a>
-   <a class="button secondary" href="${href}" download="${escape(drawing.downloadName)}">Скачать PDF <span aria-hidden="true">↓</span></a>
-   <a class="text-link" href="/documents/drawings/?objectType=line&amp;product=${drawing.objectSlug}">К документу в библиотеке ↗</a>
-  </div>
- </div>`;
-}
-export function renderProEngineeringCenter(drawing){
+export function renderProEngineeringCenter(){
  return `<div class="pro-engineering-center" data-pro-engineering-center data-engineering-group="overview" data-engineering-view="v01">
   <div class="pec-heading">
    <p class="eyebrow">ЭРА / ИНЖЕНЕРНЫЙ ОБЗОР · PRO</p>
@@ -105,9 +93,7 @@ export function renderProEngineeringCenter(drawing){
    ${groups.map((group,index)=>`<div class="pec-tabpanel" role="tabpanel" id="${scope}-panel-${group.id}" aria-labelledby="${scope}-tab-${group.id}" data-engineering-panel="${group.id}"${index?' hidden':''}${group.id==='drawings'?' data-line-dimensions':''}>
     <div data-engineering-slot>${index?'':viewer()}</div>
     ${filmstrip(group)}
-    ${group.id==='drawings'?drawingActions(drawing):''}
    </div>`).join('')}
-   <noscript><p class="pec-no-script"><a href="/documents/${drawing.file}" target="_blank" rel="noopener">Открыть оригинальный чертёж А0</a> · <a href="/documents/${drawing.file}" download="${escape(drawing.downloadName)}">Скачать PDF</a></p></noscript>
   </div>
   <dialog class="pec-dialog" data-engineering-dialog aria-labelledby="${scope}-caption">
    <button class="pec-control pec-close" type="button" data-engineering-close aria-label="Закрыть полноэкранный просмотр" title="Закрыть">${close}</button>

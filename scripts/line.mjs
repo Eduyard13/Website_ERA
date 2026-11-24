@@ -37,7 +37,6 @@ function unitCard([position,title,text,value,slug,key]){
 export function renderFilmSeparation(line){
  const email=`mailto:${siteContacts.email}?subject=`+encodeURIComponent(`Запрос ЭРА: ${line.title}`);
  const documents=lineDocuments(line);
- const drawing=documents.find(d=>d.id==='separatsiya-02-dimensions-a0');
  return `<div class="film-line film-line--full">
 
  ${renderDrySeparationHero({line,email,metrics:[
@@ -68,7 +67,7 @@ export function renderFilmSeparation(line){
  <section class="section" id="specs">${renderBaseSpecs(line)}</section>
 
  <section class="section" id="placement">
-  ${renderProEngineeringCenter(drawing)}
+  ${renderProEngineeringCenter()}
   <div class="line-placement-notes pec-placement-notes"><div><h3>Условия размещения</h3><p>Предусматривают электроснабжение и заземление, вентиляцию, пневмотранспорт и пылеудаление, доступ для обслуживания, склады сырья и тюков. В комплектации — два вилочных погрузчика; маршруты увязывают с рабочими местами и выдачей продукции.</p><p>45 × 18 м и 810 м² относятся к показанному прямоугольному контуру. Складские запасы, проезды, безопасные зоны и коммуникации учитывают при проектной привязке.</p></div><div><h3>Сортировочный бокс и помещение</h3><p>Закрытый сортировочный бокс (поз. 28) объединяет рабочие места ручной сортировки, вентиляцию и освещение. Помещение цеха (поз. 29) предусматривает подключение линии, проезды и обслуживание.</p><p class="line-note">На исходном A0 сохранены собственные обозначения и размерные цепочки; локальные размеры не являются нормативами для помещения.</p></div></div>
  </section>
 

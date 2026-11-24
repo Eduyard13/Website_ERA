@@ -158,7 +158,8 @@ with sync_playwright() as p:
   page.locator('[data-dimension-tab=sheet]').press('Home');assert page.locator('[data-dimension-tab=top]').get_attribute('aria-pressed')=='true'
   page.keyboard.press('ArrowRight');assert page.locator('[data-dimension-tab=side-1]').get_attribute('aria-pressed')=='true'
   # Existing shared PDF viewer: a real A0 page, zoom, fit, SHA-checked download, focus and Escape.
-  opener=page.locator('#placement .pec-document-actions [data-pdf-open]');opener.click()
+  assert page.locator('#placement a, #placement [data-pdf-open]').count()==0
+  opener=page.locator('#documents [data-pdf-open=separatsiya-02-dimensions-a0]');opener.click()
   page.wait_for_function('document.querySelector("[data-pdf-status]").textContent==="Страница 1 из 1"',timeout=30000)
   pdf=page.locator('#pdf-viewer');assert pdf.locator('[data-pdf-next]').is_disabled()
   assert pdf.locator('[data-pdf-canvas]').evaluate('(e)=>e.getBoundingClientRect().width<=document.querySelector("[data-pdf-stage]").clientWidth')
@@ -194,11 +195,12 @@ with sync_playwright() as p:
  assert page.locator('[data-line-source-diagram]').count()==0
  page.goto(base+'/catalog/equipment/ballisticheskiy-separator/');node=page.locator('[data-diagram]');node.locator('[data-part]').first.focus();assert node.locator('[data-diagram-tooltip]').is_visible()
  context.close()
- # No-JS PDF fallbacks remain genuine links and downloads.
+ # No-JS shows the static engineering view, with PDF downloads in documentation.
  context=browser.new_context(java_script_enabled=False,viewport={'width':390,'height':844});page=context.new_page();page.goto(base+'/catalog/lines/separatsiya-02/')
  assert page.locator('#pro-engineering-stage [data-engineering-loaded-view=v01]').is_visible()
  assert page.locator('#documents [download]').count()==3
- assert page.locator('#placement .pec-no-script [download]').get_attribute('href').endswith('/drawings/era-separatsiya-02-dimensions-a0.pdf')
+ assert page.locator('#placement a, #placement [download]').count()==0
+ assert page.locator('#documents [data-library-document=separatsiya-02-dimensions-a0] [download]').get_attribute('href').endswith('/drawings/era-separatsiya-02-dimensions-a0.pdf')
  context.close();browser.close()
 assert not errors,errors
 assert not failures,failures

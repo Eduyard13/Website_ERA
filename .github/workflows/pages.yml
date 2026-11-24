@@ -223,8 +223,16 @@ jobs:
                       if 'class="line-more line-power-details" data-keep-open>' not in specs or any(f'<strong>{value} <small>кВт</small>' not in specs for value in power):
                           raise RuntimeError('Line power summary is incorrect: ' + slug)
                       placement = re.search(r'<section[^>]* id="placement">(.*?)</section>', line_page, re.S).group(1)
-                      if placement.count('data-dimension-tab="') != tabs or f'data-pdf-open="{expected_docs[2]}"' not in placement:
+                      if placement.count('data-dimension-tab="') != tabs:
                           raise RuntimeError('Line drawing projections are incomplete: ' + slug)
+                      if slug == 'separatsiya-02':
+                          documentation = re.search(r'<section[^>]* id="documents">(.*?)</section>', line_page, re.S).group(1)
+                          if re.search(r'<a\b|\s(?:href|target|download|data-pdf-open)=|pec-document', placement):
+                              raise RuntimeError('PRO engineering center contains document actions')
+                          if f'data-pdf-open="{expected_docs[2]}"' not in documentation or by_id[expected_docs[2]]['file'] + '" download=' not in documentation:
+                              raise RuntimeError('The original PRO A0 is missing from documentation')
+                      elif f'data-pdf-open="{expected_docs[2]}"' not in placement:
+                          raise RuntimeError('Line drawing PDF is missing: ' + slug)
                       if slug == 'separatsiya-01' and ('растровые проекции' not in placement or 'кВт' in placement or 'placement.webp' in placement):
                           raise RuntimeError('The clean A4 projections are missing')
                       card = re.search(fr'<a class="line-card[^>]*data-line-id="{slug}"[^>]*>.*?</a>', lines_catalogue, re.S).group(0)

@@ -43,7 +43,7 @@ test('Инженерный центр PRO включает три вкладки
  }
 });
 
-test('Все варианты ракурсов сохранены без изменений, проекции ссылаются на прежние WebP и PDF',async()=>{
+test('Все варианты ракурсов и четыре чертежа используют прежние WebP',async()=>{
  assert.equal(manifest.views.filter(view=>view.group==='overview').length,10);
  assert.equal(manifest.views.filter(view=>view.group==='detail').length,6);
  for(const [markup,id] of allFrames.slice(0,16)){
@@ -66,10 +66,28 @@ test('Все варианты ракурсов сохранены без изм�
   assert.ok(markup.includes(`data-engineering-src="${basePath}/assets/${view.file}"`));
   assert.ok(markup.includes(`data-engineering-full="${basePath}/assets/${view.file}"`));
  }
- const drawingPanel=section.slice(section.indexOf('data-engineering-panel="drawings"'),section.indexOf('<noscript>'));
- assert.match(drawingPanel,/PDF · A0 · 1 лист · 2,2 МБ/);
- assert.match(drawingPanel,/data-pdf-open="separatsiya-02-dimensions-a0"/);
- assert.match(drawingPanel,/era-separatsiya-02-dimensions-a0\.pdf" download=/);
- assert.match(drawingPanel,/documents\/drawings\/\?objectType=line&amp;product=separatsiya-02/);
  assert.doesNotMatch(section,/source-pdf|v[0-9]{2}\.pdf/);
+});
+
+test('Инженерный центр содержит только просмотр, оригинальный A0 остаётся в документации и библиотеке',()=>{
+ assert.doesNotMatch(section,/<a\b|\s(?:href|target|download|data-pdf-open)\s*=|pec-documents|pec-document-actions|pec-no-script|PDF ·/i);
+ const documents=page.match(/<section[^>]* id="documents">([\s\S]*?)<\/section>/)[1];
+ const library=render('/documents/drawings');
+ for(const markup of [documents,library]){
+  assert.match(markup,/data-pdf-open="separatsiya-02-dimensions-a0"/);
+  assert.match(markup,/era-separatsiya-02-dimensions-a0\.pdf" download=/);
+  assert.match(markup,/PDF · A0 · 1 лист · 2,2 МБ/);
+ }
+});
+
+test('Фон цеха локальный и неизменный, оформление изолировано в инженерном центре',async()=>{
+ const file='public/assets/'+prefix+'industrial-hall.webp';
+ const hall=await readFile(file);
+ assert.equal(createHash('sha256').update(hall).digest('hex'),'ec6c3f15b61ac8306584421bad36de3db84b04f55a93dd939df0daf1f23de7c3');
+ assert.deepEqual(imageSize(file),{width:1672,height:941});
+ const css=await readFile('public/pro-engineering-center.css','utf8');
+ assert.ok(css.includes('url("assets/'+prefix+'industrial-hall.webp")'));
+ assert.doesNotMatch(css,/industrial-light\.svg|pec-documents|pec-document-actions|pec-no-script/);
+ assert.match(css,/\.pro-engineering-center \.pec-image\{[^}]*mix-blend-mode:multiply/);
+ assert.match(css,/\.pro-engineering-center \.pec-dialog \.pec-image\{mix-blend-mode:normal\}/);
 });

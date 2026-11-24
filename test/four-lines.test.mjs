@@ -75,7 +75,13 @@ test('У каждой линии три документа и полные пр�
   assert.equal(library.find(doc=>doc.category==='brochures').pages,3,slug);
   const placement=section(html,'placement');
   assert.equal((placement.match(/data-dimension-tab="/g)||[]).length,tabs,slug);
-  assert.ok(placement.includes(`/documents/${drawing.file}`)&&placement.includes(`/documents/drawings/?objectType=line&amp;product=${slug}`),slug);
+  if(slug==='separatsiya-02'){
+   assert.doesNotMatch(placement,/<a\b|data-pdf-open=|\sdownload=/i);
+   const documentation=section(html,'documents');
+   assert.ok(documentation.includes(`/documents/${drawing.file}`)&&documentation.includes(`data-pdf-open="${drawing.id}"`),slug);
+  }else{
+   assert.ok(placement.includes(`/documents/${drawing.file}`)&&placement.includes(`/documents/drawings/?objectType=line&amp;product=${slug}`),slug);
+  }
   for(const value of dimensions)assert.ok(placement.includes(`<dd>${value} <small>`),value);
   const {views}=linePlacement[slug];
   for(const view of views){
