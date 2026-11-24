@@ -140,8 +140,8 @@ jobs:
                           raise RuntimeError('Context navigation is missing or duplicated: ' + nested)
                   print('::notice title=Technical Archive verified::Five compact categories, preserved landing library, steel PDF cards and shared safe back navigation are published.')
                   _, full_line = fetch('catalog/lines/separatsiya-02/')
-                  section_ids = ('purpose', 'raw-materials', 'composition', 'process', 'quality', 'specs', 'equipment', 'placement', 'kair', 'photos', 'documents')
-                  for dry_slug in ('separatsiya-01', 'separatsiya-02', 'separatsiya-03'):
+                  section_ids = ('purpose', 'raw-materials', 'composition', 'process', 'quality', 'kair', 'specs', 'placement', 'photos', 'documents', 'request', 'equipment')
+                  for dry_slug in ('separatsiya-01', 'separatsiya-02', 'separatsiya-03', 'moyka-plenki'):
                       checked_line = full_line if dry_slug == 'separatsiya-02' else fetch('catalog/lines/' + dry_slug + '/')[1]
                       checked_indices = [checked_line.index('id="' + section_id + '"') for section_id in section_ids]
                       navigation = re.search(r'<nav class="anchor-nav line-anchor-nav"[^>]*>(.*?)</nav>', checked_line, re.S)
