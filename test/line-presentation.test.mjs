@@ -204,7 +204,7 @@ test('PRO and PREMIUM share two alternative downstream product routes, with cred
   if(previewMode){
    assert.deepEqual([...block.matchAll(/data-dry-route-reference="([^"]+)"/g)].map(m=>m[1]),['clear','sorted']);
    assert.ok(block.includes('https://images.squarespace-cdn.com/content/v1/649219dee5586d7b971d3292/c908249b-87d0-4972-86f6-ba26867ea00f/Plastic%2Bfilm%2Bwebsite.jpg')&&block.includes('https://d15gpb5pyl94gl.cloudfront.net/media/_bestand/16398/DSC_0612.jpg'));
-   assert.ok(block.includes('Источник: Waste Optima')&&block.includes('Источник: Morssinkhof Rymoplast'));
+   assert.ok(block.includes('Фото: Waste Optima')&&block.includes('Фото: Morssinkhof Rymoplast'));
   }else{
    assert.ok(block.includes('data-dry-route-gallery="original"')&&block.includes('product-bales.webp'));
    assert.doesNotMatch(block,/squarespace-cdn|cloudfront.net|data-dry-route-reference/);
