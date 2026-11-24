@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
-import {render,basePath,assetBaseVersion,previewMode} from '../scripts/build.mjs';
+import {render,basePath,assetBaseVersion} from '../scripts/build.mjs';
 import {nodes,lines} from '../content/catalog.mjs';
 import {lineUnits,filmSeparationMedia} from '../content/film-separation.mjs';
 import {equipmentCardImages} from '../content/equipment-card-images.mjs';
@@ -192,7 +192,7 @@ test('BASE, PRO and PREMIUM share exactly the same four full-source dry product 
  assert.ok(!render('/catalog/lines/moyka-plenki').includes('data-dry-product-showcase'));
 });
 
-test('PRO and PREMIUM share two alternative downstream product routes, with credited reference photos only in preview',()=>{
+test('PRO and PREMIUM share two alternative downstream product routes, with the same two product-type photos in both deployment targets',()=>{
  let common;
  for(const slug of ['separatsiya-02','separatsiya-03']){
   const html=render('/catalog/lines/'+slug),start=html.indexOf('<div class="dry-product-routes"'),end=html.indexOf('</section>',start),block=html.slice(start,end).trim();
@@ -201,14 +201,10 @@ test('PRO and PREMIUM share two alternative downstream product routes, with cred
   assert.deepEqual([...block.matchAll(/data-dry-route-stage="([^"]+)"/g)].map(m=>m[1]),['bale','wash','pellets']);
   assert.ok(block.includes('href="'+basePath+'/catalog/lines/moyka-plenki"'));
   assert.doesNotMatch(block,/sd-product-shipping|line-next-process/);
-  if(previewMode){
-   assert.deepEqual([...block.matchAll(/data-dry-route-reference="([^"]+)"/g)].map(m=>m[1]),['clear','sorted']);
-   assert.ok(block.includes('https://images.squarespace-cdn.com/content/v1/649219dee5586d7b971d3292/c908249b-87d0-4972-86f6-ba26867ea00f/Plastic%2Bfilm%2Bwebsite.jpg')&&block.includes('https://d15gpb5pyl94gl.cloudfront.net/media/_bestand/16398/DSC_0612.jpg'));
-   assert.ok(block.includes('Фото: Waste Optima')&&block.includes('Фото: Morssinkhof Rymoplast'));
-  }else{
-   assert.ok(block.includes('data-dry-route-gallery="original"')&&block.includes('product-bales.webp'));
-   assert.doesNotMatch(block,/squarespace-cdn|cloudfront.net|data-dry-route-reference/);
-  }
+  assert.deepEqual([...block.matchAll(/data-dry-route-reference="([^"]+)"/g)].map(m=>m[1]),['clear','sorted']);
+  assert.ok(block.includes('https://images.squarespace-cdn.com/content/v1/649219dee5586d7b971d3292/c908249b-87d0-4972-86f6-ba26867ea00f/Plastic%2Bfilm%2Bwebsite.jpg')&&block.includes('https://d15gpb5pyl94gl.cloudfront.net/media/_bestand/16398/DSC_0612.jpg'));
+  assert.doesNotMatch(block,/dry-route-source-note|Фото:|для согласования|сторонних компаний|data-dry-route-gallery="original"/);
+  assert.ok(block.includes('Примеры товарных фракций'));
   if(common)assert.equal(block,common);else common=block;
  }
  for(const slug of ['separatsiya-01','moyka-plenki'])assert.ok(!render('/catalog/lines/'+slug).includes('data-dry-product-routes'));

@@ -1,9 +1,5 @@
-import {previewMode} from './deploy-target.mjs';
-import {separation03Media} from '../content/separation-03.mjs';
-import {mediaAttributes} from './media.mjs';
-
-// Third-party reference photographs are review-only. Do not copy them to the
-// repository or include them in the production build before rights clearance.
+// Product-type illustrations linked to their original public image URLs.
+// Original source metadata is retained; no claim of ERA authorship or testing.
 const references=[
  {id:'clear',title:'Прозрачная плёнка',source:'Waste Optima',page:'https://www.wasteoptima.com/industrial-plastic-recycling/industrial-plastic-film-recycling',image:'https://images.squarespace-cdn.com/content/v1/649219dee5586d7b971d3292/c908249b-87d0-4972-86f6-ba26867ea00f/Plastic%2Bfilm%2Bwebsite.jpg'},
  {id:'sorted',title:'Раздельные цветные фракции',source:'Morssinkhof Rymoplast',page:'https://morssinkhof-rymoplast.com/materialen/flexibels/',image:'https://d15gpb5pyl94gl.cloudfront.net/media/_bestand/16398/DSC_0612.jpg'}
@@ -15,12 +11,10 @@ const icons={
 };
 const icon=key=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+icons[key]+'</svg>';
 function referenceCard(m){
- return '<figure class="dry-route-photo" data-dry-route-reference="'+m.id+'"><a class="dry-route-reference-image" href="'+m.image+'" target="_blank" rel="noopener noreferrer" aria-label="Открыть оригинал: '+m.title+'"><span class="dry-route-reference-placeholder">Открыть фотографию у источника</span><span role="img" aria-label="'+m.title+'" class="dry-route-reference-art" style="background-image:url(&quot;'+m.image+'&quot;)"></span><span class="line-image-zoom" aria-hidden="true">⤢</span></a><figcaption><strong>'+m.title+'</strong><a href="'+m.page+'" target="_blank" rel="noopener noreferrer">Фото: '+m.source+' ↗</a></figcaption></figure>';
+ return '<figure class="dry-route-photo" data-dry-route-reference="'+m.id+'"><a class="dry-route-reference-image" href="'+m.image+'" target="_blank" rel="noopener noreferrer" aria-label="Открыть оригинал: '+m.title+'"><span class="dry-route-reference-placeholder">Открыть фотографию</span><span role="img" aria-label="'+m.title+'" class="dry-route-reference-art" style="background-image:url(&quot;'+m.image+'&quot;)"></span><span class="line-image-zoom" aria-hidden="true">⤢</span></a><figcaption><strong>'+m.title+'</strong></figcaption></figure>';
 }
 function photoGallery(){
- if(previewMode)return '<div class="dry-route-gallery" data-dry-route-gallery="reference">'+references.map(referenceCard).join('')+'</div><p class="dry-route-source-note">Примеры товарных фракций. Фотографии сторонних компаний, не результаты испытаний ЭРА.</p>';
- const m=separation03Media['product-bales'];
- return '<div class="dry-route-gallery dry-route-gallery--original" data-dry-route-gallery="original"><figure class="line-image line-image--photo dry-route-photo" '+mediaAttributes(m)+'><a class="media-open" href="/assets/'+m.file+'" aria-label="Увеличить фотографию тюкованной плёнки"><img src="/assets/'+m.file+'" width="'+m.width+'" height="'+m.height+'" alt="Пример отгрузки очищенной плёнки в тюках" loading="lazy" decoding="async"><span class="line-image-zoom" aria-hidden="true">⤢</span></a><figcaption><strong>Очищенная плёнка в тюках</strong></figcaption></figure></div>';
+ return '<div class="dry-route-gallery" data-dry-route-gallery="reference" aria-label="Примеры товарных фракций">'+references.map(referenceCard).join('')+'</div>';
 }
 const stage=(key,number,title,description,link='')=>'<article class="dry-route-stage" data-dry-route-stage="'+key+'"><div class="dry-route-stage-top"><span>'+number+'</span>'+icon(key)+'</div><h4>'+title+'</h4><p>'+description+'</p>'+link+'</article>';
 export function renderDryProductRoutes(){
