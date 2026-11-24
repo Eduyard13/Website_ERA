@@ -191,7 +191,7 @@ with sync_playwright() as p:
  assert mini.locator('[data-detail-label]').inner_text() and mini.locator('[data-diagram-tooltip]').is_hidden()
  assert mini.locator('[data-line-leader]').count()==11 and mini.locator('.line-diagram-pin-masks').count()==0
  mini.locator('button[data-callout="11"]').click();assert mini.locator('[data-diagram-tooltip]').is_visible()
- assert page.locator('[data-line-source-diagram]').count()==1
+ assert page.locator('[data-line-source-diagram]').count()==0
  page.goto(base+'/catalog/equipment/ballisticheskiy-separator/');node=page.locator('[data-diagram]');node.locator('[data-part]').first.focus();assert node.locator('[data-diagram-tooltip]').is_visible()
  context.close()
  # No-JS PDF fallbacks remain genuine links and downloads.

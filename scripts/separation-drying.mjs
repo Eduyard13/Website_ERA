@@ -51,14 +51,9 @@ export function renderSeparationDrying(line){
 
  ${renderDrySeparationRaw(line.slug)}
 
- <section class="section line-soft" id="composition">${renderDryArchitectureHeading(line.slug)}<div class="line-layout-views" data-line-layout-views>
-  <div class="line-dimensions-tabs" role="tablist" aria-label="Ракурс компоновки">
-   <button type="button" role="tab" id="line03-view-main-tab" aria-controls="line03-view-main" aria-selected="true">Основной вид</button>
-   <button type="button" role="tab" id="line03-view-reverse-tab" aria-controls="line03-view-reverse" tabindex="-1" aria-selected="false">Другой ракурс</button>
-  </div>
-  <div id="line03-view-main" role="tabpanel" aria-labelledby="line03-view-main-tab" data-source-numbered-diagram>${interactiveLineDiagram(separation03Diagram,{fit:true,architecture:true})}</div>
-  <div id="line03-view-reverse" role="tabpanel" aria-labelledby="line03-view-reverse-tab" hidden>${picture('layout-reverse',{caption:'Исходная компоновка с противоположной стороны'})}</div>
- </div>${specificationTables()}${more('Как устроены ключевые узлы',`<div class="sd-key-units">${separation03Units.map(([position,key,title,text,value])=>`<article>${picture(key)}<div><p class="eyebrow">ПОЗИЦИЯ ${position}</p><h3>${title}</h3><p>${text}</p><strong>${value}</strong></div></article>`).join('')}</div>`)}<noscript><p class="line-note">Исходная схема, полная спецификация и PDF доступны без JavaScript. Интерактивный выбор позиций работает при включённом JavaScript.</p></noscript></section>
+ <section class="section line-soft" id="composition">${renderDryArchitectureHeading(line.slug)}
+  ${interactiveLineDiagram(separation03Diagram,{fit:true,architecture:true})}
+ </section>
 
  <section class="section" id="process">${heading('ДВИЖЕНИЕ МАТЕРИАЛА','Две баллистические ступени.<br>Сушка между ними.','Последовательная подготовка, очистка и разделение потоков. Четыре фракции ручного отбора и основной микс поступают в разные накопители.')}<ol class="line-stages">${separation03Stages.map(([title,route,text],i)=>`<li><span class="line-index">${String(i+1).padStart(2,'0')}</span><h3>${title}</h3><p class="sd-route">${route}</p><p>${text}</p></li>`).join('')}</ol><div class="line-routing"><div class="line-routing-main"><span class="eyebrow">ОСНОВНОЙ ЦВЕТНОЙ МИКС</span><h3>Сортировка → ротор → пятый бункер</h3><p>Роторный распушитель 16 последовательно доочищает основной микс. Пневмотранспорт 19 подаёт плёнку в пятый накопитель; на воздушной линии работает циклон 20.</p></div><div><span class="eyebrow">ЧЕТЫРЕ ВЫБРАННЫЕ ФРАКЦИИ</span><h3>Ручной отбор → свои накопители</h3><p>Для нужной роторной доочистки отобранную по видам плёнку повторно подают на вход отдельной партией. Перед сменой фракции освобождают общий транспортный тракт и пресс.</p></div><p class="line-routing-note">Твёрдые включения: отводы двух баллистических ступеней 25/26, сушилки 27/28, сортировки 30 и ротора 31 → общий тракт 29 → 32 → рама 33. Пыль и конденсат выводятся отдельными маршрутами.</p></div><div class="line-process-views">${picture('first-separation')}${picture('drying-flow')}</div>${more('Схема потоков плёнки, включений, пыли и конденсата',`<div class="line-flow-diagram">${picture('material-flow')}</div>`)}</section>
 

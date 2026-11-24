@@ -95,7 +95,8 @@ with sync_playwright() as p:
   page.keyboard.press('Escape');page.wait_for_function('document.querySelector("#line01-construction").dataset.expanded==="false"')
   assert expand.evaluate('(e)=>e===document.activeElement')
   # The original diagrams and source photos still use the site viewer.
-  for summary,key in [('[data-line-source-diagram] summary','layout'),('[data-line-flow] summary','flow')]:
+  assert page.locator('[data-line-source-diagram]').count()==0
+  for summary,key in [('[data-line-flow] summary','flow')]:
    page.locator(summary).click();link=page.locator('.mini-line [data-media][data-image$="/'+key+'.webp"] .media-open');link.click()
    assert page.locator('#media-viewer').is_visible() and page.locator('#viewer-image').get_attribute('src').endswith('/'+key+'.webp')
    page.keyboard.press('Escape')

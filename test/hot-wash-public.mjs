@@ -67,7 +67,7 @@ try{
   if(width===1440&&process.env.ERA_HOT_WASH_SCREENSHOT){
    await captureNativeDiagram(evaluate,command,'hotwash-construction',process.env.ERA_HOT_WASH_SCREENSHOT);
   }
-  let s=await root();assert.equal(s.mode,'fit');assert.equal(s.pins,44);assert.equal(s.options,36);assert.equal(s.products,3);assert.equal(s.spec,37);assert.ok(s.fit&&!s.overflow);assert.deepEqual(s.broken,[]);assert.equal(s.navigation,36);assert.equal(s.unmappedLink,'#placement');assert.ok(s.grid.includes('engineering-grid-02.svg'));assert.equal(s.sourceBlend,'multiply');
+  let s=await root();assert.equal(s.mode,'fit');assert.equal(s.pins,44);assert.equal(s.options,36);assert.equal(s.products,3);assert.equal(s.spec,0);assert.ok(s.fit&&!s.overflow);assert.deepEqual(s.broken,[]);assert.equal(s.navigation,36);assert.equal(s.unmappedLink,'#placement');assert.ok(s.grid.includes('engineering-grid-02.svg'));assert.equal(s.sourceBlend,'multiply');
   if(width===390||width===1440)await auditNativeDiagram(evaluate,'hotwash-construction',{count:44,branches:47});
   for(let number=1;number<=36;number++){
    await evaluate(`(()=>{const s=document.querySelector('[data-diagram-select]');s.value='${number}';s.dispatchEvent(new Event('change',{bubbles:true}));})()`);
@@ -82,10 +82,10 @@ try{
    return {row:row.getAttribute('aria-pressed'),pin:root.querySelectorAll('button[data-part="18"][aria-pressed="true"]').length,selected:root.querySelector('[data-detail-number]').textContent};
  })()`);
  assert.deepEqual(sidebarSelect,{row:'true',pin:1,selected:'18'});
- // The specification uses the same selection owner, and position 37 is a real placement link.
- await evaluate(`document.querySelector('.hw-specification').closest('details').open=true`);
- await click('[data-hotwash-select="33"]');assert.equal((await root()).selected,'33');
- assert.ok(await evaluate(`document.querySelector('[data-hotwash-position="37"] a').getAttribute('href')==='#placement'`));
+ // Keep the permanent navigator and its placement link; no redundant notes or tables below the monitor.
+ assert.equal(await evaluate(`document.querySelectorAll('#composition > .line-note,#composition > details,#composition > noscript').length`),0);
+ await click('#hotwash-construction [data-architecture-part="33"]');assert.equal((await root()).selected,'33');
+ assert.ok(await evaluate(`document.querySelector('#hotwash-construction .dry-architecture-item--link').getAttribute('href')==='#placement'`));
  await click('[data-dimension-tab="side"]');
  await click('[data-pdf-open="moyka-plenki-technical"]');
  await wait(`document.querySelector('[data-pdf-status]').textContent==='Страница 1 из 22'`);
@@ -101,7 +101,7 @@ try{
  await load('/technology/');await wait(`!!document.querySelector('[data-technology-line="moyka-plenki"]')`);
  assert.ok(await evaluate(`document.querySelector('[data-technology-line="moyka-plenki"]').href.endsWith('/catalog/lines/moyka-plenki')`));
  assert.deepEqual(errors,[],'Published hot-wash console errors');
- console.log(`::notice title=Published hot wash verified::44/44 badges, 47 leader ends, and equipment contours at 390 and 1440 px, 36 monitor selections, 7 widths, ${1+2*(manifest.assets.length+(manifest.catalogCardUpdate?.assets.length||0))} WebP SHA-256 checks, original 22-page PDF (4430978 bytes and SHA-256), live PDF viewer, specification, dimensions, technology link and wash-filter Back passed. ${url}`);
+ console.log(`::notice title=Published hot wash verified::44/44 badges, 47 leader ends, and equipment contours at 390 and 1440 px, 36 monitor selections, 7 widths, ${1+2*(manifest.assets.length+(manifest.catalogCardUpdate?.assets.length||0))} WebP SHA-256 checks, original 22-page PDF (4430978 bytes and SHA-256), live PDF viewer, single diagram and navigator, dimensions, technology link and wash-filter Back passed. ${url}`);
 }finally{
  socket?.close();chrome.kill('SIGTERM');await delay(250);await rm(profile,{recursive:true,force:true});
 }

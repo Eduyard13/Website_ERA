@@ -44,7 +44,7 @@ test('Полная линия сохраняет показатели, один 
  assert.equal((page.match(/id="pdf-viewer"/g)||[]).length,1);assert.ok(page.includes('/line-documents.js?v='));
  const equipment=page.slice(page.indexOf('id="equipment"'));assert.ok(equipment.includes('line-unit-grid'));assert.ok(equipment.includes('Предварительный распушитель'));assert.ok(equipment.includes('ДОПОЛНИТЕЛЬНЫЙ МОДУЛЬ'));
  for(const text of ['402,67','281,87','4,7','750 кг/ч','50%','810 м²','9 м','≈6,5 м','2–10','Пять раздельных потоков'])assert.ok(page.includes(text)||text==='Пять раздельных потоков'&&page.includes('5 раздельных потоков'),text);
- const mini=render('/catalog/lines/separatsiya-01');assert.ok(mini.includes('data-line-source-diagram'));assert.ok(mini.includes('/line-monitor.js?'));assert.ok(mini.includes('/line-documents.js?'));assert.ok(!mini.includes('dimensions-a0.pdf'));
+ const mini=render('/catalog/lines/separatsiya-01');assert.ok(!mini.includes('data-line-source-diagram'));assert.ok(mini.includes('/line-monitor.js?'));assert.ok(mini.includes('/line-documents.js?'));assert.ok(!mini.includes('dimensions-a0.pdf'));
 });
 test('Все четыре проекции имеют происхождение из единственного A0 и доступны в HTML',async()=>{
  const manifest=JSON.parse(await readFile('content/separatsiya-02-dimensions.json','utf8'));

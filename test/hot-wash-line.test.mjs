@@ -94,8 +94,9 @@ test('Новая страница использует общий fit-монит
  assert.deepEqual([...nav.matchAll(/href="#([^"]+)"/g)].map(m=>m[1]),ids);
  const offsets=ids.map(id=>html.indexOf(`id="${id}"`));assert.ok(offsets.every((n,i)=>n>0&&(!i||n>offsets[i-1])));
  assert.equal((html.match(/data-diagram-mode="fit"/g)||[]).length,1);assert.equal((html.match(/data-part-guide="/g)||[]).length,44);
- assert.equal((html.match(/data-hotwash-position="/g)||[]).length,37);assert.equal((html.match(/data-hotwash-select="/g)||[]).length,36);
+ assert.equal((html.match(/data-hotwash-position="/g)||[]).length,0);assert.equal((html.match(/data-hotwash-select="/g)||[]).length,0);
  const composition=html.slice(html.indexOf('id="composition"'),html.indexOf('id="process"'));
+ assert.doesNotMatch(composition,/Спецификация: все 37|37 — помещение цеха|Одна позиция может включать|Для 31 и 32 сохранены|<noscript>/);
  assert.ok(composition.includes('Каждый узел на своём месте.')&&composition.includes('Каждая функция — на результат.'));
  assert.ok(composition.includes('От подготовленной плёнки через горячую мойку'));
  assert.ok(composition.includes('data-architecture-list')&&composition.includes('dry-architecture-layout'));

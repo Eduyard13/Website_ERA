@@ -76,7 +76,7 @@ try{
   if(width===1440&&process.env.ERA_PREMIUM_SCREENSHOT){
    await captureNativeDiagram(evaluate,command,'line03-construction',process.env.ERA_PREMIUM_SCREENSHOT);
   }
-  let s=await root();assert.equal(s.mode,'fit');assert.equal(s.pins,42);assert.equal(s.options,37);assert.equal(s.qualityRows,5);assert.equal(s.spec,37);assert.ok(s.fit&&!s.overflow);assert.deepEqual(s.broken,[]);assert.ok(s.canvasBackground.includes('engineering-grid-02.svg'),'PREMIUM background asset');assert.equal(s.sourceBlend,'normal','opaque white source must blend over Engineering Grid 02');
+  let s=await root();assert.equal(s.mode,'fit');assert.equal(s.pins,42);assert.equal(s.options,37);assert.equal(s.qualityRows,5);assert.equal(s.spec,0);assert.ok(s.fit&&!s.overflow);assert.deepEqual(s.broken,[]);assert.ok(s.canvasBackground.includes('engineering-grid-02.svg'),'PREMIUM background asset');assert.equal(s.sourceBlend,'normal','opaque white source must blend over Engineering Grid 02');
   if(width===390||width===1440)await auditNativeDiagram(evaluate,'line03-construction',{count:42,branches:42});
   for(let number=1;number<=37;number++){
    await evaluate(`(()=>{const s=document.querySelector('[data-diagram-select]');s.value='${number}';s.dispatchEvent(new Event('change',{bubbles:true}));})()`);
@@ -86,10 +86,10 @@ try{
  }
  await command('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
  await load(compositionPath);await wait(`!!document.querySelector('[data-monitor-ready]')`);
- // All 37 specification rows use the same native monitor selection owner.
- await evaluate(`document.querySelector('.sd-specification').closest('details').open=true`);
- await click('[data-separation03-select="33"]');assert.equal((await root()).selected,'33');
- await click('[data-separation03-select="37"]');assert.equal((await root()).selected,'37');
+ // The sole native diagram and its permanent navigator replace the removed supplementary panels.
+ assert.equal(await evaluate(`document.querySelectorAll('#composition .line-more,#composition [data-line-layout-views],#composition [role="tab"]').length`),0);
+ await click('#line03-construction [data-architecture-part="33"]');assert.equal((await root()).selected,'33');
+ await click('#line03-construction [data-architecture-part="37"]');assert.equal((await root()).selected,'37');
  await click('[data-dimension-tab="side"]');
  await click('[data-pdf-open="separatsiya-03-technical"]');
  await wait(`document.querySelector('[data-pdf-status]').textContent==='Страница 1 из 28'`);
@@ -104,7 +104,7 @@ try{
  assert.equal(await evaluate(`new URL(location.href).searchParams.get('group')`),'Сепарация');
  await load('/documents/technical/');assert.ok(await evaluate(`!!document.querySelector('[data-library-document="separatsiya-03-technical"]')`));
  assert.deepEqual(errors,[],'Published separation-03 console errors');
- console.log(`::notice title=Published separation 03 verified::42/42 badges, leaders and equipment contours at 390 and 1440 px, 37 monitor selections, 7 widths, ${images.size+1} WebP SHA-256 checks, original 28-page PDF (5397658 bytes and SHA-256), live PDF viewer, specification, dimensions, catalogue filter and Back passed. ${url}`);
+ console.log(`::notice title=Published separation 03 verified::42/42 badges, leaders and equipment contours at 390 and 1440 px, 37 monitor selections, 7 widths, ${images.size+1} WebP SHA-256 checks, original 28-page PDF (5397658 bytes and SHA-256), live PDF viewer, single diagram and navigator, dimensions, catalogue filter and Back passed. ${url}`);
 }finally{
  socket?.close();chrome.kill('SIGTERM');await delay(250);await rm(profile,{recursive:true,force:true});
 }

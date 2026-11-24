@@ -53,7 +53,6 @@ export function renderMiniFilmSeparation(line){
  <section class="section line-soft" id="composition">${renderDryArchitectureHeading(line.slug)}
   ${interactiveLineDiagram(miniLineDiagram,{fit:true,architecture:true})}
   <p class="line-note">Позиции 12 — пылеулавливание и 13 — шкаф управления входят в базовую спецификацию. На общей компоновке они не показаны: размещение уточняют при привязке линии к площадке.</p>
-  <details class="line-more" data-keep-open data-line-source-diagram><summary>Оригинальная схема из техописания</summary><div class="line-layout">${picture('layout',{full:true})}</div></details>
  </section>
 
  <section class="section" id="process"><div class="line-section-heading"><div><p class="eyebrow">ТЕХНОЛОГИЧЕСКИЙ ПРОЦЕСС</p><h2>Один маршрут плёнки.<br>Раздельный отвод примесей.</h2></div><p>В базовой комплектации плёнка проходит общим потоком. На контрольном конвейере отбирают доступные загрязнения; отдельная сортировка плёнок по видам в базовую поставку не входит.</p></div>

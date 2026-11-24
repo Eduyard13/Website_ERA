@@ -88,8 +88,9 @@ test('Детальная страница повторяет порядок эт
  const html=render(line.path);const ids=['purpose','raw-materials','composition','process','quality','specs','equipment','placement','kair','photos','documents'];
  const offsets=ids.map(id=>html.indexOf(`id="${id}"`));assert.ok(offsets.every(i=>i>0));assert.deepEqual(offsets,[...offsets].sort((a,b)=>a-b));
  assert.equal((html.match(/data-diagram-mode="fit"/g)||[]).length,1);assert.equal((html.match(/data-part-guide="/g)||[]).length,42);
- assert.equal((html.match(/data-callout="/g)||[]).length,42);assert.equal((html.match(/data-separation03-position="/g)||[]).length,37);
- const nativeBlock=html.slice(html.indexOf('id="line03-construction"'),html.indexOf('id="process"'));
+ assert.equal((html.match(/data-callout="/g)||[]).length,42);assert.equal((html.match(/data-separation03-position="/g)||[]).length,0);
+ const nativeBlock=html.slice(html.indexOf('id="composition"'),html.indexOf('id="process"'));
+ assert.doesNotMatch(nativeBlock,/data-line-layout-views|line03-view-reverse|Другой ракурс|Основной вид|Спецификация линии|Как устроены ключевые узлы/);
  assert.ok(nativeBlock.includes('/assets/lines/separatsiya-03/layout-native-v2.webp'));
  assert.ok(!nativeBlock.includes('layout-numbered.webp'));
  assert.equal((nativeBlock.match(/data-callout-region="/g)||[]).length,42);
