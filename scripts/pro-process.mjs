@@ -31,7 +31,7 @@ const tiles=[
  ['sorted','ВЫХОД','Тюки отсорти&shy;рованной плёнки','bale','Раздельно по видам']
 ];
 const tile=([id,num,title,symbol,detail])=>'<article class="pro-flow-tile pro-flow-'+id+(['mix','sorted'].includes(id)?' pro-flow-output':'')+'" data-pro-flow-node="'+id+'"><div class="pro-flow-tile-top"><span>'+num+'</span>'+icon(symbol)+'</div><h4>'+title+'</h4><p>'+detail+'</p></article>';
-// Connector coordinates follow the seven equal grid columns and fixed row heights.
+// Initial connector topology; pro-process-layout.js positions paths from rendered cards.
 // Broken grey strokes at crossings distinguish independent routes (no junction).
 const edges=[
  ['prep','ballistic','M188 125H212','gold'],

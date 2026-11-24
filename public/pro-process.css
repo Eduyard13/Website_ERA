@@ -90,7 +90,7 @@
  .film-line--full #process .base-flow-outcomes{gap:12px}
 }
 
-.film-line--full #process .pro-flow-grid{display:grid;position:relative;grid-template-columns:repeat(7,minmax(0,1fr));grid-template-rows:250px 72px 216px 78px 126px;min-width:0;isolation:isolate}
+.film-line--full #process .pro-flow-grid{display:grid;position:relative;grid-template-columns:repeat(7,minmax(0,1fr));grid-template-rows:max-content 56px max-content 58px max-content;align-items:start;min-width:0;isolation:isolate}
 .film-line--full #process .pro-flow-edges{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:0}
 .film-line--full #process .pro-edge{fill:none;stroke-width:1.8;vector-effect:non-scaling-stroke;stroke-linejoin:round;stroke-linecap:round}
 .film-line--full #process .pro-edge--gold{stroke:#ae842b;stroke-width:2}
@@ -190,3 +190,31 @@
  .film-line--full #process :is(.pro-flow-ballistic,.pro-flow-sorting,.pro-flow-sorted) h4{font-size:clamp(12px,9.3cqi,17px);line-height:1.3}
 }
 .film-line--full #process .base-flow-outcome-head :is(span,h4){overflow-wrap:break-word;word-break:normal}
+
+/* Natural card height: keep only a small bottom inset after the description.
+   The PRO-only connector controller follows the actual edges of each card. */
+.film-line--full #process .pro-flow-tile,.film-line--full #process .pro-flow-waste{padding-bottom:11px;min-height:0;height:auto;align-self:start}
+.film-line--full #process .pro-flow-tile{gap:7px}
+.film-line--full #process .pro-flow-tile-top{padding-bottom:8px}
+.film-line--full #process .pro-flow-tile p{margin:0}
+.film-line--full #process .pro-flow-waste{align-items:center}
+.film-line--full #process .pro-flow-edges{visibility:hidden}
+.film-line--full #process .pro-flow-grid[data-pro-flow-ready="true"] .pro-flow-edges{visibility:visible}
+.film-line--full #process .base-process-map,.film-line--full #process .base-flow-chart,.film-line--full #process .base-flow-outcomes{box-sizing:border-box;max-width:100%;min-width:0}
+.film-line--full #process .base-process-map-heading,.film-line--full #process .pro-flow-note{overflow-wrap:anywhere;min-width:0;max-width:100%;box-sizing:border-box}
+@media(max-width:880px){
+ .film-line--full #process .base-flow-outcomes{grid-template-columns:minmax(0,1fr)}
+ .film-line--full #process .base-flow-legend{margin-inline:0}
+ .film-line--full #process .base-flow-legend span{min-width:0;max-width:100%;overflow-wrap:anywhere}
+ .film-line--full #process .base-flow-legend i{flex:none}
+}
+@media(max-width:560px){
+ .film-line--full #process .pro-flow-grid{grid-template-columns:minmax(0,1fr)}
+ .film-line--full #process .base-flow-outcome-head{gap:10px}
+ .film-line--full #process .base-flow-outcome-head>div{padding-left:10px}
+ .film-line--full #process .base-flow-outcome-head .base-process-icon{width:42px}
+ .film-line--full #process .base-flow-outcome{padding:16px;max-width:100%;box-sizing:border-box}
+ .film-line--full #process .base-process-map-heading h3{overflow-wrap:anywhere}
+ .film-line--full #process .pro-flow-waste>div{flex:1;min-width:0}
+ .film-line--full #process .pro-flow-waste span{overflow-wrap:anywhere}
+}
