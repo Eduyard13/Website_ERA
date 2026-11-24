@@ -76,7 +76,7 @@ test('Сравнение закрыто и включает только три 
  assert.equal((html.match(/5 × 4,7 м³/g)||[]).length,2);
  assert.deepEqual([...html.matchAll(/data-comparison-line="([^"]+)"/g)].map(match=>match[1]),['separatsiya-01','separatsiya-02','separatsiya-03']);
  assert.ok(!html.includes('moyka-plenki'));
- for(const value of ['639,77 кВт','447,84 кВт','17,75 × 11,75','45 × 18','56,2 × 43,4','До 5%','С сушкой','600–700 кг/ч'])assert.ok(html.includes(value),value);
+ for(const value of ['642,4 кВт','449,68 кВт','17,75 × 11,75','45 × 18','56,2 × 43,4','До 5%','С сушкой','600–700 кг/ч'])assert.ok(html.includes(value),value);
  const shuffled=structuredClone(lines).reverse();
  for(const line of shuffled)line.cardMetrics?.reverse();
  assert.equal(lineComparison(shuffled),html);

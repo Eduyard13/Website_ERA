@@ -103,7 +103,7 @@ try{
  await load('/catalog/lines/?campaign=test&group=Сепарация');assert.equal(await count('line'),3);assert.equal(await active(),'Сепарация');
  await evaluate(`document.querySelector('.catalog-comparison summary').click()`);
  const table=await evaluate(`document.querySelector('.catalog-comparison table').textContent`);
- for(const value of ['225 кВт','405,2 кВт','639,77 кВт','157,5 кВт','283,64 кВт','447,84 кВт','5 × 4,7 м³','Дополнительная опция, по согласованию','Не входят в базовую комплектацию','2–10 дополнительно','56,2 × 43,4'])assert.ok(table.includes(value),value);
+ for(const value of ['225 кВт','405,2 кВт','642,4 кВт','157,5 кВт','283,64 кВт','449,68 кВт','5 × 4,7 м³','Дополнительная опция, по согласованию','Не входят в базовую комплектацию','2–10 дополнительно','56,2 × 43,4'])assert.ok(table.includes(value),value);
  await clickButton('Мойка');assert.equal(await count('line'),1);assert.equal(await active(),'Мойка');
  assert.equal(await evaluate(`document.querySelector('.catalog-comparison').hidden`),true);
  await clickButton('Все линии');assert.equal(await count('line'),4);assert.equal(await evaluate(`document.querySelector('.catalog-comparison').open`),true);

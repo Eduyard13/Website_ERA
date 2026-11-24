@@ -11,7 +11,7 @@ import {imageSize} from '../scripts/image-size.mjs';
 const expected={
  'separatsiya-01':{power:[225,157.5],belts:6,tabs:2,dimensions:['17,75','11,75','208,56'],format:'A4'},
  'separatsiya-02':{power:[405.2,283.64],belts:13,tabs:4,dimensions:['45','18','810'],format:'A0'},
- 'separatsiya-03':{power:[639.77,447.84],belts:28,tabs:3,dimensions:['56,2','43,4','2 439,08'],format:'A0'},
+ 'separatsiya-03':{power:[642.4,449.68],belts:28,tabs:3,dimensions:['56,2','43,4','2 439,08'],format:'A0'},
  'moyka-plenki':{power:[1271.7,890.19],belts:15,tabs:4,dimensions:['68','33','2 244'],format:'A0'},
 };
 const cents=value=>Math.round(value*100);
@@ -51,10 +51,10 @@ test('Электрические ведомости совпадают с сум
   for(const {hours,kwh} of data.periods){
    assert.equal(kwh,cents(totals.calculated)*hours/100,slug);
    const display=hours===1?`${formatLineNumber(kwh,true)} кВт·ч`:`${formatLineNumber(kwh/1000,true)} МВт·ч`;
-   if(!['separatsiya-01','separatsiya-02'].includes(slug))assert.ok(specs.includes(`data-energy-hours="${hours}"`)&&specs.includes(display),slug);
+   if(!['separatsiya-01','separatsiya-02','separatsiya-03'].includes(slug))assert.ok(specs.includes(`data-energy-hours="${hours}"`)&&specs.includes(display),slug);
   }
   assert.equal((specs.match(/data-power-position="/g)||[]).length,data.rows.length,slug);
-  if(['separatsiya-01','separatsiya-02'].includes(slug))assert.match(specs,/data-base-output-hours="8760"><dt>За год<\/dt><dd>6 570 <small>т<\/small>/);
+  if(['separatsiya-01','separatsiya-02','separatsiya-03'].includes(slug))assert.match(specs,/data-base-output-hours="8760"><dt>За год<\/dt><dd>6 570 <small>т<\/small>/);
   else if(slug!=='moyka-plenki')assert.match(specs,/13 140<\/td><td>6 570<\/td>/);
  }
  assert.equal(linePowerData['separatsiya-03'].rows.find(row=>row.position===29).quantity,5);
@@ -98,7 +98,7 @@ test('У каждой линии три документа и полные пр�
   assert.ok(html.match(/<figure[^>]+data-line-catalog-cover[\s\S]*?<\/figure>/)[0].includes(`src="${cover}"`),slug);
  }
  const separation=render('/catalog/lines/separatsiya-03');
- assert.match(section(separation,'specs'),/1 оператор \+ 2 водителя погрузчика/);
+ assert.match(section(separation,'specs'),/1 · Оператор[\s\S]*?2 · Водителя погрузчика/);
  assert.match(section(separation,'specs'),/5–13 человек/);
  assert.match(separation.match(/<section[^>]* class="[^"]*line-hero[^"]*"[\s\S]*?<\/section>/)[0],/data-pdf-open="separatsiya-03-technical"/);
 });

@@ -271,3 +271,16 @@ test('PRO production passport uses updated 30-position specification and consist
  assert.doesNotMatch(block,/line-production-table|line-specs-layout|402,67|281,87/);
  for(const slug of ['separatsiya-01','separatsiya-03','moyka-plenki'])assert.ok(!render('/catalog/lines/'+slug).includes('data-pro-specs'));
 });
+
+test('PREMIUM production passport uses the latest 38-position specification and retains original diagram',()=>{
+ const page=render('/catalog/lines/separatsiya-03'),a=page.indexOf('id="specs"'),b=page.indexOf('</section>',a),block=page.slice(a,b);
+ assert.ok(block.includes('data-premium-specs')&&block.includes('Производственные характеристики'));
+ assert.deepEqual([...block.matchAll(/data-base-spec-kpi="([^"]+)"/g)].map(m=>m[1]),['input','output','power','gauge']);
+ assert.deepEqual([...block.matchAll(/data-premium-spec-position="([^"]+)"/g)].map(m=>Number(m[1])),Array.from({length:38},(_,i)=>i+1));
+ assert.equal((block.match(/<details\b/g)||[]).length,1);
+ for(const value of ['642,4 <small>кВт</small>','449,68 <small>кВт</small>','299,79 <small>кВт·ч/т</small>','599,57 <small>кВт·ч/т</small>','26 × 5 = 130','18,2 × 5 = 91','25 × 2 = 50','17,5 × 2 = 35','5–13 человек','2–10 · Сортировщиков','57 единиц','До 5%','166,82 м²','449,7 кВт','Установленная мощность, кВт','Потребляемая мощность, кВт','АСИИ «КАИР»'])assert.ok(block.includes(value),value);
+ assert.ok(block.includes('Итого по линии</th><td>57</td><td>642,4</td><td>449,68</td>'));
+ assert.match(block,/data-premium-spec-position="36"[\s\S]*?<th scope="row">Шкаф управления<\/th><td>На базе Siemens<\/td><td>3<\/td>/);
+ assert.doesNotMatch(block,/line-production-table|line-specs-layout|639,77|447,84/);
+ for(const slug of ['separatsiya-01','separatsiya-02','moyka-plenki'])assert.ok(!render('/catalog/lines/'+slug).includes('data-premium-specs'));
+});

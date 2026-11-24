@@ -803,10 +803,10 @@
 @media(prefers-reduced-motion:reduce){.film-line .base-specs .line-power-details>summary{transition:none}}
 
 /* PRO uses the same production passport as BASE, adding quantity and sorting. */
-.film-line [data-pro-specs] .pro-spec-table{min-width:850px}
-.film-line [data-pro-specs] .pro-spec-table thead th:nth-last-child(-n+2){white-space:normal;min-width:135px}
-.film-line [data-pro-specs] .pro-spec-table :is(th,td):nth-child(4){text-align:center}
-.film-line [data-pro-specs] .pro-staff-total{margin-top:16px}
-.film-line [data-pro-specs] .base-spec-staff-role:last-child{grid-column:1/-1}
-.film-line [data-pro-specs] .base-spec-kpi>strong{font-size:clamp(26px,3.05vw,48px)}
-@media(max-width:560px){.film-line [data-pro-specs] .base-spec-kpi>strong{font-size:clamp(22px,6.3vw,31px)}}
+.film-line :is([data-pro-specs],[data-premium-specs]) .pro-spec-table{min-width:850px}
+.film-line :is([data-pro-specs],[data-premium-specs]) .pro-spec-table thead th:nth-last-child(-n+2){white-space:normal;min-width:135px}
+.film-line :is([data-pro-specs],[data-premium-specs]) .pro-spec-table :is(th,td):nth-child(4){text-align:center}
+.film-line :is([data-pro-specs],[data-premium-specs]) .pro-staff-total{margin-top:16px}
+.film-line :is([data-pro-specs],[data-premium-specs]) .base-spec-staff-role:last-child{grid-column:1/-1}
+.film-line :is([data-pro-specs],[data-premium-specs]) .base-spec-kpi>strong{font-size:clamp(26px,3.05vw,48px)}
+@media(max-width:560px){.film-line :is([data-pro-specs],[data-premium-specs]) .base-spec-kpi>strong{font-size:clamp(22px,6.3vw,31px)}}

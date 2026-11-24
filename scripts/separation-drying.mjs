@@ -1,8 +1,9 @@
+import {renderBaseSpecs} from './base-specs.mjs';
 import {renderDryKair} from './dry-kair.mjs';
 import {renderDryProductRoutes} from './dry-product-routes.mjs';
 import {renderDryProductCollage} from './dry-product-collage.mjs';
 import {siteContacts} from '../content/contact.mjs';
-import {separation03Media as media,separation03Specification as specification,separation03Staff,separation03Stages,separation03Units} from '../content/separation-03.mjs';
+import {separation03Media as media,separation03Specification as specification,separation03Stages,separation03Units} from '../content/separation-03.mjs';
 import {separation03Diagram} from '../content/separation-03-diagram.mjs';
 import {interactiveLineDiagram} from './line-diagram.mjs';
 import {renderDryArchitectureHeading} from './dry-line-architecture.mjs';
@@ -12,7 +13,6 @@ import {lineDocuments,lineDocumentCards} from './line-page-media.mjs';
 import {renderDrySeparationHero} from './dry-separation-hero.mjs';
 import {renderDrySeparationPurpose} from './dry-separation-purpose.mjs';
 import {renderDrySeparationRaw} from './dry-separation-raw.mjs';
-import {linePower,dryLineProduction} from './line-power.mjs';
 import {nodes} from '../content/catalog.mjs';
 import {equipmentCardImages} from '../content/equipment-card-images.mjs';
 import {lineDimensions} from './line-dimensions.mjs';
@@ -40,7 +40,6 @@ export function renderSeparationDrying(line){
  const documents=lineDocuments(line);
  const doc=documents.find(document=>document.id==='separatsiya-03-technical');
  const drawing=documents.find(document=>document.id==='separatsiya-03-dimensions');
- const {primary,operators,forkliftDrivers,sorters,total}=separation03Staff;
  const email=`mailto:${siteContacts.email}?subject=`+encodeURIComponent('Запрос ЭРА: '+line.cardTitle);
  return `<div class="film-line film-line--full film-line--drying" data-separation03-line>
  ${renderDrySeparationHero({line,email,metrics:[
@@ -67,10 +66,7 @@ export function renderSeparationDrying(line){
 
  <section class="section line-kair-section" data-page-progress-label="КАИР" id="kair">${renderDryKair()}</section>
 
- <section class="section" id="specs">${heading('ПРОИЗВОДИТЕЛЬНОСТЬ И РЕСУРСЫ','Параметры<br>расширенной комплектации.','Входной поток включает загрязнения. Выпуск и энергозатраты приведены для принятого в техническом описании рабочего режима.')}<div class="line-specs-layout"><div class="table-wrap"><table class="line-spec-table"><caption>Основные показатели</caption><tbody>${rows([['Входное сырьё с включениями','1 500 кг/ч'],['Выход очищенной плёнки при засоре около 50%','750 кг/ч'],['Влажность входного сырья','До 30%'],['Влажность плёнки на выходе из сушилки','До 5%'],['Баллистические ступени','2'],['Раздельное накопление','5 бункеров по 4,7 м³'],['Масса тюка по проектной схеме','Около 700 кг'],['Основной персонал',`${primary} человека в смену: ${operators} оператор + ${forkliftDrivers} водителя погрузчика`],['Сортировщики',`${sorters} дополнительно, в зависимости от фракций и сырья`],['Всего в рабочей смене',`${total} человек с учётом сортировки`],['Установленная мощность','639,77 кВт'],['Расчётная потребляемая мощность','447,84 кВт — 70% от установленной'],['Ленточные транспортёры','28 шт.'],['Удельный расход на входное сырьё','298,56 кВт·ч/т'],['Удельный расход на очищенную плёнку','597,12 кВт·ч/т'],['Режим расчёта','24 часа в сутки; 30 суток в месяц']])}</tbody></table></div><aside class="line-output-panel era-indigo-surface"><p class="eyebrow">РАБОТА 24/7</p><h3>Выпуск очищенной плёнки</h3><dl>${[['18','За сутки / 24 часа'],['540','За месяц / 30 суток'],['6 570','За год / 365 суток']].map(([value,label])=>`<div><dt>${label}</dt><dd>${value} <small>т</small></dd></div>`).join('')}</dl><p>Расчёт при 750 кг/ч и непрерывной работе, без вычета остановок. Фактический выпуск зависит от свойств сырья, подачи и организации смен.</p></aside></div>
- ${linePower(line,{note:'Пневмотранспорт на позициях 18 и 19 учтён один раз в мощности бункеров.'})}
- ${dryLineProduction(line,{note:'Четыре сменные бригады работают по графику ротации. Для влажного сырья массу удалённой воды учитывают отдельно от посторонних включений.'})}
- </section>
+ <section class="section" id="specs">${renderBaseSpecs(line)}</section>
 
  <section class="section" id="placement">${heading('РАЗМЕЩЕНИЕ ЛИНИИ','Готовая компоновка.<br>Привязка под ваш цех.','Зоны подачи тюков и насыпного сырья, проезды двух погрузчиков, выдача тюков и биг-бэгов, проходы обслуживания и инженерные сети.')} ${lineDimensions(drawing)}<div class="line-placement-notes"><div><h3>Подача и выдача</h3><p>Свободные проезды погрузчиков, склады сырья и продукции, места смены тары и снятия тюков.</p></div><div><h3>Обслуживание и сети</h3><p>Доступ к приводам, люкам, подвижной щеке, сушилке и бункерам. Электропитание, заземление, воздуховоды, нагрев и отвод конденсата.</p></div><div><h3>Изолированная сортировка</h3><p>Площадка 13 в ангаре 35: рабочие места вдоль ленты, освещение, вентиляция и доступ к шахтам сброса. Монтажные отметки, нагрузки и точки подключения уточняются под конкретный цех.</p></div></div></section>
 

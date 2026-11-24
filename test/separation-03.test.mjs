@@ -19,7 +19,7 @@ const line=lines.find(l=>l.slug==='separatsiya-03');
 test('PREMIUM опубликована в каталоге, три другие карточки сохранены',async()=>{
  assert.equal(lines.filter(l=>l.enabled).length,4);assert.ok(line.enabled);assert.equal(line.status,'source-checked');
  assert.ok(routes.includes(line.path));assert.equal(line.cardTitle,dryLineNames[line.slug].title);
- assert.deepEqual(separation03.cardMetrics.map(m=>[m.value,m.unit]),[['1 500','кг/ч'],['750','кг/ч'],['до 5','%'],['639,77','кВт'],['447,84','кВт'],['5','бункеров']]);
+ assert.deepEqual(separation03.cardMetrics.map(m=>[m.value,m.unit]),[['1 500','кг/ч'],['750','кг/ч'],['до 5','%'],['642,4','кВт'],['449,68','кВт'],['5','бункеров']]);
  const baseline=JSON.parse(await readFile('test/fixtures/separation-03-preserved.json'));
  const oldSlugs=new Set(baseline.cards.map(c=>c.slug));
  const cards=revisedPage('/catalog/lines').match(/<a class="line-card[\s\S]*?<\/a>/g).map(html=>({slug:html.match(/data-line-id="([^"]+)"/)[1],sha256:hash(html),html}));
@@ -57,13 +57,13 @@ test('Мощности, 28 транспортёров, календарь и у�
  const sum=(items,key)=>Math.round(items.reduce((s,r)=>s+r[key],0)*100)/100;
  assert.equal(separation03Power.length,10);assert.equal(separation03ConveyorPower.length,20);
  assert.equal(sum(separation03ConveyorPower,'quantity'),28);
- assert.equal(sum(separation03Power,'installed'),497.07);assert.equal(sum(separation03Power,'calculated'),347.95);
+ assert.equal(sum(separation03Power,'installed'),499.7);assert.equal(sum(separation03Power,'calculated'),349.79);
  assert.equal(sum(separation03ConveyorPower,'installed'),142.70);assert.equal(sum(separation03ConveyorPower,'calculated'),99.89);
  for(const row of [...separation03Power,...separation03ConveyorPower])assert.equal(Math.round(row.installed*.7*100),Math.round(row.calculated*100));
- assert.equal(sum([...separation03Power,...separation03ConveyorPower],'installed'),639.77);
- assert.equal(sum([...separation03Power,...separation03ConveyorPower],'calculated'),447.84);
- assert.deepEqual([24,720,8760].map(h=>(447.84*h/1000).toFixed(2)),['10.75','322.44','3923.08']);
- assert.equal(447.84/1.5,298.56);assert.equal(447.84/.75,597.12);assert.equal(.75*720,540);assert.equal(.75*8760,6570);
+ assert.equal(sum([...separation03Power,...separation03ConveyorPower],'installed'),642.4);
+ assert.equal(sum([...separation03Power,...separation03ConveyorPower],'calculated'),449.68);
+ assert.deepEqual([24,720,8760].map(h=>(449.68*h/1000).toFixed(2)),['10.79','323.77','3939.20']);
+ assert.equal((449.68/1.5).toFixed(2),'299.79');assert.equal((449.68/.75).toFixed(2),'599.57');assert.equal(.75*720,540);assert.equal(.75*8760,6570);
 });
 test('Один монитор содержит 37 позиций и все 42 точно привязанных исходных номера',async()=>{
  const d=separation03Diagram;assert.equal(d.width,1452);assert.equal(d.height,830);assert.equal(d.page,6);
@@ -121,7 +121,7 @@ test('Детальная страница повторяет порядок эт
  assert.equal((nativeBlock.match(/data-line-leader="/g)||[]).length,42);
  assert.equal((nativeBlock.match(/data-callout-hit="/g)||[]).length,42);
  assert.equal((html.match(/data-catalogue-image="/g)||[]).length,6);assert.equal((html.match(/id="pdf-viewer"/g)||[]).length,1);
- for(const text of ['при испытаниях отдельные партии имели засорённость до 80%','До 5%','639,77','447,84','298,56','597,12','540','6 570','4К','55″','Siemens','Пневмотранспорт на позициях 18 и 19 учтён один раз','data-dimension-tab="top"','data-dimension-tab="side"','data-hero-finish="titanium-gallery"'])assert.ok(html.includes(text),text);
+ for(const text of ['при испытаниях отдельные партии имели засорённость до 80%','До 5%','642,4','449,68','299,79','599,57','540','6 570','4К','55″','Siemens','Пневмотранспорт на позициях 18 и 19 учтён один раз','data-dimension-tab="top"','data-dimension-tab="side"','data-hero-finish="titanium-gallery"'])assert.ok(html.includes(text),text);
  assert.ok(html.includes(`href="${basePath}/documents/${separation03Document.file}"`));assert.ok(html.includes(`data-pdf-open="${separation03Document.id}"`));
  assert.ok(html.includes('/separation-drying.js?v=')&&html.includes('/line-monitor.js?v='));
  assert.ok(html.includes(`href="${basePath}/catalog/lines/moyka-plenki"`));assert.ok(html.includes('data-project-request'));
