@@ -251,10 +251,10 @@ test('Мини-линия 01 использует своё ТО, показат�
  assert.ok(Math.abs(miniSpecification.reduce((sum,row)=>sum+parse(row[3]),0)-225)<1e-9);
  assert.ok(Math.abs(miniSpecification.reduce((sum,row)=>sum+parse(row[4]),0)-157.5)<1e-9);
  assert.ok(page.includes('ЭРА / ПРОМЫШЛЕННАЯ ЛИНИЯ / BASE'));
- for(const text of ['157,5 кВт','225 кВт','17,75 × 11,75 м','600–700 кг/ч','70% установленной мощности','3–5%','80% → ≤10%','Конвейеры 07–10','3 человека в смену','Отдельные протоколы испытаний'])assert.ok(page.includes(text),text);
- assert.ok(page.includes('отдельная сортировка плёнок по видам в базовую поставку не входит'));
+ for(const text of ['157,5 кВт','225 кВт','17,75 × 11,75 м','600–700 кг/ч','70% установленной мощности','3–5%','80% → ≤10%','конвейерами 07–10','3 человека в смену','Отдельные протоколы испытаний'])assert.ok(page.includes(text),text);
+ assert.ok(page.includes('Отдельная сортировка по видам плёнки в базовую поставку не входит'));
  assert.ok(page.includes('Сортировочный бокс, мойка и пресс не входят'));
- assert.ok(page.includes('Рама на позиции 11 предназначена для мешка с этими включениями'));
+ assert.ok(page.includes('Рама-наполнитель 11 обеспечивает выгрузку в биг-бэг'));
  assert.ok(!page.includes('402,67'));assert.ok(!page.includes('281,87'));
  const card=(await readFile('dist/catalog/lines/index.html','utf8')).match(/<a[^>]+data-line-id="separatsiya-01"[\s\S]*?<\/a>/)[0];
  assert.ok(card.includes(`href="${basePath}${line.path}"`));assert.equal([...card.matchAll(/<dt>/g)].length,6);
