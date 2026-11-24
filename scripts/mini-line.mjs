@@ -1,3 +1,4 @@
+import {renderDryProductCollage} from './dry-product-collage.mjs';
 import {siteContacts} from '../content/contact.mjs';
 import {nodes} from '../content/catalog.mjs';
 import {miniFilmSeparationMedia,miniLineMetrics,miniRawMaterials,miniInclusions,miniStages,miniSpecification,miniUnits,miniSpecs,miniQuality,miniService} from '../content/mini-film-separation.mjs';
@@ -58,8 +59,7 @@ export function renderMiniFilmSeparation(line){
 
  <section class="section" id="process">${renderBaseProcess(miniStages)}</section>
 
- <section class="section line-soft" id="quality"><div class="line-section-heading"><div><p class="eyebrow">ПРОДУКТ И КАЧЕСТВО</p><h2>Очищенная плёнка.<br>Подготовленная к мойке.</h2></div><p>Продукт линии BASE — плёночная фракция после сухой очистки. Состав микса определяется исходной партией; параметры для продажи или дальнейшей переработки согласуют с покупателем и следующим участком.</p></div>
-  <div class="line-comparison">${picture('before',{label:'ДО СЕПАРАЦИИ',caption:'Исходная плёнка с посторонними включениями'})}${picture('after',{label:'ПОСЛЕ СЕПАРАЦИИ',caption:'Очищенная плёночная фракция'})}</div>
+ <section class="section line-soft" id="quality">${renderDryProductCollage()}<p class="dry-product-model-note">BASE выдаёт очищенную плёнку одним общим потоком. Состав микса определяется исходной партией.</p>
   <div class="mini-quality-results"><div><strong>80% → ≤10%</strong><span>Засор до и после очистки на испытаниях</span></div><div><strong>3–5%</strong><span>Потери полезной плёнки на испытаниях</span></div><p>Для партии заказчика отдельно измеряют засор, выход продукции, влажность и потери полезной плёнки.</p></div>
   <div class="table-wrap"><table class="line-quality-table"><caption>Показатели продукта и контроль пробной партии</caption><thead><tr><th scope="col">Показатель</th><th scope="col">По техническому описанию</th><th scope="col">Как проверяют</th></tr></thead><tbody>${miniQuality.map(([label,claim,check])=>`<tr><th scope="row">${label}</th><td data-label="По техническому описанию">${claim}</td><td data-label="На пробной партии">${check}</td></tr>`).join('')}</tbody></table></div>
   <div class="line-evidence"><div><p class="eyebrow">ЧЕМ ПОДТВЕРЖДАЕТСЯ РЕЗУЛЬТАТ</p><h3>Техописание, фотографии и пробная партия</h3><p>В документе приведены результаты испытаний и фотографии исходного сырья, очищенной плёнки и отделённых включений. Перед поставкой проверяют конкретное сырьё заказчика и фиксируют условия работы.</p></div><div><h3>Показатели для вашего производства</h3><p>Приёмку связывают с согласованными значениями и замерами партии: остаточным засором, влажностью, выпуском, потерями и составом плёночного микса.</p><p class="line-note">Отдельные протоколы испытаний в приложенном ТО не опубликованы. Фотографии показывают результат визуально; численное значение выходной влажности согласуется отдельно.</p></div></div>

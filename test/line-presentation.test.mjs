@@ -165,3 +165,22 @@ test('PRO native flow preserves the single press, both useful routes and separat
  assert.ok(page.includes('/pro-process.css?v='));
  for(const slug of ['separatsiya-01','separatsiya-03','moyka-plenki']){const other=render('/catalog/lines/'+slug);assert.ok(!other.includes('data-pro-process-map')&&!other.includes('/pro-process.css?v='));}
 });
+
+test('BASE, PRO and PREMIUM share exactly the same four full-source dry product photographs',()=>{
+ const photos=['lines/separatsiya-01-mini/before.webp','lines/separatsiya-01-mini/after.webp','lines/separatsiya-03/product-before.webp','lines/separatsiya-03/product-after.webp'];
+ let common;
+ for(const slug of ['separatsiya-01','separatsiya-02','separatsiya-03']){
+  const page=render('/catalog/lines/'+slug),part=page.slice(page.indexOf('id="quality"'),page.indexOf('id="specs"'));
+  const block=part.slice(part.indexOf('<div class="dry-product-showcase"'),part.indexOf('<p class="dry-product-model-note"'));
+  assert.ok(block.includes('data-dry-product-showcase'),slug);
+  assert.equal((block.match(/data-dry-product-pair="/g)||[]).length,2);
+  assert.deepEqual([...block.matchAll(/<img src="([^"]+)" /g)].map(m=>m[1]),photos.map(p=>basePath+'/assets/'+p));
+  assert.equal((block.match(/data-dry-product-state="before"/g)||[]).length,2);
+  assert.equal((block.match(/data-dry-product-state="after"/g)||[]).length,2);
+  assert.equal((block.match(/data-media-group="dry-product-results"/g)||[]).length,4);
+  assert.ok(!block.includes('-thumb.webp'));
+  assert.ok(part.includes('line-quality-table'));
+  if(common)assert.equal(block,common);else common=block;
+ }
+ assert.ok(!render('/catalog/lines/moyka-plenki').includes('data-dry-product-showcase'));
+});
