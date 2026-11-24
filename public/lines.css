@@ -664,3 +664,41 @@
 @media(max-width:800px){.film-line .dry-route-hero{grid-template-columns:1fr;gap:20px}}
 @media(max-width:560px){.film-line .dry-route-gallery,.film-line .dry-route-branches{grid-template-columns:1fr}.film-line .dry-route-branch{height:28px;visibility:hidden}.film-line .dry-route-map{padding:12px}.film-line .dry-route-lane{padding:12px}}
 @media(prefers-reduced-motion:reduce){.film-line .dry-route-reference-art{transition:none}}
+
+/* BASE — original trial photographs, flexible discharge and expansion cards. */
+.film-line .base-product-routes .dry-route-hero{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr)}
+.film-line .base-output-gallery{grid-template-columns:minmax(0,1.333fr) minmax(0,.75fr);align-items:stretch}
+.film-line .base-output-gallery .dry-route-photo{display:flex;flex-direction:column}
+.film-line .base-output-gallery .media-open{position:relative;display:block;overflow:hidden;background:#e7e2d8;aspect-ratio:4/3}
+.film-line .base-output-gallery [data-base-product-photo=after-close] .media-open{aspect-ratio:3/4}
+.film-line .base-output-gallery img{display:block;width:100%;height:100%;object-fit:contain;filter:none}
+.film-line .base-output-gallery figcaption{flex:1}
+.film-line .base-product-routes .dry-route-copy p+p{margin-top:12px}
+.film-line .base-delivery{margin-top:clamp(24px,3vw,44px);padding-top:24px;border-top:1px solid var(--line)}
+.film-line .base-delivery>.eyebrow{margin:0 0 16px}
+.film-line .base-delivery-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.film-line .base-delivery-card{min-width:0;padding:clamp(16px,2vw,28px);border:1px solid #d7c9b2;border-radius:10px;background:#fffdf8}
+.film-line .base-delivery-card svg{display:block;width:40px;height:40px;color:#ad8537;margin-bottom:16px}
+.film-line .base-delivery-card h4{font-size:clamp(18px,1.7vw,25px);margin:0 0 8px;line-height:1.25}
+.film-line .base-delivery-card p,.film-line .base-delivery-note{font-size:14px;line-height:1.5;margin:0}
+.film-line .base-delivery-note{margin-top:12px;color:var(--muted)}
+.film-line .base-expansion{margin-top:clamp(24px,3vw,46px);padding:clamp(20px,3vw,44px);border:1px solid #b7954f;border-radius:15px;background:linear-gradient(135deg,#283246,#12162c 80%);color:#fff;min-width:0}
+.film-line .base-expansion .eyebrow{color:#e9c46d;margin:0 0 10px}
+.film-line .base-expansion h3{font-size:clamp(25px,3vw,42px);line-height:1.16;letter-spacing:-.03em;color:#fff;margin:0 0 14px}
+.film-line .base-expansion-intro{max-width:1000px;color:#dce0eb;font-size:16px;line-height:1.6;margin:0 0 24px}
+.film-line .base-expansion-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.film-line .base-expansion-card{min-width:0;display:flex;flex-direction:column;gap:14px;padding:clamp(15px,2vw,26px);border:1px solid #958050;border-radius:10px;background:#ffffff06;color:#fff;text-decoration:none;transition:background .2s,border-color .2s}
+.film-line .base-expansion-card:hover,.film-line .base-expansion-card:focus-visible{background:#ffffff12;border-color:#e9c46d}
+.film-line .base-expansion-card-head{display:flex;align-items:center;justify-content:space-between;color:#e9c46d}
+.film-line .base-expansion-card-head strong{font-size:clamp(23px,2.3vw,34px);letter-spacing:.04em}
+.film-line .base-expansion-card-head>span{font-size:24px}
+.film-line .base-expansion-card img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:#14182f;border-radius:7px}
+.film-line .base-expansion-card h4{color:#fff;font-size:clamp(19px,1.9vw,27px);margin:0;line-height:1.2}
+.film-line .base-expansion-card ul{list-style:none;padding:0;margin:0 0 10px;display:grid;gap:8px}
+.film-line .base-expansion-card li{display:flex;align-items:baseline;gap:9px;color:#e0e3ec;line-height:1.45;font-size:14px}
+.film-line .base-expansion-card li span{color:#e9c46d;flex:none}
+.film-line .base-expansion-link{display:block;text-align:center;margin-top:auto;padding:12px;border:1px solid #a99055;border-radius:6px;color:#fff;font-weight:600}
+.film-line .base-expansion-note{color:#d0d4e2;font-size:12px;line-height:1.5;margin:16px 0 0}
+@media(max-width:1000px){.film-line .base-product-routes .dry-route-hero{grid-template-columns:1fr}}
+@media(max-width:560px){.film-line .base-output-gallery,.film-line .base-delivery-grid,.film-line .base-expansion-grid{grid-template-columns:1fr}.film-line .base-output-gallery [data-base-product-photo=after-close] .media-open{aspect-ratio:3/4;max-height:430px}.film-line .base-expansion{padding:16px}}
+@media(prefers-reduced-motion:reduce){.film-line .base-expansion-card{transition:none}}

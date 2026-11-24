@@ -171,7 +171,7 @@ test('BASE, PRO and PREMIUM share exactly the same four full-source dry product 
  let common;
  for(const slug of ['separatsiya-01','separatsiya-02','separatsiya-03']){
   const page=render('/catalog/lines/'+slug),part=page.slice(page.indexOf('id="quality"'),page.indexOf('id="kair"'));
-  const block=part.slice(part.indexOf('<div class="dry-product-showcase"'),part.indexOf(slug==='separatsiya-01'?'<div class="line-next-process">':'<div class="dry-product-routes"')).trim();
+  const block=part.slice(part.indexOf('<div class="dry-product-showcase"'),part.indexOf(slug==='separatsiya-01'?'<div class="dry-product-routes base-product-routes"':'<div class="dry-product-routes"')).trim();
   assert.ok(block.includes('data-dry-product-showcase'),slug);
   assert.equal((block.match(/data-dry-product-pair="/g)||[]).length,2);
   assert.deepEqual([...block.matchAll(/<img src="([^"]+)" /g)].map(m=>m[1]),photos.map(p=>basePath+'/assets/'+p));
@@ -185,7 +185,7 @@ test('BASE, PRO and PREMIUM share exactly the same four full-source dry product 
   const offsets=benefits.map(label=>block.indexOf('<span>'+label+'</span>'));
   assert.ok(offsets.every((offset,i)=>offset>=0&&(!i||offset>offsets[i-1])),slug);
   assert.doesNotMatch(block,/Что получает клиент|Визуально более чистая/);
-  assert.ok(part.includes(slug==='separatsiya-01'?'line-next-process':'data-dry-product-routes'));
+  assert.ok(part.includes(slug==='separatsiya-01'?'data-base-product-routes':'data-dry-product-routes'));
   if(slug==='separatsiya-01')assert.ok(part.includes('id="options"'));
   if(common)assert.equal(block,common);else common=block;
  }
@@ -208,4 +208,21 @@ test('PRO and PREMIUM share two alternative downstream product routes, with the 
   if(common)assert.equal(block,common);else common=block;
  }
  for(const slug of ['separatsiya-01','moyka-plenki'])assert.ok(!render('/catalog/lines/'+slug).includes('data-dry-product-routes'));
+});
+
+test('BASE uses both full original trial photos, three discharge formats and native PRO / PREMIUM links',()=>{
+ const html=render('/catalog/lines/separatsiya-01'),start=html.indexOf('<div class="dry-product-routes base-product-routes"'),end=html.indexOf('</section>',start),block=html.slice(start,end);
+ assert.ok(start>0&&block.includes('Готовая продукция и дальнейший путь материала'));
+ assert.deepEqual([...block.matchAll(/data-base-product-photo="([^"]+)"/g)].map(m=>m[1]),['after','after-close']);
+ for(const file of ['after.webp','after-close.webp'])assert.ok(block.includes('src="'+basePath+'/assets/lines/separatsiya-01-mini/'+file+'"'));
+ assert.deepEqual([...block.matchAll(/data-base-delivery="([^"]+)"/g)].map(m=>m[1]),['loose','bag','cage']);
+ assert.deepEqual([...block.matchAll(/data-dry-route-lane="([^"]+)"/g)].map(m=>m[1]),['sale','cycle']);
+ assert.deepEqual([...block.matchAll(/data-dry-route-stage="([^"]+)"/g)].map(m=>m[1]),['sale','wash','pellets']);
+ for(const [slug,name] of [['separatsiya-02','PRO'],['separatsiya-03','PREMIUM']]){
+  const l=lines.find(x=>x.slug===slug);assert.ok(block.includes('data-base-expansion="'+name+'" href="'+basePath+l.path+'"'));assert.ok(block.includes('src="'+basePath+'/assets/'+l.cardFile+'"'));
+ }
+ assert.ok(block.includes('Сортировка по видам и автоматизированный пресс в базовой комплектации не предусмотрены'));
+ assert.ok(block.includes('href="'+basePath+'/catalog/lines/moyka-plenki"'));
+ assert.doesNotMatch(block,/line-next-process|mini-line-options|https?:\/\//);
+ for(const slug of ['separatsiya-02','separatsiya-03','moyka-plenki'])assert.ok(!render('/catalog/lines/'+slug).includes('data-base-product-routes'));
 });

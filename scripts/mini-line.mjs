@@ -1,3 +1,4 @@
+import {renderBaseProductRoutes} from './base-product-routes.mjs';
 import {renderDryProductCollage} from './dry-product-collage.mjs';
 import {siteContacts} from '../content/contact.mjs';
 import {nodes} from '../content/catalog.mjs';
@@ -60,10 +61,7 @@ export function renderMiniFilmSeparation(line){
  <section class="section" id="process">${renderBaseProcess(miniStages)}</section>
 
  <section class="section line-soft" id="quality">${renderDryProductCollage()}
-  <div class="line-next-process"><p class="eyebrow">ДАЛЬНЕЙШИЙ ПУТЬ МАТЕРИАЛА</p><ol><li><span>01</span><div><h3>Сухая сепарация</h3><p>Подготовленная плёнка одним общим потоком</p></div></li><li><span>02</span><div><h3>Горячая мойка</h3><p>Удаление стойких жиров, масел, клея и этикеток; обезвоживание перед грануляцией</p></div></li><li><span>03</span><div><h3>Грануляция</h3><p>Получение гранулы из подготовленного полимера; применение зависит от состава и характеристик партии</p></div></li></ol></div>
-
- <div class="mini-line-options" id="options"><div class="line-section-heading"><div><p class="eyebrow">ВАРИАНТЫ ПРИЁМА И РАСШИРЕНИЯ</p><h3>Под вашу задачу.<br>С возможностью расширения.</h3></div><p>Базовая линия выдаёт общий плёночный микс. Дополнительные участки подбирают под нужный продукт, логистику и дальнейшую переработку.</p></div>  <aside class="line-option"><div><p class="eyebrow">ВЫДАЧА ПРОДУКТА</p><h3>Приёмная секция под вашу площадку</h3><p>На площадках в Китае и Нидерландах очищенную плёнку принимали в ограждённую сетчатую секцию. Её размер, точку подачи и доступ для выгрузки подбирают под организацию смены.</p></div><div><strong>1 поток плёнки</strong><p>Далее — накопление, продажа переработчику или подача на собственную мойку. Форма выдачи согласуется при подборе линии.</p></div></aside>
-<div class="line-purpose-grid"><article><h3>Сортировка по видам</h3><p>Дополнительный сортировочный бокс по согласованию позволяет выделять ценные виды плёнки, например прозрачную, в отдельные потоки.</p><a class="text-link" href="/catalog/lines/separatsiya-02">Посмотреть комплектацию PRO ↗</a></article><article><h3>Подача на мойку</h3><p>Конвейер передаёт очищенную плёнку на собственный участок мойки. Способ передачи согласуют при размещении.</p></article><article><h3>Прессование в тюки</h3><p>Дополнительный автоматизированный пресс формирует и увязывает тюки для хранения, продажи или перевозки.</p></article></div><p class="line-note">Сортировочный бокс, мойка и пресс не входят в приведённые 13 позиций и мощность 225 кВт базовой комплектации. Их состав и нагрузки учитывают дополнительно.</p></div>
+  ${renderBaseProductRoutes()}
  </section>
 
  <section class="section line-kair-section" id="kair"><div class="line-section-heading"><div><p class="eyebrow">СИСТЕМА УПРАВЛЕНИЯ</p><h2>Одна линия.<br>Согласованная работа.</h2></div><p>КАИР на базе Siemens управляет последовательностью операций и сохраняет режимы под сырьё. Настройка подачи и отбора, контроль состояния и защитная остановка — в едином интерфейсе.</p></div>
