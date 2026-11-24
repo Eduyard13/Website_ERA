@@ -89,6 +89,13 @@ test('Детальная страница повторяет порядок эт
  const offsets=ids.map(id=>html.indexOf(`id="${id}"`));assert.ok(offsets.every(i=>i>0));assert.deepEqual(offsets,[...offsets].sort((a,b)=>a-b));
  assert.equal((html.match(/data-diagram-mode="fit"/g)||[]).length,1);assert.equal((html.match(/data-part-guide="/g)||[]).length,42);
  assert.equal((html.match(/data-callout="/g)||[]).length,42);assert.equal((html.match(/data-separation03-position="/g)||[]).length,0);
+ const processBlock=html.slice(html.indexOf('id="process"'),html.indexOf('id="quality"'));
+ assert.ok(processBlock.includes('data-premium-process-map'));
+ assert.equal((processBlock.match(/class="line-index"/g)||[]).length,9);
+ assert.equal((processBlock.match(/data-premium-node="press"/g)||[]).length,1);
+ for(const id of ['prep','opener','ballistic1','dryer','ballistic2','sorting','rotor','fifth','fractions','four','press','mix','sorted','solids','dust','air','condensate'])assert.ok(processBlock.includes('data-premium-node="'+id+'"'),id);
+ assert.ok(!/<(?:details|img)\b/.test(processBlock));
+ assert.ok(processBlock.includes('Фракции не смешиваются'));
  const nativeBlock=html.slice(html.indexOf('id="composition"'),html.indexOf('id="process"'));
  assert.doesNotMatch(nativeBlock,/data-line-layout-views|line03-view-reverse|Другой ракурс|Основной вид|Спецификация линии|Как устроены ключевые узлы/);
  assert.ok(nativeBlock.includes('/assets/lines/separatsiya-03/layout-native-v2.webp'));
