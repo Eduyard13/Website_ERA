@@ -182,3 +182,11 @@
  .film-line--full #process .pro-flow-rotor:before{content:"ОСНОВНОЙ ЦВЕТНОЙ МИКС"}
  .film-line--full #process .pro-flow-fractions:before{content:"ЧЕТЫРЕ ВЫБРАННЫЕ ФРАКЦИИ"}
 }
+
+/* Long Russian equipment names must fit even without a browser hyphenation dictionary. */
+.film-line--full #process .pro-flow-tile{container-type:inline-size}
+.film-line--full #process .pro-flow-tile h4{hyphens:manual;overflow-wrap:break-word}
+@media(min-width:1320px){
+ .film-line--full #process :is(.pro-flow-ballistic,.pro-flow-sorting,.pro-flow-sorted) h4{font-size:clamp(12px,9.3cqi,17px);line-height:1.3}
+}
+.film-line--full #process .base-flow-outcome-head :is(span,h4){overflow-wrap:break-word;word-break:normal}

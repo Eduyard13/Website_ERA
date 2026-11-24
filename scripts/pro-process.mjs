@@ -20,15 +20,15 @@ const productFilm='<svg class="base-product-film" viewBox="0 0 320 240" aria-hid
 const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
 const tiles=[
  ['prep','01–03','Подготовка сырья','feed','Вскрытие тюков и подача'],
- ['ballistic','04','Баллистическая сепарация','ballistic','Отделение объёмных включений и просева'],
- ['sorting','08–09','Закрытый сортировочный бокс','box','С вакуумными высосами'],
+ ['ballistic','04','Баллисти&shy;ческая сепарация','ballistic','Отделение объёмных включений и просева'],
+ ['sorting','08–09','Закрытый сорти&shy;ровочный бокс','box','С вакуумными высосами'],
  ['rotor','12–15','Интенсивная очистка','rotor','Ротор · диски · воздух'],
  ['fifth','20 · 1 из 5','Пятый бункер','bunker','Основной цветной микс'],
  ['press','22–25','Общий пресс','press','Поочерёдная подача партий'],
  ['mix','ВЫХОД','Тюки очищенной плёнки','bale','Основной цветной микс'],
  ['fractions','10','4 выбранные фракции','film','Вакуумный высос из бокса'],
  ['four','20 · 4 из 5','4 отдельных бункера','four','Раздельное накопление'],
- ['sorted','ВЫХОД','Тюки отсортированной плёнки','bale','Раздельно по видам']
+ ['sorted','ВЫХОД','Тюки отсорти&shy;рованной плёнки','bale','Раздельно по видам']
 ];
 const tile=([id,num,title,symbol,detail])=>'<article class="pro-flow-tile pro-flow-'+id+(['mix','sorted'].includes(id)?' pro-flow-output':'')+'" data-pro-flow-node="'+id+'"><div class="pro-flow-tile-top"><span>'+num+'</span>'+icon(symbol)+'</div><h4>'+title+'</h4><p>'+detail+'</p></article>';
 // Connector coordinates follow the seven equal grid columns and fixed row heights.
