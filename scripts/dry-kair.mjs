@@ -1,5 +1,4 @@
-// Shared KAIR presentation for the three dry-separation configurations.
-// The approved chip is a native SVG, not a raster or third-party icon.
+// Shared KAIR presentation. Line-specific features are passed by the line renderer.
 const chip='<svg class="dry-kair-chip" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="14" y="14" width="36" height="36" rx="7"/><rect x="21" y="21" width="22" height="22" rx="3"/>'+[21,32,43].map(x=>'<path d="M'+x+' 6 V14 M'+x+' 50 V58 M6 '+x+' H14 M50 '+x+' H58"/><circle cx="'+x+'" cy="4" r="2"/><circle cx="'+x+'" cy="60" r="2"/><circle cx="4" cy="'+x+'" r="2"/><circle cx="60" cy="'+x+'" r="2"/>').join('')+'<path d="M25 33 L30 38 L40 27"/></svg>';
 const icons={
  automation:'<rect x="8" y="2" width="8" height="5" rx="1.5"/><rect x="2" y="17" width="8" height="5" rx="1.5"/><rect x="14" y="17" width="8" height="5" rx="1.5"/><path d="M12 7v5H6v5m6-5h6v5"/>',
@@ -18,9 +17,12 @@ const features=[
  ['history','История событий','Журнал работы системы и действий оператора.']
 ];
 const icon=key=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+icons[key]+'</svg>';
-export function renderDryKair(){
+export function renderDryKair({
+ description='Единая интеллектуальная система управления технологическими процессами, контроля состояния оборудования и удалённого наблюдения за производством.',
+ lineFeatures=features
+}={}){
  return '<div class="dry-kair era-indigo-surface" data-dry-kair>'+
  '<div class="dry-kair-brand">'+chip+'<div class="dry-kair-brand-copy"><span class="dry-kair-wordmark">КАИР</span><span class="dry-kair-subtitle">ИНТЕЛЛЕКТУАЛЬНАЯ СИСТЕМА УПРАВЛЕНИЯ</span></div><span class="dry-kair-siemens" aria-label="Управление на базе Siemens">SIEMENS</span></div>'+
- '<div class="dry-kair-layout"><div class="dry-kair-copy"><h2>Всё производство.<br><span>Под вашим контролем.</span></h2><p>Единая интеллектуальная система управления технологическими процессами, контроля состояния оборудования и удалённого наблюдения за производством.</p><a class="dry-kair-link" href="/automation"><span>Подробнее о КАИР</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 13 13 3M3 3h10v10"/></svg></a></div>'+
- '<div class="dry-kair-features" aria-label="Возможности КАИР">'+features.map(([key,title,description])=>'<article class="dry-kair-feature" data-dry-kair-feature="'+key+'">'+icon(key)+'<h3>'+title+'</h3><p>'+description+'</p></article>').join('')+'</div></div></div>';
+ '<div class="dry-kair-layout"><div class="dry-kair-copy"><h2>Всё производство.<br><span>Под вашим контролем.</span></h2><p>'+description+'</p><a class="dry-kair-link" href="/automation"><span>Подробнее о КАИР</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 13 13 3M3 3h10v10"/></svg></a></div>'+
+ '<div class="dry-kair-features" aria-label="Возможности КАИР">'+lineFeatures.map(([key,title,description])=>'<article class="dry-kair-feature" data-dry-kair-feature="'+key+'">'+icon(key)+'<h3>'+title+'</h3><p>'+description+'</p></article>').join('')+'</div></div></div>';
 }

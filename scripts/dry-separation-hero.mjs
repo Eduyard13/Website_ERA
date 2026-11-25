@@ -1,7 +1,6 @@
 import {lineHeroImage} from './line-page-media.mjs';
 
-// A single visual template for BASE, PRO and PREMIUM. Technical figures are supplied
-// independently by each original line renderer, not copied across configurations.
+// Line renderers supply the metrics for their own configuration.
 const escape=value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const presentations={
  'separatsiya-01':{
@@ -21,13 +20,19 @@ const presentations={
   hook:'Две ступени сепарации, сушка и пять раздельных потоков плёнки.',
   lead:'Предварительное распушение, две баллистические ступени с роторной сушкой между ними, сортировка по видам и роторная доочистка основного микса. Пять накопителей и автоматический пресс формируют раздельные партии.',
   tags:['Две баллистические ступени','Роторная сушка','Пять раздельных потоков']
+ },
+ 'moyka-plenki':{
+  heading:'Линия горячей мойки плёнок и пакетов',
+  hook:'От подготовленной плёнки — к чистому полимерному продукту.',
+  lead:'Второй ключевой этап полного цикла переработки. Измельчение в жидкой среде, горячая фрикционная мойка, флотация, ополаскивание и механическое обезвоживание. На выходе — тюки чистой плёнки, капсулят или полиэтиленовая гранула.',
+  tags:['После сухой сепарации','Две ступени мойки','Три маршрута выдачи']
  }
 };
 const button=(label,href,secondary=false)=>'<a class="button '+(secondary?'secondary':'')+'" href="'+escape(href)+'">'+escape(label)+'<span aria-hidden="true">↗</span></a>';
 
 export function renderDrySeparationHero({line,email,metrics,metricNote,documentHref,documentText,documentAttributes=''}) {
  const entry=presentations[line.slug];
- if(!entry)throw new Error('No source-specific dry line hero: '+line.slug);
+ if(!entry)throw new Error('No hero presentation for '+line.slug);
  if(!Array.isArray(metrics)||metrics.length!==4)throw new Error('Four source-specific metrics are required for '+line.slug);
  if(!documentHref||!documentText)throw new Error('Original PDF reference is required for '+line.slug);
  const metricCards=metrics.map(({value,unit,label,detail},index)=>{

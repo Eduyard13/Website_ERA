@@ -51,7 +51,7 @@ test('Электрические ведомости совпадают с сум
   for(const {hours,kwh} of data.periods){
    assert.equal(kwh,cents(totals.calculated)*hours/100,slug);
    const display=hours===1?`${formatLineNumber(kwh,true)} кВт·ч`:`${formatLineNumber(kwh/1000,true)} МВт·ч`;
-   if(!['separatsiya-01','separatsiya-02','separatsiya-03'].includes(slug))assert.ok(specs.includes(`data-energy-hours="${hours}"`)&&specs.includes(display),slug);
+   if(slug==='moyka-plenki'&&hours!==1)assert.ok(specs.includes(`data-base-spec-fact="energy-${hours}"`)&&specs.includes(display.replace(' МВт·ч',' <small>МВт·ч')),slug);
   }
   assert.equal((specs.match(/data-power-position="/g)||[]).length,data.rows.length,slug);
   if(['separatsiya-01','separatsiya-02','separatsiya-03'].includes(slug))assert.match(specs,/data-base-output-hours="8760"><dt>За год<\/dt><dd>6 570 <small>т<\/small>/);

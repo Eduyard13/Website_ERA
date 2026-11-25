@@ -3,7 +3,9 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {lines,nodes} from '../content/catalog.mjs';
-import {hotFilmWashing,hotWashDocument,hotWashSpecification,hotWashPower,hotWashEnergy,hotWashMedia} from '../content/hot-film-washing.mjs';
+import {hotFilmWashing,hotWashDocument,hotWashSpecification,hotWashPower,hotWashEnergy,hotWashMedia,hotWashProducts} from '../content/hot-film-washing.mjs';
+import flow from '../content/hot-wash-flow.json' with {type:'json'};
+import {formatLineNumber as fmt,linePowerData} from '../content/line-engineering.mjs';
 import {hotWashDiagram} from '../content/hot-wash-diagram.mjs';
 import {publicLibraryDocuments} from '../content/document-library.mjs';
 import {buildGalleryData} from '../scripts/gallery-data.mjs';
@@ -65,8 +67,9 @@ test('Ведомость, календарные величины и энерг�
  assert.deepEqual([24,720,744,8760].map(h=>hotWashEnergy(h).toFixed(2)),['21.36','640.94','662.30','7798.06']);
  assert.equal(.75*24,18);assert.equal(.75*720,540);assert.equal(.75*8760,6570);assert.equal(68*33,2244);
  const html=revisedPage(line.path);
- for(const text of ['70%','1 271,70','890,19','77,5','37,6','700–1 200','240–250','0,003–0,007%','190 °C / 2,16 кг','30 суток','720 часов','6 570'])assert.ok(html.includes(text),text);
- assert.ok(html.includes('номинал одного гранулятора')&&html.includes('потери плёнки 1–2%'));
+ for(const text of ['70%','1 271,70','890,19','77,5','37,6','700–1 200','240–250','0,003–0,007%','190 °C / 2,16 кг','30 суток','720 ч','6 570'])assert.ok(html.includes(text),text);
+ assert.match(html,/<dd>1–2<small>%<\/small>/);
+ assert.match(html,/Номинал одного гранулятора/);
 });
 test('Монитор связывает 44 номера и 47 ветвей выносок с контурами 36 позиций',()=>{
  const d=hotWashDiagram,height=d.height/d.width*1000;
@@ -94,9 +97,9 @@ test('Новая страница использует общий fit-монит
  assert.deepEqual([...nav.matchAll(/href="#([^"]+)"/g)].map(m=>m[1]),ids);
  const offsets=ids.map(id=>html.indexOf(`id="${id}"`));assert.ok(offsets.every((n,i)=>n>0&&(!i||n>offsets[i-1])));
  assert.equal((html.match(/data-diagram-mode="fit"/g)||[]).length,1);assert.equal((html.match(/data-part-guide="/g)||[]).length,44);
- assert.equal((html.match(/data-hotwash-position="/g)||[]).length,0);assert.equal((html.match(/data-hotwash-select="/g)||[]).length,0);
+ assert.equal((html.match(/data-hotwash-position="/g)||[]).length,37);assert.equal((html.match(/data-hotwash-select="/g)||[]).length,36);
  const composition=html.slice(html.indexOf('id="composition"'),html.indexOf('id="process"'));
- assert.doesNotMatch(composition,/Спецификация: все 37|37 — помещение цеха|Одна позиция может включать|Для 31 и 32 сохранены|<noscript>/);
+ assert.doesNotMatch(composition,/data-hotwash-position|data-hotwash-select|Техническая спецификация|Спецификация: все 37|37 — помещение цеха|Одна позиция может включать|Для 31 и 32 сохранены|<noscript>/);
  assert.ok(composition.includes('Каждый узел на своём месте.')&&composition.includes('Каждая функция — на результат.'));
  assert.ok(composition.includes('От подготовленной плёнки через горячую мойку'));
  assert.ok(composition.includes('data-architecture-list')&&composition.includes('dry-architecture-layout'));
@@ -116,6 +119,43 @@ test('Новая страница использует общий fit-монит
  assert.ok(html.includes('era-moyka-plenki-dimensions-a0.pdf'));
  assert.ok(!html.includes('undefined')&&!html.includes('NaN')&&!html.includes('javascript:'));
  const htmlIds=[...html.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);assert.equal(new Set(htmlIds).size,htmlIds.length);
+});
+test('Карта HOT-WASH воспроизводит направления материала, реагентов, воды и стоков',()=>{
+ const html=render(line.path);
+ const process=html.slice(html.indexOf('id="process"'),html.indexOf('id="quality"'));
+ const routes=(attribute)=>[...process.matchAll(new RegExp(attribute+'="([^"]+)" data-hotwash-flow="([^"]+)"','g'))].map(m=>m.slice(1));
+ assert.deepEqual(routes('data-hotwash-stage'),flow.material.map(([key,route])=>[key,route]));
+ assert.deepEqual(routes('data-hotwash-product'),flow.products.map(([key,route])=>[key,route]));
+ assert.deepEqual(routes('data-hotwash-water'),flow.water.map(([route],i)=>[['fresh','mill','hot','rinse','treatment'][i],route]));
+ assert.deepEqual(routes('data-hotwash-reagent'),flow.reagents.map(([route],i)=>[['32А','32Б'][i],route]));
+ assert.deepEqual(routes('data-hotwash-waste'),flow.waste.map(([route],i)=>[['solids','sludge'][i],route]));
+ assert.match(process,/12А → 13А или 12Б → 13Б/);
+ assert.match(process,/30 → 13\/15\/16А; 30 → 18А; 30 → 18Б/);
+ assert.match(process,/штробы → 33 → 34 → 18А/);
+ assert.doesNotMatch(process,/30 → 31|34 → 18Б|вторичн/i);
+ assert.equal((process.match(/hw-flow-product--primary/g)||[]).length,1);
+ assert.deepEqual(hotWashProducts.map(([,title,,route])=>[title,route]),flow.products.map(([,route,title])=>[title,route]));
+ assert.equal((html.match(/hot-wash-process\.css\?v=/g)||[]).length,1);
+ for(const slug of ['separatsiya-01','separatsiya-02','separatsiya-03'])assert.doesNotMatch(render('/catalog/lines/'+slug),/hot-wash-process\.css\?v=/);
+});
+test('Единая спецификация выводит все четыре значения мощности и суммы по проектным позициям',()=>{
+ const html=render(line.path),specs=html.slice(html.indexOf('id="specs"'),html.indexOf('id="placement"'));
+ const rows=[...specs.matchAll(/<tr data-hotwash-position="(\d+)"(?: data-power-position="\d+")?>([\s\S]*?)<\/tr>/g)];
+ const powers=new Map(linePowerData[line.slug].rows.map(power=>[power.position,power]));
+ assert.equal(powers.size,32);
+ assert.deepEqual(rows.map(row=>Number(row[1])),hotWashSpecification.map(item=>item.position));
+ for(const [,index,row] of rows){
+  const position=Number(index),power=powers.get(position),item=hotWashSpecification[position-1];
+  const values=[power?.installed_unit_kw,power?.installed_total_kw,power?.calculated_unit_kw,power?.calculated_total_kw];
+  assert.deepEqual([...row.matchAll(/class="line-power-number">([^<]+)</g)].map(m=>m[1]),values.map(value=>value==null?'—':fmt(value)),index);
+  assert.ok(row.includes('<td>'+item.quantity+'</td>'),index);
+  assert.ok(row.includes(position===37?'href="#placement"':'data-hotwash-select="'+position+'"'),index);
+ }
+ assert.deepEqual(rows.map(row=>Number(row[1])).filter(position=>!powers.has(position)),[30,34,35,36,37]);
+ assert.equal(Math.round([...powers.values()].reduce((sum,row)=>sum+100*row.installed_total_kw,0)),127170);
+ assert.equal(Math.round([...powers.values()].reduce((sum,row)=>sum+100*row.calculated_total_kw,0)),89019);
+ assert.match(specs,/Всего по линии<\/th><td>—<\/td><td>1 271,70<\/td><td>—<\/td><td>890,19/);
+ for(const text of ['1 186,92','21,36','640,94','7 798,06','0,8%','До 3%','5–7%','термодеструкция'])assert.ok(specs.includes(text),text);
 });
 test('Медиатека объединяет повторно используемые фотографии, считает материалы и выделяет новую линию',()=>{
  const gallery=buildGalleryData(),items=selectGalleryItems(gallery.items,{album:'moyka-plenki'});

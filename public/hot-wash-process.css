@@ -1,0 +1,206 @@
+.film-line--hot-wash .hw-process {
+ --hw-paper:#f8f3e9;
+ --hw-border:#d5c7af;
+ --hw-ink:#18213a;
+ --hw-muted:#414961;
+ --hw-gold:#896015;
+ --hw-film:#a47a24;
+ --hw-working:#264980;
+ --hw-fresh:#2874a3;
+ --hw-waste:#606776;
+ --hw-reagent:#79512c;
+ --hw-gap:24px;
+ --hw-mobile-track:19px;
+}
+
+.hw-process .hw-flow-map {
+ display:grid;
+ min-width:0;
+ padding:clamp(12px,2vw,32px);
+ border:1px solid var(--hw-border);
+ border-radius:14px;
+ background:linear-gradient(160deg,#fbf8f0,var(--hw-paper) 74%);
+ color:var(--hw-ink);
+}
+.hw-process :is(.hw-flow-legend,.hw-flow-stages,.hw-flow-branch-grid,.hw-water-local,.hw-water-treatment) {
+ list-style:none;
+ padding:0;
+ margin:0;
+ min-width:0;
+}
+.hw-process .hw-flow-arrow {
+ display:block;
+ flex:none;
+ width:24px;
+ height:16px;
+ stroke:currentColor;
+ stroke-width:1.9;
+ stroke-linecap:round;
+ stroke-linejoin:round;
+}
+.hw-process .hw-flow-arrow--down {transform:rotate(90deg)}
+.hw-process .hw-flow-arrow--up {transform:rotate(-90deg)}
+.hw-process :is(.hw-flow-arrow--film,.hw-flow-rail--film){color:var(--hw-film)}
+.hw-process :is(.hw-flow-arrow--working,.hw-flow-rail--working){color:var(--hw-working)}
+.hw-process :is(.hw-flow-arrow--fresh,.hw-flow-rail--fresh){color:var(--hw-fresh)}
+.hw-process :is(.hw-flow-arrow--waste,.hw-flow-rail--waste){color:var(--hw-waste)}
+.hw-process .hw-flow-arrow--reagent{color:var(--hw-reagent)}
+.hw-process :is(.hw-flow-arrow--fresh .hw-arrow-shaft,.hw-flow-rail--fresh path){stroke-dasharray:4 3}
+.hw-process .hw-flow-rail{display:block;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.5}
+.hw-process .hw-flow-icon{display:block;width:32px;height:32px;flex:none;color:var(--hw-gold)}
+.hw-process .hw-flow-legend {
+ display:flex;
+ flex-wrap:wrap;
+ gap:8px 26px;
+ margin-bottom:22px;
+ padding:10px 14px;
+ border:1px solid var(--hw-border);
+ border-radius:9px;
+}
+.hw-process .hw-flow-legend li{display:flex;align-items:center;gap:8px;font-size:13px;line-height:1.35}
+.hw-process .hw-flow-stages {display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0 var(--hw-gap)}
+.hw-process .hw-stage-item {display:grid;grid-row:span 2;grid-template-rows:subgrid;position:relative;min-width:0}
+.hw-process .hw-stage-card {
+ position:relative;
+ min-width:0;
+ padding:clamp(13px,1.35vw,22px);
+ border:1px solid var(--hw-border);
+ border-radius:9px;
+ background:linear-gradient(155deg,#fffdf6,#f3e9d9);
+}
+.hw-process .hw-stage-top{display:flex;justify-content:space-between;align-items:center;gap:6px;min-height:34px;margin-bottom:9px}
+.hw-process :is(.hw-stage-top span,.hw-position){font-size:13px;font-weight:650;color:var(--hw-gold);line-height:1.45;font-variant-numeric:tabular-nums}
+.hw-process .hw-stage-card h3{font-size:clamp(17px,1.42vw,22px);line-height:1.2;margin:0 0 8px;letter-spacing:-.02em;color:var(--hw-ink)}
+.hw-process :is(.hw-stage-card,.hw-flow-product) p{color:var(--hw-muted);font-size:14px;line-height:1.45;margin:0}
+.hw-process :is(.hw-stage-card--hot,.hw-flow-product--primary) {
+ --hw-ink:#fdf9ee;
+ --hw-muted:#e0e6f1;
+ --hw-gold:#f0cc79;
+ color:var(--hw-ink);
+ background:linear-gradient(145deg,#293750,#151b32 79%);
+ border-color:#ac843a;
+}
+.hw-process .hw-stage-next-desktop{position:absolute;inset-inline-start:100%;inset-block-start:50%;margin-top:-8px}
+.hw-process .hw-stage-extension .hw-flow-rail{width:1px;margin-inline:auto}
+.hw-process :is(.hw-stage-next-mobile,.hw-branch-side,.hw-mobile-film-rail,.hw-mobile-water-rail){display:none}
+.hw-process .hw-stage-side{display:grid;justify-items:center;align-self:start;min-width:0;color:var(--hw-muted)}
+.hw-process .hw-stage-side > svg{margin-block:4px}
+.hw-process .hw-stage-side > div{
+ display:flex;align-items:flex-start;gap:8px;width:100%;min-width:0;padding:9px;
+ border:1px solid #ceb995;border-radius:8px;background:#fffbf1;
+}
+.hw-process .hw-stage-side--waste > div{border-color:#c3c3bf;background:#f3f1ed}
+.hw-process .hw-stage-side .hw-flow-icon{width:22px;height:22px}
+.hw-process .hw-stage-side--waste .hw-flow-icon{color:var(--hw-waste)}
+.hw-process .hw-stage-side p{margin:0;font-size:13px;line-height:1.35;min-width:0}
+.hw-process .hw-stage-side p span{display:block;margin-top:4px}
+.hw-process .hw-flow-turn{position:relative;display:grid;place-items:center;height:48px;margin-bottom:4px}
+.hw-process .hw-flow-turn .hw-flow-rail{position:absolute;inset:0}
+.hw-process .hw-flow-turn > .hw-flow-arrow{position:absolute;bottom:-3px;left:calc(9% - 12px)}
+.hw-process .hw-flow-turn span{position:relative;padding:3px 11px;border:1px solid #e2cfaa;border-radius:6px;background:var(--hw-paper);font-size:13px;font-weight:600;text-align:center}
+
+.hw-process .hw-flow-output-join{height:28px;position:relative}
+.hw-process .hw-flow-output-join .hw-flow-arrow{position:absolute;bottom:-3px;left:calc(50% - 12px)}
+.hw-process .hw-flow-output-label{margin:4px auto 0;width:fit-content;max-width:100%;padding:9px 14px;text-align:center;border:1px solid var(--hw-border);border-radius:9px;background:#fffbf2}
+.hw-process .hw-flow-output-label h3{font-size:16px;line-height:1.35;margin:0 0 4px}
+.hw-process .hw-flow-output-label p{font-size:13px;line-height:1.4;color:var(--hw-muted);margin:0}
+.hw-process .hw-output-fan{height:24px}
+.hw-process .hw-flow-branch-grid,.hw-process .hw-water-zones{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.hw-process .hw-flow-branch-grid > li{display:flex;flex-direction:column;align-items:center;min-width:0}
+.hw-process .hw-flow-product{
+ display:flex;align-items:flex-start;gap:clamp(8px,1vw,16px);width:100%;height:100%;
+ padding:clamp(12px,1.4vw,20px);border:1px solid var(--hw-border);border-radius:9px;background:#fffbf2;
+}
+.hw-process .hw-flow-product h4{color:var(--hw-ink);font-size:clamp(17px,1.45vw,22px);line-height:1.2;margin:5px 0 8px}
+.hw-process .hw-flow-product--primary {
+ border-color:#c99838;
+ background:linear-gradient(155deg,transparent 65%,#9a6b272e),linear-gradient(145deg,#263652,#10182d 77%);
+ box-shadow:0 3px 12px #8f62152b,inset 0 0 16px #a8761c22;
+}
+.hw-process .hw-flow-notes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
+.hw-process .hw-flow-notes p{font-size:14px;line-height:1.5;margin:0;padding:12px 14px;border:1px solid var(--hw-border);border-radius:8px;background:#fffbf2}
+.hw-process .hw-flow-notes strong{color:#65460e}
+
+.hw-process .hw-water-map {
+ margin-top:24px;
+ padding:clamp(12px,1.7vw,26px);
+ border:1px solid #b6cadb;
+ border-radius:12px;
+ background:linear-gradient(155deg,#edf6fa,#e7eef5);
+}
+.hw-process .hw-water-title{display:flex;align-items:flex-start;gap:11px;margin-bottom:17px}
+.hw-process .hw-water-title .hw-flow-icon{color:var(--hw-fresh)}
+.hw-process .hw-water-title h3{margin:0;font-size:clamp(20px,2vw,31px);line-height:1.23}
+.hw-process .hw-water-title p{margin:5px 0 0;font-size:14px;color:var(--hw-muted)}
+.hw-process .hw-water-tank,.hw-process .hw-water-node{padding:12px 14px;border:1px solid #aebfce;border-radius:8px;background:#f9fcff}
+.hw-process .hw-water-tank{width:fit-content;max-width:100%;margin-inline:auto;text-align:center}
+.hw-process :is(.hw-water-tank,.hw-water-node) p{margin:3px 0 0;color:var(--hw-muted);font-size:13px;line-height:1.45}
+.hw-process .hw-water-fan{height:21px}
+.hw-process .hw-water-zone{display:grid;grid-template-rows:auto 1fr auto;align-items:stretch;min-width:0}
+.hw-process :is(.hw-water-feed,.hw-water-drain){
+ display:grid;justify-items:center;gap:3px;margin:0;padding-bottom:6px;text-align:center;
+ font-size:13px;line-height:1.35;font-weight:600;color:#24577c;
+}
+.hw-process .hw-water-zone > article{padding:12px;border:1px solid #b6c9db;border-radius:9px;background:#ffffff94;min-width:0;text-align:center}
+.hw-process .hw-water-zone h4{margin:0 0 8px;font-size:16px;line-height:1.25}
+.hw-process .hw-water-local li{display:grid;justify-items:center;gap:1px;font-size:14px;line-height:1.4}
+.hw-process .hw-water-local li > span{display:block;width:100%;padding:5px 8px;border-radius:5px;background:#e9f1f7}
+.hw-process .hw-water-local .hw-flow-arrow{margin-block:4px}
+.hw-process .hw-water-drain{padding:6px 4px 0;color:#4e586c}
+.hw-process .hw-water-confluence{height:30px;position:relative;margin-bottom:8px}
+.hw-process .hw-water-confluence .hw-flow-arrow{position:absolute;left:calc(11.5% - 12px);bottom:-5px}
+.hw-process .hw-water-treatment{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--hw-gap)}
+.hw-process .hw-water-treatment > li{position:relative;min-width:0}
+.hw-process .hw-water-treatment .hw-water-node{min-height:95px}
+.hw-process .hw-treatment-arrow{position:absolute;top:38px;right:100%}
+.hw-process .hw-water-waste{display:grid;justify-items:center;margin-top:4px}
+.hw-process .hw-water-waste p{margin:4px 0 0;text-align:center;font-size:13px;line-height:1.4;color:#4e586c}
+.hw-process .hw-water-note{margin:16px 0 0;padding-top:11px;border-top:1px solid #b8cad9;color:var(--hw-muted);font-size:14px}
+.hw-process .hw-process-archive{margin-top:24px}
+
+@media(max-width:1199px){
+ .hw-process .hw-flow-stages{grid-template-columns:minmax(0,1fr);gap:var(--hw-gap)}
+ .hw-process .hw-stage-item{display:block;grid-row:auto}
+ .hw-process .hw-stage-card{padding:12px 15px}
+ .hw-process .hw-stage-top{max-width:430px;margin-bottom:5px}
+ .hw-process .hw-stage-top .hw-flow-icon{width:28px;height:28px}
+ .hw-process :is(.hw-stage-next-desktop,.hw-stage-extension),.hw-process :is(.hw-flow-turn,.hw-flow-output-join) .hw-flow-rail{display:none}
+ .hw-process :is(.hw-stage-extras,.hw-treatment-extras){position:relative}
+ .hw-process .hw-mobile-film-rail{display:block;position:absolute;left:var(--hw-mobile-track);inset-block:0;width:1px}
+ .hw-process .hw-stage-next-mobile{display:block;position:absolute;bottom:-20px;left:calc(var(--hw-mobile-track) - 12px)}
+ .hw-process .hw-stage-side{width:min(calc(100% - 46px),400px);margin-left:min(46px,16%)}
+ .hw-process .hw-stage-side > div{justify-content:center}
+ .hw-process .hw-flow-turn{height:auto;min-height:44px;justify-items:start;padding:6px 0 6px 40px}
+ .hw-process .hw-flow-turn > .hw-flow-arrow{left:calc(var(--hw-mobile-track) - 12px);bottom:calc(50% - 8px)}
+ .hw-process .hw-flow-turn span{text-align:left}
+}
+@media(max-width:700px){
+ .hw-process .hw-flow-legend{display:grid;gap:9px}
+ .hw-process .hw-output-fan,.hw-process .hw-water-fan,.hw-process .hw-water-confluence .hw-flow-rail{display:none}
+ .hw-process .hw-flow-branch-grid{grid-template-columns:minmax(0,1fr);gap:0;margin-top:10px}
+ .hw-process .hw-flow-branch-grid > li{
+  position:relative;display:grid;grid-template-columns:22px minmax(0,1fr);padding-block:5px;
+ }
+ .hw-process .hw-flow-branch-grid > li::before{content:'';position:absolute;left:0;inset-block:0;width:1.5px;background:var(--hw-film)}
+ .hw-process .hw-flow-branch-grid > li:last-child::before{bottom:50%}
+ .hw-process .hw-branch-down{display:none}
+ .hw-process .hw-branch-side{display:block;margin-left:-1px}
+ .hw-process .hw-flow-product .hw-flow-icon{width:24px;height:24px}
+ .hw-process .hw-flow-notes,.hw-process .hw-water-treatment,.hw-process .hw-water-zones{grid-template-columns:minmax(0,1fr)}
+ .hw-process .hw-water-zones{margin-top:14px}
+ .hw-process .hw-water-zone{border:1px solid #b6c9db;border-radius:9px;background:#f9fcff}
+ .hw-process .hw-water-zone > article{border:0;border-radius:0;background:none;padding-top:7px}
+ .hw-process :is(.hw-water-feed,.hw-water-drain){display:flex;align-items:center;padding:8px 9px;text-align:left}
+ .hw-process .hw-water-feed{border-bottom:1px solid #d8e4ed}
+ .hw-process .hw-water-drain{justify-content:flex-end;border-top:1px solid #d8e4ed}
+ .hw-process .hw-water-drain span{order:-1}
+ .hw-process :is(.hw-water-feed,.hw-water-drain) .hw-flow-arrow{transform:none}
+ .hw-process .hw-water-confluence .hw-flow-arrow{left:calc(var(--hw-mobile-track) - 12px)}
+ .hw-process .hw-water-tank,.hw-process .hw-water-title{width:100%}
+ .hw-process .hw-water-treatment .hw-water-node{min-height:0}
+ .hw-process .hw-treatment-arrow{top:-20px;left:calc(var(--hw-mobile-track) - 12px);right:auto;transform:rotate(90deg)}
+ .hw-process .hw-mobile-water-rail{display:block;position:absolute;left:var(--hw-mobile-track);inset-block:0;width:1px}
+ .hw-process .hw-water-waste{justify-items:start;margin:0 0 0 48px}
+ .hw-process .hw-water-waste > svg{margin-left:8px}
+ .hw-process .hw-water-waste p{text-align:left}
+}

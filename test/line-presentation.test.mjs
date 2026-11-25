@@ -244,7 +244,10 @@ test('All three dry separation pages share the approved KAIR chip, slogan, six c
   assert.doesNotMatch(block,/<details|line-control|line-section-heading|Обслуживание и доступ|kair-screen|kair-overview/);
   if(common)assert.equal(block,common);else common=block;
  }
- assert.ok(!render('/catalog/lines/moyka-plenki').includes('data-dry-kair'));
+ const washKair=render('/catalog/lines/moyka-plenki').match(/<section[^>]*id="kair">([\s\S]*?)<\/section>/)[1];
+ assert.equal((washKair.match(/data-dry-kair-feature=/g)||[]).length,6);
+ assert.match(washKair,/pH рабочей жидкости/);
+ assert.ok(!washKair.includes('под поставщика, вид и партию сырья'));
 });
 
 test('BASE production passport: one closed combined technical and power specification',()=>{
@@ -325,7 +328,9 @@ test('All dry lines share the approved six-photo editorial album with isolated v
   assert.doesNotMatch(block,/На производственной съёмке отсутствует|line-photo-grid/);
   if(previous)assert.equal(block,previous);else previous=block;
  }
- assert.ok(!render('/catalog/lines/moyka-plenki').includes('data-dry-photo-album'));
+ const washAlbum=render('/catalog/lines/moyka-plenki').match(/<section[^>]*id="photos"[^>]*>([\s\S]*?)<\/section>/)[1];
+ assert.equal((washAlbum.match(/data-media-group="hot-wash-album"/g)||[]).length,6);
+ assert.doesNotMatch(washAlbum,/data-media-group="dry-separation-album"/);
 });
 
 test('Dry line technical editions use original covers and the correct filtered library',()=>{

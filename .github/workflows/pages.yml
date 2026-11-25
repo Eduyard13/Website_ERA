@@ -422,7 +422,15 @@ jobs:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
           ERA_BUILD_COMMIT: ${{ github.sha }}
           ERA_HOT_WASH_SCREENSHOT: tmp/era-hot-wash-native-check.png
+          ERA_HOT_WASH_PRESENTATION_SCREENSHOTS: tmp/hot-wash-presentation
         run: node test/hot-wash-public.mjs
+      - name: Upload hot-wash presentation screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: era-hot-wash-presentation
+          path: tmp/hot-wash-presentation/*.png
+          if-no-files-found: ignore
       - name: Verify published Separation 03 in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}

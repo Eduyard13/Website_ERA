@@ -5,9 +5,10 @@ import {dryFilmOutputLabels,formatLineNumber as fmt,lineMetric,linePowerData,lin
 const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const icons={input:'<path d="m12 2 10 5-10 5L2 7l10-5ZM2 11l10 5 10-5M2 15l10 5 10-5"/>',output:'<path d="m3 7 9-4 9 4v10l-9 4-9-4V7Zm0 0 9 4 9-4M12 11v10"/><path d="m6 13 2 2 3-3"/>',power:'<path d="m13 2-9 12h7l-1 8 10-12h-7l1-8Z"/>',gauge:'<path d="M3 17a9 9 0 1 1 18 0H3ZM12 13l4-5"/><circle cx="12" cy="13" r="1"/>',person:'<circle cx="12" cy="7" r="4"/><path d="M4 22v-3a8 8 0 0 1 16 0v3"/>',list:'<rect x="5" y="4" width="14" height="18" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 10h6m-6 4h6m-6 4h6"/>'};
 const icon=key=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+icons[key]+'</svg>';
-const metric=(key,value,unit,label,note)=>'<div class="base-spec-kpi" data-base-spec-kpi="'+key+'">'+icon(key)+'<strong>'+fmt(value)+' <small>'+unit+'</small></strong><h3>'+label+'</h3><p>'+note+'</p></div>';
+const metric=(key,value,unit,label,note)=>'<div class="base-spec-kpi" data-base-spec-kpi="'+key+'">'+icon(key)+'<strong>'+(typeof value==='string'?esc(value):fmt(value))+' <small>'+unit+'</small></strong><h3>'+label+'</h3><p>'+note+'</p></div>';
 const fact=(key,value,label,note='')=>'<div class="base-spec-fact" data-base-spec-fact="'+key+'"><strong>'+value+'</strong><span>'+label+'</span>'+(note?'<p>'+note+'</p>':'')+'</div>';
 const staff=(number,title,text)=>'<article class="base-spec-staff-role"><h4>'+number+' · '+title+'</h4><p>'+text+'</p></article>';
+export {icon as lineSpecIcon, metric as lineSpecMetric, fact as lineSpecFact, staff as lineSpecStaff};
 function specification(line,totals){
  const data=linePowerData[line.slug];
  const rows=miniSpecification.map(([position,name,parameter,installed,calculated])=>{

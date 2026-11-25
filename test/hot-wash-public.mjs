@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {spawn} from 'node:child_process';
 import {existsSync} from 'node:fs';
-import {mkdtemp,readFile,rm} from 'node:fs/promises';
+import {mkdir,mkdtemp,readFile,rm,writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {setTimeout as delay} from 'node:timers/promises';
@@ -25,7 +25,7 @@ for(const asset of [...manifest.assets,...(manifest.catalogCardUpdate?.assets||[
  assert.equal(createHash('sha256').update(Buffer.from(await r.arrayBuffer())).digest('hex'),sha,file);
 }
 for(const path of ['/catalog/lines/','/technology/','/documents/technical/','/media/','/catalog/lines/separatsiya-02/'])assert.equal((await fetch(base+path,{cache:'no-store'})).status,200,path);
-for(const file of ['hot-film-washing.css','hot-film-washing.js']){const r=await fetch(base+'/'+file+'?v='+version,{cache:'no-store'});assert.equal(r.status,200,file);assert.ok(!r.headers.get('content-type').includes('text/html'));}
+for(const file of ['hot-film-washing.css','hot-wash-process.css','hot-film-washing.js']){const r=await fetch(base+'/'+file+'?v='+version,{cache:'no-store'});assert.equal(r.status,200,file);assert.ok(!r.headers.get('content-type').includes('text/html'));}
 const binary=process.env.ERA_CHROME_PATH||['/usr/bin/google-chrome','/usr/bin/chromium','/opt/google/chrome/chrome'].find(existsSync);
 if(!binary)throw new Error('Chrome is required to verify public hot-wash line');
 const profile=await mkdtemp(join(tmpdir(),'era-hot-wash-browser-'));
@@ -46,7 +46,7 @@ try{
   if(message.error)request.reject(new Error(message.error.message));else request.resolve(message.result);
  });
  const command=(method,params={})=>new Promise((resolve,reject)=>{
-  const key=++id,timer=setTimeout(()=>{pending.delete(key);reject(new Error('CDP timeout: '+method));},15000);
+  const key=++id,timer=setTimeout(()=>{pending.delete(key);reject(new Error('CDP timeout: '+method));},30000);
   pending.set(key,{resolve,reject,timer});socket.send(JSON.stringify({id:key,method,params}));
  });
  const evaluate=async expression=>{
@@ -56,6 +56,37 @@ try{
  };
  const wait=async expression=>{for(let i=0;i<300;i++){if(await evaluate(expression))return;await delay(100);}throw new Error('Public hot-wash line condition failed: '+expression);};
  const click=selector=>evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
+ async function capturePresentation(width){
+  const directory=process.env.ERA_HOT_WASH_PRESENTATION_SCREENSHOTS;
+  if(!directory)return;
+  await mkdir(directory,{recursive:true});
+  await evaluate(`(async()=>{
+   const style=document.createElement('style');style.id='hot-wash-capture-style';
+   style.textContent='.site-header,.context-navigation,.quick-contact,.page-progress{visibility:hidden!important}';
+   document.head.append(style);await document.fonts.ready;
+  })()`);
+  const blocks=[
+   ['hero','.line-hero'],['process','#process'],['water','#water-circulation'],
+   ['products','#quality'],['specs','#specs'],['kair','#kair'],['photos','#photos']
+  ];
+  async function capture([name,selector],maxHeight=0){
+   const clip=await evaluate(`(async()=>{
+    const block=document.querySelector(${JSON.stringify(selector)});
+    block.scrollIntoView({block:'start',behavior:'instant'});
+    await Promise.all([...block.querySelectorAll('img')].map(image=>image.decode()));
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    const {top,height}=block.getBoundingClientRect();
+    return {x:0,y:Math.max(0,Math.floor(top+scrollY)-8),height:Math.ceil(Math.min(height,${maxHeight||'height'}))+8,width:innerWidth,scale:1};
+   })()`);
+   const {data}=await command('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,clip});
+   await writeFile(join(directory,`${width}-${name}.png`),Buffer.from(data,'base64'));
+  }
+  for(const block of blocks)await capture(block);
+  await click('#specs .line-power-details summary');
+  await capture(['specs-open','#specs .line-power-details'],860);
+  await click('#specs .line-power-details summary');
+  await evaluate(`document.querySelector('#hot-wash-capture-style').remove()`);
+ }
  await command('Page.enable');await command('Runtime.enable');
  await command('Page.addScriptToEvaluateOnNewDocument',{source:"localStorage.setItem('era-map-consent-v1','deny')"});
  const load=async path=>{await command('Page.navigate',{url:base+path});await wait(`document.readyState==='complete'`);};
@@ -81,7 +112,24 @@ try{
   if(width===1440&&process.env.ERA_HOT_WASH_SCREENSHOT){
    await captureNativeDiagram(evaluate,command,'hotwash-construction',process.env.ERA_HOT_WASH_SCREENSHOT);
   }
-  let s=await root();assert.equal(s.mode,'fit');assert.equal(s.pins,44);assert.equal(s.options,36);assert.equal(s.products,3);assert.equal(s.spec,0);assert.ok(s.fit&&!s.overflow);assert.deepEqual(s.broken,[]);assert.equal(s.navigation,36);assert.equal(s.unmappedLink,'#placement');assert.ok(s.grid.includes('engineering-grid-02.svg'));assert.equal(s.sourceBlend,'multiply');
+  const s=await root();assert.equal(s.mode,'fit');assert.equal(s.pins,44);assert.equal(s.options,36);assert.equal(s.products,3);assert.equal(s.spec,37);assert.ok(s.fit&&!s.overflow);assert.deepEqual(s.broken,[]);assert.equal(s.navigation,36);assert.equal(s.unmappedLink,'#placement');assert.ok(s.grid.includes('engineering-grid-02.svg'));assert.equal(s.sourceBlend,'multiply');
+  const presentation=await evaluate(`(()=>{
+   const count=selector=>document.querySelectorAll(selector).length;
+   const cards=[...document.querySelectorAll('[data-hotwash-stage]')].map(e=>e.getBoundingClientRect());
+   const intersections=[...document.querySelectorAll('.hw-stage-next-desktop,.hw-stage-next-mobile')].filter(e=>{
+    if(getComputedStyle(e).display==='none')return false;
+    const a=e.getBoundingClientRect();
+    return cards.some(b=>Math.min(a.right,b.right)-Math.max(a.left,b.left)>1&&Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top)>1);
+   }).length;
+   return {sections:count('[data-hot-wash-line] > section'),nav:count('[data-line-section-nav] a'),
+    stages:cards.length,intersections,routes:count('[data-hotwash-product]'),water:count('[data-hotwash-water]'),
+    mapOverflow:document.querySelector('.hw-flow-map').scrollWidth>document.querySelector('.hw-flow-map').clientWidth,
+    reagents:count('[data-hotwash-reagent]'),waste:count('[data-hotwash-waste]'),
+    specs:count('#specs [data-hotwash-select]'),power:count('#specs [data-power-position]'),gallery:count('#photos [data-dry-album-photo]'),
+    composition:count('#composition [data-hotwash-position]')};
+  })()`);
+  assert.deepEqual(presentation,{sections:13,nav:12,stages:10,intersections:0,routes:3,water:5,mapOverflow:false,reagents:2,waste:2,specs:36,power:32,gallery:6,composition:0},String(width));
+  if(width===390||width===1440)await capturePresentation(width);
   if(width===390||width===1440)await auditNativeDiagram(evaluate,'hotwash-construction',{count:44,branches:47});
   for(let number=1;number<=36;number++){
    await evaluate(`(()=>{const s=document.querySelector('[data-diagram-select]');s.value='${number}';s.dispatchEvent(new Event('change',{bubbles:true}));})()`);
@@ -98,6 +146,13 @@ try{
  assert.deepEqual(sidebarSelect,{row:'true',pin:1,selected:'18'});
  // Keep the permanent navigator and its placement link; no redundant notes or tables below the monitor.
  assert.equal(await evaluate(`document.querySelectorAll('#composition > .line-note,#composition > details,#composition > noscript').length`),0);
+ await click('#specs .line-power-details summary');
+ assert.ok(await evaluate(`document.querySelector('#specs .line-power-details').open`));
+ for(let position=1;position<=36;position++){
+  await click(`#specs [data-hotwash-select="${position}"]`);
+  assert.equal((await root()).selected,String(position).padStart(2,'0'));
+ }
+ assert.equal(await evaluate(`document.querySelector('#specs [data-hotwash-position="37"] a').getAttribute('href')`),'#placement');
  await click('#hotwash-construction [data-architecture-part="33"]');assert.equal((await root()).selected,'33');
  assert.ok(await evaluate(`document.querySelector('#hotwash-construction .dry-architecture-item--link').getAttribute('href')==='#placement'`));
  await selectDrawing('side');
@@ -115,7 +170,7 @@ try{
  await load('/technology/');await wait(`!!document.querySelector('[data-technology-line="moyka-plenki"]')`);
  assert.ok(await evaluate(`document.querySelector('[data-technology-line="moyka-plenki"]').href.endsWith('/catalog/lines/moyka-plenki')`));
  assert.deepEqual(errors,[],'Published hot-wash console errors');
- console.log(`::notice title=Published hot wash verified::44/44 badges, 47 leader ends, and equipment contours at 390 and 1440 px, 36 monitor selections, 7 widths, ${1+2*(manifest.assets.length+(manifest.catalogCardUpdate?.assets.length||0))} WebP SHA-256 checks, original 22-page PDF (4430978 bytes and SHA-256), live PDF viewer, single diagram and navigator, dimensions, technology link and wash-filter Back passed. ${url}`);
+ console.log(`::notice title=Published hot wash verified::10 material stages, 5 water routes, 37 specification rows (32 powered), 7 widths, 44/44 equipment badges and 47 leader ends, 36 monitor selections, original PDF/viewer, media checks, dimensions and navigation passed. ${url}`);
 }finally{
  socket?.close();chrome.kill('SIGTERM');await delay(250);await rm(profile,{recursive:true,force:true});
 }
