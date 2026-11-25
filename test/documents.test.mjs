@@ -42,7 +42,7 @@ test('Полная линия сохраняет показатели, один 
  assert.equal((documents.match(/data-library-document="/g)||[]).length,3);
  for(const id of ['separatsiya-02-overview','separatsiya-02-technical','separatsiya-02-dimensions-a0'])assert.ok(documents.includes(`data-pdf-open="${id}"`));
  assert.equal((page.match(/id="pdf-viewer"/g)||[]).length,1);assert.ok(page.includes('/line-documents.js?v='));
- const equipment=page.slice(page.indexOf('id="equipment"'));assert.ok(equipment.includes('line-unit-grid'));assert.ok(equipment.includes('Предварительный распушитель'));assert.ok(equipment.includes('ДОПОЛНИТЕЛЬНЫЙ МОДУЛЬ'));
+ const equipment=page.slice(page.indexOf('id="equipment"'),page.indexOf('</section>',page.indexOf('id="equipment"')));assert.ok(equipment.includes('line-unit-grid'));assert.equal((equipment.match(/data-catalogue-image=/g)||[]).length,5);assert.doesNotMatch(equipment,/Предварительный распушитель|ДОПОЛНИТЕЛЬНЫЙ МОДУЛЬ|Пресс и рольганги/);
  for(const text of ['405,2','283,64','4,7','750 кг/ч','50%','810 м²','9 м','≈6,5 м','2–10','Пять раздельных потоков'])assert.ok(page.includes(text)||text==='Пять раздельных потоков'&&page.includes('5 раздельных потоков'),text);
  const mini=render('/catalog/lines/separatsiya-01');assert.ok(!mini.includes('data-line-source-diagram'));assert.ok(mini.includes('/line-monitor.js?'));assert.ok(mini.includes('/line-documents.js?'));assert.ok(!mini.includes('dimensions-a0.pdf'));
 });
