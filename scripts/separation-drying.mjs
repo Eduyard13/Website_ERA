@@ -1,3 +1,4 @@
+import {renderDryLineRequest} from './dry-line-request.mjs';
 import {renderDryDocumentEditions} from './dry-document-editions.mjs';
 import {renderDryPhotoAlbum} from './dry-photo-album.mjs';
 import {renderBaseSpecs} from './base-specs.mjs';
@@ -77,7 +78,7 @@ export function renderSeparationDrying(line){
 
  ${renderDryDocumentEditions(line,documents)}
 
- <section class="section contact line-request" id="request"><div><p class="eyebrow">ПОД ВАШЕ СЫРЬЁ И ПЛОЩАДКУ</p><h2>Подберём режим<br>и расстановку линии.</h2><p>Учитываем фактический состав и влажность сырья, засорённость, формат подачи и требования к готовой плёночной фракции. Пробная партия помогает оценить выход, влажность после сушилки и целесообразность ручного отбора.</p>${more('Что подготовить для подбора',`<p>Фото и видео партии, известные полимеры, размеры и масса тюков, длина фрагментов, толщина плёнки, анализ или представительная проба, планируемая подача и сменность. Для площадки — план и высота цеха, доступная мощность, источник нагрева, отвод конденсата и склады.</p><p>При дальнейшем расширении учитываем выдачу на горячую мойку и последующую грануляцию.</p>`)}</div><div>${button('Оценить моё сырьё',email)}<a class="phone" href="tel:+79032813535">+7 903 281-35-35</a><a href="mailto:${siteContacts.email}">${siteContacts.email}</a><small>Приложите фотографии, видео или документы к заявке.</small></div></section>
+ ${renderDryLineRequest(line)}
 
  <section class="section line-soft" id="equipment">${heading('ОБОРУДОВАНИЕ В СОСТАВЕ','Изучите каждый узел.','Прямые переходы к существующим страницам оборудования. Исполнение и количество единиц определяются спецификацией линии.')}<div class="line-unit-grid">${specification.filter(s=>s.catalogSlug).map(unitCard).join('')}</div><p class="line-note">Роторная сушильная установка 10, воздушный контур 34, пресс 23 и рольганг 24 описаны в техническом описании и в блоке устройства ключевых узлов.</p></section>
  <script type="application/json" id="line-document-data">${JSON.stringify(documents).replaceAll('<','\\u003c')}</script>${pdfViewerDialog()}</div>`;

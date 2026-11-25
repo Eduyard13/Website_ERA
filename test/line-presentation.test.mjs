@@ -339,3 +339,25 @@ test('Dry line technical editions use original covers and the correct filtered l
  assert.ok(!render('/catalog/lines/moyka-plenki').includes('data-dry-document-editions'));
  assert.ok(!render('/documents').includes('data-dry-document-editions'));
 });
+
+test('Shared dry-line CTA opens the existing form with a configuration-specific topic',()=>{
+ for(const [slug,tier] of [['separatsiya-01','BASE'],['separatsiya-02','PRO'],['separatsiya-03','PREMIUM']]){
+  const page=render('/catalog/lines/'+slug),a=page.indexOf('id="request"'),z=page.indexOf('</section>',a),block=page.slice(a,z);
+  assert.ok(block.includes('data-dry-request="'+tier+'"'));
+  assert.equal((block.match(/<li>/g)||[]).length,3);
+  assert.equal((block.match(/data-project-request/g)||[]).length,1);
+  assert.doesNotMatch(block,/<form|<input|<textarea/);
+  const match=block.match(/class="button dry-request-action" href="([^"]+)"/);
+  const url=new URL(match[1].replaceAll('&amp;','&'),'https://example.test');
+  assert.ok(url.searchParams.get('topic').includes('Сухая сепарация · '+tier));
+  assert.equal(url.searchParams.get('source'),'/catalog/lines/'+slug);
+  assert.equal(url.hash,'#project-form');
+  assert.equal((page.match(/data-request-form(?=[\s>])/g)||[]).length,1);
+ }
+ assert.ok(!render('/catalog/lines/moyka-plenki').includes('data-dry-request'));
+});
+test('Production mail subject uses the validated source rather than raw user input',async()=>{
+ const php=await readFile('server/regru/private/request-handler.php','utf8');
+ assert.ok(php.includes('$mail->Subject = requestMailSubject($source);'));
+ for(const [slug,tier] of [['separatsiya-01','BASE'],['separatsiya-02','PRO'],['separatsiya-03','PREMIUM']])assert.match(php,new RegExp("'/catalog/lines/"+slug+"' => '[^']*"+tier+"'"));
+});

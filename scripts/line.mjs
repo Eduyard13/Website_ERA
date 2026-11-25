@@ -1,3 +1,4 @@
+import {renderDryLineRequest} from './dry-line-request.mjs';
 import {renderDryDocumentEditions} from './dry-document-editions.mjs';
 import {renderDryPhotoAlbum} from './dry-photo-album.mjs';
 import {renderBaseSpecs} from './base-specs.mjs';
@@ -77,7 +78,7 @@ export function renderFilmSeparation(line){
 
  ${renderDryDocumentEditions(line,documents)}
 
- <section class="section contact line-request" id="request"><div><p class="eyebrow">ПОД ВАШЕ СЫРЬЁ И ПЛОЩАДКУ</p><h2>Обсудим вашу<br>линию сепарации.</h2><p>Для подбора нужны фото или видео сырья, состав и загрязнённость, влажность, требуемая подача и продукт, план цеха и доступная мощность.</p></div><div>${button('Отправить запрос по линии',email)}<a class="phone" href="tel:+79032813535">+7 903 281-35-35</a><a href="mailto:${siteContacts.email}">${siteContacts.email}</a><small>Заполните форму и приложите фотографии, видео или документы к заявке.</small></div></section>
+ ${renderDryLineRequest(line)}
 
  <section class="section line-soft" id="equipment"><div class="line-section-heading"><div><p class="eyebrow">ОБОРУДОВАНИЕ В СОСТАВЕ ЛИНИИ</p><h2>Изучите каждый узел.</h2></div><p>Назначение, рабочие показатели и прямые переходы на страницы машин представленной комплектации.</p></div>
   <div class="line-unit-grid">${lineUnits.map(unitCard).join('')}</div>

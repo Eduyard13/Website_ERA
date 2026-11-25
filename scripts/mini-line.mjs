@@ -1,3 +1,4 @@
+import {renderDryLineRequest} from './dry-line-request.mjs';
 import {renderDryDocumentEditions} from './dry-document-editions.mjs';
 import {renderDryPhotoAlbum} from './dry-photo-album.mjs';
 import {renderBaseSpecs} from './base-specs.mjs';
@@ -79,7 +80,7 @@ export function renderMiniFilmSeparation(line){
 
  ${renderDryDocumentEditions(line,documents)}
 
- <section class="section contact line-request" id="request"><div><p class="eyebrow">ПОДБОР ЛИНИИ BASE</p><h2>Обсудим ваше сырьё<br>и будущую линию.</h2><p>Пришлите фото или видео материала, состав примесей, засорённость и влажность, требуемую подачу и форму продукта, план цеха и доступную мощность.</p></div><div>${button('Отправить запрос по линии BASE',email)}<a class="phone" href="tel:+79032813535">+7 903 281-35-35</a><a href="mailto:${siteContacts.email}">${siteContacts.email}</a><small>Заполните форму и приложите фотографии, видео или документы к заявке.</small></div></section>
+ ${renderDryLineRequest(line)}
 
  <section class="section line-soft" id="equipment"><div class="line-section-heading"><div><p class="eyebrow">ОБОРУДОВАНИЕ В СОСТАВЕ ЛИНИИ</p><h2>Изучите каждый узел.</h2></div><p>Подготовка сырья, сухая очистка и сбор отделённых включений. Перейдите к паспортам оборудования в каталоге.</p></div><div class="line-unit-grid">${miniUnits.map(unitCard).join('')}</div></section>
  <script type="application/json" id="line-document-data">${JSON.stringify(documents).replaceAll('<','\\u003c')}</script>${pdfViewerDialog()}

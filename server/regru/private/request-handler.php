@@ -109,6 +109,18 @@ function hasApprovedLegalDocument(string $file, string $revision): bool
         'data-policy-status="approved" data-pd-revision="' . $revision . '"');
 }
 
+// Use a fixed, server-controlled line name derived from the validated source path.
+function requestMailSubject(string $source): string
+{
+    $line = match (rtrim(localPath($source), '/')) {
+        '/catalog/lines/separatsiya-01' => 'Сухая сепарация · BASE',
+        '/catalog/lines/separatsiya-02' => 'Сухая сепарация · PRO',
+        '/catalog/lines/separatsiya-03' => 'Сухая сепарация и сушка · PREMIUM',
+        default => '',
+    };
+    return 'Заявка с сайта ЭРА' . ($line !== '' ? ' — ' . $line : '');
+}
+
 function receiveRequest(string $privateDir, string $webRoot): void
 {
     [$topic, $source] = formContext();
@@ -192,7 +204,7 @@ function receiveRequest(string $privateDir, string $webRoot): void
         $mail->setFrom(REQUEST_SENDER, 'ЭРА');
         $mail->addAddress(REQUEST_RECIPIENT);
         $mail->addReplyTo($email);
-        $mail->Subject = 'Заявка с сайта ЭРА';
+        $mail->Subject = requestMailSubject($source);
         $mail->Body = implode("\n\n", $body);
         foreach ($attachments as $item) {
             $mail->addAttachment($item['file'], $item['name'], PHPMailer::ENCODING_BASE64, $item['mime']);
