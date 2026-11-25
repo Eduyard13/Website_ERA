@@ -284,3 +284,18 @@ test('PREMIUM production passport uses the latest 38-position specification and 
  assert.doesNotMatch(block,/line-production-table|line-specs-layout|639,77|447,84/);
  for(const slug of ['separatsiya-01','separatsiya-02','moyka-plenki'])assert.ok(!render('/catalog/lines/'+slug).includes('data-premium-specs'));
 });
+
+test('All dry lines use the approved editorial route diagram with local imagery and sequential full cycle',()=>{
+ for(const slug of ['separatsiya-01','separatsiya-02','separatsiya-03']){
+  const html=render('/catalog/lines/'+slug),start=html.indexOf('data-route-design="editorial-03"'),end=html.indexOf('</section>',start),block=html.slice(start,end);
+  assert.ok(start>0&&block.includes('dry-route-cycle-stages'));
+  assert.deepEqual([...block.matchAll(/data-route-illustration="([^"]+)"/g)].map(m=>m[1]),[slug==='separatsiya-01'?'bulk':'bale','wash','pellets']);
+  assert.ok(block.includes('src="'+basePath+'/assets/project-home/process/stage-hot-wash-approved.webp"'));
+  assert.ok(block.includes('src="'+basePath+'/assets/lines/moyka-plenki/product-granule-768.webp"'));
+  assert.ok(block.includes('href="'+basePath+'/catalog/lines/moyka-plenki"'));
+  assert.match(block,/data-dry-route-stage="wash"[\s\S]*?dry-route-down[\s\S]*?data-dry-route-stage="pellets"/);
+  if(slug==='separatsiya-01')assert.match(block,/Очищенная плёночная фракция[\s\S]*?Реализация навалом/);
+  else assert.match(block,/Очищенная плёнка в тюках[\s\S]*?Реализация в тюках/);
+ }
+ assert.ok(!render('/catalog/lines/moyka-plenki').includes('data-route-design="editorial-03"'));
+});
