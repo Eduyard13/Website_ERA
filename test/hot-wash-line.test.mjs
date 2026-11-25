@@ -141,3 +141,14 @@ test('Все разделы вне комплектаций сохраняют �
   assert.ok(html.includes(`href="${basePath}/catalog/lines/moyka-plenki" data-technology-line="moyka-plenki"`));
   assert.ok(html.includes('catalog-cover-detailed.webp')&&html.includes('data-washing-configuration="existing-granulator"'));
 });
+
+test('В конце страницы мойки остаются только карточки с действующими страницами узлов',()=>{
+ const html=render(line.path),start=html.indexOf('id="equipment"'),section=html.slice(start,html.indexOf('</section>',start));
+ const cards=[...section.matchAll(/<article class="line-unit-card[^>]*>[\s\S]*?<\/article>/g)].map(m=>m[0]);
+ const linked=hotWashSpecification.filter(s=>s.catalogSlug);
+ assert.equal(cards.length,linked.length);
+ assert.ok(cards.length>0);
+ for(const [i,item] of linked.entries()){const node=nodes.find(n=>n.slug===item.catalogSlug);assert.ok(node);assert.ok(cards[i].includes('href="'+basePath+node.path+'"')); }
+ assert.doesNotMatch(section,/class="line-routing"|24 · Автоматическое тюкование|28 · Двухстадийная грануляция/);
+ assert.ok(hotWashSpecification.find(s=>s.position===24));assert.ok(hotWashSpecification.find(s=>s.position===28));
+});

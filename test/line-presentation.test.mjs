@@ -127,7 +127,7 @@ test('Пять карточек PRO ведут на существующие с�
  assert.equal(lines.find(l=>l.slug==='separatsiya-02').cardFile,'lines/separatsiya-01/catalog-cover.webp');
  const premium=render('/catalog/lines/separatsiya-03'),startPremium=premium.indexOf('id="equipment"'),premiumEquipment=premium.slice(startPremium,premium.indexOf('</section>',startPremium));
  assert.doesNotMatch(premiumEquipment,/Роторная сушильная установка 10, воздушный контур 34/);
- assert.equal((premiumEquipment.match(/data-catalogue-image=/g)||[]).length,5);
+ assert.equal((premiumEquipment.match(/data-catalogue-image=/g)||[]).length,6);
 });
 
 
