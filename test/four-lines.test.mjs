@@ -75,8 +75,9 @@ test('У каждой линии три документа и полные пр�
   assert.equal(library.find(doc=>doc.category==='brochures').pages,3,slug);
   const placement=section(html,'placement');
   assert.equal((placement.match(/data-dimension-tab="/g)||[]).length,tabs,slug);
-  if(slug==='separatsiya-02'){
-   assert.doesNotMatch(placement,/<a\b|data-pdf-open=|\sdownload=/i);
+  const engineeringCenter=['separatsiya-02','separatsiya-03'].includes(slug);
+  if(engineeringCenter){
+   assert.doesNotMatch(placement,/<a\b|\s(?:href|target|download|data-pdf-open)=/i);
    const documentation=section(html,'documents');
    assert.ok(documentation.includes(`/documents/${drawing.file}`)&&documentation.includes(`data-pdf-open="${drawing.id}"`),slug);
   }else{
@@ -92,7 +93,7 @@ test('У каждой линии три документа и полные пр�
     assert.equal(bytes.length,view.bytes,view.file);
     assert.equal(createHash('sha256').update(bytes).digest('hex'),view.sha256,view.file);
    }
-   const imageAttribute=slug==='separatsiya-02'?'data-engineering-src':'src';
+   const imageAttribute=engineeringCenter?'data-engineering-src':'src';
    assert.ok(placement.includes(`${imageAttribute}="${basePath}/assets/${view.file}"`),view.file);
   }
   if(slug==='separatsiya-01'){

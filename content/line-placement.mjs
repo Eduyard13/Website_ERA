@@ -1,6 +1,9 @@
 import additionalViews from './line-dimensions-assets.json' with {type:'json'};
 import separation02 from './separatsiya-02-dimensions-assets.json' with {type:'json'};
 
+const premiumHeightMark='7,0';
+const premiumFitNote='Высоту помещения, монтажные отметки и проезды уточняют для конкретного цеха.';
+
 export const linePlacement={
  'separatsiya-01':{
   length:17.75,width:11.75,idPrefix:'mini-dimension',
@@ -17,7 +20,8 @@ export const linePlacement={
  'separatsiya-03':{
   length:56.2,width:43.4,idPrefix:'sd-dimension',
   source:'из исходного листа A0',
-  caption:'7,0 м — высотная отметка воздуховода на боковой проекции. Высоту помещения, монтажные отметки и проезды уточняют для конкретного цеха.',
+  heightMark:premiumHeightMark,fitNote:premiumFitNote,
+  caption:`${premiumHeightMark} м — высотная отметка воздуховода на боковой проекции. ${premiumFitNote}`,
   views:additionalViews['separatsiya-03'],
  },
  'moyka-plenki':{

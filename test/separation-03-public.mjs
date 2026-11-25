@@ -84,6 +84,14 @@ try{
   assert.equal(map.topRows,desktop?1:5);assert.equal(map.bottomRows,desktop?1:4);
   if(desktop)assert.ok(map.renderRight);
  };
+ async function selectDrawing(id){
+  await wait(`!!document.querySelector('[data-premium-engineering-center][data-engineering-ready="true"]')`);
+  await click('[data-engineering-tab="drawings"]');
+  await click(`[data-dimension-tab="${id}"]`);
+  await wait(`(()=>{const image=document.querySelector('[data-engineering-loaded-view="${id}"]');
+   return !!image?.complete&&image.naturalWidth>0&&document.querySelector('[data-dimension-tab="${id}"]').getAttribute('aria-pressed')==='true';
+  })()`);
+ }
  for(const width of [1440,320,390,768,1024,1280,1920]){
   await command('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:width<768});
   await load(compositionPath);await wait(`!!document.querySelector('#line03-construction[data-monitor-ready="true"]')`);
@@ -110,7 +118,7 @@ try{
    await evaluate(`(()=>{const s=document.querySelector('[data-diagram-select]');s.value='${number}';s.dispatchEvent(new Event('change',{bubbles:true}));})()`);
    assert.equal((await root()).selected,String(number).padStart(2,'0'));
   }
-  await click('[data-dimension-tab="top"]');assert.equal(await evaluate(`document.querySelector('#sd-dimension-view-top').hidden`),false);
+  await selectDrawing('top');
  }
  await command('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
  await load(compositionPath);await wait(`!!document.querySelector('[data-monitor-ready]')`);
@@ -118,7 +126,7 @@ try{
  assert.equal(await evaluate(`document.querySelectorAll('#composition .line-more,#composition [data-line-layout-views],#composition [role="tab"]').length`),0);
  await click('#line03-construction [data-architecture-part="33"]');assert.equal((await root()).selected,'33');
  await click('#line03-construction [data-architecture-part="37"]');assert.equal((await root()).selected,'37');
- await click('[data-dimension-tab="side"]');
+ await selectDrawing('side');
  await click('[data-pdf-open="separatsiya-03-technical"]');
  await wait(`document.querySelector('[data-pdf-status]').textContent==='Страница 1 из 28'`);
  assert.ok(await evaluate(`document.querySelector('[data-pdf-canvas]').width>100`));

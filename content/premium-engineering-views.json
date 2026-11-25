@@ -1,0 +1,938 @@
+{
+  "schemaVersion": 1,
+  "source": "ЛСОС ПКП -Виды.zip",
+  "processing": "PDF rendered at 4500 px longest page edge; only exterior white margins cropped with 45 px padding; original geometry/colors retained; lossless WebP; opaque white background retained.",
+  "views": [
+    {
+      "id": "v01",
+      "source": "source-pdf/v01.pdf",
+      "originalName": "Вид 1.PDF",
+      "sourceSha256": "4de7ec36e7ab4f1b2bf0366a4fec540a39ca2c1679d43090f681b1b81bc8d73b",
+      "page": 1,
+      "group": "overview",
+      "title": "Общий ракурс 1",
+      "shortLabel": "Ракурс 1",
+      "renderSize": [
+        4500,
+        3179
+      ],
+      "cropPx": [
+        0,
+        314,
+        4458,
+        2999
+      ],
+      "full": {
+        "file": "views/v01-full.webp",
+        "width": 4458,
+        "height": 2685,
+        "bytes": 1812708,
+        "sha256": "3903ff58f3b28d536a6fe62887bb0da47c32e1b01e16018444e90fa7322a1422"
+      },
+      "display": {
+        "file": "views/v01-display.webp",
+        "width": 2200,
+        "height": 1325,
+        "bytes": 891616,
+        "sha256": "0c3d3d3b00cad5770c995015462d85f1930670f77cc959a9eec143d64618fca6"
+      },
+      "thumb": {
+        "file": "views/v01-thumb.webp",
+        "width": 400,
+        "height": 241,
+        "bytes": 56978,
+        "sha256": "7ac7a98bdf89bb112a6a4e5ded305ad38b5819b4d801bd52bcf163ca36974b4e"
+      }
+    },
+    {
+      "id": "v01a",
+      "source": "source-pdf/v01a.pdf",
+      "originalName": "Вид 1а.PDF",
+      "sourceSha256": "84d3f7bceb646fe1529315697962e79d8f557cef6289d90122d9e2de90ae691b",
+      "page": 1,
+      "group": "overview",
+      "title": "Общий ракурс 1 — с ограждением сортировочного бокса",
+      "shortLabel": "Ракурс 1а",
+      "renderSize": [
+        4500,
+        3179
+      ],
+      "cropPx": [
+        0,
+        314,
+        4458,
+        2999
+      ],
+      "full": {
+        "file": "views/v01a-full.webp",
+        "width": 4458,
+        "height": 2685,
+        "bytes": 1768636,
+        "sha256": "dd80909021c34d55483f423d881aeedd4430a2ad5f2f31c01ba541b11ac9dc44"
+      },
+      "display": {
+        "file": "views/v01a-display.webp",
+        "width": 2200,
+        "height": 1325,
+        "bytes": 884930,
+        "sha256": "fde48e2fca8725b5333e4c127dcea4e4a6699751501d70b577887cfdd0bd5719"
+      },
+      "thumb": {
+        "file": "views/v01a-thumb.webp",
+        "width": 400,
+        "height": 241,
+        "bytes": 57206,
+        "sha256": "138ff334656f19d5385bd3126e235d1a92eccd6c22859473b28ffb06b2c713ac"
+      }
+    },
+    {
+      "id": "v02",
+      "source": "source-pdf/v02.pdf",
+      "originalName": "Вид 2.PDF",
+      "sourceSha256": "5dcc1244750399ab82888cfe0b66cedf5888927d36548ddbfa8f956f7a16879e",
+      "page": 1,
+      "group": "overview",
+      "title": "Общий ракурс 2",
+      "shortLabel": "Ракурс 2",
+      "renderSize": [
+        4500,
+        3179
+      ],
+      "cropPx": [
+        148,
+        8,
+        4200,
+        3179
+      ],
+      "full": {
+        "file": "views/v02-full.webp",
+        "width": 4052,
+        "height": 3171,
+        "bytes": 2204250,
+        "sha256": "85faf447c51f171face294532e6b7243268e9af21985703ded1bf4c3bf43d6f2"
+      },
+      "display": {
+        "file": "views/v02-display.webp",
+        "width": 2200,
+        "height": 1722,
+        "bytes": 1233820,
+        "sha256": "7dbd3c577307efb34d15f9234eeeae4f5f96a1d8d0905b93124cf9852623fbb8"
+      },
+      "thumb": {
+        "file": "views/v02-thumb.webp",
+        "width": 400,
+        "height": 313,
+        "bytes": 77456,
+        "sha256": "a73c19a79b5d4017ef0484cd0a40513112a7d30b960e3f6dc8ce08d6869dfd89"
+      }
+    },
+    {
+      "id": "v02a",
+      "source": "source-pdf/v02a.pdf",
+      "originalName": "Вид 2а.PDF",
+      "sourceSha256": "19758250f93fd7ae117e6f1d32725e3443ced0654dab01c98cc860d7ac785ae7",
+      "page": 1,
+      "group": "overview",
+      "title": "Общий ракурс 2 — с ограждением сортировочного бокса",
+      "shortLabel": "Ракурс 2а",
+      "renderSize": [
+        4500,
+        3179
+      ],
+      "cropPx": [
+        148,
+        8,
+        4200,
+        3179
+      ],
+      "full": {
+        "file": "views/v02a-full.webp",
+        "width": 4052,
+        "height": 3171,
+        "bytes": 2277948,
+        "sha256": "f918fc1204a444e9a91eae0f93f3376aafd1f242ed7e64d8a241f85726d8d058"
+      },
+      "display": {
+        "file": "views/v02a-display.webp",
+        "width": 2200,
+        "height": 1722,
+        "bytes": 1217504,
+        "sha256": "43cf9409467611243387ed81f32f5a72e668b5cc5a080928eb2557c4dd476b6e"
+      },
+      "thumb": {
+        "file": "views/v02a-thumb.webp",
+        "width": 400,
+        "height": 313,
+        "bytes": 77856,
+        "sha256": "8da00f810a4394d8dc2e2447ff290455873a9c51e286e7da1ce7af22fbab497b"
+      }
+    },
+    {
+      "id": "v03",
+      "source": "source-pdf/v03.pdf",
+      "originalName": "Вид 3.PDF",
+      "sourceSha256": "3366c6e234d24ccf2e2e5b21672f8b5fa4cced0d93e0519576fcd9e0661ceb06",
+      "page": 1,
+      "group": "overview",
+      "title": "Общий ракурс 3",
+      "shortLabel": "Ракурс 3",
+      "renderSize": [
+        4500,
+        3179
+      ],
+      "cropPx": [
+        50,
+        291,
+        4441,
+        3013
+      ],
+      "full": {
+        "file": "views/v03-full.webp",
+        "width": 4391,
+        "height": 2722,
+        "bytes": 1822430,
+        "sha256": "990d14e9a340143b8d959bde6d7dff06eb270486c8cc0663324a781674e3dd30"
+      },
+      "display": {
+        "file": "views/v03-display.webp",
+        "width": 2200,
+        "height": 1364,
+        "bytes": 913664,
+        "sha256": "e9f268126cc25048a581d9688eb7ddbd7afb116f3fa98ce3a93023fc5fdcd205"
+      },
+      "thumb": {
+        "file": "views/v03-thumb.webp",
+        "width": 400,
+        "height": 248,
+        "bytes": 61508,
+        "sha256": "4bff3d44447339d06bade5ea74d32d873be8eed4851efeae33a01d402f4baa3b"
+      }
+    },
+    {
+      "id": "v03a",
+      "source": "source-pdf/v03a.pdf",
+      "originalName": "Вид 3а.PDF",
+      "sourceSha256": "cbda6cee56d1c9c170d68ebfda9a287ff5de41e838e228c7dd87fb15b96e3e13",
+      "page": 1,
+      "group": "overview",
+      "title": "Общий ракурс 3 — с ограждением сортировочного бокса",
+      "shortLabel": "Ракурс 3а",
+      "renderSize": [
+        4500,
+        3179
+      ],
+      "cropPx": [
+        50,
+        291,
+        4441,
+        3013
+      ],
+      "full": {
+        "file": "views/v03a-full.webp",
+        "width": 4391,
+        "height": 2722,
+        "bytes": 1799122,
+        "sha256": "5cc9df7086d49cb90ece0fcee98c39be72617c327dbc151a66239ea5012021e3"
+      },
+      "display": {
+        "file": "views/v03a-display.webp",
+        "width": 2200,
+        "height": 1364,
+        "bytes": 902880,
+        "sha256": "1017c1c2a35ac51c55873a153dcf792e30bfacbaa7ef86167e8061400d20a4fc"
+      },
+      "thumb": {
+        "file": "views/v03a-thumb.webp",
+        "width": 400,
+        "height": 248,
+        "bytes": 58390,
+        "sha256": "39ef29d14b3eb61347bf6ab2b7298857d28f7d08fbe07be9df42012f9fc5748b"
+      }
+    },
+    {
+      "id": "v04",
+      "source": "source-pdf/v04.pdf",
+      "originalName": "Вид 4.PDF",
+      "sourceSha256": "e7f93234ee7a5b0bc39fff51759e57ab68c19efac0f69084dd5a3064dc84355d",
+      "page": 1,
+      "group": "overview",
+      "title": "Общий ракурс 4",
+      "shortLabel": "Ракурс 4",
+      "renderSize": [
+        4500,
+        3179
+      ],
+      "cropPx": [
+        231,
+        270,
+        4294,
+        3115
+      ],
+      "full": {
+        "file": "views/v04-full.webp",
+        "width": 4063,
+        "height": 2845,
+        "bytes": 1790390,
+        "sha256": "3eb8d62a992eaf1447c5de88eafa9157a736feb038d1f31ba6435fa5c66d2163"
+      },
+      "display": {
+        "file": "views/v04-display.webp",
+        "width": 2200,
+        "height": 1540,
+        "bytes": 1004714,
+        "sha256": "15a3d7c87824fe786713fad87aa0715da70fcacbbbdadad0317552c32c41fa66"
+      },
+      "thumb": {
+        "file": "views/v04-thumb.webp",
+        "width": 400,
+        "height": 280,
+        "bytes": 66242,
+        "sha256": "ca100af8a830c2340bfa2550edc6d192fb09d510b824de6560ad39181793ed70"
+      }
+    },
+    {
+      "id": "v04a",
+      "source": "source-pdf/v04a.pdf",
+      "originalName": "Вид 4а.PDF",
+      "sourceSha256": "3aeabb14300a41d848ea9e7375cbaaed4b5fbedaf28faf82907b43b3e4f40be9",
+      "page": 1,
+      "group": "overview",
+      "title": "Общий ракурс 4 — с ограждением сортировочного бокса",
+      "shortLabel": "Ракурс 4а",
+      "renderSize": [
+        4500,
+        3179
+      ],
+      "cropPx": [
+        231,
+        270,
+        4294,
+        3115
+      ],
+      "full": {
+        "file": "views/v04a-full.webp",
+        "width": 4063,
+        "height": 2845,
+        "bytes": 1897818,
+        "sha256": "429bbcb1e7eaec6c60f116caddeeb1d2958e9d7a769f17405542b9178da5ae51"
+      },
+      "display": {
+        "file": "views/v04a-display.webp",
+        "width": 2200,
+        "height": 1540,
+        "bytes": 988970,
+        "sha256": "91a033185e8672bd3e85a255d9adcb280de1f94e5d1211943adf20496e91b1fe"
+      },
+      "thumb": {
+        "file": "views/v04a-thumb.webp",
+        "width": 400,
+        "height": 280,
+        "bytes": 66084,
+        "sha256": "e003309ee25a225b403cf67e6f291188d45ad93251f423ca934626c26ce342b6"
+      }
+    },
+    {
+      "id": "v05",
+      "source": "source-pdf/v05.pdf",
+      "originalName": "Вид 5.PDF",
+      "sourceSha256": "923f460889dadec3369732a3e74fa26a8183818330eaaff37d567c7fc56fadd3",
+      "page": 1,
+      "group": "overview",
+      "title": "Вид сверху",
+      "shortLabel": "Сверху",
+      "renderSize": [
+        4500,
+        3179
+      ],
+      "cropPx": [
+        304,
+        66,
+        4308,
+        3179
+      ],
+      "full": {
+        "file": "views/v05-full.webp",
+        "width": 4004,
+        "height": 3113,
+        "bytes": 355330,
+        "sha256": "8f5373d85845bffe901c7088e9bd3ec3086ed6b308a7b948e9ad2b44c5efb6d7"
+      },
+      "display": {
+        "file": "views/v05-display.webp",
+        "width": 2200,
+        "height": 1710,
+        "bytes": 291010,
+        "sha256": "03a43f984a1ccdd82f9bc1aa1891c38a37671dc34acd7e40d702bb0a33d588a7"
+      },
+      "thumb": {
+        "file": "views/v05-thumb.webp",
+        "width": 400,
+        "height": 311,
+        "bytes": 35040,
+        "sha256": "8b58fdd37328952669aaad29f8eedcd1c4e6264ef55432d46811fadb736d12fd"
+      }
+    },
+    {
+      "id": "v06",
+      "source": "source-pdf/v06.pdf",
+      "originalName": "Вид 6.PDF",
+      "sourceSha256": "675d103a333a16b5bce4016bff56d01799b79b457c3a8e2643c9fdb35188cefd",
+      "page": 1,
+      "group": "overview",
+      "title": "Боковой вид 1",
+      "shortLabel": "Сбоку 1",
+      "renderSize": [
+        4500,
+        3179
+      ],
+      "cropPx": [
+        269,
+        940,
+        4274,
+        1574
+      ],
+      "full": {
+        "file": "views/v06-full.webp",
+        "width": 4005,
+        "height": 634,
+        "bytes": 328884,
+        "sha256": "69d51ef4aed1b46ab836e38ea814eeb2d29c3d228bcc41a8e8d218b64eb70fcb"
+      },
+      "display": {
+        "file": "views/v06-display.webp",
+        "width": 2200,
+        "height": 348,
+        "bytes": 245364,
+        "sha256": "cc7ce7b2f0c8816084cd46160d258159f1986e7b34e0102387cc4b38f5c08413"
+      },
+      "thumb": {
+        "file": "views/v06-thumb.webp",
+        "width": 400,
+        "height": 63,
+        "bytes": 22994,
+        "sha256": "b44ab624c05d95d88dcae9fb6ec12c234ab06550f1c5bd0d964df65ee9f6f1ef"
+      }
+    },
+    {
+      "id": "v07",
+      "source": "source-pdf/v07.pdf",
+      "originalName": "Вид 7.PDF",
+      "sourceSha256": "cbc8dd96a03b87096271614d9adad47e6ecc2405fb0c1f0a46d2ed73d6227afa",
+      "page": 1,
+      "group": "overview",
+      "title": "Боковой вид 2",
+      "shortLabel": "Сбоку 2",
+      "renderSize": [
+        4500,
+        3179
+      ],
+      "cropPx": [
+        181,
+        1173,
+        4186,
+        1806
+      ],
+      "full": {
+        "file": "views/v07-full.webp",
+        "width": 4005,
+        "height": 633,
+        "bytes": 338904,
+        "sha256": "21115ac2f574024d255e631bb1ba4193d1bd1cc679d3dbb344eed0ebdeaecfaa"
+      },
+      "display": {
+        "file": "views/v07-display.webp",
+        "width": 2200,
+        "height": 348,
+        "bytes": 247678,
+        "sha256": "656d2e701a372adff4f672215651d220e4e1b7bde639959aa1d19606d9368d97"
+      },
+      "thumb": {
+        "file": "views/v07-thumb.webp",
+        "width": 400,
+        "height": 63,
+        "bytes": 23720,
+        "sha256": "556f651e4ea776d695442e0128c4d0819775efb9e8dd88b468510da995f58bfc"
+      }
+    },
+    {
+      "id": "v08",
+      "source": "source-pdf/v08.pdf",
+      "originalName": "Вид 8.PDF",
+      "sourceSha256": "6bdadc95e191d16f4e3fb8a6e630265ff76f8a52ef248e91fd2ae3dd9e72dc2f",
+      "page": 1,
+      "group": "overview",
+      "title": "Торцевой вид 1",
+      "shortLabel": "С торца 1",
+      "renderSize": [
+        4500,
+        3179
+      ],
+      "cropPx": [
+        787,
+        1301,
+        3913,
+        1934
+      ],
+      "full": {
+        "file": "views/v08-full.webp",
+        "width": 3126,
+        "height": 633,
+        "bytes": 165206,
+        "sha256": "d8353e259afea41ee8dd1fc995a4e5032980b104558eca0915d8cb7965739c4e"
+      },
+      "display": {
+        "file": "views/v08-display.webp",
+        "width": 2200,
+        "height": 445,
+        "bytes": 180044,
+        "sha256": "b30ca79fd34fbcc0ca0e2e9b9f788abb6f82d9323d7f44f5fcfa8a06cffd8f25"
+      },
+      "thumb": {
+        "file": "views/v08-thumb.webp",
+        "width": 400,
+        "height": 81,
+        "bytes": 20218,
+        "sha256": "a9b7ac36d1b9e51f0b9959d725c3c32334008d3f985659608c5a468c6084325a"
+      }
+    },
+    {
+      "id": "v09",
+      "source": "source-pdf/v09.pdf",
+      "originalName": "Вид 9.PDF",
+      "sourceSha256": "acd59f9384ceb1c586469c1bf458061278b576a90897a20885833c32735a8f46",
+      "page": 1,
+      "group": "overview",
+      "title": "Торцевой вид 2",
+      "shortLabel": "С торца 2",
+      "renderSize": [
+        4500,
+        3179
+      ],
+      "cropPx": [
+        654,
+        1249,
+        3780,
+        1882
+      ],
+      "full": {
+        "file": "views/v09-full.webp",
+        "width": 3126,
+        "height": 633,
+        "bytes": 166532,
+        "sha256": "65d6c9062e7e0873078afd1ad765f25aca31891ed24325afbaab295ceb510cec"
+      },
+      "display": {
+        "file": "views/v09-display.webp",
+        "width": 2200,
+        "height": 445,
+        "bytes": 182364,
+        "sha256": "e6ebddd4744a390b96afb51686c2c0c9099b363dfbab05ca1f616d8bc6ce79d7"
+      },
+      "thumb": {
+        "file": "views/v09-thumb.webp",
+        "width": 400,
+        "height": 81,
+        "bytes": 21386,
+        "sha256": "c7fa49c53e135a90eeb08b442bbac15c767b1f017b220401ede6ac02e6e72f35"
+      }
+    },
+    {
+      "id": "v10",
+      "source": "source-pdf/v10.pdf",
+      "originalName": "Вид 10.PDF",
+      "sourceSha256": "1f2abb3d1b04851f76fd4e6d720d30a2ebcb6063903438a57335753c480c916f",
+      "page": 1,
+      "group": "detail",
+      "title": "Сушильная установка и транспортёры — вид 1",
+      "shortLabel": "Сушка 1",
+      "renderSize": [
+        4500,
+        3179
+      ],
+      "cropPx": [
+        387,
+        948,
+        3989,
+        2410
+      ],
+      "full": {
+        "file": "views/v10-full.webp",
+        "width": 3602,
+        "height": 1462,
+        "bytes": 1103806,
+        "sha256": "cb97a77d88bc79287aa12e7d143875b0e148e286b0c6b1ba1c4cd862067cb6f9"
+      },
+      "display": {
+        "file": "views/v10-display.webp",
+        "width": 2200,
+        "height": 893,
+        "bytes": 807734,
+        "sha256": "e0720433a990ca0806b74e5b6a2aaa43f91e1568944a962479920816ea16d3ee"
+      },
+      "thumb": {
+        "file": "views/v10-thumb.webp",
+        "width": 400,
+        "height": 162,
+        "bytes": 59658,
+        "sha256": "7a7041faf1538febe45fc8ba6b9287e4039ec48d0d76888e8e427d6cd0707cd7"
+      }
+    },
+    {
+      "id": "v11",
+      "source": "source-pdf/v11.pdf",
+      "originalName": "Вид 11.PDF",
+      "sourceSha256": "186fd32a497823cf93d70b6436a81f1743588d338a99613e91cf8f37adb8f32b",
+      "page": 1,
+      "group": "detail",
+      "title": "Зона сортировки, накопления и пневмотранспорта",
+      "shortLabel": "Сортировка 1",
+      "renderSize": [
+        4500,
+        3179
+      ],
+      "cropPx": [
+        790,
+        136,
+        3595,
+        2999
+      ],
+      "full": {
+        "file": "views/v11-full.webp",
+        "width": 2805,
+        "height": 2863,
+        "bytes": 1564992,
+        "sha256": "35fb0dd628ad2041a516f0b476acf522b5201f793521d60c6ef6600b789f91ae"
+      },
+      "display": {
+        "file": "views/v11-display.webp",
+        "width": 2155,
+        "height": 2200,
+        "bytes": 1574926,
+        "sha256": "8fff243457d3f07ec69bf987c6a2fa528153d2103132d98387c34bddcf596ee2"
+      },
+      "thumb": {
+        "file": "views/v11-thumb.webp",
+        "width": 392,
+        "height": 400,
+        "bytes": 116406,
+        "sha256": "3f6f79aba6100f289191380d5c50de1ba46f069d0001b7aa3b2a4049c0ca963f"
+      }
+    },
+    {
+      "id": "v12",
+      "source": "source-pdf/v12.pdf",
+      "originalName": "Вид 12.PDF",
+      "sourceSha256": "6a191587e9948fb013b3001c10947bd9f4af21f28f74e2b3e5859665c38cdbea",
+      "page": 1,
+      "group": "detail",
+      "title": "Каркас сортировочного бокса и пневмотранспорт",
+      "shortLabel": "Сортировка 2",
+      "renderSize": [
+        4500,
+        3179
+      ],
+      "cropPx": [
+        975,
+        194,
+        3290,
+        3113
+      ],
+      "full": {
+        "file": "views/v12-full.webp",
+        "width": 2315,
+        "height": 2919,
+        "bytes": 1034396,
+        "sha256": "5eacce4967b38ef9683f41140a9401ed3d7c7b8cb9da39b9081b0ea27ab852ca"
+      },
+      "display": {
+        "file": "views/v12-display.webp",
+        "width": 1745,
+        "height": 2200,
+        "bytes": 1065498,
+        "sha256": "f5ef21e1783beaef95f61d058defbc234b86eacf0a67823843accfcf6fe3ded5"
+      },
+      "thumb": {
+        "file": "views/v12-thumb.webp",
+        "width": 317,
+        "height": 400,
+        "bytes": 87948,
+        "sha256": "4b7e65e594cda3fc2409bf94de6ab5ecfd5ce27c6e53f0b3490fde95096d7f35"
+      }
+    },
+    {
+      "id": "v13",
+      "source": "source-pdf/v13.pdf",
+      "originalName": "Вид 13.PDF",
+      "sourceSha256": "29886da6294b5f5d97c5c4480fb6647232c4fa03c04751922601a8fa4b90c9b6",
+      "page": 1,
+      "group": "detail",
+      "title": "Сортировочная зона и бункеры-накопители",
+      "shortLabel": "Накопление 1",
+      "renderSize": [
+        4500,
+        3179
+      ],
+      "cropPx": [
+        179,
+        0,
+        4227,
+        3167
+      ],
+      "full": {
+        "file": "views/v13-full.webp",
+        "width": 4048,
+        "height": 3167,
+        "bytes": 2219724,
+        "sha256": "782411a386b24fc18f3deeb9841925e15655ab652b4b99f9005c48cf093a2e59"
+      },
+      "display": {
+        "file": "views/v13-display.webp",
+        "width": 2200,
+        "height": 1721,
+        "bytes": 1312726,
+        "sha256": "941dfa9b73c64f4b4a2131b2d8e16a1e76c31969f96d82f687c1760188a51079"
+      },
+      "thumb": {
+        "file": "views/v13-thumb.webp",
+        "width": 400,
+        "height": 313,
+        "bytes": 91106,
+        "sha256": "5febf0ceb578946d381e9b897bd00938f63ca2f3f6d2a0f17aae05eaef5f60a0"
+      }
+    },
+    {
+      "id": "v14",
+      "source": "source-pdf/v14.pdf",
+      "originalName": "Вид 14.PDF",
+      "sourceSha256": "9bc2774bc81235ae43c1b33349d81d94604554e8f57d6ca29597666981dfc7c8",
+      "page": 1,
+      "group": "detail",
+      "title": "Сушильная установка и транспортёры — вид 2",
+      "shortLabel": "Сушка 2",
+      "renderSize": [
+        4500,
+        3179
+      ],
+      "cropPx": [
+        525,
+        772,
+        4049,
+        2874
+      ],
+      "full": {
+        "file": "views/v14-full.webp",
+        "width": 3524,
+        "height": 2102,
+        "bytes": 1030096,
+        "sha256": "493d9b49d433e0928eb31eeb16e5193a1eaf357ee705669926552608aa9c0de4"
+      },
+      "display": {
+        "file": "views/v14-display.webp",
+        "width": 2200,
+        "height": 1312,
+        "bytes": 764170,
+        "sha256": "a1519214bda1cba7755acad6b5e8ded4aa160a734ffd4d4a29693bc13f2c10fb"
+      },
+      "thumb": {
+        "file": "views/v14-thumb.webp",
+        "width": 400,
+        "height": 239,
+        "bytes": 55648,
+        "sha256": "1130db92e274cc85bbeea8240423db73ce3bc01f2ee63b671ed1b390e084866e"
+      }
+    },
+    {
+      "id": "v15",
+      "source": "source-pdf/v15.pdf",
+      "originalName": "Вид 15.PDF",
+      "sourceSha256": "5c0612ddc2d2b9f98ab17cff0d419dbc4d136dd0490b4f14bdb8441eb01927e7",
+      "page": 1,
+      "group": "detail",
+      "title": "Зона сортировки и накопления — общий вид",
+      "shortLabel": "Накопление 2",
+      "renderSize": [
+        4500,
+        3179
+      ],
+      "cropPx": [
+        328,
+        123,
+        4224,
+        3154
+      ],
+      "full": {
+        "file": "views/v15-full.webp",
+        "width": 3896,
+        "height": 3031,
+        "bytes": 1845678,
+        "sha256": "ad6edd818138aeb434c5b539721802005a515acfcae630b291e38410e426e66d"
+      },
+      "display": {
+        "file": "views/v15-display.webp",
+        "width": 2200,
+        "height": 1712,
+        "bytes": 1117192,
+        "sha256": "90d8fab9056d0968d6c1960da610f0cbc91d735e8b686bd6ab3694b3030495b9"
+      },
+      "thumb": {
+        "file": "views/v15-thumb.webp",
+        "width": 400,
+        "height": 311,
+        "bytes": 75718,
+        "sha256": "6fd403b7ed14765a42c1d693e777056eaf65bbd1925e1f5f908b4bc664113868"
+      }
+    },
+    {
+      "id": "v16",
+      "source": "source-pdf/v16.pdf",
+      "originalName": "Вид 16.PDF",
+      "sourceSha256": "8a9768fd89012bfb3b1105d1b145a243b451efff0c338456475d5e7e4688a5eb",
+      "page": 1,
+      "group": "detail",
+      "title": "Сушильная установка и транспортёры — вид 3",
+      "shortLabel": "Сушка 3",
+      "renderSize": [
+        4500,
+        3179
+      ],
+      "cropPx": [
+        813,
+        571,
+        4120,
+        2724
+      ],
+      "full": {
+        "file": "views/v16-full.webp",
+        "width": 3307,
+        "height": 2153,
+        "bytes": 1007870,
+        "sha256": "58b49cb4dff4061925e73a699793d64cc39569491e662ddbbd91f5acb9b18203"
+      },
+      "display": {
+        "file": "views/v16-display.webp",
+        "width": 2200,
+        "height": 1432,
+        "bytes": 779788,
+        "sha256": "4132a9fee83349923a383647ff1f2f428bbfdd77384a13ceaa53907693df6bda"
+      },
+      "thumb": {
+        "file": "views/v16-thumb.webp",
+        "width": 400,
+        "height": 260,
+        "bytes": 58830,
+        "sha256": "6fc957991c763ba3cbe9adda559a6d1c1e24548ba7ddc3ece1ac98db08f3a52b"
+      }
+    },
+    {
+      "id": "v17",
+      "source": "source-pdf/v17.pdf",
+      "originalName": "Вид 17.PDF",
+      "sourceSha256": "5a6e7dc3b813bad1c666b6fd78efbeb68a31fbb83eac8a85961f9f4d85a676a0",
+      "page": 1,
+      "group": "detail",
+      "title": "Сортировочная зона и бункеры — обратный ракурс",
+      "shortLabel": "Накопление 3",
+      "renderSize": [
+        4500,
+        3179
+      ],
+      "cropPx": [
+        113,
+        271,
+        4267,
+        2999
+      ],
+      "full": {
+        "file": "views/v17-full.webp",
+        "width": 4154,
+        "height": 2728,
+        "bytes": 1924378,
+        "sha256": "fb5322e4110a2395123dad933ee601782c87bbfe0447e754f03e40d3708da0da"
+      },
+      "display": {
+        "file": "views/v17-display.webp",
+        "width": 2200,
+        "height": 1445,
+        "bytes": 1022720,
+        "sha256": "7cb0530fdad807506a47cd13d28fbf352d733ec601f68d749fbbc9ce7d9dd1a9"
+      },
+      "thumb": {
+        "file": "views/v17-thumb.webp",
+        "width": 400,
+        "height": 263,
+        "bytes": 67930,
+        "sha256": "39642276f219d53e8b4f682918cdeb04f000831331b0def6702586edc68f1833"
+      }
+    },
+    {
+      "id": "v18",
+      "source": "source-pdf/v18.pdf",
+      "originalName": "Вид 18.PDF",
+      "sourceSha256": "ae5a5ff30d2e22e6584b135acecfe0ee453d6a17aa593280dea4f678922e41f1",
+      "page": 1,
+      "group": "detail",
+      "title": "Сушильная установка и транспортёры — вид 4",
+      "shortLabel": "Сушка 4",
+      "renderSize": [
+        4500,
+        3179
+      ],
+      "cropPx": [
+        877,
+        765,
+        3797,
+        2703
+      ],
+      "full": {
+        "file": "views/v18-full.webp",
+        "width": 2920,
+        "height": 1938,
+        "bytes": 1112646,
+        "sha256": "d8820103d7ea0bb40aaf6c56ecee5d5ffa68d2290acbfe71a2a2c14d8a2c4fc1"
+      },
+      "display": {
+        "file": "views/v18-display.webp",
+        "width": 2200,
+        "height": 1460,
+        "bytes": 983588,
+        "sha256": "917e45f1bdfe4fdbbccb1a74d41840955ca1728e724c191bd62fa79e853c3dc6"
+      },
+      "thumb": {
+        "file": "views/v18-thumb.webp",
+        "width": 400,
+        "height": 265,
+        "bytes": 71696,
+        "sha256": "a8b84aa5b580d7cbf581fdab8ad45b439f32a14e36397c5bcb1de4353210448e"
+      }
+    }
+  ],
+  "drawingThumbnails": [
+    {
+      "id": "top",
+      "shortLabel": "Сверху",
+      "file": "lines/separatsiya-03/engineering-center/drawings/top-thumb.webp",
+      "width": 360,
+      "height": 285,
+      "bytes": 25840,
+      "sha256": "543e7f397abc158c854fac5d3456f2e9d3fe11aa6b15d7bcc8494613bd5fbb75"
+    },
+    {
+      "id": "side",
+      "shortLabel": "Сбоку",
+      "file": "lines/separatsiya-03/engineering-center/drawings/side-thumb.webp",
+      "width": 360,
+      "height": 78,
+      "bytes": 9386,
+      "sha256": "ab74377408c3287367f8d2cb289f270d5d70e98ed2feb3454ae6f434b6824dc1"
+    },
+    {
+      "id": "opposite-and-sections",
+      "shortLabel": "Вид А и сечения",
+      "file": "lines/separatsiya-03/engineering-center/drawings/opposite-and-sections-thumb.webp",
+      "width": 360,
+      "height": 125,
+      "bytes": 12676,
+      "sha256": "88d053b109ea14fa729e15e6e3b11fcf189978b750690c23c56b745ff03d67f9"
+    }
+  ]
+}

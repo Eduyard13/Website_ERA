@@ -15,7 +15,7 @@ import {renderDrySeparationPurpose} from './dry-separation-purpose.mjs';
 import {renderDrySeparationRaw} from './dry-separation-raw.mjs';
 import {nodes} from '../content/catalog.mjs';
 import {equipmentCardImages} from '../content/equipment-card-images.mjs';
-import {lineDimensions} from './line-dimensions.mjs';
+import {renderPremiumEngineeringCenter} from './premium-engineering-center.mjs';
 import {renderPremiumProcess} from './premium-process.mjs';
 
 const escape=v=>String(v).replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;').replaceAll('>','&gt;');
@@ -39,7 +39,6 @@ function unitCard(item){
 export function renderSeparationDrying(line){
  const documents=lineDocuments(line);
  const doc=documents.find(document=>document.id==='separatsiya-03-technical');
- const drawing=documents.find(document=>document.id==='separatsiya-03-dimensions');
  const email=`mailto:${siteContacts.email}?subject=`+encodeURIComponent('Запрос ЭРА: '+line.cardTitle);
  return `<div class="film-line film-line--full film-line--drying" data-separation03-line>
  ${renderDrySeparationHero({line,email,metrics:[
@@ -68,7 +67,9 @@ export function renderSeparationDrying(line){
 
  <section class="section" id="specs">${renderBaseSpecs(line)}</section>
 
- <section class="section" id="placement">${heading('РАЗМЕЩЕНИЕ ЛИНИИ','Готовая компоновка.<br>Привязка под ваш цех.','Зоны подачи тюков и насыпного сырья, проезды двух погрузчиков, выдача тюков и биг-бэгов, проходы обслуживания и инженерные сети.')} ${lineDimensions(drawing)}<div class="line-placement-notes"><div><h3>Подача и выдача</h3><p>Свободные проезды погрузчиков, склады сырья и продукции, места смены тары и снятия тюков.</p></div><div><h3>Обслуживание и сети</h3><p>Доступ к приводам, люкам, подвижной щеке, сушилке и бункерам. Электропитание, заземление, воздуховоды, нагрев и отвод конденсата.</p></div><div><h3>Изолированная сортировка</h3><p>Площадка 13 в ангаре 35: рабочие места вдоль ленты, освещение, вентиляция и доступ к шахтам сброса. Монтажные отметки, нагрузки и точки подключения уточняются под конкретный цех.</p></div></div></section>
+ <section class="section" id="placement">
+  ${renderPremiumEngineeringCenter()}
+  <div class="line-placement-notes"><div><h3>Подача и выдача</h3><p>Свободные проезды двух погрузчиков, склады сырья и продукции, места смены тары и снятия тюков.</p></div><div><h3>Обслуживание и сети</h3><p>Доступ к приводам, люкам, подвижной щеке, сушилке и бункерам. Электропитание, заземление, воздуховоды, нагрев и отвод конденсата.</p></div><div><h3>Изолированная сортировка</h3><p>Площадка 13 в ангаре 35: рабочие места вдоль ленты, освещение, вентиляция и доступ к шахтам сброса. Монтажные отметки, нагрузки и точки подключения уточняются под конкретный цех.</p></div></div></section>
 
  <section class="section line-soft" id="photos">${heading('ОБОРУДОВАНИЕ И ДЕТАЛИ','Фотографии из<br>технического описания.','Отдельные узлы и пример размещения сухой сепарации ЭРА на производственной площадке. Нажмите на изображение для увеличения.')}<div class="line-photo-grid">${['pre-opener-photo','rotor','rotor-disc','rotor-hood','bag-frame','installation'].map(key=>picture(key)).join('')}</div><p class="line-note">Фотографии отдельных узлов и пример площадки иллюстрируют оборудование. Проектные изображения компоновки и машин подписаны как визуализации.</p><a class="text-link" href="/media/" data-photo-gallery data-product="/catalog/lines/separatsiya-03">Материалы этой линии в медиатеке ↗</a></section>
 

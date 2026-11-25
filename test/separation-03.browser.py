@@ -22,7 +22,7 @@ with sync_playwright() as p:
  for width in [320,390,768,1024,1280,1440,1920]:
   page.set_viewport_size({'width':width,'height':1000}); load(); overflow()
   page.locator('main img').evaluate_all('items=>Promise.all(items.map(i=>{i.loading="eager";return i.decode()}))')
-  assert page.locator('main img').evaluate_all('items=>items.every(i=>i.complete&&i.naturalWidth&&(i.alt||i.closest("[data-library-document]")))')
+  assert page.locator('main img').evaluate_all('items=>items.every(i=>i.complete&&i.naturalWidth&&(i.alt||i.closest("[data-library-document], .pec-thumb[aria-label]")))')
   root=page.locator('#line03-construction'); viewport=root.locator('[data-diagram-viewport]')
   assert viewport.evaluate('e=>e.scrollWidth<=e.clientWidth+1&&e.scrollHeight<=e.clientHeight+1')
   expect(root.locator('[data-diagram-select] option')).to_have_count(37)
@@ -34,9 +34,11 @@ with sync_playwright() as p:
    assert root.locator('[data-detail-label]').inner_text() and root.locator('[data-detail-description]').inner_text()
    assert abs(root.bounding_box()['height']-initial)<1,(width,number,'unstable monitor')
    assert root.locator('.diagram-details').evaluate('e=>{const r=e.getBoundingClientRect();return [...e.children].filter(c=>getComputedStyle(c).display!=="none").every(c=>c.getBoundingClientRect().bottom<=r.bottom+1)}'),(width,number,'panel overflow')
-  tabs=page.locator('[data-line-dimensions] [role=tab]');expect(tabs).to_have_count(3)
-  tabs.nth(1).click();expect(page.locator('#sd-dimension-view-side')).to_be_visible()
-  tabs.nth(1).focus();page.keyboard.press('Home');expect(page.locator('#sd-dimension-view-top')).to_be_visible()
+  center=page.locator('[data-premium-engineering-center]')
+  center.locator('[data-engineering-tab="drawings"]').click()
+  tabs=center.locator('[data-dimension-tab]');expect(tabs).to_have_count(3)
+  tabs.nth(1).click();expect(center.locator('[data-engineering-loaded-view="side"]')).to_be_visible()
+  tabs.nth(1).press('Home');expect(center.locator('[data-engineering-loaded-view="top"]')).to_be_visible()
   overflow();report['widths'].append(width)
   if width in [320,1440]:
    page.goto(base+'/catalog/lines/separatsiya-03/');page.wait_for_selector('[data-monitor-ready]')
