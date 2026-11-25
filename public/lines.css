@@ -869,7 +869,7 @@
 }
 
 /* Exact approved Variant 3 artwork and compact reference proportions.
-   Scope to PRO / PREMIUM; the BASE route map is untouched. */
+   Shared by BASE, PRO and PREMIUM. */
 .film-line .dry-route-map--approved{container-type:inline-size;scroll-margin-top:150px;--route-paper:#faf7f2;padding:clamp(16px,2vw,30px);background:radial-gradient(ellipse at 47% 35%,#fbf7ef,#f5eee3 75%,#efe7db);border-color:#d9cbb3}
 .film-line .dry-route-map--approved::before{background:repeating-linear-gradient(128deg,transparent 0 4px,#fff6 5px 6px,transparent 7px 10px);mask-image:radial-gradient(ellipse at 96% 4%,#000 0%,transparent 43%)}
 .film-line .dry-route-map--approved .dry-route-origin{min-height:0;aspect-ratio:1462/130;padding:12px 18px;gap:clamp(8px,1.35cqw,18px);border-radius:clamp(12px,1.4cqw,20px);background:#24263d;box-shadow:0 6px 16px #191c3010}
@@ -923,3 +923,7 @@
  .film-line .dry-route-map--approved .dry-route-origin{min-height:108px;padding:16px 12px}
  .film-line .dry-route-map--approved .dry-route-down>svg{transform:rotate(90deg)}
 }
+
+/* BASE uses the same approved proportions, with its original loose-film image. */
+.film-line .dry-route-map--approved[data-route-base] [data-route-illustration="bulk"]{mask-image:none;background:#faf7f1}
+.film-line .dry-route-map--approved[data-route-base] [data-route-illustration="bulk"]>img{object-fit:cover;object-position:center 57%}
