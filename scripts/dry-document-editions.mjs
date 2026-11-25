@@ -1,0 +1,17 @@
+import {documentFileMeta} from './documents.mjs';
+const escape=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+const editions=[['brochures','Брошюра'],['technical','Техническое описание'],['drawings','Габаритный чертёж']];
+const names={'separatsiya-01':'BASE','separatsiya-02':'PRO','separatsiya-03':'PREMIUM'};
+const arrow='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18 18 6M7 6h11v11"/></svg>';
+const download='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v13m-5-5 5 5 5-5M5 18v3h14v-3"/></svg>';
+const pedestal='<svg class="edition-pedestal" viewBox="0 0 300 48" fill="none" preserveAspectRatio="none" aria-hidden="true"><path d="M8 17 150 2 292 17 150 34Z" fill="#454958"/><path d="M8 17 150 34v11L8 28Z" fill="#252a3b"/><path d="M150 34 292 17v11L150 45Z" fill="#aa8a4b"/><path d="M8 17 150 34 292 17" stroke="#dbbf78" stroke-opacity=".6" stroke-width=".8"/><path d="M8 17 150 2 292 17" stroke="#a8adb7" stroke-opacity=".27" stroke-width=".8"/></svg>';
+function edition(d,label){
+ const href='/documents/'+escape(d.file),name=escape(d.title),open='href="'+href+'" data-pdf-open="'+escape(d.id)+'" target="_blank" rel="noopener noreferrer" aria-label="Открыть: '+name+'"';
+ return '<article class="edition-item" data-library-document="'+escape(d.id)+'" data-edition-category="'+escape(d.category)+'"><a class="edition-display" '+open+'><span class="edition-halo" aria-hidden="true"></span><span class="edition-paper"><img src="/assets/'+escape(d.cover)+'" width="'+d.coverWidth+'" height="'+d.coverHeight+'" alt="'+name+'" loading="lazy" decoding="async"></span>'+pedestal+'</a><h3>'+label+'</h3><p class="edition-meta">'+escape(documentFileMeta(d))+'</p><div class="edition-actions"><a class="edition-open" '+open+'>Открыть '+arrow+'</a><span class="edition-action-divider" aria-hidden="true"></span><a class="edition-download" href="'+href+'" download="'+escape(d.downloadName)+'" aria-label="Скачать PDF: '+name+'" title="Скачать PDF">'+download+'</a></div></article>';
+}
+export function renderDryDocumentEditions(line,documents){
+ const name=names[line.slug];if(!name)throw new Error('Unexpected dry line: '+line.slug);
+ const selected=editions.flatMap(([category,label])=>{const d=documents.find(d=>d.objectSlug===line.slug&&d.category===category&&d.file&&d.cover);return d?[[d,line.slug==='separatsiya-01'&&category==='drawings'?'Габаритная схема':label]]:[]});
+ const extra=documents.length-selected.length;
+ return '<section class="section dry-document-editions" id="documents"><div class="edition-showcase" data-dry-document-editions="'+name+'"><div class="edition-heading"><div><p class="eyebrow">ЭРА / ТЕХНИЧЕСКИЕ ИЗДАНИЯ</p><h2>Проект в документах.</h2></div><p class="edition-intro">Оригинальные материалы для технического и коммерческого изучения.</p></div><div class="edition-grid">'+selected.map(([d,label])=>edition(d,label)).join('')+'</div><div class="edition-footer"><div><p>Все материалы комплектации <strong>'+name+'</strong></p>'+(extra>0?'<small>Ещё '+extra+' в библиотеке</small>':'')+'</div><a class="edition-library" href="/documents/?objectType=line&amp;product='+escape(line.slug)+'">В библиотеку '+arrow+'</a></div></div></section>';
+}

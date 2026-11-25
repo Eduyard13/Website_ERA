@@ -1,3 +1,4 @@
+import {renderDryDocumentEditions} from './dry-document-editions.mjs';
 import {renderDryPhotoAlbum} from './dry-photo-album.mjs';
 import {renderBaseSpecs} from './base-specs.mjs';
 import {renderDryKair} from './dry-kair.mjs';
@@ -10,7 +11,7 @@ import {interactiveLineDiagram} from './line-diagram.mjs';
 import {renderDryArchitectureHeading} from './dry-line-architecture.mjs';
 import {mediaAttributes} from './media.mjs';
 import {pdfViewerDialog} from './documents.mjs';
-import {lineDocuments,lineDocumentCards} from './line-page-media.mjs';
+import {lineDocuments} from './line-page-media.mjs';
 import {renderDrySeparationHero} from './dry-separation-hero.mjs';
 import {renderDrySeparationPurpose} from './dry-separation-purpose.mjs';
 import {renderDrySeparationRaw} from './dry-separation-raw.mjs';
@@ -74,7 +75,7 @@ export function renderSeparationDrying(line){
 
  ${renderDryPhotoAlbum()}
 
- <section class="section line-documents" id="documents">${heading('ТЕХНИЧЕСКАЯ ДОКУМЕНТАЦИЯ','От состава линии<br>до размещения и управления.','Брошюра линии, техническое описание на 28 страницах от 18 ноября 2026 года и исходный габаритный чертёж A0.')}${lineDocumentCards(documents)}<a class="text-link" href="/documents/technical/?objectType=line&amp;product=separatsiya-03">Техническое описание в инженерной библиотеке ↗</a></section>
+ ${renderDryDocumentEditions(line,documents)}
 
  <section class="section contact line-request" id="request"><div><p class="eyebrow">ПОД ВАШЕ СЫРЬЁ И ПЛОЩАДКУ</p><h2>Подберём режим<br>и расстановку линии.</h2><p>Учитываем фактический состав и влажность сырья, засорённость, формат подачи и требования к готовой плёночной фракции. Пробная партия помогает оценить выход, влажность после сушилки и целесообразность ручного отбора.</p>${more('Что подготовить для подбора',`<p>Фото и видео партии, известные полимеры, размеры и масса тюков, длина фрагментов, толщина плёнки, анализ или представительная проба, планируемая подача и сменность. Для площадки — план и высота цеха, доступная мощность, источник нагрева, отвод конденсата и склады.</p><p>При дальнейшем расширении учитываем выдачу на горячую мойку и последующую грануляцию.</p>`)}</div><div>${button('Оценить моё сырьё',email)}<a class="phone" href="tel:+79032813535">+7 903 281-35-35</a><a href="mailto:${siteContacts.email}">${siteContacts.email}</a><small>Приложите фотографии, видео или документы к заявке.</small></div></section>
 

@@ -1,3 +1,4 @@
+import {renderDryDocumentEditions} from './dry-document-editions.mjs';
 import {renderDryPhotoAlbum} from './dry-photo-album.mjs';
 import {renderBaseSpecs} from './base-specs.mjs';
 import {renderDryKair} from './dry-kair.mjs';
@@ -8,7 +9,7 @@ import {nodes} from '../content/catalog.mjs';
 import {filmSeparationMedia as pictures,lineMetrics,lineRawMaterials,lineStages,lineUnits,linePositions} from '../content/film-separation.mjs';
 import {mediaAttributes} from './media.mjs';
 import {pdfViewerDialog} from './documents.mjs';
-import {lineDocuments,lineDocumentCards} from './line-page-media.mjs';
+import {lineDocuments} from './line-page-media.mjs';
 import {renderDrySeparationHero} from './dry-separation-hero.mjs';
 import {renderDrySeparationPurpose} from './dry-separation-purpose.mjs';
 import {renderDrySeparationRaw} from './dry-separation-raw.mjs';
@@ -74,7 +75,7 @@ export function renderFilmSeparation(line){
 
  ${renderDryPhotoAlbum()}
 
- <section class="section line-documents" id="documents"><div class="line-section-heading"><div><p class="eyebrow">ТЕХНИЧЕСКАЯ ДОКУМЕНТАЦИЯ</p><h2>От состава линии<br>до габаритов в цехе.</h2></div><p>Брошюра комплекса, техническое описание от 2 ноября 2026 года и исходный габаритный лист A0 с проекциями и размерами.</p></div>${lineDocumentCards(documents)}<a class="text-link" href="/documents/?objectType=line&amp;product=separatsiya-02">Все документы линии в библиотеке ↗</a></section>
+ ${renderDryDocumentEditions(line,documents)}
 
  <section class="section contact line-request" id="request"><div><p class="eyebrow">ПОД ВАШЕ СЫРЬЁ И ПЛОЩАДКУ</p><h2>Обсудим вашу<br>линию сепарации.</h2><p>Для подбора нужны фото или видео сырья, состав и загрязнённость, влажность, требуемая подача и продукт, план цеха и доступная мощность.</p></div><div>${button('Отправить запрос по линии',email)}<a class="phone" href="tel:+79032813535">+7 903 281-35-35</a><a href="mailto:${siteContacts.email}">${siteContacts.email}</a><small>Заполните форму и приложите фотографии, видео или документы к заявке.</small></div></section>
 

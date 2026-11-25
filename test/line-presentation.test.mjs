@@ -323,3 +323,19 @@ test('All dry lines share the approved six-photo editorial album with isolated v
  }
  assert.ok(!render('/catalog/lines/moyka-plenki').includes('data-dry-photo-album'));
 });
+
+test('Dry line technical editions use original covers and the correct filtered library',()=>{
+ const configs=[['separatsiya-01','BASE',['separatsiya-01-brochure','separatsiya-01-mini-technical','separatsiya-01-dimensions']],['separatsiya-02','PRO',['separatsiya-02-overview','separatsiya-02-technical','separatsiya-02-dimensions-a0']],['separatsiya-03','PREMIUM',['separatsiya-03-brochure','separatsiya-03-technical','separatsiya-03-dimensions']]];
+ for(const [slug,name,ids] of configs){
+  const page=render('/catalog/lines/'+slug),a=page.indexOf('id="documents"'),z=page.indexOf('</section>',a),block=page.slice(a,z);
+  assert.ok(block.includes('data-dry-document-editions="'+name+'"'));
+  assert.deepEqual([...block.matchAll(/data-library-document="([^"]+)"/g)].map(m=>m[1]),ids);
+  assert.deepEqual([...block.matchAll(/data-edition-category="([^"]+)"/g)].map(m=>m[1]),['brochures','technical','drawings']);
+  for(const id of ids){assert.ok(block.includes('data-pdf-open="'+id+'"'));assert.ok(block.includes('src="'+basePath+'/assets/document-covers/'+id+'.webp"'));}
+  assert.equal((block.match(/ download="/g)||[]).length,3);
+  assert.ok(block.includes('href="'+basePath+'/documents/?objectType=line&amp;product='+slug+'"'));
+  assert.doesNotMatch(block,/dl-description|line-document-grid--complete/);
+ }
+ assert.ok(!render('/catalog/lines/moyka-plenki').includes('data-dry-document-editions'));
+ assert.ok(!render('/documents').includes('data-dry-document-editions'));
+});
