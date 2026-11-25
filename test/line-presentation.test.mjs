@@ -113,17 +113,21 @@ test('Полная схема использует прозрачную моде
  assert.ok((await readFile('dist/line-monitor.js','utf8')).includes(`./line-callout-layout.mjs?v=${version}-callouts-3`));
 });
 
-test('Шесть компактных карточек сохраняют данные и ссылки, используя точные изображения каталога',()=>{
+test('Пять карточек PRO ведут на существующие страницы каталога без дополнительных модулей',()=>{
  const page=render('/catalog/lines/separatsiya-02');
  const start=page.indexOf('id="equipment"');const section=page.slice(start,page.indexOf('</section>',start));
- const cards=[...section.matchAll(/<article class="line-unit-card[^>]*>([\s\S]*?)<\/article>/g)];assert.equal(cards.length,lineUnits.length);
- lineUnits.forEach(([position,title,text,value,slug,key],i)=>{
+ const cards=[...section.matchAll(/<article class="line-unit-card[^>]*>([\s\S]*?)<\/article>/g)];const linkedUnits=lineUnits.filter(unit=>nodes.some(node=>node.slug===unit[4]));assert.equal(cards.length,5);assert.equal(linkedUnits.length,5);
+ assert.doesNotMatch(section,/line-option|Пресс и рольганги|ДОПОЛНИТЕЛЬНЫЙ МОДУЛЬ|line-unit-card--technical/);
+ linkedUnits.forEach(([position,title,text,value,slug,key],i)=>{
   const card=cards[i][0];for(const expected of [`Поз. ${position}`,title,text,value])assert.ok(card.includes(expected),expected);
   if(slug){const image=equipmentCardImages[slug],n=nodes.find(n=>n.slug===slug);assert.ok(card.includes(`src="${basePath}/assets/${image.file}"`));assert.ok(card.includes(`href="${basePath}${n.path}"`));assert.ok(card.includes(image.smallFile));}
   else{assert.ok(card.includes(`src="${basePath}/assets/${filmSeparationMedia[key].file}"`));assert.ok(card.includes('В составе представленной линии'));assert.ok(!card.includes('<a '));}
   assert.ok(!card.includes('node-card-specs'));assert.ok(!card.includes('node-card-features'));
  });
  assert.equal(lines.find(l=>l.slug==='separatsiya-02').cardFile,'lines/separatsiya-01/catalog-cover.webp');
+ const premium=render('/catalog/lines/separatsiya-03'),startPremium=premium.indexOf('id="equipment"'),premiumEquipment=premium.slice(startPremium,premium.indexOf('</section>',startPremium));
+ assert.doesNotMatch(premiumEquipment,/Роторная сушильная установка 10, воздушный контур 34/);
+ assert.equal((premiumEquipment.match(/data-catalogue-image=/g)||[]).length,5);
 });
 
 

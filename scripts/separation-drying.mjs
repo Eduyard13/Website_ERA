@@ -80,6 +80,6 @@ export function renderSeparationDrying(line){
 
  ${renderDryLineRequest(line)}
 
- <section class="section line-soft" id="equipment">${heading('ОБОРУДОВАНИЕ В СОСТАВЕ','Изучите каждый узел.','Прямые переходы к существующим страницам оборудования. Исполнение и количество единиц определяются спецификацией линии.')}<div class="line-unit-grid">${specification.filter(s=>s.catalogSlug).map(unitCard).join('')}</div><p class="line-note">Роторная сушильная установка 10, воздушный контур 34, пресс 23 и рольганг 24 описаны в техническом описании и в блоке устройства ключевых узлов.</p></section>
+ <section class="section line-soft" id="equipment">${heading('ОБОРУДОВАНИЕ В СОСТАВЕ','Изучите каждый узел.','Прямые переходы к существующим страницам оборудования. Исполнение и количество единиц определяются спецификацией линии.')}<div class="line-unit-grid">${specification.filter(s=>s.catalogSlug).map(unitCard).join('')}</div></section>
  <script type="application/json" id="line-document-data">${JSON.stringify(documents).replaceAll('<','\\u003c')}</script>${pdfViewerDialog()}</div>`;
 }

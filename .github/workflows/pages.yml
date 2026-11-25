@@ -181,7 +181,7 @@ jobs:
                       raise RuntimeError('The published callout controller is stale')
                   unit_cards = re.findall(r'<article class="line-unit-card[^>]*>.*?</article>', full_line, re.S)
                   catalogue_slugs = re.findall(r'data-catalogue-image="([^"]+)"', full_line)
-                  if len(unit_cards) != 6 or len(catalogue_slugs) != 5 or 'node-card-specs' in ''.join(unit_cards):
+                  if len(unit_cards) != 5 or len(catalogue_slugs) != 5 or 'node-card-specs' in ''.join(unit_cards) or any('Подробнее об узле' not in card for card in unit_cards):
                       raise RuntimeError('Compact equipment cards were expanded or lost')
                   _, equipment_catalogue = fetch('catalog/equipment/')
                   for slug in catalogue_slugs:
@@ -199,7 +199,7 @@ jobs:
                       content_type, image = fetch(image_path, binary=True)
                       if content_type != 'image/webp' or image[:4] != b'RIFF' or image[8:12] != b'WEBP':
                           raise RuntimeError('Titanium, construction or approved catalogue WebP is missing: ' + image_path)
-                  print('::notice title=Titanium Gallery verified::Titanium hero and responsive WebP, light 01-27 construction display, six compact equipment cards and five unchanged catalogue images are published. Line and both catalogue routes return HTTP 200.')
+                  print('::notice title=Titanium Gallery verified::Titanium hero and responsive WebP, light 01-27 construction display, five linked equipment cards and five unchanged catalogue images are published. Line and both catalogue routes return HTTP 200.')
                   line_checks = {
                       'separatsiya-01': (('separatsiya-01-brochure', 'separatsiya-01-mini-technical', 'separatsiya-01-dimensions'), ('225', '157,5'), 'A4', 2),
                       'separatsiya-02': (('separatsiya-02-overview', 'separatsiya-02-technical', 'separatsiya-02-dimensions-a0'), ('405,2', '283,64'), 'A0', 4),

@@ -81,8 +81,8 @@ export function renderFilmSeparation(line){
  ${renderDryLineRequest(line)}
 
  <section class="section line-soft" id="equipment"><div class="line-section-heading"><div><p class="eyebrow">ОБОРУДОВАНИЕ В СОСТАВЕ ЛИНИИ</p><h2>Изучите каждый узел.</h2></div><p>Назначение, рабочие показатели и прямые переходы на страницы машин представленной комплектации.</p></div>
-  <div class="line-unit-grid">${lineUnits.map(unitCard).join('')}</div>
-  <aside class="line-option"><div><p class="eyebrow">ДОПОЛНИТЕЛЬНЫЙ МОДУЛЬ</p><h3>Предварительный распушитель</h3><p>Устанавливается между измельчителем и баллистикой. Разрыхляет комки и разделяет слои, улучшая освобождение включений и сохранение полезной плёнки.</p></div><div><strong>37 кВт</strong><p>Учитываются дополнительно к 405,2 кВт представленной комплектации.</p><a class="text-link" href="/catalog/equipment/predvaritelnyy-raspushitel">Подробнее об узле ↗</a></div></aside>
+  <div class="line-unit-grid">${lineUnits.filter(unit=>nodes.some(node=>node.slug===unit[4])).map(unitCard).join('')}</div>
+
  </section>
  <script type="application/json" id="line-document-data">${JSON.stringify(documents).replaceAll('<','\\u003c')}</script>${pdfViewerDialog()}
  </div>`;
