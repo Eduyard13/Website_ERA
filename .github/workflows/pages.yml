@@ -225,7 +225,7 @@ jobs:
                       placement = re.search(r'<section[^>]* id="placement">(.*?)</section>', line_page, re.S).group(1)
                       if placement.count('data-dimension-tab="') != tabs:
                           raise RuntimeError('Line drawing projections are incomplete: ' + slug)
-                      if slug in ('separatsiya-02', 'separatsiya-03'):
+                      if slug in ('separatsiya-02', 'separatsiya-03', 'moyka-plenki'):
                           documentation = re.search(r'<section[^>]* id="documents">(.*?)</section>', line_page, re.S).group(1)
                           if re.search(r'<a\b|\s(?:href|target|download|data-pdf-open)=|pec-document', placement):
                               raise RuntimeError('Engineering center contains document actions: ' + slug)
@@ -323,9 +323,11 @@ jobs:
             test/line-diagram-public.mjs
             test/pro-engineering-center-public.mjs
             test/premium-engineering-center-public.mjs
+            test/hot-wash-engineering-center-public.mjs
             content/pro-engineering-views.json
             content/separatsiya-02-dimensions-assets.json
             content/premium-engineering-views.json
+            content/hot-wash-engineering-views.json
             content/line-dimensions-assets.json
             test/economics-public.mjs
             test/about-us-public.mjs
@@ -371,6 +373,19 @@ jobs:
         with:
           name: era-premium-engineering-center
           path: tmp/premium-engineering/*.png
+          if-no-files-found: ignore
+      - name: Verify the published hot-wash engineering center
+        env:
+          ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
+          ERA_BUILD_COMMIT: ${{ github.sha }}
+          ERA_HOT_WASH_ENGINEERING_SCREENSHOTS: tmp/hot-wash-engineering
+        run: node test/hot-wash-engineering-center-public.mjs
+      - name: Upload hot-wash engineering center screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: era-hot-wash-engineering-center
+          path: tmp/hot-wash-engineering/*.png
           if-no-files-found: ignore
       - name: Verify published economics in Chrome
         env:

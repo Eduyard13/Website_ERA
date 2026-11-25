@@ -60,6 +60,14 @@ try{
  await command('Page.addScriptToEvaluateOnNewDocument',{source:"localStorage.setItem('era-map-consent-v1','deny')"});
  const load=async path=>{await command('Page.navigate',{url:base+path});await wait(`document.readyState==='complete'`);};
  const root=()=>evaluate(`(()=>{const r=document.querySelector('#hotwash-construction');return {grid:getComputedStyle(r.querySelector('.diagram-canvas')).backgroundImage,sourceBlend:getComputedStyle(r.querySelector('.diagram-projection > svg')).mixBlendMode,navigation:r.querySelectorAll('[data-architecture-part]').length,unmappedLink:r.querySelector('.dry-architecture-item--link')?.getAttribute('href'),ready:r.dataset.monitorReady,mode:r.dataset.diagramMode,pins:r.querySelectorAll('[data-callout]').length,options:r.querySelectorAll('[data-diagram-select] option').length,selected:r.querySelector('[data-detail-number]').textContent,overflow:document.documentElement.scrollWidth>innerWidth,fit:r.querySelector('[data-diagram-viewport]').scrollWidth<=r.querySelector('[data-diagram-viewport]').clientWidth+1,products:document.querySelectorAll('.hw-product-grid>article').length,spec:document.querySelectorAll('[data-hotwash-position]').length,broken:[...document.querySelectorAll('main img')].filter(i=>!i.complete||!i.naturalWidth).map(i=>i.src)}})()`);
+ async function selectDrawing(id){
+  await wait(`!!document.querySelector('[data-hot-wash-engineering-center][data-engineering-ready="true"]')`);
+  await click('#placement [data-engineering-tab="drawings"]');
+  await click(`#placement [data-engineering-frame="${id}"]`);
+  await wait(`(()=>{const image=document.querySelector('#placement [data-engineering-loaded-view="${id}"]');
+   return !!image?.complete&&image.naturalWidth>0&&document.querySelector('#placement [data-engineering-frame="${id}"]').getAttribute('aria-pressed')==='true';
+  })()`);
+ }
  for(const width of [320,390,768,1024,1280,1440,1920]){
   await command('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:width<768});
   await load(compositionPath);await wait(`!!document.querySelector('#hotwash-construction[data-monitor-ready="true"]')`);
@@ -79,7 +87,7 @@ try{
    await evaluate(`(()=>{const s=document.querySelector('[data-diagram-select]');s.value='${number}';s.dispatchEvent(new Event('change',{bubbles:true}));})()`);
    assert.equal((await root()).selected,String(number).padStart(2,'0'));
   }
-  await click('[data-dimension-tab="top"]');assert.equal(await evaluate(`document.querySelector('#hot-dimension-view-top').hidden`),false);
+  await selectDrawing('top');
  }
  await command('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
  await load(compositionPath);await wait(`!!document.querySelector('[data-monitor-ready]')`);
@@ -92,7 +100,7 @@ try{
  assert.equal(await evaluate(`document.querySelectorAll('#composition > .line-note,#composition > details,#composition > noscript').length`),0);
  await click('#hotwash-construction [data-architecture-part="33"]');assert.equal((await root()).selected,'33');
  assert.ok(await evaluate(`document.querySelector('#hotwash-construction .dry-architecture-item--link').getAttribute('href')==='#placement'`));
- await click('[data-dimension-tab="side"]');
+ await selectDrawing('side');
  await click('[data-pdf-open="moyka-plenki-technical"]');
  await wait(`document.querySelector('[data-pdf-status]').textContent==='Страница 1 из 22'`);
  assert.ok(await evaluate(`document.querySelector('[data-pdf-canvas]').width>100`));

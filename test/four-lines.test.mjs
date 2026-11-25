@@ -75,7 +75,7 @@ test('У каждой линии три документа и полные пр�
   assert.equal(library.find(doc=>doc.category==='brochures').pages,3,slug);
   const placement=section(html,'placement');
   assert.equal((placement.match(/data-dimension-tab="/g)||[]).length,tabs,slug);
-  const engineeringCenter=['separatsiya-02','separatsiya-03'].includes(slug);
+  const engineeringCenter=['separatsiya-02','separatsiya-03','moyka-plenki'].includes(slug);
   if(engineeringCenter){
    assert.doesNotMatch(placement,/<a\b|\s(?:href|target|download|data-pdf-open)=/i);
    const documentation=section(html,'documents');

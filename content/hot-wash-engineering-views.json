@@ -1,0 +1,1159 @@
+{
+  "schemaVersion": 1,
+  "source": "ЛГМП Фрагменты .zip — 27 одностраничных PDF; 22.PDF отсутствует",
+  "processing": {
+    "renderWidth": 4500,
+    "crop": "Only white outer margins; 16 px pad; threshold 4 on luma difference",
+    "displayWidthMax": 2200,
+    "thumbWidthMax": 400,
+    "encoding": "WebP lossless",
+    "color": "Original RGB; no recolor, no redraw"
+  },
+  "views": [
+    {
+      "id": "v01",
+      "source": "source-pdf/1.PDF",
+      "originalName": "1.PDF",
+      "sourceSha256": "eb659f0ab67ab98059e4d65ea4df75ddbe628f56954d3f5fd6d9a7e0b97f8ab6",
+      "page": 1,
+      "group": "overview",
+      "title": "Общий изометрический вид 1",
+      "shortLabel": "Ракурс 1",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        89,
+        364,
+        4414,
+        2890
+      ],
+      "full": {
+        "file": "views/v01-full.webp",
+        "width": 4325,
+        "height": 2526,
+        "bytes": 896230,
+        "sha256": "6879ea2d58df78348347b8aa562e23a31fc672f80b8d55fdf69a1f2f1a78dfe9"
+      },
+      "display": {
+        "file": "views/v01-display.webp",
+        "width": 2200,
+        "height": 1285,
+        "bytes": 711036,
+        "sha256": "76c9a6ddc822a9d0e904480ac86354cfbb89253ce42870dfe468f6181ae1a543"
+      },
+      "thumb": {
+        "file": "views/v01-thumb.webp",
+        "width": 400,
+        "height": 234,
+        "bytes": 49966,
+        "sha256": "af1d3086edfb6bdcf3450cd5a5606e53284032c838e450836b8d231e8d68c8f7"
+      }
+    },
+    {
+      "id": "v02",
+      "source": "source-pdf/2.PDF",
+      "originalName": "2.PDF",
+      "sourceSha256": "6045050cf9eb3904bd50391a89c956b20fad46ae9bfa4868b4ebf40809e3165a",
+      "page": 1,
+      "group": "overview",
+      "title": "Общий изометрический вид 2",
+      "shortLabel": "Ракурс 2",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        209,
+        217,
+        4336,
+        2982
+      ],
+      "full": {
+        "file": "views/v02-full.webp",
+        "width": 4127,
+        "height": 2765,
+        "bytes": 1043042,
+        "sha256": "ecb719752ad296113bbc6efb7cd44ce424b6c1521eaee46cab4dcac448efa68c"
+      },
+      "display": {
+        "file": "views/v02-display.webp",
+        "width": 2200,
+        "height": 1474,
+        "bytes": 812240,
+        "sha256": "25627c5abe71a427e193d9616f8cbe99faa4432b63e1e0659edd657154e862d6"
+      },
+      "thumb": {
+        "file": "views/v02-thumb.webp",
+        "width": 400,
+        "height": 268,
+        "bytes": 56466,
+        "sha256": "bb7d60fe4439900cfa758f3cf2f846cf28a5691a73457dee87d7353586835970"
+      }
+    },
+    {
+      "id": "v03",
+      "source": "source-pdf/3.PDF",
+      "originalName": "3.PDF",
+      "sourceSha256": "151999b102209c387d499d740dcc9efed1c6e8ab8f47b24c71ab9d188cb18406",
+      "page": 1,
+      "group": "overview",
+      "title": "Общий изометрический вид 3",
+      "shortLabel": "Ракурс 3",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        421,
+        130,
+        4290,
+        2980
+      ],
+      "full": {
+        "file": "views/v03-full.webp",
+        "width": 3869,
+        "height": 2850,
+        "bytes": 972474,
+        "sha256": "1d64cc1d496a02334c878b024b47f0644d422538d41c0976b4090548efab270f"
+      },
+      "display": {
+        "file": "views/v03-display.webp",
+        "width": 2200,
+        "height": 1621,
+        "bytes": 908220,
+        "sha256": "a302ef0f764080bcaeca229a563d7bccfaf09d30d7dfcaa428e8637c2f2d175d"
+      },
+      "thumb": {
+        "file": "views/v03-thumb.webp",
+        "width": 400,
+        "height": 295,
+        "bytes": 63752,
+        "sha256": "89ef7103b8551c435c9e2184cd434e03076cb417a5f9dbf2887fe77690010881"
+      }
+    },
+    {
+      "id": "v04",
+      "source": "source-pdf/4.PDF",
+      "originalName": "4.PDF",
+      "sourceSha256": "cfa8ed9ff7762c963b49465b97e5aa987ee0203a5c66b787051b490e475cc8aa",
+      "page": 1,
+      "group": "overview",
+      "title": "Общий изометрический вид 4",
+      "shortLabel": "Ракурс 4",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        20,
+        146,
+        4490,
+        2942
+      ],
+      "full": {
+        "file": "views/v04-full.webp",
+        "width": 4470,
+        "height": 2796,
+        "bytes": 992752,
+        "sha256": "1d0f503beaa114b3bbf0dbec129863ecf9957bef598fa92f996567636d76fe22"
+      },
+      "display": {
+        "file": "views/v04-display.webp",
+        "width": 2200,
+        "height": 1376,
+        "bytes": 737088,
+        "sha256": "9da888fc71e66a5ebf78a7c2c250c0c265666fce429a054cdaf5000edcdddbf1"
+      },
+      "thumb": {
+        "file": "views/v04-thumb.webp",
+        "width": 400,
+        "height": 250,
+        "bytes": 52368,
+        "sha256": "37e44b44c163b6f2315d5b9fc6685e412f305d1be1b63bcd0e01ae61ac108ff6"
+      }
+    },
+    {
+      "id": "v05",
+      "source": "source-pdf/5.PDF",
+      "originalName": "5.PDF",
+      "sourceSha256": "9ee5ff178da2b11f7f4b4fe3e79d119a49b681bebbbee5914e829f8dd7ddbda2",
+      "page": 1,
+      "group": "overview",
+      "title": "Общая компоновка, вид сверху",
+      "shortLabel": "Сверху",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        96,
+        483,
+        4419,
+        2600
+      ],
+      "full": {
+        "file": "views/v05-full.webp",
+        "width": 4323,
+        "height": 2117,
+        "bytes": 248918,
+        "sha256": "93ad19a6546d7771d0d2b5671fc5b85427429b9c61b203bd5d71717fc305e109"
+      },
+      "display": {
+        "file": "views/v05-display.webp",
+        "width": 2200,
+        "height": 1077,
+        "bytes": 262092,
+        "sha256": "786f9b65887356fcecb25f9744ce035a26393ec816afa47e2a094d5f8f40987a"
+      },
+      "thumb": {
+        "file": "views/v05-thumb.webp",
+        "width": 400,
+        "height": 196,
+        "bytes": 31106,
+        "sha256": "1b7ea4dbd1adfee154b6576b6fe95de695097f1d3dbdc65330b152ad1d700dc5"
+      }
+    },
+    {
+      "id": "v06",
+      "source": "source-pdf/6.PDF",
+      "originalName": "6.PDF",
+      "sourceSha256": "dd8b94911c5c99641f252d66cd1264305a17d1491fb495e40533bcf807f80f22",
+      "page": 1,
+      "group": "overview",
+      "title": "Продольный вид 1",
+      "shortLabel": "Продольный 1",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        121,
+        1107,
+        4447,
+        1889
+      ],
+      "full": {
+        "file": "views/v06-full.webp",
+        "width": 4326,
+        "height": 782,
+        "bytes": 232306,
+        "sha256": "318b1b42da72394c05008e8bf01b93c571b181757e5aac64a4e056271f2547ff"
+      },
+      "display": {
+        "file": "views/v06-display.webp",
+        "width": 2200,
+        "height": 398,
+        "bytes": 171286,
+        "sha256": "ddb7828be640d7cae6576160eade55297029a60a7202aba99753ff6e893ab0e8"
+      },
+      "thumb": {
+        "file": "views/v06-thumb.webp",
+        "width": 400,
+        "height": 72,
+        "bytes": 17236,
+        "sha256": "e59759905bc475710b4f73c6c8c4642919c99a92454a91e68f1ca80e60fce6ec"
+      }
+    },
+    {
+      "id": "v07",
+      "source": "source-pdf/7.PDF",
+      "originalName": "7.PDF",
+      "sourceSha256": "1c455133d6529cae73c03e5bd99266843f87bb90c07671e931a7b59be0ccd352",
+      "page": 1,
+      "group": "overview",
+      "title": "Продольный вид 2",
+      "shortLabel": "Продольный 2",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        86,
+        1227,
+        4411,
+        2009
+      ],
+      "full": {
+        "file": "views/v07-full.webp",
+        "width": 4325,
+        "height": 782,
+        "bytes": 227732,
+        "sha256": "c34291553756b1f48bafc68df88108fafcd9f3d526a0187933b361f23a29f218"
+      },
+      "display": {
+        "file": "views/v07-display.webp",
+        "width": 2200,
+        "height": 398,
+        "bytes": 173458,
+        "sha256": "894a67f6c004e3c298d0693ba5578a80dc6ec9613a7929d62d39dd71136b729a"
+      },
+      "thumb": {
+        "file": "views/v07-thumb.webp",
+        "width": 400,
+        "height": 72,
+        "bytes": 17184,
+        "sha256": "f3fcc8e9650c3a13f53e5792713f43fa0c66cf3dfd2d05002233d340f6edc4a1"
+      }
+    },
+    {
+      "id": "v08",
+      "source": "source-pdf/8.PDF",
+      "originalName": "8.PDF",
+      "sourceSha256": "bef5157eb3fc256d626983eba6f53d69e3bc248ace94a561f2a9a962a81fda2c",
+      "page": 1,
+      "group": "overview",
+      "title": "Торцевой вид 1",
+      "shortLabel": "Торцевой 1",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        1237,
+        1208,
+        3355,
+        1989
+      ],
+      "full": {
+        "file": "views/v08-full.webp",
+        "width": 2118,
+        "height": 781,
+        "bytes": 108278,
+        "sha256": "7f7ce63194626ddac9a6c41954b622b5fb8f6e2d2d83c0d7842f7ae01131ca60"
+      },
+      "display": {
+        "file": "views/v08-display.webp",
+        "width": 2118,
+        "height": 781,
+        "bytes": 108278,
+        "sha256": "7f7ce63194626ddac9a6c41954b622b5fb8f6e2d2d83c0d7842f7ae01131ca60"
+      },
+      "thumb": {
+        "file": "views/v08-thumb.webp",
+        "width": 400,
+        "height": 147,
+        "bytes": 29834,
+        "sha256": "c2a37079a75fcdcc70a31f6ad323ba17e47ce1cfb450a5063c07238280123c52"
+      }
+    },
+    {
+      "id": "v09",
+      "source": "source-pdf/9.PDF",
+      "originalName": "9.PDF",
+      "sourceSha256": "68cd92c02900bb7286bc3d68969398c07609b425ab2cd18ec0fb2d65ff11798f",
+      "page": 1,
+      "group": "overview",
+      "title": "Торцевой вид 2",
+      "shortLabel": "Торцевой 2",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        947,
+        1274,
+        3065,
+        2055
+      ],
+      "full": {
+        "file": "views/v09-full.webp",
+        "width": 2118,
+        "height": 781,
+        "bytes": 89754,
+        "sha256": "80a794438a16ab0de34b563f7b8a7eae477818b885f492264bc027f2a26d73ee"
+      },
+      "display": {
+        "file": "views/v09-display.webp",
+        "width": 2118,
+        "height": 781,
+        "bytes": 89754,
+        "sha256": "80a794438a16ab0de34b563f7b8a7eae477818b885f492264bc027f2a26d73ee"
+      },
+      "thumb": {
+        "file": "views/v09-thumb.webp",
+        "width": 400,
+        "height": 147,
+        "bytes": 27246,
+        "sha256": "081b18f63ba05ce133bf36cbe42487eb877f43d7879514166a28d451bff4e6f1"
+      }
+    },
+    {
+      "id": "v01-1",
+      "source": "source-pdf/1-1.PDF",
+      "originalName": "1-1.PDF",
+      "sourceSha256": "e4b37af4fc5c16688035cd8a503007f71e23eda5bf0100825c563eb530594fd6",
+      "page": 1,
+      "group": "detail",
+      "title": "Фрагмент подачи и накопления материала",
+      "shortLabel": "Подача",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        1041,
+        121,
+        3868,
+        3182
+      ],
+      "full": {
+        "file": "views/v01-1-full.webp",
+        "width": 2827,
+        "height": 3061,
+        "bytes": 690952,
+        "sha256": "550cf95a7094c673892f59148ac8c56c4baa008ee2c01fea2c070e4262ab07bc"
+      },
+      "display": {
+        "file": "views/v01-1-display.webp",
+        "width": 2200,
+        "height": 2382,
+        "bytes": 823528,
+        "sha256": "11b8aac6cef225bd0beb8f20ea01d2e1c069c250fa1a21bb7cfe63351f121b09"
+      },
+      "thumb": {
+        "file": "views/v01-1-thumb.webp",
+        "width": 400,
+        "height": 433,
+        "bytes": 82090,
+        "sha256": "3c9b0bacd33a4351ba6296ae31e5e20c0f35a0d0df6735890219030401afe2ec"
+      }
+    },
+    {
+      "id": "v01-2",
+      "source": "source-pdf/1-2.PDF",
+      "originalName": "1-2.PDF",
+      "sourceSha256": "d77bb15c8e9fe1302b44aca340ed99e487b6a95e5c3b5e31e40dc32f44b60db8",
+      "page": 1,
+      "group": "detail",
+      "title": "Фрагмент мокрой обработки с трубопроводами",
+      "shortLabel": "Мокрая обработка",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        530,
+        199,
+        4365,
+        3013
+      ],
+      "full": {
+        "file": "views/v01-2-full.webp",
+        "width": 3835,
+        "height": 2814,
+        "bytes": 1174076,
+        "sha256": "37b32d879de0da85bb9f77bdd2f1e2eaf9ea740e82096be591077a915e57116b"
+      },
+      "display": {
+        "file": "views/v01-2-display.webp",
+        "width": 2200,
+        "height": 1614,
+        "bytes": 922224,
+        "sha256": "70a76f16da103bbf3587f7e935ac768993c74919680dad3f26b7d7d7440febb5"
+      },
+      "thumb": {
+        "file": "views/v01-2-thumb.webp",
+        "width": 400,
+        "height": 294,
+        "bytes": 81612,
+        "sha256": "6515f2a66c5d37c7033fc8d11f3009a5097264e483a6ca06457f1fc431b488f0"
+      }
+    },
+    {
+      "id": "v02-1",
+      "source": "source-pdf/2-1.PDF",
+      "originalName": "2-1.PDF",
+      "sourceSha256": "7ac33a7d55b11f27bbc5cded251209d894c0a98d89a5d01d44ca8dd7e11503af",
+      "page": 1,
+      "group": "detail",
+      "title": "Ёмкости и оборудование водооборота",
+      "shortLabel": "Водооборот",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        0,
+        638,
+        4407,
+        2715
+      ],
+      "full": {
+        "file": "views/v02-1-full.webp",
+        "width": 4407,
+        "height": 2077,
+        "bytes": 642454,
+        "sha256": "e0f75a4943a6971b50c38249debdf7bf13daac23f7909feebd36760c27335161"
+      },
+      "display": {
+        "file": "views/v02-1-display.webp",
+        "width": 2200,
+        "height": 1037,
+        "bytes": 473598,
+        "sha256": "66addd76c2d5bc33ebdaaee047626b4345d1319c1f431c67382c65bd39d85d3f"
+      },
+      "thumb": {
+        "file": "views/v02-1-thumb.webp",
+        "width": 400,
+        "height": 189,
+        "bytes": 50970,
+        "sha256": "18a51077532bad7c7753c71bde9d1e07294a129305ee7e6430d416f5fdcc8da9"
+      }
+    },
+    {
+      "id": "v10",
+      "source": "source-pdf/10.PDF",
+      "originalName": "10.PDF",
+      "sourceSha256": "9a7be46292d536b43e2ce57cbfda1206e70bbd6fbb32bdcb27dc0ffae1177b55",
+      "page": 1,
+      "group": "detail",
+      "title": "Фрагмент оборудования с подземной зоной 1",
+      "shortLabel": "Фрагмент 10",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        774,
+        658,
+        3251,
+        2712
+      ],
+      "full": {
+        "file": "views/v10-full.webp",
+        "width": 2477,
+        "height": 2054,
+        "bytes": 487928,
+        "sha256": "abe6d814ba6184f4d859499b88feebccfbac483dc58dad1fcec19b875553fda4"
+      },
+      "display": {
+        "file": "views/v10-display.webp",
+        "width": 2200,
+        "height": 1824,
+        "bytes": 662586,
+        "sha256": "443b01135d6446361b2b656e1f7973c8f4afdceced9a71d97b5b10915dc198e9"
+      },
+      "thumb": {
+        "file": "views/v10-thumb.webp",
+        "width": 400,
+        "height": 332,
+        "bytes": 56314,
+        "sha256": "16c96fc1d793af386d7f2504c6ea9a1ee87741112c936b532daa3103c3ceb2c7"
+      }
+    },
+    {
+      "id": "v11",
+      "source": "source-pdf/11.PDF",
+      "originalName": "11.PDF",
+      "sourceSha256": "52133ffc5921dabf494ea3fb66bcf5734a42efd1ef78909501107b1b5bb285e3",
+      "page": 1,
+      "group": "detail",
+      "title": "Фрагмент оборудования и ёмкости",
+      "shortLabel": "Фрагмент 11",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        868,
+        342,
+        3409,
+        2997
+      ],
+      "full": {
+        "file": "views/v11-full.webp",
+        "width": 2541,
+        "height": 2655,
+        "bytes": 561144,
+        "sha256": "2b07a66cc959e1c55e983c6830c6a72f8cbe3cc92a56644f28e146ca7bfa438d"
+      },
+      "display": {
+        "file": "views/v11-display.webp",
+        "width": 2200,
+        "height": 2299,
+        "bytes": 817350,
+        "sha256": "31256ede14ae68f8398501cbd8c9b539413ae3f48720e4b4c66630f440810e40"
+      },
+      "thumb": {
+        "file": "views/v11-thumb.webp",
+        "width": 400,
+        "height": 418,
+        "bytes": 75696,
+        "sha256": "887eae99ca9ca1b912d559b7dfc4b98aaeebc2eadab9ddf1d67987ecedff434c"
+      }
+    },
+    {
+      "id": "v12",
+      "source": "source-pdf/12.PDF",
+      "originalName": "12.PDF",
+      "sourceSha256": "ecac89bbfc4002273dc83632f2c98f33853c416a329eccc4dfd24922cbb41989",
+      "page": 1,
+      "group": "detail",
+      "title": "Фрагмент оборудования с подземной зоной 2",
+      "shortLabel": "Фрагмент 12",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        1306,
+        580,
+        3528,
+        2736
+      ],
+      "full": {
+        "file": "views/v12-full.webp",
+        "width": 2222,
+        "height": 2156,
+        "bytes": 415742,
+        "sha256": "7e7826c2f0f13782949834e2a4b2cd5ea28cfcb164c5cf44b35937f7eca1af08"
+      },
+      "display": {
+        "file": "views/v12-display.webp",
+        "width": 2200,
+        "height": 2135,
+        "bytes": 687134,
+        "sha256": "74dacd2e9191ec9264e6d62df6ca60ce923468f6dc39500b8cf4cc5d397b6b1f"
+      },
+      "thumb": {
+        "file": "views/v12-thumb.webp",
+        "width": 400,
+        "height": 388,
+        "bytes": 63986,
+        "sha256": "4e3bdbf9bdf1fb722badd6effce19bf75f3e2cb288ec33c708b72aa4d0b45bbf"
+      }
+    },
+    {
+      "id": "v13",
+      "source": "source-pdf/13.PDF",
+      "originalName": "13.PDF",
+      "sourceSha256": "b1fd647449f8b1f1a6f57dbab354d3bbe94bb88c47ea18d58041aa36ba96bcd6",
+      "page": 1,
+      "group": "detail",
+      "title": "Участок транспортировки и выдачи материала",
+      "shortLabel": "Фрагмент 13",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        291,
+        292,
+        4135,
+        3013
+      ],
+      "full": {
+        "file": "views/v13-full.webp",
+        "width": 3844,
+        "height": 2721,
+        "bytes": 636408,
+        "sha256": "a7a9ea9fc1a722f18fc607cd8c301a8803f3260fb08768bc23083f989925d76b"
+      },
+      "display": {
+        "file": "views/v13-display.webp",
+        "width": 2200,
+        "height": 1557,
+        "bytes": 619196,
+        "sha256": "5ae3351de7a2f15a1e4d9e73fa9602f000327aaa8073443746d129c92de3c387"
+      },
+      "thumb": {
+        "file": "views/v13-thumb.webp",
+        "width": 400,
+        "height": 283,
+        "bytes": 50618,
+        "sha256": "6b8b0b6f8b35fb83f731cd9bb51d067913bd829e35d50dea11dff52089ec3b1d"
+      }
+    },
+    {
+      "id": "v14",
+      "source": "source-pdf/14.PDF",
+      "originalName": "14.PDF",
+      "sourceSha256": "80b3c466aa38f8456eee3487a980bfc05dedf7b64823aebb4ada6b6267fce247",
+      "page": 1,
+      "group": "detail",
+      "title": "Участок транспортировки, боковой ракурс",
+      "shortLabel": "Фрагмент 14",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        270,
+        842,
+        4249,
+        2209
+      ],
+      "full": {
+        "file": "views/v14-full.webp",
+        "width": 3979,
+        "height": 1367,
+        "bytes": 367274,
+        "sha256": "62e7f98b0d215ac39bc8a5d4b1f51cf13767679c5c78bd48cb41382c137cd5e2"
+      },
+      "display": {
+        "file": "views/v14-display.webp",
+        "width": 2200,
+        "height": 756,
+        "bytes": 313906,
+        "sha256": "7d755fcab5de728d41e73cb27be81fc87f3fbc833a4ba82b4f06345d2c83c749"
+      },
+      "thumb": {
+        "file": "views/v14-thumb.webp",
+        "width": 400,
+        "height": 137,
+        "bytes": 28810,
+        "sha256": "62b5dfe7d5c2d80e713186e58d0a25d7f4b3624383bf9c18f12de8ea83eab902"
+      }
+    },
+    {
+      "id": "v15",
+      "source": "source-pdf/15.PDF",
+      "originalName": "15.PDF",
+      "sourceSha256": "a8329b892c76cc9f0c63af02c0cab4ddc8152429299e40ff20e995ef8578c7e2",
+      "page": 1,
+      "group": "detail",
+      "title": "Участок подачи и баллистической сепарации",
+      "shortLabel": "Сепарация",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        364,
+        436,
+        4356,
+        2966
+      ],
+      "full": {
+        "file": "views/v15-full.webp",
+        "width": 3992,
+        "height": 2530,
+        "bytes": 936528,
+        "sha256": "6352ecfd774f1b51630e2c45bdf69729418475f14227e7389baa8afaa130beab"
+      },
+      "display": {
+        "file": "views/v15-display.webp",
+        "width": 2200,
+        "height": 1394,
+        "bytes": 931492,
+        "sha256": "c2dda0b4a79093556eb89d9235fca7dc83cd485ae39ec7f793a97288e7e20771"
+      },
+      "thumb": {
+        "file": "views/v15-thumb.webp",
+        "width": 400,
+        "height": 254,
+        "bytes": 76236,
+        "sha256": "a78561daa1e91aeaf32009c67203ac8cb0ea4c43111b76353dd30976dd79bcf0"
+      }
+    },
+    {
+      "id": "v16",
+      "source": "source-pdf/16.PDF",
+      "originalName": "16.PDF",
+      "sourceSha256": "1526448bb39072220779259fccfd6d1a4d39a63eed62339eedebe48fc99a37b4",
+      "page": 1,
+      "group": "detail",
+      "title": "Участок подачи и мокрой обработки",
+      "shortLabel": "Фрагмент 16",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        321,
+        471,
+        4322,
+        2995
+      ],
+      "full": {
+        "file": "views/v16-full.webp",
+        "width": 4001,
+        "height": 2524,
+        "bytes": 971846,
+        "sha256": "9e7db068fdfad9380bcf2cd9ad36ee5cbb319d33e6b3c88715a3fc10ec64771a"
+      },
+      "display": {
+        "file": "views/v16-display.webp",
+        "width": 2200,
+        "height": 1388,
+        "bytes": 747202,
+        "sha256": "7fad00b709d60de93244b70d119a0e79dcc84bf578bd98483502487e0ba857d0"
+      },
+      "thumb": {
+        "file": "views/v16-thumb.webp",
+        "width": 400,
+        "height": 252,
+        "bytes": 59926,
+        "sha256": "fbb76f71d5bee2858445fcb4febb914d48181ba7980f1d2db8ba1bd8df95058a"
+      }
+    },
+    {
+      "id": "v17",
+      "source": "source-pdf/17.PDF",
+      "originalName": "17.PDF",
+      "sourceSha256": "117c0067425c4166943f0050f74be9876958cab7f00c926c52c4e84ca566a4e6",
+      "page": 1,
+      "group": "detail",
+      "title": "Моечный участок и водооборот, ракурс 1",
+      "shortLabel": "Мойка 1",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        61,
+        63,
+        4395,
+        3143
+      ],
+      "full": {
+        "file": "views/v17-full.webp",
+        "width": 4334,
+        "height": 3080,
+        "bytes": 1804038,
+        "sha256": "0aabfb3a5baaefbac3628fe9fe91888043103d0d95654154625db5e31de546fb"
+      },
+      "display": {
+        "file": "views/v17-display.webp",
+        "width": 2200,
+        "height": 1563,
+        "bytes": 1219810,
+        "sha256": "68695a99722fd9d99b46c395074cf044e52f8c4a7ab41e3c84802e2ad25777f7"
+      },
+      "thumb": {
+        "file": "views/v17-thumb.webp",
+        "width": 400,
+        "height": 284,
+        "bytes": 88670,
+        "sha256": "d9010781e71152646ad0b16117f35785ebd06dbcb66db7a54c527527777d9ec9"
+      }
+    },
+    {
+      "id": "v18",
+      "source": "source-pdf/18.PDF",
+      "originalName": "18.PDF",
+      "sourceSha256": "0987b2427031224c5391b12e35f48bded13a3956f1f10f7bfd880c8958932607",
+      "page": 1,
+      "group": "detail",
+      "title": "Участок транспортировки материала, ракурс 1",
+      "shortLabel": "Фрагмент 18",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        522,
+        594,
+        4116,
+        2940
+      ],
+      "full": {
+        "file": "views/v18-full.webp",
+        "width": 3594,
+        "height": 2346,
+        "bytes": 888674,
+        "sha256": "fc010992b9001000582e0280921cda32898f23cc845354374a1ef91012f174b0"
+      },
+      "display": {
+        "file": "views/v18-display.webp",
+        "width": 2200,
+        "height": 1436,
+        "bytes": 824970,
+        "sha256": "19b515ec19f6eeab441fe8a8c1babfed7d72a2d0b0453c7e7f07136dab906855"
+      },
+      "thumb": {
+        "file": "views/v18-thumb.webp",
+        "width": 400,
+        "height": 261,
+        "bytes": 62956,
+        "sha256": "e6dae75586b66657ec9d0c7a3b0edf43793c053686aaa5bcc81d974fc9d503c4"
+      }
+    },
+    {
+      "id": "v19",
+      "source": "source-pdf/19.PDF",
+      "originalName": "19.PDF",
+      "sourceSha256": "7f50c428ec34e8d3c48bdb8585868338f8915e78258d47f8e20bc63339cee6eb",
+      "page": 1,
+      "group": "detail",
+      "title": "Моечный участок и водооборот, ракурс 2",
+      "shortLabel": "Мойка 2",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        1,
+        253,
+        4414,
+        2730
+      ],
+      "full": {
+        "file": "views/v19-full.webp",
+        "width": 4413,
+        "height": 2477,
+        "bytes": 1472620,
+        "sha256": "829f7514cbeac8a3bd716a024dfa34b1c3ff3ed95298f93acfabed27223d5654"
+      },
+      "display": {
+        "file": "views/v19-display.webp",
+        "width": 2200,
+        "height": 1235,
+        "bytes": 1017254,
+        "sha256": "2e01c9ffc09275790fab064d423ab81957fd5fbcbcb3394e1d4c07a7cbee1e46"
+      },
+      "thumb": {
+        "file": "views/v19-thumb.webp",
+        "width": 400,
+        "height": 225,
+        "bytes": 75582,
+        "sha256": "15cc7e4b4cf385697848cb6631abb2cb91a1edc3c0648f9a2ada1b7f6b0d0552"
+      }
+    },
+    {
+      "id": "v20",
+      "source": "source-pdf/20.PDF",
+      "originalName": "20.PDF",
+      "sourceSha256": "483bbc646dfe0bf488511f23abcb8b07f071e776a0a1b0b8642fbedac57c720a",
+      "page": 1,
+      "group": "detail",
+      "title": "Участок транспортировки материала, ракурс 2",
+      "shortLabel": "Фрагмент 20",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        199,
+        2,
+        4315,
+        3157
+      ],
+      "full": {
+        "file": "views/v20-full.webp",
+        "width": 4116,
+        "height": 3155,
+        "bytes": 1071924,
+        "sha256": "13f007fd529d7baf18545e6f05e387cab39c861d9b10c119fce9b0870bbb873a"
+      },
+      "display": {
+        "file": "views/v20-display.webp",
+        "width": 2200,
+        "height": 1686,
+        "bytes": 818734,
+        "sha256": "1a25b5158e524425e8da3ee9b5e69f06dcac544d48cb6f3edb71d7f5bf9e937a"
+      },
+      "thumb": {
+        "file": "views/v20-thumb.webp",
+        "width": 400,
+        "height": 307,
+        "bytes": 63796,
+        "sha256": "90e69f58828f5fd5e6cc235b2340ead470dd886d1bb64add95615e885eb17c8e"
+      }
+    },
+    {
+      "id": "v21",
+      "source": "source-pdf/21.PDF",
+      "originalName": "21.PDF",
+      "sourceSha256": "cf5a5cb9e5ce04341a3a95ad204666a963aa71ec78bcd072177a6f9bd2d6e8f3",
+      "page": 1,
+      "group": "detail",
+      "title": "Участок транспортировки материала, ракурс 3",
+      "shortLabel": "Фрагмент 21",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        302,
+        345,
+        4345,
+        2888
+      ],
+      "full": {
+        "file": "views/v21-full.webp",
+        "width": 4043,
+        "height": 2543,
+        "bytes": 1596698,
+        "sha256": "526cebc3ff2badb16c0468c8d42e0c6184e0ce3647ae8e60c17207e73ffd6e1f"
+      },
+      "display": {
+        "file": "views/v21-display.webp",
+        "width": 2200,
+        "height": 1384,
+        "bytes": 956050,
+        "sha256": "cf155ca7c45c6e925edc76b2cf86f5c4821f11be69da0bc191e2db77236905da"
+      },
+      "thumb": {
+        "file": "views/v21-thumb.webp",
+        "width": 400,
+        "height": 252,
+        "bytes": 70648,
+        "sha256": "d1bef1c8afc958f77ff2051db42b78f61b7302963afc108ef15072344d27e44a"
+      }
+    },
+    {
+      "id": "v23",
+      "source": "source-pdf/23.PDF",
+      "originalName": "23.PDF",
+      "sourceSha256": "f6435730352ef61d03d18bbb51c62ff4691e394b30b251f61915b86d10dc0489",
+      "page": 1,
+      "group": "detail",
+      "title": "Деталь трубопроводов и опор 1",
+      "shortLabel": "Деталь 23",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        911,
+        362,
+        3756,
+        2944
+      ],
+      "full": {
+        "file": "views/v23-full.webp",
+        "width": 2845,
+        "height": 2582,
+        "bytes": 829778,
+        "sha256": "e951811f9917531434f94d4446ec897efd56a30f3cd4defdd4296937839a6e02"
+      },
+      "display": {
+        "file": "views/v23-display.webp",
+        "width": 2200,
+        "height": 1997,
+        "bytes": 1076262,
+        "sha256": "04f9d765a9e71289f2e9ef64aa192c94ea40fb974bd3f3095bc52abdd16d7e06"
+      },
+      "thumb": {
+        "file": "views/v23-thumb.webp",
+        "width": 400,
+        "height": 363,
+        "bytes": 111824,
+        "sha256": "d7c15e57117fb76071630eae69c1fea5c42ff0792eea21ca4706115060cc918a"
+      }
+    },
+    {
+      "id": "v24",
+      "source": "source-pdf/24.PDF",
+      "originalName": "24.PDF",
+      "sourceSha256": "b116ec47530d43579796ef4cd721e68e38dbf27b2f6a9fad8e87e987764312ad",
+      "page": 1,
+      "group": "detail",
+      "title": "Деталь оборудования и транспортёра",
+      "shortLabel": "Деталь 24",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        1392,
+        278,
+        3469,
+        2779
+      ],
+      "full": {
+        "file": "views/v24-full.webp",
+        "width": 2077,
+        "height": 2501,
+        "bytes": 500172,
+        "sha256": "b7e5cd1f02f87dddd4bbf284ca393a7bb09aa8254fcc0fbac514dde049d7400b"
+      },
+      "display": {
+        "file": "views/v24-display.webp",
+        "width": 2077,
+        "height": 2501,
+        "bytes": 500172,
+        "sha256": "b7e5cd1f02f87dddd4bbf284ca393a7bb09aa8254fcc0fbac514dde049d7400b"
+      },
+      "thumb": {
+        "file": "views/v24-thumb.webp",
+        "width": 400,
+        "height": 482,
+        "bytes": 98814,
+        "sha256": "a24b1ad446569a4689bf363830d979b720e7cb286fc81fc1be6fd3f8a38be478"
+      }
+    },
+    {
+      "id": "v25",
+      "source": "source-pdf/25.PDF",
+      "originalName": "25.PDF",
+      "sourceSha256": "f21e3f4a4152ee00cdd43c9a68e9ecaf0ae1917dbe35e0242506943263f5def8",
+      "page": 1,
+      "group": "detail",
+      "title": "Деталь трубопроводов и опор 2",
+      "shortLabel": "Деталь 25",
+      "renderSize": [
+        4500,
+        3183
+      ],
+      "cropPx": [
+        604,
+        9,
+        3782,
+        3159
+      ],
+      "full": {
+        "file": "views/v25-full.webp",
+        "width": 3178,
+        "height": 3150,
+        "bytes": 1027926,
+        "sha256": "07205fddf01aad9e9a26ae2dc66ee2ee066377c1e5bc004195d6e386582d47fd"
+      },
+      "display": {
+        "file": "views/v25-display.webp",
+        "width": 2200,
+        "height": 2181,
+        "bytes": 1188760,
+        "sha256": "c312eeea24f7ab8fe606c93d2b79773beb993590285a40aa4730f25279aaa8bb"
+      },
+      "thumb": {
+        "file": "views/v25-thumb.webp",
+        "width": 400,
+        "height": 396,
+        "bytes": 118810,
+        "sha256": "406dedf6b8480f720c4ed15a4264617fcb50ede26de1ef6147a32584e31a7058"
+      }
+    }
+  ],
+  "drawingThumbnails": [
+    {
+      "id": "top",
+      "shortLabel": "Сверху",
+      "file": "lines/moyka-plenki/engineering-center/drawings/top-thumb.webp",
+      "width": 360,
+      "height": 203,
+      "bytes": 25034,
+      "sha256": "62a8af69a1e745ca38914b725ecd79de000e7f169209cac1f105378153ce05fb"
+    },
+    {
+      "id": "side",
+      "shortLabel": "Сбоку",
+      "file": "lines/moyka-plenki/engineering-center/drawings/side-thumb.webp",
+      "width": 360,
+      "height": 88,
+      "bytes": 10102,
+      "sha256": "9e6c8af1e5181f8b90ac331ad0a0d806e15c3f13e177e60fb81e2fd495051ff0"
+    },
+    {
+      "id": "opposite",
+      "shortLabel": "Вид А",
+      "file": "lines/moyka-plenki/engineering-center/drawings/opposite-thumb.webp",
+      "width": 360,
+      "height": 88,
+      "bytes": 9260,
+      "sha256": "0a7a80442ceabf0cc93d61f56f20f459a0da33179d918e74388ff8d4ff6c443b"
+    },
+    {
+      "id": "section-b",
+      "shortLabel": "Сечение Б–Б",
+      "file": "lines/moyka-plenki/engineering-center/drawings/section-b-thumb.webp",
+      "width": 360,
+      "height": 75,
+      "bytes": 7310,
+      "sha256": "20d23de508be22b2f9e8c7a27a7a9f1ebd07b6a62e5d390dc8395aed60c9479d"
+    }
+  ]
+}

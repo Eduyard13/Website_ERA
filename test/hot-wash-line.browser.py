@@ -21,7 +21,7 @@ with sync_playwright() as p:
  for width in [320,390,768,1024,1280,1440,1920]:
   page.set_viewport_size({'width':width,'height':1000});load();overflow()
   page.locator('main img').evaluate_all('items=>Promise.all(items.map(i=>{i.loading="eager";return i.decode()}))')
-  assert page.locator('main img').evaluate_all('items=>items.every(i=>i.complete&&i.naturalWidth&&(i.alt||i.closest("[data-library-document]")))')
+  assert page.locator('main img').evaluate_all('items=>items.every(i=>i.complete&&i.naturalWidth&&(i.alt||i.closest("[data-library-document], .pec-thumb[aria-label]")))')
   root=page.locator('#hotwash-construction');viewport=root.locator('[data-diagram-viewport]')
   assert viewport.evaluate('e=>e.scrollWidth<=e.clientWidth+1&&e.scrollHeight<=e.clientHeight+1')
   assert root.locator('[data-diagram-select] option').count()==36
@@ -35,11 +35,13 @@ with sync_playwright() as p:
    assert root.locator('[data-detail-description]').inner_text()
    assert abs(root.bounding_box()['height']-initial)<1,(width,number)
    assert root.locator('.diagram-details').evaluate('e=>{const a=e.getBoundingClientRect();return [...e.children].filter(c=>getComputedStyle(c).display!=="none").every(c=>c.getBoundingClientRect().bottom<=a.bottom+1)}'),(width,number)
-  dimensions=page.locator('[data-line-dimensions]');tabs=dimensions.get_by_role('tab')
+  center=page.locator('[data-hot-wash-engineering-center]')
+  center.locator('[data-engineering-tab="drawings"]').click()
+  tabs=center.locator('[data-dimension-tab]')
   expect(tabs).to_have_count(4)
-  tabs.nth(1).click();expect(tabs.nth(1)).to_have_attribute('aria-selected','true');expect(page.locator('#hot-dimension-view-side')).to_be_visible()
-  tabs.nth(1).focus();page.keyboard.press('Home');expect(tabs.first).to_have_attribute('aria-selected','true')
-  expect(page.locator('#hot-dimension-view-top')).to_be_visible();overflow()
+  tabs.nth(1).click();expect(tabs.nth(1)).to_have_attribute('aria-pressed','true');expect(center.locator('[data-engineering-loaded-view="side"]')).to_be_visible()
+  tabs.nth(1).press('Home');expect(tabs.first).to_have_attribute('aria-pressed','true')
+  expect(center.locator('[data-engineering-loaded-view="top"]')).to_be_visible();overflow()
   assert page.locator('#quality .hw-product-grid>article').count()==3
   assert not page.locator('#quality').evaluate('e=>e.scrollWidth>e.clientWidth')
   report['widths'].append(width)
