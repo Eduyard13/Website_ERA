@@ -48,7 +48,6 @@ export function renderFilmSeparation(line){
    {value:lineMetrics[2][0].split(' × ')[0],unit:'потоков',label:'Раздельное накопление',detail:lineMetrics[2][0]+' '+lineMetrics[2][1]+' · пять бункеров'},
    {value:lineMetrics[3][0],unit:lineMetrics[3][1],label:'Масса тюка',detail:'Ориентир по проектной схеме'}
   ],metricNote:'750 кг/ч — рабочий ориентир при засоре около 50%. Выпуск зависит от состава сырья, влажности и режима.',documentHref:'#documents',documentText:'Техническое описание · PDF, 32 страницы'})}
- <nav class="anchor-nav line-anchor-nav" aria-label="Разделы линии"><a href="#purpose">Назначение</a><a href="#raw-materials">Сырьё</a><a href="#composition">Схема линии</a><a href="#process">Процесс</a><a href="#quality">Продукт</a><a href="#kair">КАИР</a><a href="#specs">Характеристики</a><a href="#placement">Габариты</a><a href="#photos">Фото</a><a href="#documents">Документы</a><a href="#request">Обратная связь</a><a href="#equipment">Состав узлов</a></nav>
 
  ${renderDrySeparationPurpose(line.slug)}
 

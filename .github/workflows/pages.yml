@@ -144,7 +144,8 @@ jobs:
                   for dry_slug in ('separatsiya-01', 'separatsiya-02', 'separatsiya-03', 'moyka-plenki'):
                       checked_line = full_line if dry_slug == 'separatsiya-02' else fetch('catalog/lines/' + dry_slug + '/')[1]
                       checked_indices = [checked_line.index('id="' + section_id + '"') for section_id in section_ids]
-                      navigation = re.search(r'<nav class="anchor-nav line-anchor-nav"[^>]*>(.*?)</nav>', checked_line, re.S)
+                      context = re.search(r'<nav class="context-navigation" data-context-navigation[^>]*>(.*?)</nav>', checked_line, re.S)
+                      navigation = re.search(r'<div class="line-section-nav" data-line-section-nav[^>]*>(.*?)</div>', context.group(1), re.S) if context else None
                       if (checked_indices != sorted(checked_indices) or
                               navigation is None or
                               tuple(re.findall(r'href="#([^"]+)"', navigation.group(1))) != section_ids):
@@ -225,15 +226,12 @@ jobs:
                       placement = re.search(r'<section[^>]* id="placement">(.*?)</section>', line_page, re.S).group(1)
                       if placement.count('data-dimension-tab="') != tabs:
                           raise RuntimeError('Line drawing projections are incomplete: ' + slug)
-                      if slug in ('separatsiya-02', 'separatsiya-03', 'moyka-plenki'):
-                          documentation = re.search(r'<section[^>]* id="documents">(.*?)</section>', line_page, re.S).group(1)
-                          if re.search(r'<a\b|\s(?:href|target|download|data-pdf-open)=|pec-document', placement):
-                              raise RuntimeError('Engineering center contains document actions: ' + slug)
-                          if f'data-pdf-open="{expected_docs[2]}"' not in documentation or by_id[expected_docs[2]]['file'] + '" download=' not in documentation:
-                              raise RuntimeError('The original A0 is missing from documentation: ' + slug)
-                      elif f'data-pdf-open="{expected_docs[2]}"' not in placement:
-                          raise RuntimeError('Line drawing PDF is missing: ' + slug)
-                      if slug == 'separatsiya-01' and ('растровые проекции' not in placement or 'кВт' in placement or 'placement.webp' in placement):
+                      documentation = re.search(r'<section[^>]* id="documents">(.*?)</section>', line_page, re.S).group(1)
+                      if re.search(r'<a\b|\s(?:href|target|download|data-pdf-open)=|pec-document', placement):
+                          raise RuntimeError('Engineering center contains document actions: ' + slug)
+                      if f'data-pdf-open="{expected_docs[2]}"' not in documentation or by_id[expected_docs[2]]['file'] + '" download=' not in documentation:
+                          raise RuntimeError('The original drawing PDF is missing from documentation: ' + slug)
+                      if slug == 'separatsiya-01' and ('data-base-engineering-center' not in placement or 'кВт' in placement or 'placement.webp' in placement):
                           raise RuntimeError('The clean A4 projections are missing')
                       card = re.search(fr'<a class="line-card[^>]*data-line-id="{slug}"[^>]*>.*?</a>', lines_catalogue, re.S).group(0)
                       hero = re.search(r'<figure[^>]*data-line-catalog-cover[^>]*>.*?</figure>', line_page, re.S).group(0)
@@ -324,10 +322,12 @@ jobs:
             test/pro-engineering-center-public.mjs
             test/premium-engineering-center-public.mjs
             test/hot-wash-engineering-center-public.mjs
+            test/base-engineering-center-public.mjs
             content/pro-engineering-views.json
             content/separatsiya-02-dimensions-assets.json
             content/premium-engineering-views.json
             content/hot-wash-engineering-views.json
+            content/base-engineering-views.json
             content/line-dimensions-assets.json
             test/economics-public.mjs
             test/about-us-public.mjs
@@ -386,6 +386,19 @@ jobs:
         with:
           name: era-hot-wash-engineering-center
           path: tmp/hot-wash-engineering/*.png
+          if-no-files-found: ignore
+      - name: Verify the published BASE center and sticky line navigation
+        env:
+          ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
+          ERA_BUILD_COMMIT: ${{ github.sha }}
+          ERA_BASE_ENGINEERING_SCREENSHOTS: tmp/base-engineering
+        run: node test/base-engineering-center-public.mjs
+      - name: Upload BASE center and line navigation screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: era-base-line-navigation
+          path: tmp/base-engineering/*.png
           if-no-files-found: ignore
       - name: Verify published economics in Chrome
         env:

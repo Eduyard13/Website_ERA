@@ -1,0 +1,347 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "file": "documents/technical/era-separatsiya-01-mini-technical-description.pdf",
+    "sha256": "07e383f99d3abd1049d4b1ff4472749a510005311558993e46ea87e0409a3a3d",
+    "scheme": {
+      "page": 1,
+      "xref": 5,
+      "width": 1500,
+      "height": 1010
+    },
+    "drawings": {
+      "page": 11,
+      "xref": 65,
+      "width": 1659,
+      "height": 1896
+    }
+  },
+  "views": [
+    {
+      "id": "overall",
+      "group": "overview",
+      "title": "Общий вид линии",
+      "shortLabel": "Общий вид",
+      "preparedView": 1,
+      "cropPx": [
+        0,
+        0,
+        1500,
+        1010
+      ],
+      "thumb": {
+        "file": "views/overall-thumb.webp",
+        "width": 400,
+        "height": 269,
+        "bytes": 84388,
+        "sha256": "f0c4206cd70a1472102751f4b82af9fa05a03cf63ff88e951ad04a16a8d9b0e5"
+      },
+      "display": {
+        "file": "views/overall-display.webp",
+        "width": 1280,
+        "height": 862,
+        "bytes": 665998,
+        "sha256": "358c43d49eb987cf4c0d0f30974d5d5b75f3154aceaf2a8ffc4e323f1c098853"
+      },
+      "full": {
+        "file": "views/overall-full.webp",
+        "width": 1500,
+        "height": 1010,
+        "bytes": 835772,
+        "sha256": "16ece9a7b19a5765a588fbbb4f5a3085417e516ab00b48cf1ac62032299e9a52"
+      }
+    },
+    {
+      "id": "central-module",
+      "group": "overview",
+      "title": "Центральный модуль",
+      "shortLabel": "Центральный модуль",
+      "preparedView": 2,
+      "cropPx": [
+        421,
+        90,
+        1192,
+        725
+      ],
+      "thumb": {
+        "file": "views/central-module-thumb.webp",
+        "width": 400,
+        "height": 329,
+        "bytes": 154288,
+        "sha256": "c205f96378e325c7803e8786a3230303f9501866417d91aecc47e1b27822a1df"
+      },
+      "display": {
+        "file": "views/central-module-full.webp",
+        "width": 771,
+        "height": 635,
+        "bytes": 464780,
+        "sha256": "4384b29112f6d271ad478be97ef1af6b92e88cbdc9b9136e666aea80e8ff8839"
+      },
+      "full": {
+        "file": "views/central-module-full.webp",
+        "width": 771,
+        "height": 635,
+        "bytes": 464780,
+        "sha256": "4384b29112f6d271ad478be97ef1af6b92e88cbdc9b9136e666aea80e8ff8839"
+      }
+    },
+    {
+      "id": "left-area",
+      "group": "overview",
+      "title": "Левая зона линии",
+      "shortLabel": "Левая зона",
+      "preparedView": 8,
+      "cropPx": [
+        44,
+        271,
+        588,
+        650
+      ],
+      "thumb": {
+        "file": "views/left-area-thumb.webp",
+        "width": 400,
+        "height": 279,
+        "bytes": 64660,
+        "sha256": "2a470e0fcd7e32f3a6143998944aaf30402856d96bd7bae671db1cccf21cc002"
+      },
+      "display": {
+        "file": "views/left-area-full.webp",
+        "width": 544,
+        "height": 379,
+        "bytes": 105544,
+        "sha256": "f0a4e79aae5af611b4ffbac37b3ca10c4bf9bca07082750d651eb024d7e1b653"
+      },
+      "full": {
+        "file": "views/left-area-full.webp",
+        "width": 544,
+        "height": 379,
+        "bytes": 105544,
+        "sha256": "f0a4e79aae5af611b4ffbac37b3ca10c4bf9bca07082750d651eb024d7e1b653"
+      }
+    },
+    {
+      "id": "feed-area",
+      "group": "overview",
+      "title": "Подающий участок",
+      "shortLabel": "Подача",
+      "preparedView": 4,
+      "cropPx": [
+        1040,
+        0,
+        1458,
+        423
+      ],
+      "thumb": {
+        "file": "views/feed-area-thumb.webp",
+        "width": 400,
+        "height": 405,
+        "bytes": 114936,
+        "sha256": "38ee1e9cb83837126157b2c8307912950a5f61c86668cae36f8f8d66e870d6c2"
+      },
+      "display": {
+        "file": "views/feed-area-full.webp",
+        "width": 418,
+        "height": 423,
+        "bytes": 123636,
+        "sha256": "97458d7ee34c510820dfdee289b97097c7ba73d9672ddbc293c982577564facc"
+      },
+      "full": {
+        "file": "views/feed-area-full.webp",
+        "width": 418,
+        "height": 423,
+        "bytes": 123636,
+        "sha256": "97458d7ee34c510820dfdee289b97097c7ba73d9672ddbc293c982577564facc"
+      }
+    },
+    {
+      "id": "sorting-deck",
+      "group": "detail",
+      "title": "Сортировочная дека",
+      "shortLabel": "Сортировочная дека",
+      "preparedView": 5,
+      "cropPx": [
+        504,
+        0,
+        1132,
+        371
+      ],
+      "thumb": {
+        "file": "views/sorting-deck-thumb.webp",
+        "width": 400,
+        "height": 236,
+        "bytes": 94112,
+        "sha256": "74aa30678e166f9e4777e13ec457f517426ac1c1b99f77f5da46e4a655c835f1"
+      },
+      "display": {
+        "file": "views/sorting-deck-full.webp",
+        "width": 628,
+        "height": 371,
+        "bytes": 198834,
+        "sha256": "0302aae927d70970a7bec41ae4ddea5c1dedaeef7522c44c39ab27c80aec3974"
+      },
+      "full": {
+        "file": "views/sorting-deck-full.webp",
+        "width": 628,
+        "height": 371,
+        "bytes": 198834,
+        "sha256": "0302aae927d70970a7bec41ae4ddea5c1dedaeef7522c44c39ab27c80aec3974"
+      }
+    },
+    {
+      "id": "left-unit",
+      "group": "detail",
+      "title": "Узлы левой зоны",
+      "shortLabel": "Левые узлы",
+      "preparedView": 3,
+      "cropPx": [
+        44,
+        377,
+        558,
+        922
+      ],
+      "thumb": {
+        "file": "views/left-unit-thumb.webp",
+        "width": 400,
+        "height": 424,
+        "bytes": 133558,
+        "sha256": "eca713e2b3825d3f1ad6f45cd38975f274d802c8622098394599fce2cb85cdcf"
+      },
+      "display": {
+        "file": "views/left-unit-full.webp",
+        "width": 514,
+        "height": 545,
+        "bytes": 193766,
+        "sha256": "41a7ad4e83c66b3f5c5fdaf5584efd82102bd721342c8a4d3bf0073c0c700982"
+      },
+      "full": {
+        "file": "views/left-unit-full.webp",
+        "width": 514,
+        "height": 545,
+        "bytes": 193766,
+        "sha256": "41a7ad4e83c66b3f5c5fdaf5584efd82102bd721342c8a4d3bf0073c0c700982"
+      }
+    },
+    {
+      "id": "lower-conveyors",
+      "group": "detail",
+      "title": "Нижняя конвейерная группа",
+      "shortLabel": "Конвейеры",
+      "preparedView": 6,
+      "cropPx": [
+        497,
+        543,
+        1177,
+        937
+      ],
+      "thumb": {
+        "file": "views/lower-conveyors-thumb.webp",
+        "width": 400,
+        "height": 232,
+        "bytes": 77756,
+        "sha256": "691f4290056c15a91ccba13dcf03f23378c073785fb474856099cf55483da7f8"
+      },
+      "display": {
+        "file": "views/lower-conveyors-full.webp",
+        "width": 680,
+        "height": 394,
+        "bytes": 185134,
+        "sha256": "ff3f917f643d8ab3d1b41257d6d61ee231110e0249bd8fcbd021fb60583646c8"
+      },
+      "full": {
+        "file": "views/lower-conveyors-full.webp",
+        "width": 680,
+        "height": 394,
+        "bytes": 185134,
+        "sha256": "ff3f917f643d8ab3d1b41257d6d61ee231110e0249bd8fcbd021fb60583646c8"
+      }
+    },
+    {
+      "id": "discharge",
+      "group": "detail",
+      "title": "Участок выдачи",
+      "shortLabel": "Выдача",
+      "preparedView": 7,
+      "cropPx": [
+        950,
+        256,
+        1434,
+        710
+      ],
+      "thumb": {
+        "file": "views/discharge-thumb.webp",
+        "width": 400,
+        "height": 375,
+        "bytes": 121108,
+        "sha256": "4c18da3dd2d2d08629caaab3a32b5923a816028e67c766a2ada4690aa9b3a750"
+      },
+      "display": {
+        "file": "views/discharge-full.webp",
+        "width": 484,
+        "height": 454,
+        "bytes": 165694,
+        "sha256": "64c119fbac9b8359c5c4d0eb22f6281d5dfa5f0697292de8454768ad325b5afa"
+      },
+      "full": {
+        "file": "views/discharge-full.webp",
+        "width": 484,
+        "height": 454,
+        "bytes": 165694,
+        "sha256": "64c119fbac9b8359c5c4d0eb22f6281d5dfa5f0697292de8454768ad325b5afa"
+      }
+    },
+    {
+      "id": "support-frame",
+      "group": "detail",
+      "title": "Рама и участок сбора",
+      "shortLabel": "Рама и сбор",
+      "preparedView": 9,
+      "cropPx": [
+        829,
+        649,
+        1328,
+        1010
+      ],
+      "thumb": {
+        "file": "views/support-frame-thumb.webp",
+        "width": 400,
+        "height": 289,
+        "bytes": 55216,
+        "sha256": "8ba117c49e07f8cc571a6ed58c4fe3ced160b71bc19f826ab2fe96680efbf507"
+      },
+      "display": {
+        "file": "views/support-frame-full.webp",
+        "width": 499,
+        "height": 361,
+        "bytes": 80044,
+        "sha256": "daa2b5b1f1eb7c8072b2becbb49e366f7d196de24032198480c88244766a3b9f"
+      },
+      "full": {
+        "file": "views/support-frame-full.webp",
+        "width": 499,
+        "height": 361,
+        "bytes": 80044,
+        "sha256": "daa2b5b1f1eb7c8072b2becbb49e366f7d196de24032198480c88244766a3b9f"
+      }
+    }
+  ],
+  "drawingThumbnails": [
+    {
+      "id": "top",
+      "shortLabel": "Сверху",
+      "file": "lines/separatsiya-01/engineering-center/drawings/top-thumb.webp",
+      "width": 360,
+      "height": 294,
+      "bytes": 21636,
+      "sha256": "3fe76cbdac5f7f4f9bbb76db1f8b43e0de65a40bbcaadd4e500317c87245eced"
+    },
+    {
+      "id": "side",
+      "shortLabel": "Сбоку",
+      "file": "lines/separatsiya-01/engineering-center/drawings/side-thumb.webp",
+      "width": 360,
+      "height": 97,
+      "bytes": 13366,
+      "sha256": "1b592c01ed08d5c0bf775852530d79af7931b1e366b33922c80755abe4001760"
+    }
+  ]
+}

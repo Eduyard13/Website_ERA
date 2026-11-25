@@ -89,3 +89,6 @@
  .mini-line #process .base-flow-outcome{padding:19px}
  .mini-line #process .base-flow-outcomes{gap:12px}
 }
+@media(max-width:360px){
+ .mini-line #process .base-process-map-heading{flex-direction:column;align-items:flex-start;gap:8px}
+}

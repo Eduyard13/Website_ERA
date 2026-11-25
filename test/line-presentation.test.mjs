@@ -17,7 +17,7 @@ test('Мини-линия сохраняет свои исходники, 11 т�
  const ids=['purpose','raw-materials','composition','process','quality','kair','specs','placement','photos','documents','request','equipment'];
  const order=ids.map(id=>page.indexOf(`id="${id}"`));
  assert.ok(order.every((position,index)=>position>=0&&(!index||position>order[index-1])));
- assert.deepEqual([...page.match(/<nav class="anchor-nav line-anchor-nav"[^>]*>(.*?)<\/nav>/s)[1].matchAll(/href="#([^"]+)"/g)].map(m=>m[1]),ids);
+ assert.deepEqual([...page.match(/<div class="line-section-nav" data-line-section-nav[^>]*>(.*?)<\/div>/s)[1].matchAll(/href="#([^"]+)"/g)].map(m=>m[1]),ids);
  assert.ok(page.includes('data-line-catalog-cover'));
  const mini=lines.find(line=>line.slug==='separatsiya-01');
  assert.ok(page.includes('width="1536" height="1024"'));

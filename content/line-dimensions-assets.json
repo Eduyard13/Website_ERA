@@ -3,20 +3,32 @@
     {
       "id": "top",
       "label": "Вид сверху",
-      "file": "lines/separatsiya-01/dimensions/top.png",
-      "width": 515,
-      "height": 405,
-      "bytes": 75066,
-      "sha256": "a3f389d7ce88982810658e92829e6a1a1ac803f100aaddf00754a0a0124c7c34"
+      "file": "lines/separatsiya-01/engineering-center/drawings/top.webp",
+      "width": 1659,
+      "height": 1356,
+      "bytes": 269440,
+      "sha256": "7a1eb2932df1babcfe89ce6abaef19d38beb6bd2c0968637022d17577ea9dcb4",
+      "cropPx": [
+        0,
+        540,
+        1659,
+        1896
+      ]
     },
     {
       "id": "side",
       "label": "Вид сбоку",
-      "file": "lines/separatsiya-01/dimensions/side.png",
-      "width": 515,
-      "height": 159,
-      "bytes": 43879,
-      "sha256": "e78099508004a7c4d0b47adb0ca7bdd0b6445bfb3313c6f036191e58e28d146f"
+      "file": "lines/separatsiya-01/engineering-center/drawings/side.webp",
+      "width": 1659,
+      "height": 447,
+      "bytes": 163764,
+      "sha256": "db4143b3c373f465a2a695fc5a965cb298d7fc77e6707995eb3e280a17ee37a3",
+      "cropPx": [
+        0,
+        78,
+        1659,
+        525
+      ]
     }
   ],
   "separatsiya-03": [

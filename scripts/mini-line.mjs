@@ -18,7 +18,7 @@ import {equipmentCardImages} from '../content/equipment-card-images.mjs';
 import {interactiveLineDiagram} from './line-diagram.mjs';
 import {renderDryArchitectureHeading} from './dry-line-architecture.mjs';
 import {renderBaseProcess} from './base-process.mjs';
-import {lineDimensions} from './line-dimensions.mjs';
+import {renderBaseEngineeringCenter} from './base-engineering-center.mjs';
 import {miniLineDiagram} from '../content/line-diagrams.mjs';
 import {imageSize} from './image-size.mjs';
 
@@ -42,7 +42,6 @@ function unitCard([position,title,text,value,slug,key]){
 export function renderMiniFilmSeparation(line){
  const email=`mailto:${siteContacts.email}?subject=`+encodeURIComponent(`Запрос ЭРА: ${line.title}`);
  const documents=lineDocuments(line);
- const drawing=documents.find(d=>d.id==='separatsiya-01-dimensions');
  return `<div class="film-line mini-line">
 
  ${renderDrySeparationHero({line,email,metrics:[
@@ -51,7 +50,6 @@ export function renderMiniFilmSeparation(line){
    {value:miniLineMetrics[2][0],unit:miniLineMetrics[2][1],label:miniLineMetrics[2][2]},
    {value:miniLineMetrics[3][0],unit:'чел./смена',label:'Рабочий персонал'}
   ],metricNote:'750 кг/ч — расчёт при засоре около 50%. Выпуск подтверждаем на выбранном сырье и комплектации.',documentHref:'#documents',documentText:'Техническое описание · PDF, 14 страниц'})}
- <nav class="anchor-nav line-anchor-nav" aria-label="Разделы линии BASE"><a href="#purpose">Назначение</a><a href="#raw-materials">Сырьё</a><a href="#composition">Схема линии</a><a href="#process">Процесс</a><a href="#quality">Продукт</a><a href="#kair">КАИР</a><a href="#specs">Характеристики</a><a href="#placement">Габариты</a><a href="#photos">Фото</a><a href="#documents">Документы</a><a href="#request">Обратная связь</a><a href="#equipment">Состав узлов</a></nav>
 
  ${renderDrySeparationPurpose(line.slug)}
 
@@ -72,8 +70,8 @@ export function renderMiniFilmSeparation(line){
 
  <section class="section" id="specs">${renderBaseSpecs(line)}</section>
 
- <section class="section" id="placement"><div class="line-section-heading"><div><p class="eyebrow">ГАБАРИТЫ И РАЗМЕЩЕНИЕ</p><h2>Компактная расстановка.<br>Доступ к каждому узлу.</h2></div><p>17,75 × 11,75 м — габарит механической части в плане. Проходы, загрузку, выгрузку и смену биг-бэгов учитывают дополнительно при привязке к площадке.</p></div>
-  ${lineDimensions(drawing)}
+ <section class="section" id="placement">
+  ${renderBaseEngineeringCenter()}
  </section>
 
  ${renderDryPhotoAlbum()}

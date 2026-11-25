@@ -30,7 +30,7 @@ test('Полная линия сохраняет показатели, один 
  const ids=['purpose','raw-materials','composition','process','quality','kair','specs','placement','photos','documents','request','equipment'];
  let previous=-1;
  for(const id of ids){const index=page.indexOf(`id="${id}"`);assert.ok(index>previous,id);previous=index;}
- const nav=page.match(/<nav class="anchor-nav line-anchor-nav"[^>]*>(.*?)<\/nav>/s)[1];
+ const nav=page.match(/<div class="line-section-nav" data-line-section-nav[^>]*>(.*?)<\/div>/s)[1];
  assert.deepEqual([...nav.matchAll(/href="#([^"]+)"/g)].map(m=>m[1]),ids);
  assert.equal((page.match(/data-diagram data-diagram-mode="fit"/g)||[]).length,1);
  const composition=page.slice(page.indexOf('id="composition"'),page.indexOf('id="process"'));

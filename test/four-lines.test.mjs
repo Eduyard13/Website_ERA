@@ -75,14 +75,9 @@ test('У каждой линии три документа и полные пр�
   assert.equal(library.find(doc=>doc.category==='brochures').pages,3,slug);
   const placement=section(html,'placement');
   assert.equal((placement.match(/data-dimension-tab="/g)||[]).length,tabs,slug);
-  const engineeringCenter=['separatsiya-02','separatsiya-03','moyka-plenki'].includes(slug);
-  if(engineeringCenter){
-   assert.doesNotMatch(placement,/<a\b|\s(?:href|target|download|data-pdf-open)=/i);
-   const documentation=section(html,'documents');
-   assert.ok(documentation.includes(`/documents/${drawing.file}`)&&documentation.includes(`data-pdf-open="${drawing.id}"`),slug);
-  }else{
-   assert.ok(placement.includes(`/documents/${drawing.file}`)&&placement.includes(`/documents/drawings/?objectType=line&amp;product=${slug}`),slug);
-  }
+  assert.doesNotMatch(placement,/<a\b|\s(?:href|target|download|data-pdf-open)=/i);
+  const documentation=section(html,'documents');
+  assert.ok(documentation.includes(`/documents/${drawing.file}`)&&documentation.includes(`data-pdf-open="${drawing.id}"`),slug);
   for(const value of dimensions)assert.ok(placement.includes(`<dd>${value} <small>`),value);
   const {views}=linePlacement[slug];
   for(const view of views){
@@ -93,12 +88,11 @@ test('У каждой линии три документа и полные пр�
     assert.equal(bytes.length,view.bytes,view.file);
     assert.equal(createHash('sha256').update(bytes).digest('hex'),view.sha256,view.file);
    }
-   const imageAttribute=engineeringCenter?'data-engineering-src':'src';
-   assert.ok(placement.includes(`${imageAttribute}="${basePath}/assets/${view.file}"`),view.file);
+   assert.ok(placement.includes(`data-engineering-src="${basePath}/assets/${view.file}"`),view.file);
   }
   if(slug==='separatsiya-01'){
    assert.equal(drawing.kind,'raster-extract');
-   assert.match(placement,/растровые проекции/);
+   assert.match(placement,/data-base-engineering-center/);
    assert.doesNotMatch(placement,/кВт|500–700|placement\.webp|dimensions-a0\.pdf/);
   }
   const card=catalogue.match(new RegExp(`<a class="line-card[^>]*data-line-id="${slug}"[\\s\\S]*?</a>`))[0];
@@ -113,12 +107,16 @@ test('У каждой линии три документа и полные пр�
 
 test('Все четыре линии: единая утверждённая последовательность разделов и навигации',()=>{
  const expected=['purpose','raw-materials','composition','process','quality','kair','specs','placement','photos','documents','request','equipment'];
+ const labels=['Назначение','Сырьё','Схема линии','Процесс','Продукт','КАИР','Характеристики','Габариты','Фото','Документы','Обратная связь','Состав узлов'];
  for(const slug of Object.keys({"separatsiya-01":1,"separatsiya-02":1,"separatsiya-03":1,"moyka-plenki":1})){
   const html=render('/catalog/lines/'+slug);
   const order=[...html.matchAll(/<section\b[^>]*\bid="([^"]+)"[^>]*>/g)].map(m=>m[1]).filter(id=>expected.includes(id));
   assert.deepEqual(order,expected,slug+' DOM order');
-  const nav=html.match(/<nav class="anchor-nav line-anchor-nav"[^>]*>(.*?)<\/nav>/s)[1];
-  assert.deepEqual([...nav.matchAll(/href="#([^"]+)"/g)].map(m=>m[1]),expected,slug+' navigation order');
+  const context=html.match(/<nav class="context-navigation" data-context-navigation[^>]*>(.*?)<\/nav>/s)[1];
+  const nav=context.match(/<div class="line-section-nav" data-line-section-nav[^>]*>(.*?)<\/div>/s)[1];
+  assert.deepEqual([...nav.matchAll(/href="#([^"]+)">([^<]+)/g)].map(m=>m.slice(1)),expected.map((id,i)=>[id,labels[i]]),slug+' navigation order');
+  assert.equal((html.match(/ data-line-section-nav /g)||[]).length,1,slug);
+  assert.doesNotMatch(html,/class="anchor-nav line-anchor-nav"/);
   assert.equal((html.match(/<section class="section contact line-request" id="request">/g)||[]).length,1,slug);
  }
 });

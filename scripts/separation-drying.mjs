@@ -50,7 +50,6 @@ export function renderSeparationDrying(line){
    {value:line.cardMetrics[2].value,unit:line.cardMetrics[2].unit,label:'Влажность после сушилки',detail:'Не норма влажности отгружаемых тюков'},
    {value:line.cardMetrics[5].value,unit:'потоков',label:'Раздельное накопление',detail:'Пять бункеров по 4,7 м³'}
   ],metricNote:'750 кг/ч — расчёт при засорённости около 50%. До 5% — влажность после сушилки; влажность готового тюка проверяют по пробе. Фактический выпуск зависит от сырья и режима.',documentHref:'/documents/'+doc.file,documentText:'Техническое описание · PDF, 28 страниц',documentAttributes:'data-pdf-open="'+doc.id+'"'})}
- <nav class="anchor-nav line-anchor-nav" aria-label="Разделы линии">${[['purpose','Назначение'],['raw-materials','Сырьё'],['composition','Схема линии'],['process','Процесс'],['quality','Продукт'],['kair','КАИР'],['specs','Характеристики'],['placement','Размещение'],['photos','Фото'],['documents','Документы'],['request','Обратная связь'],['equipment','Состав узлов']].map(([id,label])=>`<a href="#${id}">${label}</a>`).join('')}</nav>
 
  ${renderDrySeparationPurpose(line.slug)}
 

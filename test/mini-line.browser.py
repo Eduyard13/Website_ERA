@@ -11,7 +11,7 @@ prefix=urlparse(base).path
 out=Path(os.environ.get('ERA_LINE_REPORT_DIR','/tmp/era-mini-alignment-20261116/browser-mini'));out.mkdir(parents=True,exist_ok=True)
 model=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {miniLineDiagram} from './content/line-diagrams.mjs';console.log(JSON.stringify(miniLineDiagram))"],text=True))
 results=[];errors=[];failed=[]
-sections=['purpose','raw-materials','specs','process','composition','quality','placement','kair','photos','documents','equipment']
+sections=['purpose','raw-materials','composition','process','quality','kair','specs','placement','photos','documents','request','equipment']
 with sync_playwright() as p:
  browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'])
  for width in [320,390,768,1024,1440,1920]:
@@ -31,7 +31,7 @@ with sync_playwright() as p:
   page.wait_for_selector('#line01-construction[data-monitor-ready=true]')
   assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
   assert page.locator('.film-line>section[id]:not(.line-hero):not(.line-request)').evaluate_all('es=>es.map(e=>e.id)')==sections
-  assert page.locator('.line-anchor-nav a').evaluate_all('es=>es.map(e=>e.hash.slice(1))')==sections
+  assert page.locator('[data-context-navigation] [data-line-section-nav] a').evaluate_all('es=>es.map(e=>e.hash.slice(1))')==sections
   assert page.locator('#quality #options').count()==1
   assert page.locator('#kair .line-control').count()==1 and page.locator('#placement .line-control').count()==0
   for text in ['225 кВт','157,5 кВт','600–700 кг/ч','17,75 × 11,75 м','3 человека в смену']:
@@ -101,7 +101,10 @@ with sync_playwright() as p:
   assert flow.locator('[data-base-flow-branch]').count()==2 and flow.locator('[data-base-flow-outcome]').count()==3
   assert page.locator('#process details,#process img').count()==0
   assert flow.evaluate('(e)=>e.scrollWidth<=e.clientWidth+1')
-  page.locator('#mini-dimension-view-top [data-pdf-open]').click()
+  center=page.locator('[data-base-engineering-center]')
+  center.locator('[data-engineering-tab="drawings"]').click()
+  center.locator('[data-engineering-loaded-view="top"]').wait_for(state='visible')
+  page.locator('#documents .edition-open[data-pdf-open="separatsiya-01-dimensions"]').click()
   page.wait_for_function('document.querySelector("[data-pdf-status]").textContent==="Страница 1 из 1"',timeout=30000)
   page.keyboard.press('Escape')
   spec=page.locator('#specs details').filter(has=page.locator('.mini-specification-table'))
