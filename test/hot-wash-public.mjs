@@ -24,6 +24,15 @@ for(const asset of [...manifest.assets,...(manifest.catalogCardUpdate?.assets||[
  const r=await fetch(base+'/assets/'+file,{cache:'no-store'});assert.equal(r.status,200,file);assert.equal(r.headers.get('content-type'),'image/webp');
  assert.equal(createHash('sha256').update(Buffer.from(await r.arrayBuffer())).digest('hex'),sha,file);
 }
+const rawAssets=JSON.parse(await readFile(new URL('../content/hot-wash-raw-assets.json',import.meta.url),'utf8'));
+const rawDirectory='/assets/lines/moyka-plenki/raw-prepared/';
+for(const {files} of rawAssets){
+ await Promise.all(files.map(async ({file,sha256})=>{
+  const r=await fetch(base+rawDirectory+file+'?v='+version,{cache:'no-store'});
+  assert.equal(r.status,200,file);assert.equal(r.headers.get('content-type'),'image/webp');
+  assert.equal(createHash('sha256').update(Buffer.from(await r.arrayBuffer())).digest('hex'),sha256,file);
+ }));
+}
 for(const path of ['/catalog/lines/','/technology/','/documents/technical/','/media/','/catalog/lines/separatsiya-02/'])assert.equal((await fetch(base+path,{cache:'no-store'})).status,200,path);
 for(const file of ['hot-film-washing.css','hot-wash-process.css','hot-film-washing.js']){const r=await fetch(base+'/'+file+'?v='+version,{cache:'no-store'});assert.equal(r.status,200,file);assert.ok(!r.headers.get('content-type').includes('text/html'));}
 const binary=process.env.ERA_CHROME_PATH||['/usr/bin/google-chrome','/usr/bin/chromium','/opt/google/chrome/chrome'].find(existsSync);
@@ -66,7 +75,7 @@ try{
    document.head.append(style);await document.fonts.ready;
   })()`);
   const blocks=[
-   ['hero','.line-hero'],['process','#process'],['water','#water-circulation'],
+   ['hero','.line-hero'],['raw','#raw-materials'],['process','#process'],['water','#water-circulation'],
    ['products','#quality'],['specs','#specs'],['kair','#kair'],['photos','#photos']
   ];
   async function capture([name,selector],maxHeight=0){
@@ -99,7 +108,7 @@ try{
    return !!image?.complete&&image.naturalWidth>0&&document.querySelector('#placement [data-engineering-frame="${id}"]').getAttribute('aria-pressed')==='true';
   })()`);
  }
- for(const width of [320,390,768,1024,1280,1440,1920]){
+ for(const width of [320,375,390,768,1024,1280,1440,1920]){
   await command('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:width<768});
   await load(compositionPath);await wait(`!!document.querySelector('#hotwash-construction[data-monitor-ready="true"]')`);
   await evaluate(`Promise.all([...document.querySelectorAll('main img')].map(i=>{i.loading='eager';return i.decode();}))`);
@@ -129,6 +138,20 @@ try{
     composition:count('#composition [data-hotwash-position]')};
   })()`);
   assert.deepEqual(presentation,{sections:13,nav:12,stages:10,intersections:0,routes:3,water:5,mapOverflow:false,reagents:2,waste:2,specs:36,power:32,gallery:6,composition:0},String(width));
+  const rawLayout=await evaluate(`(()=>{
+   const section=document.querySelector('#raw-materials'),prepared=section.querySelector('.hw-raw-photos'),categories=section.querySelector('.hw-raw-origins');
+   const columns=node=>getComputedStyle(node).gridTemplateColumns.split(' ').length;
+   const images=[...section.querySelectorAll('.media-open')];
+   const cover=images.every(a=>{
+    const box=a.getBoundingClientRect(),image=a.querySelector('img'),imgBox=image.getBoundingClientRect();
+    return Math.abs(box.width/box.height-4/3)<.02&&getComputedStyle(image).objectFit==='cover'
+     &&Math.abs(imgBox.width-box.width)<1&&Math.abs(imgBox.height-box.height)<1
+     &&image.currentSrc.includes('/moyka-plenki/raw-prepared/')&&image.naturalWidth>0;
+   });
+   const removed=document.querySelectorAll('#raw-materials :is(details,table), #kair img, #kair .line-note, #process details, #process .hw-process-archive, #quality details, #quality .line-note, #quality .hw-quality-metrics > p').length;
+   return {prepared:prepared.children.length,categories:categories.children.length,columns:[columns(prepared),columns(categories)],cover,removed};
+  })()`);
+  assert.deepEqual(rawLayout,{prepared:2,categories:3,columns:width<=760?[1,1]:width<=1100?[2,2]:[2,3],cover:true,removed:0},String(width));
   if(width===390||width===1440)await capturePresentation(width);
   if(width===390||width===1440)await auditNativeDiagram(evaluate,'hotwash-construction',{count:44,branches:47});
   for(let number=1;number<=36;number++){
@@ -139,6 +162,13 @@ try{
  }
  await command('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
  await load(compositionPath);await wait(`!!document.querySelector('[data-monitor-ready]')`);
+ await click('#raw-materials .media-open');
+ const expectedImages=['raw-prepared-01','raw-prepared-02','raw-household','raw-agricultural','raw-stretch'];
+ for(const [index,key] of expectedImages.entries()){
+  if(index)await click('#media-viewer [data-next]');
+  await wait(`document.querySelector('#media-viewer').open&&document.querySelector('#viewer-image').getAttribute('src').endsWith(${JSON.stringify(rawDirectory+key+'.webp')})`);
+ }
+ await click('#media-viewer [data-close]');
  const sidebarSelect=await evaluate(`(()=>{
    const root=document.querySelector('#hotwash-construction'),row=root.querySelector('[data-architecture-part="18"]');row.click();
    return {row:row.getAttribute('aria-pressed'),pin:root.querySelectorAll('button[data-part="18"][aria-pressed="true"]').length,selected:root.querySelector('[data-detail-number]').textContent};
@@ -170,7 +200,7 @@ try{
  await load('/technology/');await wait(`!!document.querySelector('[data-technology-line="moyka-plenki"]')`);
  assert.ok(await evaluate(`document.querySelector('[data-technology-line="moyka-plenki"]').href.endsWith('/catalog/lines/moyka-plenki')`));
  assert.deepEqual(errors,[],'Published hot-wash console errors');
- console.log(`::notice title=Published hot wash verified::10 material stages, 5 water routes, 37 specification rows (32 powered), 7 widths, 44/44 equipment badges and 47 leader ends, 36 monitor selections, original PDF/viewer, media checks, dimensions and navigation passed. ${url}`);
+ console.log(`::notice title=Published hot wash verified::5 approved media cards and 15 WebP hashes, 10 material stages, 5 water routes, 37 specification rows (32 powered), 8 widths, 44/44 equipment badges and 47 leader ends, 36 monitor selections, original PDF/viewer, media checks, dimensions and navigation passed. ${url}`);
 }finally{
  socket?.close();chrome.kill('SIGTERM');await delay(250);await rm(profile,{recursive:true,force:true});
 }

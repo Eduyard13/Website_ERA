@@ -148,6 +148,7 @@ try{
   drawings:projections.map(view=>view.id)
  };
  const views=new Map([...assembly.views,...projections].map(view=>[view.id,view]));
+ const drawingLabels=new Map(assembly.drawingThumbnails.map(view=>[view.id,view.shortLabel]));
  const activeButton=id=>find(`[data-engineering-frame="${id}"]`);
  const initialFiles=new Set(['v01-display.webp',...sets.overview.map(id=>id+'-thumb.webp')]);
  async function openPdf(opener){
@@ -202,9 +203,12 @@ try{
     const frame=await evaluate(`(()=>{
      const image=${find('[data-engineering-image]')},thumb=${activeButton(id)};
      const strip=thumb.closest('[data-engineering-strip]').getBoundingClientRect(),box=thumb.getBoundingClientRect();
+     const short=thumb.querySelector('span'),labelRange=document.createRange();
+     labelRange.selectNodeContents(short);
      return {dimensions:[image.naturalWidth,image.naturalHeight],attributes:['width','height'].map(name=>Number(image.getAttribute(name))),fit:getComputedStyle(image).objectFit,
       full:thumb.dataset.engineeringFull,
       label:${find('[data-engineering-title]')}.textContent,alt:image.alt,pressed:thumb.getAttribute('aria-pressed'),
+      aria:thumb.getAttribute('aria-label'),shortLabel:short.textContent,shortLines:labelRange.getClientRects().length,
       visible:box.left>=strip.left-2&&box.right<=strip.right+2};
     })()`);
     const view=views.get(id), variant=view.display??view, label=view.title??view.label;
@@ -213,6 +217,10 @@ try{
     assert.equal(frame.fit,'contain',id);
     assert.equal(frame.label,label,id);
     assert.equal(frame.alt,label,id);
+    assert.equal(frame.aria,label,id);
+    assert.equal(frame.shortLabel,view.shortLabel??drawingLabels.get(id),id);
+    assert.doesNotMatch(frame.shortLabel,/(?:Фрагмент|Деталь)\s+\d+/i,id);
+    assert.ok(frame.shortLines<=2,`${id} thumbnail label fits two rows at ${width} px`);
     assert.equal(frame.pressed,'true',id);
     assert.ok(frame.visible,`${id} scrolled into view at ${width} px`);
     const fullFile=view.full?'lines/moyka-plenki/engineering-center/'+view.full.file:view.file;
@@ -231,6 +239,7 @@ try{
   await wait(`${find('[data-engineering-dialog]')}.open`);
   assert.equal(await evaluate("document.querySelector('#pdf-viewer').open"),false);
   assert.match(await evaluate(find('[data-engineering-image]')+'.getAttribute("src")'),/\/dimensions\/section-b\.webp$/);
+  assert.equal(await evaluate(find('[data-engineering-dialog] [data-engineering-title]')+'.textContent'),'Сечение Б–Б');
   assert.equal((await getStyles()).blend,'normal');
   assert.equal(await noDocuments(),true);
   await key('Escape');await wait(`!${find('[data-engineering-dialog]')}.open&&document.activeElement===${find('.pec-image-open')}`);

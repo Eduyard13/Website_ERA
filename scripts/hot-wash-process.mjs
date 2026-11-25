@@ -125,7 +125,7 @@ function waterCircuit(){
  </div>`;
 }
 
-export function renderHotWashProcess(archive){
+export function renderHotWashProcess(){
  return `<section class="section hw-process" id="process">
   <div class="line-section-heading hw-process-heading"><div><p class="eyebrow">МАРШРУТ МАТЕРИАЛА · HOT-WASH</p><h2>Как линия отмывает подготовленную плёнку и выпускает тюки, капсулят или гранулу</h2></div><p>Наглядная карта движения плёнки, рабочих жидкостей, чистой воды и трёх маршрутов готовой продукции.</p></div>
   <div class="hw-flow-map">
@@ -140,6 +140,5 @@ export function renderHotWashProcess(archive){
     <p><strong>Один поток плёнки направляют по выбранному маршруту.</strong> Три отдельные рамы позиции 9 предназначены для включений, капсулята и гранулы.</p>
    </div>
   </div>
-  <div class="hw-process-archive">${archive}</div>
  </section>`;
 }

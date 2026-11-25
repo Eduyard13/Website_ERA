@@ -17,8 +17,8 @@
       "sourceSha256": "eb659f0ab67ab98059e4d65ea4df75ddbe628f56954d3f5fd6d9a7e0b97f8ab6",
       "page": 1,
       "group": "overview",
-      "title": "Общий изометрический вид 1",
-      "shortLabel": "Ракурс 1",
+      "title": "Общий изометрический вид линии, ракурс 1",
+      "shortLabel": "Компоновка 1",
       "renderSize": [
         4500,
         3183
@@ -58,8 +58,8 @@
       "sourceSha256": "6045050cf9eb3904bd50391a89c956b20fad46ae9bfa4868b4ebf40809e3165a",
       "page": 1,
       "group": "overview",
-      "title": "Общий изометрический вид 2",
-      "shortLabel": "Ракурс 2",
+      "title": "Общий изометрический вид линии, ракурс 2",
+      "shortLabel": "Компоновка 2",
       "renderSize": [
         4500,
         3183
@@ -99,8 +99,8 @@
       "sourceSha256": "151999b102209c387d499d740dcc9efed1c6e8ab8f47b24c71ab9d188cb18406",
       "page": 1,
       "group": "overview",
-      "title": "Общий изометрический вид 3",
-      "shortLabel": "Ракурс 3",
+      "title": "Общий изометрический вид линии, ракурс 3",
+      "shortLabel": "Компоновка 3",
       "renderSize": [
         4500,
         3183
@@ -140,8 +140,8 @@
       "sourceSha256": "cfa8ed9ff7762c963b49465b97e5aa987ee0203a5c66b787051b490e475cc8aa",
       "page": 1,
       "group": "overview",
-      "title": "Общий изометрический вид 4",
-      "shortLabel": "Ракурс 4",
+      "title": "Общий изометрический вид линии, ракурс 4",
+      "shortLabel": "Компоновка 4",
       "renderSize": [
         4500,
         3183
@@ -181,8 +181,8 @@
       "sourceSha256": "9ee5ff178da2b11f7f4b4fe3e79d119a49b681bebbbee5914e829f8dd7ddbda2",
       "page": 1,
       "group": "overview",
-      "title": "Общая компоновка, вид сверху",
-      "shortLabel": "Сверху",
+      "title": "Компоновка линии, вид сверху",
+      "shortLabel": "Вид сверху",
       "renderSize": [
         4500,
         3183
@@ -222,8 +222,8 @@
       "sourceSha256": "dd8b94911c5c99641f252d66cd1264305a17d1491fb495e40533bcf807f80f22",
       "page": 1,
       "group": "overview",
-      "title": "Продольный вид 1",
-      "shortLabel": "Продольный 1",
+      "title": "Продольная проекция линии, сторона 1",
+      "shortLabel": "Продольный вид 1",
       "renderSize": [
         4500,
         3183
@@ -263,8 +263,8 @@
       "sourceSha256": "1c455133d6529cae73c03e5bd99266843f87bb90c07671e931a7b59be0ccd352",
       "page": 1,
       "group": "overview",
-      "title": "Продольный вид 2",
-      "shortLabel": "Продольный 2",
+      "title": "Продольная проекция линии, сторона 2",
+      "shortLabel": "Продольный вид 2",
       "renderSize": [
         4500,
         3183
@@ -304,8 +304,8 @@
       "sourceSha256": "bef5157eb3fc256d626983eba6f53d69e3bc248ace94a561f2a9a962a81fda2c",
       "page": 1,
       "group": "overview",
-      "title": "Торцевой вид 1",
-      "shortLabel": "Торцевой 1",
+      "title": "Торцевая проекция линии, сторона 1",
+      "shortLabel": "Торцевой вид 1",
       "renderSize": [
         4500,
         3183
@@ -345,8 +345,8 @@
       "sourceSha256": "68cd92c02900bb7286bc3d68969398c07609b425ab2cd18ec0fb2d65ff11798f",
       "page": 1,
       "group": "overview",
-      "title": "Торцевой вид 2",
-      "shortLabel": "Торцевой 2",
+      "title": "Торцевая проекция линии, сторона 2",
+      "shortLabel": "Торцевой вид 2",
       "renderSize": [
         4500,
         3183
@@ -386,8 +386,8 @@
       "sourceSha256": "e4b37af4fc5c16688035cd8a503007f71e23eda5bf0100825c563eb530594fd6",
       "page": 1,
       "group": "detail",
-      "title": "Фрагмент подачи и накопления материала",
-      "shortLabel": "Подача",
+      "title": "Бункер-накопитель и узел порционной выдачи плёнки",
+      "shortLabel": "Бункер-накопитель",
       "renderSize": [
         4500,
         3183
@@ -427,8 +427,8 @@
       "sourceSha256": "d77bb15c8e9fe1302b44aca340ed99e487b6a95e5c3b5e31e40dc32f44b60db8",
       "page": 1,
       "group": "detail",
-      "title": "Фрагмент мокрой обработки с трубопроводами",
-      "shortLabel": "Мокрая обработка",
+      "title": "Две ветки мокрого измельчения, шнеки и первичный отжим",
+      "shortLabel": "Мокрое измельчение",
       "renderSize": [
         4500,
         3183
@@ -468,7 +468,7 @@
       "sourceSha256": "7ac33a7d55b11f27bbc5cded251209d894c0a98d89a5d01d44ca8dd7e11503af",
       "page": 1,
       "group": "detail",
-      "title": "Ёмкости и оборудование водооборота",
+      "title": "Резервуары воды и комплекс очистки стоков",
       "shortLabel": "Водооборот",
       "renderSize": [
         4500,
@@ -509,8 +509,8 @@
       "sourceSha256": "9a7be46292d536b43e2ce57cbfda1206e70bbd6fbb32bdcb27dc0ffae1177b55",
       "page": 1,
       "group": "detail",
-      "title": "Фрагмент оборудования с подземной зоной 1",
-      "shortLabel": "Фрагмент 10",
+      "title": "Комплекс очистки стоков и заглублённая зона сбора, ракурс 1",
+      "shortLabel": "Очистка стоков 1",
       "renderSize": [
         4500,
         3183
@@ -550,8 +550,8 @@
       "sourceSha256": "52133ffc5921dabf494ea3fb66bcf5734a42efd1ef78909501107b1b5bb285e3",
       "page": 1,
       "group": "detail",
-      "title": "Фрагмент оборудования и ёмкости",
-      "shortLabel": "Фрагмент 11",
+      "title": "Комплекс очистки стоков, заглублённая зона и бак очищенной воды",
+      "shortLabel": "Бак и очистка",
       "renderSize": [
         4500,
         3183
@@ -591,8 +591,8 @@
       "sourceSha256": "ecac89bbfc4002273dc83632f2c98f33853c416a329eccc4dfd24922cbb41989",
       "page": 1,
       "group": "detail",
-      "title": "Фрагмент оборудования с подземной зоной 2",
-      "shortLabel": "Фрагмент 12",
+      "title": "Комплекс очистки стоков и заглублённая зона сбора, ракурс 2",
+      "shortLabel": "Очистка стоков 2",
       "renderSize": [
         4500,
         3183
@@ -632,8 +632,8 @@
       "sourceSha256": "b1fd647449f8b1f1a6f57dbab354d3bbe94bb88c47ea18d58041aa36ba96bcd6",
       "page": 1,
       "group": "detail",
-      "title": "Участок транспортировки и выдачи материала",
-      "shortLabel": "Фрагмент 13",
+      "title": "Распределение очищенной плёнки и оборудование выдачи продукции",
+      "shortLabel": "Участок выдачи",
       "renderSize": [
         4500,
         3183
@@ -673,8 +673,8 @@
       "sourceSha256": "80b3c466aa38f8456eee3487a980bfc05dedf7b64823aebb4ada6b6267fce247",
       "page": 1,
       "group": "detail",
-      "title": "Участок транспортировки, боковой ракурс",
-      "shortLabel": "Фрагмент 14",
+      "title": "Двухстадийная линия грануляции и выдача гранулы в биг-бэг",
+      "shortLabel": "Грануляция",
       "renderSize": [
         4500,
         3183
@@ -714,8 +714,8 @@
       "sourceSha256": "a8329b892c76cc9f0c63af02c0cab4ddc8152429299e40ff20e995ef8578c7e2",
       "page": 1,
       "group": "detail",
-      "title": "Участок подачи и баллистической сепарации",
-      "shortLabel": "Сепарация",
+      "title": "Предварительный измельчитель, баллистический сепаратор и подача плёнки",
+      "shortLabel": "Защитная сепарация",
       "renderSize": [
         4500,
         3183
@@ -755,8 +755,8 @@
       "sourceSha256": "1526448bb39072220779259fccfd6d1a4d39a63eed62339eedebe48fc99a37b4",
       "page": 1,
       "group": "detail",
-      "title": "Участок подачи и мокрой обработки",
-      "shortLabel": "Фрагмент 16",
+      "title": "Бункер, распределение потока и две ветки мокрого измельчения",
+      "shortLabel": "Подача на измельчение",
       "renderSize": [
         4500,
         3183
@@ -796,8 +796,8 @@
       "sourceSha256": "117c0067425c4166943f0050f74be9876958cab7f00c926c52c4e84ca566a4e6",
       "page": 1,
       "group": "detail",
-      "title": "Моечный участок и водооборот, ракурс 1",
-      "shortLabel": "Мойка 1",
+      "title": "Два плёночных флотатора, межступенчатые узлы и водооборот, ракурс 1",
+      "shortLabel": "Мойка и водооборот",
       "renderSize": [
         4500,
         3183
@@ -837,8 +837,8 @@
       "sourceSha256": "0987b2427031224c5391b12e35f48bded13a3956f1f10f7bfd880c8958932607",
       "page": 1,
       "group": "detail",
-      "title": "Участок транспортировки материала, ракурс 1",
-      "shortLabel": "Фрагмент 18",
+      "title": "Участок отжима, накопления очищенной плёнки и распределения по маршрутам",
+      "shortLabel": "Отжим и накопление",
       "renderSize": [
         4500,
         3183
@@ -878,8 +878,8 @@
       "sourceSha256": "7f50c428ec34e8d3c48bdb8585868338f8915e78258d47f8e20bc63339cee6eb",
       "page": 1,
       "group": "detail",
-      "title": "Моечный участок и водооборот, ракурс 2",
-      "shortLabel": "Мойка 2",
+      "title": "Два плёночных флотатора, межступенчатые узлы и водооборот, ракурс 2",
+      "shortLabel": "Мойка и ополаскивание",
       "renderSize": [
         4500,
         3183
@@ -919,8 +919,8 @@
       "sourceSha256": "483bbc646dfe0bf488511f23abcb8b07f071e776a0a1b0b8642fbedac57c720a",
       "page": 1,
       "group": "detail",
-      "title": "Участок транспортировки материала, ракурс 2",
-      "shortLabel": "Фрагмент 20",
+      "title": "Буфер очищенной плёнки и транспортёры выбора маршрута выдачи",
+      "shortLabel": "Распределение продукта",
       "renderSize": [
         4500,
         3183
@@ -960,8 +960,8 @@
       "sourceSha256": "cf5a5cb9e5ce04341a3a95ad204666a963aa71ec78bcd072177a6f9bd2d6e8f3",
       "page": 1,
       "group": "detail",
-      "title": "Участок транспортировки материала, ракурс 3",
-      "shortLabel": "Фрагмент 21",
+      "title": "Распределение плёнки, прессование и капсуляция с выдачей в биг-бэг",
+      "shortLabel": "Тюкование и капсуляция",
       "renderSize": [
         4500,
         3183
@@ -1001,8 +1001,8 @@
       "sourceSha256": "f6435730352ef61d03d18bbb51c62ff4691e394b30b251f61915b86d10dc0489",
       "page": 1,
       "group": "detail",
-      "title": "Деталь трубопроводов и опор 1",
-      "shortLabel": "Деталь 23",
+      "title": "Гидроциклон, насос и трубопроводы возврата рабочей жидкости, ракурс 1",
+      "shortLabel": "Контур возврата 1",
       "renderSize": [
         4500,
         3183
@@ -1042,8 +1042,8 @@
       "sourceSha256": "b116ec47530d43579796ef4cd721e68e38dbf27b2f6a9fad8e87e987764312ad",
       "page": 1,
       "group": "detail",
-      "title": "Деталь оборудования и транспортёра",
-      "shortLabel": "Деталь 24",
+      "title": "Узел порционной выдачи бункера-накопителя на ленточный транспортёр",
+      "shortLabel": "Выдача из бункера",
       "renderSize": [
         4500,
         3183
@@ -1083,8 +1083,8 @@
       "sourceSha256": "f21e3f4a4152ee00cdd43c9a68e9ecaf0ae1917dbe35e0242506943263f5def8",
       "page": 1,
       "group": "detail",
-      "title": "Деталь трубопроводов и опор 2",
-      "shortLabel": "Деталь 25",
+      "title": "Гидроциклон, насос и трубопроводы возврата рабочей жидкости, ракурс 2",
+      "shortLabel": "Контур возврата 2",
       "renderSize": [
         4500,
         3183
@@ -1121,7 +1121,7 @@
   "drawingThumbnails": [
     {
       "id": "top",
-      "shortLabel": "Сверху",
+      "shortLabel": "Вид сверху",
       "file": "lines/moyka-plenki/engineering-center/drawings/top-thumb.webp",
       "width": 360,
       "height": 203,
@@ -1130,7 +1130,7 @@
     },
     {
       "id": "side",
-      "shortLabel": "Сбоку",
+      "shortLabel": "Вид сбоку",
       "file": "lines/moyka-plenki/engineering-center/drawings/side-thumb.webp",
       "width": 360,
       "height": 88,

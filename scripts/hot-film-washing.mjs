@@ -16,7 +16,7 @@ import {renderHotWashPhotoAlbum} from './dry-photo-album.mjs';
 import {renderHotWashRaw,renderHotWashProducts,renderHotWashKair} from './hot-wash-presentation.mjs';
 import {renderHotWashProcess} from './hot-wash-process.mjs';
 import {renderHotWashSpecs} from './hot-wash-specs.mjs';
-import {escapeHtml as escape,hotWashPicture as picture} from './hot-wash-media.mjs';
+import {escapeHtml as escape} from './hot-wash-media.mjs';
 
 const heading=(index,title,lead='')=>`<div class="line-section-heading"><div><p class="eyebrow">${index}</p><h2>${title}</h2></div>${lead?`<p>${lead}</p>`:''}</div>`;
 const more=(summary,body)=>`<details class="line-more" data-keep-open><summary>${summary}</summary><div>${body}</div></details>`;
@@ -41,11 +41,6 @@ export function renderHotFilmWashing(line){
   documentText:'Техническое описание · PDF, 22 страницы',
   documentAttributes:'data-pdf-open="'+technical.id+'"'
  });
- const processArchive=`
-  ${more('Узлы и режимы мокрой обработки',`<div class="line-inclusions"><p><strong>Мокрый измельчитель:</strong> проектный ротор Ø530×920 мм; ножевой зазор около 0,35 мм. Для отдельного паспортного исполнения: 0,2–0,5 мм, 70–90 °C, 17–25 м³/ч в узле, 77,5 кВт и до 1 000 кг/ч.</p><p><strong>Центрифуги 16А, Б, В:</strong> последовательные задачи отжима. Паспортные 1 480 об/мин ротора, 4,2 об/мин сетки и 37,6 кВт относятся к отдельному исполнению. Целевая влажность до 3% проверяется на выходе центрифуги на согласованном материале и режиме.</p><p><strong>Флотатор:</strong> фрикционная мойка, флотация и предварительный отжим; два рабочих барабана и затвор, поверхностный поток плёнки до 40 мм. Осадок отделяется в нижней зоне, жидкость возвращается из шнека. По паспорту до +95 °C и 240–250 м³/ч внутренней циркуляции.</p><p><strong>Настройки партии:</strong> температура, время и рецептура определяются испытаниями. Влажность центрифуги не является безусловной влажностью любого вида готовой продукции.</p></div><div class="line-process-views">${picture('buffer-feed')}${picture('wet-section')}</div>`)}
-  ${more('Исходная технологическая схема',`<div class="line-flow-diagram">${picture('material-flow',{sizes:'(min-width:1101px) 65vw, 88vw'})}</div>`)}
-  ${more('Исходная схема водооборота',picture('water-loop',{sizes:'(min-width:1101px) 65vw, 88vw'}))}
- `;
  return `<div class="film-line film-line--full film-line--hot-wash" data-hot-wash-line>
  ${hero}
 
@@ -55,7 +50,7 @@ export function renderHotFilmWashing(line){
 
  <section class="section line-soft" id="composition">${renderDryArchitectureHeading(hotWashDiagram.slug)} ${interactiveLineDiagram(hotWashDiagram,{fit:true,architecture:true})}</section>
 
- ${renderHotWashProcess(processArchive)}
+ ${renderHotWashProcess()}
 
  ${renderHotWashProducts()}
 

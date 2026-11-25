@@ -327,6 +327,7 @@ jobs:
             content/separatsiya-02-dimensions-assets.json
             content/premium-engineering-views.json
             content/hot-wash-engineering-views.json
+            content/hot-wash-raw-assets.json
             content/base-engineering-views.json
             content/line-dimensions-assets.json
             test/economics-public.mjs

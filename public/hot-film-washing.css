@@ -1,25 +1,28 @@
 /* Hot-wash uses the shared line presentation with source-specific grids. */
-.film-line--hot-wash .hw-raw-photos {
- grid-template-columns:repeat(2,minmax(0,1fr));
- max-width:900px;
+.film-line--hot-wash .hw-raw-photos{grid-template-columns:repeat(2,minmax(0,1fr))}
+.film-line--hot-wash #raw-materials .dry-raw-photo .media-open{aspect-ratio:4/3}
+.film-line--hot-wash #raw-materials .dry-raw-photo img{width:100%;height:100%;object-fit:cover}
+.film-line--hot-wash .hw-raw-origins{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:clamp(16px,2.2vw,32px);margin-top:clamp(20px,2.5vw,36px);
 }
-.film-line--hot-wash #raw-materials .hw-raw-photos .media-open {
- height:clamp(190px,32vw,380px);
- aspect-ratio:auto;
- background:linear-gradient(150deg,#f9f6ef,#e3dbcb);
+.film-line--hot-wash .hw-raw-origin{
+ min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:9px;
+ background:#fffdf8;box-shadow:0 12px 35px #0b1e3610;
 }
-.film-line--hot-wash #raw-materials .hw-raw-photos img{width:100%;height:100%;object-fit:contain}
-.film-line--hot-wash .hw-raw-origins{margin-top:24px}
-.film-line--hot-wash .hw-raw-origins h3{font-size:18px;line-height:1.25;margin:0 0 10px}
-.film-line--hot-wash .hw-raw-origins p+p{margin-top:10px}
+.film-line--hot-wash .hw-raw-origin .dry-raw-photo{margin:0;border:0;border-radius:0;box-shadow:none}
+.film-line--hot-wash .hw-raw-origin-copy{padding:clamp(16px,2vw,25px)}
+.film-line--hot-wash .hw-raw-origin h3{font-size:clamp(19px,1.6vw,25px);line-height:1.25;margin:0 0 16px}
+.film-line--hot-wash .hw-raw-origin dl{margin:0}
+.film-line--hot-wash .hw-raw-origin dl>div+div{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.film-line--hot-wash .hw-raw-origin dt{font-size:13px;font-weight:650;color:var(--ink)}
+.film-line--hot-wash .hw-raw-origin dd{margin:3px 0 0;font-size:14px;line-height:1.5;color:var(--muted)}
 .film-line--hot-wash .dry-raw-evidence h3{margin:0 0 12px;color:#f0d088;font-size:clamp(22px,2.6vw,38px);line-height:1.25}
 .film-line--hot-wash .dry-raw-evidence p{color:#e0e6f2;max-width:860px}
 .film-line--hot-wash .dry-raw-evidence .text-link{color:#f0d088}
 .film-line--hot-wash .hw-raw-contaminants{grid-template-columns:repeat(4,minmax(0,1fr))}
 .film-line--hot-wash .hw-table-scroll{overflow-x:auto;max-width:100%}
 .film-line--hot-wash .hw-table-scroll:focus-visible{outline:2px solid var(--era-gold-dark);outline-offset:-2px}
-.film-line--hot-wash .hw-raw-table{min-width:660px}
-.film-line--hot-wash .hw-raw-table :is(th,td){width:auto;vertical-align:top}
 
 .film-line--hot-wash .hw-product-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,1.7vw,24px)}
 .film-line--hot-wash .hw-product {
@@ -48,12 +51,10 @@
 .film-line--hot-wash .hw-product--primary .hw-product-copy p:not(.eyebrow,.hw-material-route){color:#e3e8f3}
 .film-line--hot-wash .hw-product--primary .hw-material-route{color:#efce84}
 .film-line--hot-wash .hw-product--primary .eyebrow{color:#efce84;font-size:11px;margin:0 0 7px}
-.film-line--hot-wash .hw-quality-metrics{margin-top:26px}
+.film-line--hot-wash .hw-quality-metrics{margin-top:26px;border-bottom:0;padding-bottom:0}
 .film-line--hot-wash .hw-quality-metrics dl{grid-template-columns:repeat(3,minmax(0,1fr))}
 .film-line--hot-wash .hw-quality-metrics dd{font-size:clamp(27px,3vw,42px);white-space:normal}
 .film-line--hot-wash .hw-quality-metrics .line-metric-detail{order:3;margin-top:4px;font-size:13px;color:var(--muted)}
-.film-line--hot-wash .hw-kair-previews .media-open{aspect-ratio:5/3;background:#edf0f4}
-.film-line--hot-wash .hw-kair-previews .line-image[data-type=photo] img{object-fit:contain}
 .film-line--hot-wash #photos .dry-album-card:is([data-type=scheme],[data-type=visualization]) .media-open{aspect-ratio:16/10;background:#e8e9e9}
 .film-line--hot-wash #photos .dry-album-card:nth-child(3) .media-open{aspect-ratio:1.9}
 .film-line--hot-wash #photos .dry-album-card:is([data-type=scheme],[data-type=visualization]) img{height:100%;object-fit:contain}
@@ -92,6 +93,9 @@
 .film-line--hot-wash .line-monitor .diagram-pin{width:min(36px,2.6%)}
 .film-line--hot-wash .line-monitor .diagram-pin span{max-width:none}
 
+@media(max-width:1100px){
+ .film-line--hot-wash .hw-raw-origins{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 @media(max-width:900px){
  .film-line--hot-wash .hw-raw-contaminants{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
@@ -99,9 +103,12 @@
  .film-line--hot-wash .hw-product-grid,.film-line--hot-wash .hw-placement-grid{grid-template-columns:minmax(0,1fr)}
  .film-line--hot-wash .hw-quality-metrics dl{grid-template-columns:minmax(0,1fr);gap:0}
  .film-line--hot-wash .hw-quality-metrics dl>div{padding:14px 0;border-left:0;border-top:1px solid var(--line)}
+ .film-line--hot-wash .hw-quality-metrics dl>div:last-child{padding-bottom:0}
+}
+@media(max-width:760px){
+ .film-line--hot-wash .hw-raw-photos,.film-line--hot-wash .hw-raw-origins{grid-template-columns:minmax(0,1fr)}
 }
 @media(max-width:560px){
  .film-line--hot-wash .base-spec-kpi>strong{font-size:clamp(21px,5.9vw,32px);white-space:normal}
- .film-line--hot-wash .hw-raw-photos{gap:9px}
- .film-line--hot-wash .hw-raw-origins,.film-line--hot-wash .hw-raw-contaminants{grid-template-columns:minmax(0,1fr)}
+ .film-line--hot-wash .hw-raw-contaminants{grid-template-columns:minmax(0,1fr)}
 }

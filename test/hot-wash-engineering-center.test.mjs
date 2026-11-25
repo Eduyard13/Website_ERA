@@ -39,3 +39,16 @@ test('81 source views, four original projections and four drawing thumbnails mat
  assert.equal(css,premiumCss.replaceAll('premium-engineering-center','hot-wash-engineering-center'));
  assert.equal(js,premiumJs.replaceAll('premium-engineering-center','hot-wash-engineering-center'));
 });
+test('HOT-WASH: технические названия согласованы у всех 31 миниатюры и ракурса',()=>{
+ const labels=[...registry.views,...linePlacement['moyka-plenki'].views.map((view,index)=>({
+  ...view,title:view.label,shortLabel:registry.drawingThumbnails[index].shortLabel
+ }))];
+ for(const {id,title,shortLabel} of labels){
+  const frame=p.match(new RegExp('data-engineering-frame="'+id+'"[\\s\\S]*?<\\/button>'))[0];
+  assert.ok(title&&shortLabel,id);
+  assert.doesNotMatch(`${title} ${shortLabel}`,/(?:Фрагмент|Деталь)\s+\d+/i,id);
+  assert.ok(frame.includes(`aria-label="${title}"`)&&frame.includes(`<span>${shortLabel}</span>`),id);
+ }
+ assert.deepEqual(labels.slice(-4).map(v=>v.title),['Вид сверху','Вид сбоку','Вид А','Сечение Б–Б']);
+ assert.ok(p.includes(`alt="${labels[0].title}"`)&&p.includes(`data-engineering-title aria-live="polite">${labels[0].title}</p>`));
+});

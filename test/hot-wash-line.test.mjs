@@ -5,6 +5,7 @@ import {createHash} from 'node:crypto';
 import {lines,nodes} from '../content/catalog.mjs';
 import {hotFilmWashing,hotWashDocument,hotWashSpecification,hotWashPower,hotWashEnergy,hotWashMedia,hotWashProducts} from '../content/hot-film-washing.mjs';
 import flow from '../content/hot-wash-flow.json' with {type:'json'};
+import rawAssets from '../content/hot-wash-raw-assets.json' with {type:'json'};
 import {formatLineNumber as fmt,linePowerData} from '../content/line-engineering.mjs';
 import {hotWashDiagram} from '../content/hot-wash-diagram.mjs';
 import {publicLibraryDocuments} from '../content/document-library.mjs';
@@ -67,7 +68,7 @@ test('Ведомость, календарные величины и энерг�
  assert.deepEqual([24,720,744,8760].map(h=>hotWashEnergy(h).toFixed(2)),['21.36','640.94','662.30','7798.06']);
  assert.equal(.75*24,18);assert.equal(.75*720,540);assert.equal(.75*8760,6570);assert.equal(68*33,2244);
  const html=revisedPage(line.path);
- for(const text of ['70%','1 271,70','890,19','77,5','37,6','700–1 200','240–250','0,003–0,007%','190 °C / 2,16 кг','30 суток','720 ч','6 570'])assert.ok(html.includes(text),text);
+ for(const text of ['70%','1 271,70','890,19','77,5','37,6','700–1 200','0,003–0,007%','190 °C / 2,16 кг','30 суток','720 ч','6 570'])assert.ok(html.includes(text),text);
  assert.match(html,/<dd>1–2<small>%<\/small>/);
  assert.match(html,/Номинал одного гранулятора/);
 });
@@ -156,6 +157,48 @@ test('Единая спецификация выводит все четыре �
  assert.equal(Math.round([...powers.values()].reduce((sum,row)=>sum+100*row.calculated_total_kw,0)),89019);
  assert.match(specs,/Всего по линии<\/th><td>—<\/td><td>1 271,70<\/td><td>—<\/td><td>890,19/);
  for(const text of ['1 186,92','21,36','640,94','7 798,06','0,8%','До 3%','5–7%','термодеструкция'])assert.ok(specs.includes(text),text);
+});
+test('Сырьё HOT-WASH использует пять утверждённых иллюстраций и три полноценных карточки',async()=>{
+ const html=render(line.path);
+ const section=html.slice(html.indexOf('id="raw-materials"'),html.indexOf('id="composition"'));
+ const figures=[...section.matchAll(/<figure[^>]*data-media-group="hot-wash-raw"[^>]*>([\s\S]*?)<\/figure>/g)].map(match=>match[1]);
+ const keys=['raw-prepared-01','raw-prepared-02','raw-household','raw-agricultural','raw-stretch'];
+ assert.equal(figures.length,5);
+ assert.equal((section.match(/class="hw-raw-origin"/g)||[]).length,3);
+ keys.forEach((key,index)=>assert.match(figures[index],new RegExp('/raw-prepared/'+key+'\\.webp"')));
+ for(const [index,key] of keys.entries()){
+  const {files,title}=rawAssets.find(asset=>asset.key===key);
+  assert.ok(figures[index].includes(`alt="${title}"`));
+  assert.match(figures[index],/loading="lazy"/);
+  assert.deepEqual(files.map(file=>file.width).sort((a,b)=>a-b).slice(0,2),[480,768]);
+  for(const {file,width,height,sha256} of files){
+   assert.ok(figures[index].includes(`/raw-prepared/${file} ${width}w`),file);
+   const local='public/assets/lines/moyka-plenki/raw-prepared/'+file;
+   assert.deepEqual(imageSize(local),{width,height},file);
+   assert.equal(hash(await readFile(local)),sha256,file);
+  }
+ }
+ for(const label of ['Что отделяется на сухой стадии','Что остаётся для мойки','Что проверяем']){
+  assert.equal(section.split(`<dt>${label}</dt>`).length-1,3);
+ }
+ assert.match(section,/Что удаляет мойка/);
+ assert.ok(section.includes(`href="${basePath}/catalog/lines/separatsiya-02"`));
+ assert.doesNotMatch(section,/<details|<table|Сырьё и контроль партии|raw-film-0[12]/);
+ assert.doesNotMatch(render('/media'),/\/moyka-plenki\/raw-prepared\//);
+});
+test('На мойке сохранены основной КАИР, карта процесса и показатели готовой продукции',()=>{
+ const html=render(line.path);
+ const process=html.slice(html.indexOf('id="process"'),html.indexOf('id="quality"'));
+ const quality=html.slice(html.indexOf('id="quality"'),html.indexOf('id="kair"'));
+ const kair=html.slice(html.indexOf('id="kair"'),html.indexOf('id="specs"'));
+ assert.doesNotMatch(process,/<details|hw-process-archive/);
+ assert.equal((process.match(/data-hotwash-stage="/g)||[]).length,10);
+ assert.doesNotMatch(quality,/<details|class="line-note"|Показатели из технического описания/);
+ assert.equal((quality.match(/data-hotwash-output="/g)||[]).length,3);
+ for(const value of ['30–70<small>ppm','1–2<small>%','0,8–1,2<small>г/10 мин','190 °C / 2,16 кг'])assert.ok(quality.includes(value),value);
+ assert.doesNotMatch(kair,/<img|line-process-views|Экраны из технического описания/);
+ assert.equal((kair.match(/data-dry-kair-feature="/g)||[]).length,6);
+ assert.ok(kair.includes(`class="dry-kair-link" href="${basePath}/automation"`));
 });
 test('Медиатека объединяет повторно используемые фотографии, считает материалы и выделяет новую линию',()=>{
  const gallery=buildGalleryData(),items=selectGalleryItems(gallery.items,{album:'moyka-plenki'});

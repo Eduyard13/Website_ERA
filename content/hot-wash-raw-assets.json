@@ -1,0 +1,127 @@
+[
+  {
+    "key": "raw-household",
+    "title": "Бытовые пакеты и плёночная упаковка",
+    "origin": "generated",
+    "files": [
+      {
+        "file": "raw-household.webp",
+        "width": 1536,
+        "height": 1024,
+        "sha256": "6fa41f6c8c3063dcfa408c0223de73790f440f368bc362d8d248a4f9c49bc2d2"
+      },
+      {
+        "file": "raw-household-768w.webp",
+        "width": 768,
+        "height": 512,
+        "sha256": "bb60bed4c22b5b5a54a45c65f92b6e8017e2dbd997c3b673ed35c5ee7e5d8416"
+      },
+      {
+        "file": "raw-household-480w.webp",
+        "width": 480,
+        "height": 320,
+        "sha256": "ab97e1a4f26d41f18feb29b9bedcbd48e2de259d6c0e76c1ca24d6af81e99a32"
+      }
+    ]
+  },
+  {
+    "key": "raw-agricultural",
+    "title": "Сельскохозяйственные плёнки",
+    "origin": "generated",
+    "files": [
+      {
+        "file": "raw-agricultural.webp",
+        "width": 1448,
+        "height": 1086,
+        "sha256": "12f9de383e810ed54ae46f7899f48434055c0f9ddd8c02ab46729cdfe414e482"
+      },
+      {
+        "file": "raw-agricultural-768w.webp",
+        "width": 768,
+        "height": 576,
+        "sha256": "92087075d4a5835e09ea50e2f836882528e7fe4e719597e279f058a21ab3fa27"
+      },
+      {
+        "file": "raw-agricultural-480w.webp",
+        "width": 480,
+        "height": 360,
+        "sha256": "835d07681d0129d5d9a638b2e8152ed8e58a1ad27d693aaf92d4d7d8756757dc"
+      }
+    ]
+  },
+  {
+    "key": "raw-stretch",
+    "title": "Стретч и упаковочная плёнка",
+    "origin": "generated",
+    "files": [
+      {
+        "file": "raw-stretch.webp",
+        "width": 1536,
+        "height": 1024,
+        "sha256": "c9e0f2246a569dd793b72f31eae52466d179fd9be1ccb74da658ab5758918d09"
+      },
+      {
+        "file": "raw-stretch-768w.webp",
+        "width": 768,
+        "height": 512,
+        "sha256": "d85e88ac52940c0fb4d72a96a2fb1f771908600378c64bdbc08da0031f636626"
+      },
+      {
+        "file": "raw-stretch-480w.webp",
+        "width": 480,
+        "height": 320,
+        "sha256": "81ff931996e0ac7864d4290c687c1a72837736ad885ef66b97380333ad3cdec4"
+      }
+    ]
+  },
+  {
+    "key": "raw-prepared-01",
+    "title": "Подготовленная плёнка — крупный план",
+    "origin": "generated reconstruction",
+    "files": [
+      {
+        "file": "raw-prepared-01.webp",
+        "width": 1448,
+        "height": 1086,
+        "sha256": "bee5c695217c237fc9966ccd26b5fba7be3b434c950be472f9ebcd23d657277b"
+      },
+      {
+        "file": "raw-prepared-01-768w.webp",
+        "width": 768,
+        "height": 576,
+        "sha256": "02cb5eaa9a3618a573fc549f9b95ea09a3a2b2ea2d8ef48a226308d0942e65eb"
+      },
+      {
+        "file": "raw-prepared-01-480w.webp",
+        "width": 480,
+        "height": 360,
+        "sha256": "a9c5deb5912929d4522a7415ab153006e02192916dec1ac4aac5fd8ecf2d86d6"
+      }
+    ]
+  },
+  {
+    "key": "raw-prepared-02",
+    "title": "Подготовленная плёнка — фактура материала",
+    "origin": "generated reconstruction",
+    "files": [
+      {
+        "file": "raw-prepared-02.webp",
+        "width": 1448,
+        "height": 1086,
+        "sha256": "c01b48d69b945a8339d6d46f08216de7a88347807426f79e572729d948bf933b"
+      },
+      {
+        "file": "raw-prepared-02-768w.webp",
+        "width": 768,
+        "height": 576,
+        "sha256": "037be51df65295e6e33240540db38c94a10cb393aed969f136992599a3c21397"
+      },
+      {
+        "file": "raw-prepared-02-480w.webp",
+        "width": 480,
+        "height": 360,
+        "sha256": "1f4c58ff400a10018444161d47ba70f6f8a6c163d40b9ee155fc076e3171d93a"
+      }
+    ]
+  }
+]

@@ -156,7 +156,6 @@
 .hw-process .hw-water-waste{display:grid;justify-items:center;margin-top:4px}
 .hw-process .hw-water-waste p{margin:4px 0 0;text-align:center;font-size:13px;line-height:1.4;color:#4e586c}
 .hw-process .hw-water-note{margin:16px 0 0;padding-top:11px;border-top:1px solid #b8cad9;color:var(--hw-muted);font-size:14px}
-.hw-process .hw-process-archive{margin-top:24px}
 
 @media(max-width:1199px){
  .hw-process .hw-flow-stages{grid-template-columns:minmax(0,1fr);gap:var(--hw-gap)}
