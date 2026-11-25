@@ -6,7 +6,8 @@ if(mediaViewer){
  const error=mediaViewer.querySelector('#viewer-video-error');
  const videoActions=mediaViewer.querySelector('.viewer-video-actions');
  const fullscreen=mediaViewer.querySelector('[data-video-fullscreen]');
- let activeIndex=0,opener,activeGroup=null;
+ let activeIndex=0,opener,activeGroup=null,touch=null;
+ const dryAlbum=()=>activeGroup==='dry-separation-album';
  const visibleEntries=()=>entries.filter(e=>!e.hidden&&(!activeGroup||e.dataset.mediaGroup===activeGroup));
  function stopVideo(){
   video.pause();
@@ -22,7 +23,7 @@ if(mediaViewer){
   image.hidden=isVideo;video.hidden=!isVideo;videoActions.hidden=!isVideo;
   mediaViewer.classList.toggle('is-video',isVideo);
   mediaViewer.querySelector('#viewer-title').textContent=entry.dataset.title;
-  mediaViewer.querySelector('#viewer-source').textContent=entry.dataset.source;
+  mediaViewer.querySelector('#viewer-source').textContent=entry.dataset.source+(dryAlbum()?' · '+(activeIndex+1)+' / '+items.length:'');
   mediaViewer.querySelector('#viewer-product').href=entry.dataset.product;
   mediaViewer.querySelectorAll('[data-next],[data-prev]').forEach(b=>{b.disabled=items.length<2;b.hidden=items.length<2;});
   if(isVideo){
@@ -39,6 +40,7 @@ if(mediaViewer){
  entries.forEach(entry=>entry.querySelector('.media-open').addEventListener('click',event=>{
   event.preventDefault();opener=document.activeElement?.matches('[data-kair-inspect]')?document.activeElement:event.currentTarget;
   activeGroup=entry.dataset.mediaGroup||null;
+  mediaViewer.classList.toggle('is-dry-photo-album',dryAlbum());
   mediaViewer.showModal();showEntry(visibleEntries().indexOf(entry),true);
   document.body.classList.add('viewer-open');
   mediaViewer.querySelector('[data-close]').focus();
@@ -67,8 +69,11 @@ if(mediaViewer){
    if(Number.isFinite(video.duration))video.currentTime=Math.max(0,Math.min(video.duration,video.currentTime+direction*5));
   }else showEntry(activeIndex+direction,true);
  });
+ image.addEventListener('pointerdown',event=>{if(dryAlbum()&&event.pointerType==='touch'&&event.isPrimary)touch={x:event.clientX,y:event.clientY};});
+ image.addEventListener('pointerup',event=>{if(!touch)return;const dx=event.clientX-touch.x,dy=event.clientY-touch.y;touch=null;if(dryAlbum()&&Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.3)showEntry(activeIndex+(dx<0?1:-1));});
+ image.addEventListener('pointercancel',()=>{touch=null;});
  mediaViewer.addEventListener('close',()=>{
   stopVideo();image.removeAttribute('src');
-  document.body.classList.remove('viewer-open');activeGroup=null;opener?.focus({preventScroll:true});
+  document.body.classList.remove('viewer-open');activeGroup=null;touch=null;mediaViewer.classList.remove('is-dry-photo-album');opener?.focus({preventScroll:true});
  });
 }

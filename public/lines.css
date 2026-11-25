@@ -927,3 +927,47 @@
 /* BASE uses the same approved proportions, with its original loose-film image. */
 .film-line .dry-route-map--approved[data-route-base] [data-route-illustration="bulk"]{mask-image:none;background:#faf7f1}
 .film-line .dry-route-map--approved[data-route-base] [data-route-illustration="bulk"]>img{object-fit:cover;object-position:center 57%}
+
+/* Shared editorial industrial photo album: 1 / 2 / 3, original PRO photographs. */
+.film-line .dry-photo-album{--album-gold:#a9843d;--album-border:#d9cbb4}
+.film-line .dry-photo-album .line-section-heading{align-items:end}
+.film-line .dry-album-hint{display:block;margin-top:10px;color:#62677a;font-size:14px}
+.film-line .dry-album-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(12px,1.8vw,26px);align-items:stretch}
+.film-line .dry-album-grid>.dry-album-card{grid-column:span 2;display:flex;flex-direction:column;min-width:0;margin:0;border:1px solid var(--album-border);border-radius:14px;background:linear-gradient(155deg,#fffdf9,#f7f2e9);box-shadow:0 6px 20px #4633190b;transition:box-shadow .25s,border-color .25s}
+.film-line .dry-album-grid>.dry-album-card:first-child{grid-column:1/-1}
+.film-line .dry-album-grid>.dry-album-card:nth-child(2),.film-line .dry-album-grid>.dry-album-card:nth-child(3){grid-column:span 3}
+.film-line .dry-album-card .media-open{aspect-ratio:16/10;overflow:hidden;background:#e5dfd5}
+.film-line .dry-album-card:first-child .media-open{aspect-ratio:2.55;max-height:520px}
+.film-line .dry-album-card:nth-child(2) .media-open,.film-line .dry-album-card:nth-child(3) .media-open{aspect-ratio:1.9}
+.film-line .dry-album-card .media-open img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;filter:none;transition:transform .3s}
+.film-line .dry-album-card:first-child .media-open img{object-position:center 48%}
+.film-line .dry-album-card .media-open::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(145deg,#10162e29,transparent 35%,transparent 80%,#10162e20)}
+.film-line .dry-album-country{position:absolute;top:clamp(12px,1.5vw,22px);left:clamp(12px,1.5vw,22px);z-index:1;display:inline-flex;padding:7px 13px;border:1px solid #d9c18d66;border-radius:5px;background:#15192fe8;color:#fff;font-size:12px;letter-spacing:.045em}
+.film-line .dry-album-zoom{position:absolute;right:14px;bottom:14px;z-index:1;display:grid;place-items:center;width:40px;height:40px;border:1px solid #c8af79;border-radius:50%;background:#faf7f2ee;color:#171b32}
+.film-line .dry-album-zoom svg{width:19px;height:19px}
+.film-line .dry-album-card figcaption{flex:1;display:flex;align-items:start;gap:14px;padding:clamp(15px,1.7vw,24px);border-top:1px solid var(--album-border)}
+.film-line .dry-album-card figcaption>.dry-album-index{display:block;flex:none;margin:3px 0 0;color:#9a742a;font-size:12px;font-weight:600;letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.film-line .dry-album-card figcaption>div{min-width:0}
+.film-line .dry-album-card h3{margin:0 0 5px;font-size:clamp(18px,1.55vw,24px);font-weight:600;line-height:1.22;letter-spacing:-.02em;color:var(--ink)}
+.film-line .dry-album-card:first-child h3{font-size:clamp(23px,2.2vw,33px)}
+.film-line .dry-album-card figcaption p{margin:0;font-size:clamp(13px,1.1vw,16px);line-height:1.45;color:#555b6d}
+.film-line .dry-album-card:hover,.film-line .dry-album-card:focus-within{border-color:#ad8c48;box-shadow:0 8px 24px #46331918}
+.film-line .dry-album-card .media-open:hover img{transform:scale(1.025)}
+.film-line .dry-album-more{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:clamp(14px,2.2vw,32px);margin-top:clamp(20px,3vw,42px);padding:clamp(20px,3vw,38px);border:1px solid #b49250;border-radius:14px;background:radial-gradient(ellipse at 0 0,#2b3049,#15192f 70%);color:#fff;box-shadow:0 8px 24px #15192f12}
+.film-line .dry-album-more-icon{display:grid;place-items:center;width:58px;height:58px;border:1px solid #c3a45a66;border-radius:10px;color:#d7b768}
+.film-line .dry-album-more-icon svg{width:31px;height:31px}
+.film-line .dry-album-more-copy{min-width:0}
+.film-line .dry-album-more-copy .eyebrow{margin:0 0 7px;color:#d6b565;font-size:11px}
+.film-line .dry-album-more-copy h3{margin:0 0 7px;font-size:clamp(22px,2vw,30px);line-height:1.2;font-weight:550;color:#fff}
+.film-line .dry-album-more-copy p:not(.eyebrow){margin:0;color:#d5d8e3;font-size:14px;line-height:1.45}
+.film-line .dry-album-more-link{display:inline-flex;align-items:center;justify-content:space-between;gap:18px;min-height:48px;padding:12px 16px;border:1px solid #c5a55d;border-radius:6px;color:#fff;font-size:14px;line-height:1.3;transition:background .2s}
+.film-line .dry-album-more-link span{color:#e3c679;font-size:19px}
+.film-line .dry-album-more-link:hover{background:#ffffff12;color:#fff}
+.film-line .dry-album-more-link:focus-visible{outline-color:#d6b565}
+#media-viewer.is-dry-photo-album #viewer-image{touch-action:pan-y}
+#media-viewer.is-dry-photo-album #viewer-product{display:none}
+#media-viewer.is-dry-photo-album #viewer-source{color:#555b6d;font-variant-numeric:tabular-nums}
+@media(max-width:1000px){.film-line .dry-album-grid>.dry-album-card:nth-child(n+4){grid-column:span 2}.film-line .dry-album-more{grid-template-columns:auto minmax(0,1fr)}.film-line .dry-album-more-link{grid-column:2;justify-self:start}}
+@media(max-width:760px){.film-line .dry-album-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.film-line .dry-album-grid>.dry-album-card:first-child{grid-column:1/-1}.film-line .dry-album-grid>.dry-album-card:nth-child(n+2){grid-column:span 1}.film-line .dry-album-card:first-child .media-open{aspect-ratio:1.6}.film-line .dry-album-card:nth-child(n+2) .media-open{aspect-ratio:1.5}.film-line .dry-album-card figcaption{gap:9px;padding:14px}.film-line .dry-album-country{font-size:11px;padding:5px 9px}}
+@media(max-width:520px){.film-line .dry-album-grid{grid-template-columns:minmax(0,1fr)}.film-line .dry-album-grid>.dry-album-card:nth-child(n){grid-column:1/-1}.film-line .dry-album-more{grid-template-columns:minmax(0,1fr);gap:13px}.film-line .dry-album-more-icon{width:44px;height:44px}.film-line .dry-album-more-link{grid-column:1;justify-self:stretch}.film-line .dry-album-card .media-open{aspect-ratio:1.55}}
+@media(prefers-reduced-motion:reduce){.film-line .dry-album-card,.film-line .dry-album-card .media-open img,.film-line .dry-album-more-link{transition:none}.film-line .dry-album-card .media-open:hover img{transform:none}}

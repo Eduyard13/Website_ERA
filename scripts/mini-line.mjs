@@ -1,3 +1,4 @@
+import {renderDryPhotoAlbum} from './dry-photo-album.mjs';
 import {renderBaseSpecs} from './base-specs.mjs';
 import {renderDryKair} from './dry-kair.mjs';
 import {renderBaseProductRoutes} from './base-product-routes.mjs';
@@ -73,7 +74,7 @@ export function renderMiniFilmSeparation(line){
   ${lineDimensions(drawing)}
  </section>
 
- <section class="section line-soft" id="photos"><div class="line-section-heading"><div><p class="eyebrow">ФОТОГРАФИИ ИЗ ТЕХОПИСАНИЯ</p><h2>Оборудование и результат.<br>В деталях.</h2></div><p>Оригинальные фотографии роторного узла на сборке, очищенной плёнки и отделённых примесей. Нажмите на изображение, чтобы рассмотреть его крупнее.</p></div><div class="line-photo-grid">${picture('rotor',{label:'СБОРКА УЗЛА'})}${picture('after-close',{label:'ОЧИЩЕННАЯ ПЛЁНКА'})}${picture('rejects',{label:'ОТДЕЛЁННЫЕ ПРИМЕСИ'})}</div></section>
+ ${renderDryPhotoAlbum()}
 
  <section class="section line-documents" id="documents"><div class="line-section-heading"><div><p class="eyebrow">ТЕХНИЧЕСКАЯ ДОКУМЕНТАЦИЯ</p><h2>Брошюра, техническое описание<br>и габаритная схема.</h2></div><p>Техническое описание линии BASE от 3 ноября 2026 года: 14 страниц о сырье, потоках, оборудовании, качестве продукта, спецификации, размещении, управлении и обслуживании.</p></div>${lineDocumentCards(documents)}<a class="text-link" href="/documents/?objectType=line&amp;product=separatsiya-01">Все документы линии BASE в библиотеке ↗</a></section>
 

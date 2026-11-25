@@ -1,3 +1,4 @@
+import {renderDryPhotoAlbum} from './dry-photo-album.mjs';
 import {renderBaseSpecs} from './base-specs.mjs';
 import {renderDryKair} from './dry-kair.mjs';
 import {renderDryProductRoutes} from './dry-product-routes.mjs';
@@ -71,7 +72,7 @@ export function renderSeparationDrying(line){
   ${renderPremiumEngineeringCenter()}
   <div class="line-placement-notes"><div><h3>Подача и выдача</h3><p>Свободные проезды двух погрузчиков, склады сырья и продукции, места смены тары и снятия тюков.</p></div><div><h3>Обслуживание и сети</h3><p>Доступ к приводам, люкам, подвижной щеке, сушилке и бункерам. Электропитание, заземление, воздуховоды, нагрев и отвод конденсата.</p></div><div><h3>Изолированная сортировка</h3><p>Площадка 13 в ангаре 35: рабочие места вдоль ленты, освещение, вентиляция и доступ к шахтам сброса. Монтажные отметки, нагрузки и точки подключения уточняются под конкретный цех.</p></div></div></section>
 
- <section class="section line-soft" id="photos">${heading('ОБОРУДОВАНИЕ И ДЕТАЛИ','Фотографии из<br>технического описания.','Отдельные узлы и пример размещения сухой сепарации ЭРА на производственной площадке. Нажмите на изображение для увеличения.')}<div class="line-photo-grid">${['pre-opener-photo','rotor','rotor-disc','rotor-hood','bag-frame','installation'].map(key=>picture(key)).join('')}</div><p class="line-note">Фотографии отдельных узлов и пример площадки иллюстрируют оборудование. Проектные изображения компоновки и машин подписаны как визуализации.</p><a class="text-link" href="/media/" data-photo-gallery data-product="/catalog/lines/separatsiya-03">Материалы этой линии в медиатеке ↗</a></section>
+ ${renderDryPhotoAlbum()}
 
  <section class="section line-documents" id="documents">${heading('ТЕХНИЧЕСКАЯ ДОКУМЕНТАЦИЯ','От состава линии<br>до размещения и управления.','Брошюра линии, техническое описание на 28 страницах от 18 ноября 2026 года и исходный габаритный чертёж A0.')}${lineDocumentCards(documents)}<a class="text-link" href="/documents/technical/?objectType=line&amp;product=separatsiya-03">Техническое описание в инженерной библиотеке ↗</a></section>
 

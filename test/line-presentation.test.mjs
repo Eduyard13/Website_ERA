@@ -307,3 +307,19 @@ test('All dry lines use the approved editorial route diagram with local imagery 
  }
  assert.ok(!render('/catalog/lines/moyka-plenki').includes('data-route-design="editorial-03"'));
 });
+
+test('All dry lines share the approved six-photo editorial album with isolated viewer and gallery CTA',()=>{
+ let previous;
+ const keys=['netherlands-line','netherlands-rotor','china-assembly','china-ballistic','china-air-separation','netherlands-feed'];
+ for(const slug of ['separatsiya-01','separatsiya-02','separatsiya-03']){
+  const page=render('/catalog/lines/'+slug),a=page.indexOf('id="photos"'),z=page.indexOf('</section>',a),block=page.slice(a,z);
+  assert.ok(a>0&&block.includes('data-dry-photo-album'));
+  assert.deepEqual([...block.matchAll(/data-dry-album-photo="([^"]+)"/g)].map(m=>m[1]),keys);
+  assert.equal((block.match(/data-media-group="dry-separation-album"/g)||[]).length,6);
+  for(const key of keys)assert.ok(block.includes('href="'+basePath+'/assets/'+filmSeparationMedia[key].file+'"'));
+  assert.ok(block.includes('href="'+basePath+'/media/"')&&block.includes('Перейти в фото- и видеогалерею'));
+  assert.doesNotMatch(block,/На производственной съёмке отсутствует|line-photo-grid/);
+  if(previous)assert.equal(block,previous);else previous=block;
+ }
+ assert.ok(!render('/catalog/lines/moyka-plenki').includes('data-dry-photo-album'));
+});
