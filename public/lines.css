@@ -867,3 +867,59 @@
  .film-line .dry-route-map--editorial .dry-route-visual{height:140px}
  .film-line .dry-route-map--editorial .dry-route-stage h4{font-size:23px}
 }
+
+/* Exact approved Variant 3 artwork and compact reference proportions.
+   Scope to PRO / PREMIUM; the BASE route map is untouched. */
+.film-line .dry-route-map--approved{container-type:inline-size;scroll-margin-top:150px;--route-paper:#faf7f2;padding:clamp(16px,2vw,30px);background:radial-gradient(ellipse at 47% 35%,#fbf7ef,#f5eee3 75%,#efe7db);border-color:#d9cbb3}
+.film-line .dry-route-map--approved::before{background:repeating-linear-gradient(128deg,transparent 0 4px,#fff6 5px 6px,transparent 7px 10px);mask-image:radial-gradient(ellipse at 96% 4%,#000 0%,transparent 43%)}
+.film-line .dry-route-map--approved .dry-route-origin{min-height:0;aspect-ratio:1462/130;padding:12px 18px;gap:clamp(8px,1.35cqw,18px);border-radius:clamp(12px,1.4cqw,20px);background:#24263d;box-shadow:0 6px 16px #191c3010}
+.film-line .dry-route-map--approved .dry-route-approved-origin{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:fill;z-index:-1;pointer-events:none}
+.film-line .dry-route-map--approved .dry-route-origin>span{font-size:clamp(11px,1.05cqw,15px);gap:1.65cqw}
+.film-line .dry-route-map--approved .dry-route-origin>strong{font-size:clamp(22px,2.65cqw,39px);line-height:1.13;font-weight:650;letter-spacing:-.02em}
+.film-line .dry-route-map--approved .dry-route-branch{height:4.05cqw}
+.film-line .dry-route-map--approved .dry-route-branches{grid-template-columns:minmax(0,33.1%) minmax(0,1fr);gap:4.5cqw;align-items:stretch}
+.film-line .dry-route-map--approved [data-dry-route-lane="cycle"]{position:relative;padding:0;border:0}
+.film-line .dry-route-map--approved [data-dry-route-lane="cycle"]::before{content:"";position:absolute;left:-2.35cqw;inset-block:0;width:1px;background:#bda274}
+.film-line .dry-route-map--approved .dry-route-lane-label{margin:0 0 .9cqw;padding-top:.25cqw;font-size:clamp(11px,1.05cqw,15px);line-height:1.4;gap:1.8cqw}
+.film-line .dry-route-map--approved .dry-route-cycle-stages{grid-template-columns:minmax(0,1fr) 4.3cqw minmax(0,1.02fr)}
+.film-line .dry-route-map--approved .dry-route-stage{border-radius:clamp(13px,1.45cqw,22px);border:1px solid #ddccb0;background:linear-gradient(145deg,#fdfaf6,#f6f0e7);box-shadow:0 6px 12px #7d5b2618,inset 0 0 0 2px #fff9;min-height:24.3cqw}
+.film-line .dry-route-map--approved [data-dry-route-lane="sale"] .dry-route-stage{min-height:26.9cqw}
+.film-line .dry-route-map--approved .dry-route-stage-copy{padding:1.15cqw 1.9cqw 0;flex:0 0 auto}
+.film-line .dry-route-map--approved [data-dry-route-lane="sale"] .dry-route-stage-copy{padding:1.95cqw 2.15cqw 0}
+.film-line .dry-route-map--approved .dry-route-stage-top{gap:1.1cqw;margin-bottom:.85cqw}
+.film-line .dry-route-map--approved .dry-route-stage-top span{width:clamp(29px,2.65cqw,39px);height:clamp(29px,2.65cqw,39px);font-size:clamp(12px,1.15cqw,16px);background:transparent}
+.film-line .dry-route-map--approved .dry-route-stage-top svg{width:clamp(25px,2.4cqw,35px);height:clamp(25px,2.4cqw,35px)}
+.film-line .dry-route-map--approved .dry-route-sale-label{font-size:clamp(11px,1.05cqw,15px)}
+.film-line .dry-route-map--approved .dry-route-stage h4{font-size:clamp(20px,2.05cqw,30px);line-height:1.13;letter-spacing:-.022em;font-weight:650;margin:0 0 .8cqw}
+.film-line .dry-route-map--approved .dry-route-stage p{font-size:clamp(13px,1.17cqw,17px);line-height:1.4}
+.film-line .dry-route-map--approved .dry-route-stage .text-link{margin-top:.75cqw;font-size:clamp(12px,1.0cqw,14px);min-height:0;padding-bottom:.45cqw;line-height:1.4}
+.film-line .dry-route-map--approved .dry-route-visual{height:auto;min-height:0;margin:auto 4px 4px;aspect-ratio:409/126;background:transparent;overflow:hidden;border-radius:0 0 14px 14px}
+.film-line .dry-route-map--approved [data-dry-route-lane="sale"] .dry-route-visual{height:auto;aspect-ratio:473/182;mask-image:linear-gradient(to bottom,transparent 0,#000 9%)}
+.film-line .dry-route-map--approved [data-dry-route-stage="pellets"] .dry-route-visual{aspect-ratio:419/164}
+.film-line .dry-route-map--approved .dry-route-visual>img{object-fit:fill}
+.film-line .dry-route-map--approved .dry-route-down>svg{width:clamp(22px,2.5cqw,35px)}
+@media(max-width:900px){
+ .film-line .dry-route-map--approved .dry-route-origin{aspect-ratio:auto;min-height:100px}
+ .film-line .dry-route-map--approved .dry-route-stage-copy,.film-line .dry-route-map--approved [data-dry-route-lane="sale"] .dry-route-stage-copy{padding:16px 13px 8px}
+ .film-line .dry-route-map--approved .dry-route-stage-top{margin-bottom:10px}
+ .film-line .dry-route-map--approved .dry-route-stage h4{margin-bottom:9px}
+ .film-line .dry-route-map--approved .dry-route-stage .text-link{margin-top:9px;padding-bottom:5px}
+}
+@media(max-width:720px){
+ .film-line .dry-route-map--approved .dry-route-branches{grid-template-columns:minmax(0,1fr);gap:18px}
+ .film-line .dry-route-map--approved .dry-route-branch{height:22px;visibility:hidden}
+ .film-line .dry-route-map--approved [data-dry-route-lane="cycle"]::before{display:none}
+ .film-line .dry-route-map--approved .dry-route-origin>strong{font-size:clamp(21px,4.3vw,30px)}
+ .film-line .dry-route-map--approved .dry-route-approved-origin{object-fit:cover}
+ .film-line .dry-route-map--approved .dry-route-cycle-stages{grid-template-columns:minmax(0,1fr) 32px minmax(0,1fr)}
+ .film-line .dry-route-map--approved .dry-route-stage-copy,.film-line .dry-route-map--approved [data-dry-route-lane="sale"] .dry-route-stage-copy{padding:18px 18px 12px}
+ .film-line .dry-route-map--approved .dry-route-stage h4{font-size:clamp(20px,3.6vw,25px)}
+ .film-line .dry-route-map--approved .dry-route-stage p{font-size:15px}
+ .film-line .dry-route-map--approved .dry-route-lane-label{margin-bottom:10px}
+}
+@media(max-width:470px){
+ .film-line .dry-route-map--approved .dry-route-cycle-stages{grid-template-columns:1fr;grid-template-rows:auto 32px auto}
+ .film-line .dry-route-map--approved .dry-route-stage-top{gap:10px}
+ .film-line .dry-route-map--approved .dry-route-origin{min-height:108px;padding:16px 12px}
+ .film-line .dry-route-map--approved .dry-route-down>svg{transform:rotate(90deg)}
+}

@@ -290,8 +290,16 @@ test('All dry lines use the approved editorial route diagram with local imagery 
   const html=render('/catalog/lines/'+slug),start=html.indexOf('data-route-design="editorial-03"'),end=html.indexOf('</section>',start),block=html.slice(start,end);
   assert.ok(start>0&&block.includes('dry-route-cycle-stages'));
   assert.deepEqual([...block.matchAll(/data-route-illustration="([^"]+)"/g)].map(m=>m[1]),[slug==='separatsiya-01'?'bulk':'bale','wash','pellets']);
-  assert.ok(block.includes('src="'+basePath+'/assets/project-home/process/stage-hot-wash-approved.webp"'));
-  assert.ok(block.includes('src="'+basePath+'/assets/lines/moyka-plenki/product-granule-768.webp"'));
+  if(slug==='separatsiya-01'){
+   assert.ok(block.includes('src="'+basePath+'/assets/project-home/process/stage-hot-wash-approved.webp"'));
+   assert.ok(block.includes('src="'+basePath+'/assets/lines/moyka-plenki/product-granule-768.webp"'));
+   assert.ok(!block.includes('data-route-approved='));
+  }else{
+   assert.ok(block.includes('data-route-approved="reference-20261125"'));
+   assert.deepEqual([...block.matchAll(/data-approved-route-art="([^"]+)"/g)].map(m=>m[1]),['origin','bale','wash','pellets']);
+   for(const key of ['origin','bale','wash','pellets'])assert.ok(block.includes('src="'+basePath+'/assets/lines/shared/route-approved-03/'+key+'.webp"'));
+   assert.doesNotMatch(block,/stage-hot-wash-approved\.webp|product-bales-768\.webp|dry-route-origin-film/);
+  }
   assert.ok(block.includes('href="'+basePath+'/catalog/lines/moyka-plenki"'));
   assert.match(block,/data-dry-route-stage="wash"[\s\S]*?dry-route-down[\s\S]*?data-dry-route-stage="pellets"/);
   if(slug==='separatsiya-01')assert.match(block,/Очищенная плёночная фракция[\s\S]*?Реализация навалом/);
