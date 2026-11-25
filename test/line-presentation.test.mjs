@@ -329,7 +329,7 @@ test('All dry lines share the approved six-photo editorial album with isolated v
 });
 
 test('Dry line technical editions use original covers and the correct filtered library',()=>{
- const configs=[['separatsiya-01','BASE',['separatsiya-01-brochure','separatsiya-01-mini-technical','separatsiya-01-dimensions']],['separatsiya-02','PRO',['separatsiya-02-overview','separatsiya-02-technical','separatsiya-02-dimensions-a0']],['separatsiya-03','PREMIUM',['separatsiya-03-brochure','separatsiya-03-technical','separatsiya-03-dimensions']]];
+ const configs=[['separatsiya-01','BASE',['separatsiya-01-brochure','separatsiya-01-mini-technical','separatsiya-01-dimensions']],['separatsiya-02','PRO',['separatsiya-02-overview','separatsiya-02-technical','separatsiya-02-dimensions-a0']],['separatsiya-03','PREMIUM',['separatsiya-03-brochure','separatsiya-03-technical','separatsiya-03-dimensions']],['moyka-plenki','HOT-WASH',['moyka-plenki-brochure','moyka-plenki-technical','moyka-plenki-dimensions']]];
  for(const [slug,name,ids] of configs){
   const page=render('/catalog/lines/'+slug),a=page.indexOf('id="documents"'),z=page.indexOf('</section>',a),block=page.slice(a,z);
   assert.ok(block.includes('data-dry-document-editions="'+name+'"'));
@@ -340,12 +340,11 @@ test('Dry line technical editions use original covers and the correct filtered l
   assert.ok(block.includes('href="'+basePath+'/documents/?objectType=line&amp;product='+slug+'"'));
   assert.doesNotMatch(block,/dl-description|line-document-grid--complete/);
  }
- assert.ok(!render('/catalog/lines/moyka-plenki').includes('data-dry-document-editions'));
  assert.ok(!render('/documents').includes('data-dry-document-editions'));
 });
 
-test('Shared dry-line CTA opens the existing form with a configuration-specific topic',()=>{
- for(const [slug,tier] of [['separatsiya-01','BASE'],['separatsiya-02','PRO'],['separatsiya-03','PREMIUM']]){
+test('Shared line CTA opens the existing form with a configuration-specific topic',()=>{
+ for(const [slug,tier] of [['separatsiya-01','BASE'],['separatsiya-02','PRO'],['separatsiya-03','PREMIUM'],['moyka-plenki','HOT-WASH']]){
   const page=render('/catalog/lines/'+slug),a=page.indexOf('id="request"'),z=page.indexOf('</section>',a),block=page.slice(a,z);
   assert.ok(block.includes('data-dry-request="'+tier+'"'));
   assert.equal((block.match(/<li>/g)||[]).length,3);
@@ -353,15 +352,16 @@ test('Shared dry-line CTA opens the existing form with a configuration-specific 
   assert.doesNotMatch(block,/<form|<input|<textarea/);
   const match=block.match(/class="button dry-request-action" href="([^"]+)"/);
   const url=new URL(match[1].replaceAll('&amp;','&'),'https://example.test');
-  assert.ok(url.searchParams.get('topic').includes('Сухая сепарация · '+tier));
+  assert.ok(url.searchParams.get('topic').includes(tier==='HOT-WASH'?'Линия горячей мойки плёнок и пакетов':'Сухая сепарация · '+tier));
   assert.equal(url.searchParams.get('source'),'/catalog/lines/'+slug);
   assert.equal(url.hash,'#project-form');
   assert.equal((page.match(/data-request-form(?=[\s>])/g)||[]).length,1);
  }
- assert.ok(!render('/catalog/lines/moyka-plenki').includes('data-dry-request'));
+ assert.ok(!render('/documents').includes('data-dry-request'));
 });
 test('Production mail subject uses the validated source rather than raw user input',async()=>{
  const php=await readFile('server/regru/private/request-handler.php','utf8');
  assert.ok(php.includes('$mail->Subject = requestMailSubject($source);'));
+ assert.ok(php.includes("'/catalog/lines/moyka-plenki' => 'Линия горячей мойки плёнок и пакетов',"));
  for(const [slug,tier] of [['separatsiya-01','BASE'],['separatsiya-02','PRO'],['separatsiya-03','PREMIUM']])assert.match(php,new RegExp("'/catalog/lines/"+slug+"' => '[^']*"+tier+"'"));
 });

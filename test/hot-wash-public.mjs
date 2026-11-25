@@ -64,6 +64,12 @@ try{
   await command('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:width<768});
   await load(compositionPath);await wait(`!!document.querySelector('#hotwash-construction[data-monitor-ready="true"]')`);
   await evaluate(`Promise.all([...document.querySelectorAll('main img')].map(i=>{i.loading='eager';return i.decode();}))`);
+  const sharedBlocks=await evaluate(`(()=>{const r=document.querySelector('#request'),d=document.querySelector('[data-dry-document-editions]'),cards=[...d.querySelectorAll('[data-library-document]')],button=r.querySelector('.dry-request-action'),dialog=document.querySelector('#project-request');button.click();const result={opened:dialog.open,topic:dialog.querySelector('[data-request-topic]').value,source:dialog.querySelector('[data-request-source]').value,forms:r.querySelectorAll('form').length,steps:r.querySelectorAll('.dry-request-steps li').length,fit:r.scrollWidth<=r.clientWidth+1&&d.scrollWidth<=d.clientWidth+1,docs:cards.map(c=>c.dataset.libraryDocument),links:cards.every(c=>c.querySelector('.edition-open').href===c.querySelector('.edition-download').href&&c.querySelector('.edition-download').hasAttribute('download')),library:new URL(d.querySelector('.edition-library').href).searchParams.get('product')};dialog.querySelector('[data-request-close]').click();return {...result,closed:!dialog.open}})()`);
+  assert.ok(sharedBlocks.opened&&sharedBlocks.closed&&sharedBlocks.fit&&sharedBlocks.links);
+  assert.equal(sharedBlocks.topic,'Линия горячей мойки плёнок и пакетов');
+  assert.ok(sharedBlocks.source.split('/').filter(Boolean).at(-1)==='moyka-plenki');
+  assert.equal(sharedBlocks.forms,0);assert.equal(sharedBlocks.steps,3);
+  assert.deepEqual(sharedBlocks.docs,['moyka-plenki-brochure','moyka-plenki-technical','moyka-plenki-dimensions']);assert.equal(sharedBlocks.library,'moyka-plenki');
   if(width===1440&&process.env.ERA_HOT_WASH_SCREENSHOT){
    await captureNativeDiagram(evaluate,command,'hotwash-construction',process.env.ERA_HOT_WASH_SCREENSHOT);
   }

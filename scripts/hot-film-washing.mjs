@@ -5,7 +5,9 @@ import {interactiveLineDiagram} from './line-diagram.mjs';
 import {renderDryArchitectureHeading} from './dry-line-architecture.mjs';
 import {mediaAttributes} from './media.mjs';
 import {pdfViewerDialog} from './documents.mjs';
-import {lineDocuments,lineDocumentCards,lineHeroImage} from './line-page-media.mjs';
+import {lineDocuments,lineHeroImage} from './line-page-media.mjs';
+import {renderDryDocumentEditions} from './dry-document-editions.mjs';
+import {renderDryLineRequest} from './dry-line-request.mjs';
 import {linePower} from './line-power.mjs';
 import {nodes} from '../content/catalog.mjs';
 import {equipmentCardImages} from '../content/equipment-card-images.mjs';
@@ -61,9 +63,9 @@ export function renderHotFilmWashing(line){
 
  <section class="section line-soft" id="photos">${heading('ОБОРУДОВАНИЕ И ДЕТАЛИ','Оборудование и производственные детали.','Материалы из технического описания: фотографии отдельных узлов, экраны управления и проектные визуализации. Фотографии и проектные визуализации подписаны отдельно.')}<div class="line-photo-grid">${['centrifuge','flotator','wet-mill','wet-section','placement-isometric','buffer-feed'].map(key=>picture(key,{kind:true,id:key==='placement-isometric'?'hot-dimension-view-workshop':undefined})).join('')}</div><a class="text-link" href="/media/" data-photo-gallery data-product="/catalog/lines/moyka-plenki">Материалы линии в медиатеке ↗</a></section>
 
- <section class="section line-documents" id="documents">${heading('ТЕХНИЧЕСКАЯ ДОКУМЕНТАЦИЯ','Брошюра, техническое описание и чертёж.','Краткая брошюра, техническое описание на 22 страницах от 18 ноября 2026 года и исходный габаритный лист A0.')}${lineDocumentCards(documents)}<a class="text-link" href="/documents/technical/?objectType=line&amp;product=moyka-plenki">Документ линии в инженерной библиотеке ↗</a></section>
+ ${renderDryDocumentEditions(line,documents)}
 
- <section class="section contact line-request" id="request"><div><p class="eyebrow">ПОД ВАШЕ СЫРЬЁ И ПЛОЩАДКУ</p><h2>Обсудим вашу линию горячей мойки.</h2><p>При подборе учитываем состав и объём подготовленной плёнки, остаточные включения и влажность, требуемый продукт, доступную электрическую и тепловую мощность, воду и план помещения. Подготовим спецификацию и схему размещения.</p>${more('Что подготовить для подбора',`<p>Фото и видео партии, размеры тюков, длина фрагментов, толщина, насыпная плотность, рабочий график и показатели сухой линии. Полезны критерии качества покупателя и представительная партия для испытаний.</p>`)}</div><div>${button('Отправить запрос по линии',email)}<a class="phone" href="tel:+79032813535">+7 903 281-35-35</a><a href="mailto:${siteContacts.email}">${siteContacts.email}</a><small>Приложите фотографии, видео или документы к заявке.</small></div></section>
+ ${renderDryLineRequest(line)}
 
  <section class="section line-soft" id="equipment">${heading('ОБОРУДОВАНИЕ В СОСТАВЕ','Изучите каждый узел.','Прямые переходы к типам оборудования, указанным в спецификации. Параметры конкретного поставляемого исполнения согласуются для линии.')}<div class="line-unit-grid">${hotWashSpecification.filter(s=>s.catalogSlug).map(unitCard).join('')}</div></section>
  <script type="application/json" id="line-document-data">${JSON.stringify(documents).replaceAll('<','\\u003c')}</script>${pdfViewerDialog()}</div>`;

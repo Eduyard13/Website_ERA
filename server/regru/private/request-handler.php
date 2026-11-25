@@ -116,6 +116,7 @@ function requestMailSubject(string $source): string
         '/catalog/lines/separatsiya-01' => 'Сухая сепарация · BASE',
         '/catalog/lines/separatsiya-02' => 'Сухая сепарация · PRO',
         '/catalog/lines/separatsiya-03' => 'Сухая сепарация и сушка · PREMIUM',
+        '/catalog/lines/moyka-plenki' => 'Линия горячей мойки плёнок и пакетов',
         default => '',
     };
     return 'Заявка с сайта ЭРА' . ($line !== '' ? ' — ' . $line : '');
