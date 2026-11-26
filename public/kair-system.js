@@ -1,6 +1,39 @@
-/* Native disclosures work without JS; enhancement adds tabs and function discovery. */
+/* Native links and disclosures work without JS. */
+function connectSectionNav(nav,progress){
+ const track=nav.querySelector('.ka-outline-track');
+ const links=new Map([...track.querySelectorAll('a')].map(link=>[link.hash,link]));
+ let current;
+ function revealActive(){
+  if(!current)return;
+  const link=current.getBoundingClientRect(),row=track.getBoundingClientRect();
+  if(link.left<row.left)track.scrollLeft+=link.left-row.left;
+  else if(link.right>row.right)track.scrollLeft+=link.right-row.right;
+ }
+ function syncSection(){
+  const hash=progress.querySelector('[aria-current="location"]')?.hash;
+  const next=links.get(hash==='#kair-contact'?'#kair-project':hash);
+  if(next===current)return;
+  current?.removeAttribute('aria-current');
+  current=next;
+  current?.setAttribute('aria-current','location');
+  revealActive();
+ }
+ // The side rail supplies the active section for both navigation controls.
+ new MutationObserver(syncSection).observe(progress,{attributes:true,attributeFilter:['data-active-section']});
+ if('ResizeObserver' in window)new ResizeObserver(revealActive).observe(track);
+ syncSection();
+}
+
 const root=document.querySelector('[data-kair-system]');
 if(root){
+ const nav=root.querySelector('[data-kair-section-nav]');
+ const progress=document.querySelector('.page-progress-rail');
+ if(progress)connectSectionNav(nav,progress);
+ else document.addEventListener('DOMContentLoaded',()=>{
+  const rail=document.querySelector('.page-progress-rail');
+  if(rail)connectSectionNav(nav,rail);
+ },{once:true});
+
  for(const group of root.querySelectorAll('[data-kair-tabs]')){
   const tabs=[...group.querySelectorAll('[data-ka-tab]')];
   const select=(tab,focus=false)=>{
@@ -33,15 +66,15 @@ if(root){
  const result=root.querySelector('[data-kair-function-result]');
  const empty=root.querySelector('[data-kair-function-empty]');
  const normalise=value=>value.toLocaleLowerCase('ru-RU').replaceAll('ё','е').trim();
- let scope='all',selectedGroup=null;
+ let scope='all';
  function update(){
   const words=normalise(input.value).split(/\s+/).filter(Boolean);
-  const filtering=words.length>0||scope!=='all'||selectedGroup!==null;
+  const filtering=words.length>0||scope!=='all';
   let count=0,groupCount=0;
   for(const card of cards){
    const text=normalise(card.dataset.search);
    const scopeMatch=scope==='all'||card.dataset.scope===scope||card.dataset.scope==='both'&&scope!=='equipment';
-   const visible=scopeMatch&&(!selectedGroup||card.dataset.group===selectedGroup)&&words.every(word=>text.includes(word));
+   const visible=scopeMatch&&words.every(word=>text.includes(word));
    card.hidden=!visible;if(visible)count++;
   }
   for(const group of groups){
@@ -51,26 +84,22 @@ if(root){
    if(visible){groupCount++;if(filtering)group.open=true;}
   }
   for(const control of controls)control.setAttribute('aria-pressed',String(control.dataset.kairScope===scope));
-  const selectedTitle=selectedGroup?groups.find(g=>g.dataset.kairFunctionGroup===selectedGroup)?.querySelector('summary strong').textContent:'';
-  result.textContent=filtering?`Найдено: ${count} из ${cards.length}${selectedTitle?' · '+selectedTitle:''}`:`${count} описаний в ${groupCount} группах`;
+  result.textContent=filtering?`Найдено: ${count} из ${cards.length}`:`${count} описаний в ${groupCount} группах`;
   empty.hidden=count!==0;
  }
- input.addEventListener('input',()=>{selectedGroup=null;update();});
+ input.addEventListener('input',update);
  form.addEventListener('submit',event=>event.preventDefault());
- for(const control of controls)control.addEventListener('click',()=>{scope=control.dataset.kairScope;selectedGroup=null;update();});
+ for(const control of controls)control.addEventListener('click',()=>{scope=control.dataset.kairScope;update();});
  form.addEventListener('reset',()=>{
-  input.value='';scope='all';selectedGroup=null;
+  input.value='';scope='all';
   for(const group of groups)group.open=group.dataset.kairFunctionGroup==='process';
   update();
- });
- for(const link of root.querySelectorAll('[data-kair-group-link]'))link.addEventListener('click',()=>{
-  input.value='';scope='all';selectedGroup=link.dataset.kairGroupLink;update();
  });
  // Open a deep-linked function group without changing the visitor's other controls.
  const openLinkedGroup=()=>{
   const id=location.hash.slice(1);
   const linked=groups.find(group=>group.id===id);
-  if(linked){if(linked.hidden){scope='all';selectedGroup=null;input.value='';update();}linked.open=true;}
+  if(linked){if(linked.hidden){scope='all';input.value='';update();}linked.open=true;}
  };
  window.addEventListener('hashchange',openLinkedGroup);
  update();openLinkedGroup();root.dataset.ready='true';

@@ -2,6 +2,7 @@
  'use strict';
  const main=document.querySelector('main');if(!main)return;
  const header=document.querySelector('.site-header'),footer=document.querySelector('footer');
+ const kairNav=main.querySelector('[data-kair-section-nav]');
  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
  const homeLabels={hero:'Ресурс',problem:'Сырьё',process:'Обработка',products:'Продукты',evidence:'Практика',business:'Экономика',integration:'Интеграция',contact:'Ваш проект'};
  const rail=document.createElement('nav');rail.className='page-progress-rail';rail.setAttribute('aria-label','Разделы страницы');rail.hidden=true;
@@ -9,7 +10,12 @@
  let entries=[],links=[],frame=0;
  const clean=text=>text?.replace(/\s+/g,' ').trim()||'';
  const visible=element=>!element.closest('[hidden],[aria-hidden="true"],dialog,details:not([open])')&&element.getClientRects().length>0;
- const headerHeight=()=>(header?.getBoundingClientRect().height||0)+(document.querySelector('[data-context-navigation]')?.getBoundingClientRect().height||0);
+ function headerHeight(){
+  const offset=(header?.getBoundingClientRect().height||0)+(document.querySelector('[data-context-navigation]')?.getBoundingClientRect().height||0);
+  if(!kairNav)return offset;
+  const {top,bottom}=kairNav.getBoundingClientRect();
+  return top<=offset+1?Math.max(offset,bottom):offset;
+ }
  function labelFor(element){
   const home=homeLabels[element.dataset.homeBlock];if(home)return home;
   const label=element.getAttribute('data-page-progress-label')||element.getAttribute('aria-label');if(label)return clean(label);
@@ -76,6 +82,7 @@
  function queue(){if(!frame)frame=requestAnimationFrame(update);}
  const resize='ResizeObserver' in window?new ResizeObserver(queue):null;
  resize?.observe(main);if(header)resize?.observe(header);
+ if(kairNav)resize?.observe(kairNav);
  // New content sections and visibility changes update the outline; card lists,
  // graphs and individual values do not add navigation stops.
  new MutationObserver(records=>{

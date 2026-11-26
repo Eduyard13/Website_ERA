@@ -113,6 +113,25 @@ jobs:
                           if not release:
                               raise RuntimeError('The gallery script is missing')
                           version = release.group(1)
+                  commit = os.environ['GITHUB_SHA']
+                  _, kair = fetch('automation/?v=' + commit)
+                  kair_order = ['value', 'logic', 'scenarios', 'process', 'screens', 'functions', 'hardware', 'project', 'contact']
+                  kair_nav = re.search(r'<nav class="ka-outline" data-kair-section-nav[^>]*>(.*?)</nav>', kair, re.S)
+                  if (not kair_nav or kair_nav.start() > kair.index('<section class="ka-hero ')
+                          or re.findall(r'href="#kair-([^"]+)"', kair_nav[1]) != kair_order[:-1]
+                          or re.findall(r'<section class="ka-section\b[^"]*" id="kair-([^"]+)"', kair) != kair_order
+                          or kair.count('class="ka-value-card') != 6
+                          or 'Управлять бизнесом, а не каждым механизмом.' not in kair):
+                      raise RuntimeError('The approved KAIR navigation, benefits or section order is missing')
+                  for asset in ('kair-system.css', 'kair-system.js', 'page-progress.js'):
+                      link = re.search(r'(?:href|src)="([^"]*/' + re.escape(asset) + r'\?v=([0-9a-f]{12}))"', kair)
+                      if not link:
+                          raise RuntimeError('Missing KAIR resource: ' + asset)
+                      _, data = fetch(link[1], binary=True)
+                      versioned = (asset + ':' + hashlib.sha256(data).hexdigest()).encode()
+                      if hashlib.sha256(versioned).hexdigest()[:12] != link[2]:
+                          raise RuntimeError('Published resource does not match the KAIR asset revision: ' + asset)
+                  print('::notice title=KAIR verified::Published /automation/ has the approved 8 links, 6 cards, 10 sections and matching CSS and JS asset revisions at ' + commit)
                   _, library = fetch('documents/')
                   if '<h1>Инженерная библиотека ЭРА.</h1>' not in library or 'data-document-library' not in library:
                       raise RuntimeError('The engineering library is missing')

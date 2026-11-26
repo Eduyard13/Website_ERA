@@ -857,6 +857,37 @@ test('КАИР имеет связные схемы, независимые вк
  assert.ok(html.includes(`${basePath}/kair-system.js?v=`));assert.ok(html.includes(`${basePath}/kair-system.css?v=`));
  assert.ok(!(await readFile('dist/technology/index.html','utf8')).includes('/kair-system.css'));
 });
+test('Порядок разделов КАИР совпадает с меню, а преимущества представлены статичными карточками',async()=>{
+ const html=await readFile('dist/automation/index.html','utf8');
+ const {default:benefits}=await import('../content/kair-benefits.json',{with:{type:'json'}});
+ const expected=[
+  ['kair-value','Польза'],['kair-logic','Принцип работы'],['kair-scenarios','Сценарии'],
+  ['kair-process','Оборудование'],['kair-screens','Интерфейс'],['kair-functions','Функции'],
+  ['kair-hardware','Оснащение'],['kair-project','Эффективность'],
+ ];
+ const nav=html.match(/<nav class="ka-outline" data-kair-section-nav aria-label="Разделы страницы КАИР">([\s\S]*?)<\/nav>/);
+ assert.ok(nav);assert.equal((html.match(/data-kair-section-nav/g)||[]).length,1);
+ assert.ok(nav.index<html.indexOf('<section class="ka-hero '));
+ assert.deepEqual([...nav[1].matchAll(/<a href="#([^"]+)">([^<]+)<\/a>/g)].map(m=>m.slice(1)),expected);
+ const sections=[...html.matchAll(/<section class="ka-section\b[^"]*" id="([^"]+)" data-page-progress-label="([^"]+)">/g)];
+ assert.deepEqual(sections.map(m=>m.slice(1)),[...expected,['kair-contact','Обсуждение проекта']]);
+ const value=html.slice(sections[0].index,sections[1].index);
+ assert.ok(value.includes(`<h2>${benefits.title.replace('. ','.<br>')}</h2>`));
+ const cards=[...value.matchAll(/<article class="ka-value-card([^"]*)"><svg\b[^>]*>(.*?)<\/svg><h3>([^<]+)<\/h3><p>([^<]+)<\/p><\/article>/g)];
+ assert.deepEqual(cards.map(([,classes,,title,text])=>({title,text,accent:classes===' ka-value-accent'})),
+  benefits.cards.map(({title,text,accent})=>({title,text,accent})));
+ assert.doesNotMatch(value,/<a\b|<button\b|tabindex=|Посмотреть функции|(?:0[1-6]|↗)\s*<\//);
+ assert.ok(value.includes(`<div class="ka-value-hook"><h3>${benefits.hook}</h3><p>${benefits.hookText}</p></div>`));
+ const contact=html.slice(sections.at(-1).index,html.indexOf('</main>'));
+ assert.equal((html.match(/class="ka-business-result /g)||[]).length,1);
+ assert.ok(contact.includes('class="ka-business-result '));assert.ok(contact.includes(`href="${basePath}/economics"`));
+ const ids=[...html.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);
+ assert.equal(new Set(ids).size,ids.length);
+ for(const [,id] of html.matchAll(/href="#(kair-[^"]+)"/g))assert.ok(ids.includes(id),id);
+ for(const route of ['technology','catalog/lines/separatsiya-01','catalog/lines/separatsiya-02','catalog/lines/separatsiya-03','catalog/lines/moyka-plenki']){
+  assert.doesNotMatch(await readFile(`dist/${route}/index.html`,'utf8'),/data-kair-section-nav|kair-system\.(css|js)\?v=/);
+ }
+});
 test('Отдельная страница ИИ удалена из меню и разделов, старые ссылки направляют к КАИР',async()=>{
  const {sections}=await import('../content/site.mjs');
  assert.ok(!sections.some(([path])=>path==='/ai'));

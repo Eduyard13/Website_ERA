@@ -66,9 +66,9 @@ with sync_playwright() as p:
  # Actual production interval, pause/resume and leaving the viewport.
  live=browser.new_page(viewport={'width':1440,'height':1000},reduced_motion='no-preference')
  live.on('pageerror',lambda e:errors.append(str(e)))
- live.goto(base+'/technology');m=live.locator('[data-kair]');m.scroll_into_view_if_needed();live.mouse.move(0,0)
+ live.goto(base+'/automation/#kair-screens');m=live.locator('[data-kair]');m.scroll_into_view_if_needed();live.mouse.move(0,0)
  live.wait_for_function('document.querySelector("[data-kair-counter]").textContent==="2 из 23"',timeout=12000)
- m.locator('[data-kair-pause]').click();live.locator('#control-title').click();live.mouse.move(0,0)
+ m.locator('[data-kair-pause]').click();live.locator('#kair-screens > .ka-section-heading h2').click();live.mouse.move(0,0)
  assert m.locator('[data-kair-pause]').get_attribute('aria-pressed')=='true'
  live.wait_for_timeout(8500);assert m.locator('[data-kair-counter]').inner_text()=='2 из 23'
  m.locator('[data-kair-pause]').click()
