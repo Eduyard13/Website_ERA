@@ -14,14 +14,15 @@ export function normalizeProductionScenario(value={}){
  return normalizeEconomicsState({...state,input:Math.max(state.input,safeMinimum)});
 }
 
-export function createEconomicsStore(){
- let state=normalizeProductionScenario();
+export function createEconomicsStore({initialMode='separation',lockedMode=null}={}){
+ const initialState=()=>normalizeProductionScenario({mode:lockedMode??initialMode});
+ let state=initialState();
  let unit='kg',result=calculateEconomics(state);
  const subscribers=new Set();
  const snapshot=()=>({state:structuredClone(state),result,unit});
  function dispatch(action){
-  if(action.type==='reset'){state=normalizeEconomicsState();unit='kg';}
-  else if(action.type==='selection')state=changeEconomicsSelection(state,action.value);
+  if(action.type==='reset'){state=initialState();unit='kg';}
+  else if(action.type==='selection')state=changeEconomicsSelection(state,lockedMode?{...action.value,mode:lockedMode}:action.value);
   else if(action.type==='price')state=normalizeEconomicsState({...state,salePrices:{...state.salePrices,[state.mode]:action.value}});
   else if(action.type==='input')state=normalizeEconomicsState({...state,input:action.value});
   else if(action.type==='unit'){unit=action.value==='tonne'?'tonne':'kg';}

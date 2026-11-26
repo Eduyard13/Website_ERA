@@ -128,17 +128,19 @@
       "route": "/economics/",
       "groups": [
         {
-          "label": "Калькулятор",
-          "target": "production-constructor",
+          "label": "Потенциал",
+          "target": "economic-case",
           "activeSections": [
-            "production-constructor"
+            "economic-case"
           ]
         },
         {
-          "label": "Сырьё и продукт",
+          "label": "Продукт и рынок",
           "target": "raw-material",
           "activeSections": [
-            "raw-material"
+            "raw-material",
+            "product-quality",
+            "market"
           ]
         },
         {
@@ -149,37 +151,37 @@
           ]
         },
         {
-          "label": "Рентабельность",
-          "target": "monthly-result",
+          "label": "Калькулятор",
+          "target": "production-constructor",
           "activeSections": [
+            "production-constructor",
             "monthly-result"
           ]
         },
         {
-          "label": "Рынок",
-          "target": "market",
+          "label": "Устойчивость",
+          "target": "project-resilience",
           "activeSections": [
-            "market"
+            "project-resilience"
           ]
         },
         {
-          "label": "Условия расчёта",
-          "target": "economic-conditions",
+          "label": "Масштабирование",
+          "target": "production-growth",
           "activeSections": [
-            "economic-conditions"
+            "production-growth"
           ]
         },
         {
           "label": "Ваш проект",
           "target": "economics-project",
           "activeSections": [
+            "economic-conditions",
             "economics-project"
           ]
         }
       ],
-      "noActiveSections": [
-        "economic-case"
-      ]
+      "noActiveSections": []
     }
   ]
 }

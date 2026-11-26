@@ -267,7 +267,7 @@ try{
  const menus={
   '/technology/':['raw-material','solution','products','granule-quality','applications','control-story','standalone-equipment'],
   '/':['raw-material','process','products','russia-market','solution','manufacturing','kair'],
-  '/economics/':['production-constructor','raw-material','economics','monthly-result','market','economic-conditions','economics-project'],
+  '/economics/':['economic-case','raw-material','economics','production-constructor','project-resilience','production-growth','economics-project'],
  };
  const digest=bytes=>createHash('sha256').update(bytes).digest('hex');
  for(const path of ['/technology/','/','/economics/']){
@@ -289,7 +289,8 @@ try{
    await wait(`document.readyState==='complete'&&document.querySelector('[data-section-navigation]+main')&&document.querySelector('.page-progress-rail a')`);
    const menu='[data-section-navigation]';
    assert.deepEqual(await evaluate(`[...document.querySelectorAll('${menu} a')].map(a=>a.hash.slice(1))`),ids);
-   assert.equal(await evaluate(`document.querySelectorAll('${menu} [aria-current],.tf-outline,.ec-toc').length`),0);
+   assert.equal(await evaluate(`document.querySelectorAll('.tf-outline,.ec-toc').length`),0);
+   assert.equal(await evaluate(`document.querySelector('${menu} [aria-current="location"]')?.hash ?? null`),path==='/economics/'?'#economic-case':null);
    for(const target of ids){
     await click(`${menu} a[href="#${target}"]`);
     await wait(`(()=>{
@@ -299,8 +300,9 @@ try{
      const rail=document.querySelector('.page-progress-rail [aria-current=location]');
      const bounds=nav.getBoundingClientRect(), heading=document.getElementById('${target}').getBoundingClientRect();
      const item=link.getBoundingClientRect(), track=link.parentElement.getBoundingClientRect();
+     const aligned=Math.abs(heading.top-bounds.bottom-16)<2 || ('${target}'==='economic-case' && scrollY<2 && Math.abs(heading.top-bounds.bottom)<2);
      return rail&&link.dataset.sectionGroup.split(' ').includes(rail.hash.slice(1))
-      &&Math.abs(heading.top-bounds.bottom-16)<2&&item.left>=track.left-1&&item.right<=track.right+1
+      &&aligned&&item.left>=track.left-1&&item.right<=track.right+1
       &&Math.abs(bounds.top-document.querySelector('.site-header').getBoundingClientRect().bottom)<2
       &&document.documentElement.scrollWidth<=innerWidth;
     })()`);

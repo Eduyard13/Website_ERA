@@ -114,6 +114,33 @@ test('Подписчики единого состояния получают о
  const copy=store.get();copy.state.salePrices.full=1;assert.equal(store.get().state.salePrices.full,100000);
  unsubscribe();const count=seen.length;store.dispatch({type:'input',value:0});assert.equal(seen.length,count);assert.ok(store.get().result.net>=0);assert.ok(store.get().result.yearNet>=0);
 });
+test('Публичная экономика фиксирует полный цикл при открытии, смене комплектов и сбросе',()=>{
+ const store=createEconomicsStore({lockedMode:'full'});
+ const baseline=store.get();
+ assert.equal(baseline.state.mode,'full');assert.equal(baseline.state.lines,1);
+ assert.equal(baseline.result.grossPrice,90000);assert.equal(baseline.result.load,1);assert.equal(baseline.result.output,558);
+ close(baseline.result.revenue,41163934.43,.01);close(baseline.result.totalCosts,26891054.12,.01);
+ close(baseline.result.net,10704660.23,.01);close(baseline.result.yearNet,123733828.27,.01);
+ assert.deepEqual(baseline.result.payback.months,[6.5,8.2]);
+ store.dispatch({type:'price',value:100000});
+ const at100=store.get().result;
+ close(at100.net,14134988.10,.01);close(at100.yearNet,164123172.53,.01);
+ assert.deepEqual(at100.payback.months,[5.1,6.4]);
+ store.dispatch({type:'price',value:99500});
+ store.dispatch({type:'input',value:baseline.result.capacity*.8});
+ for(const lines of [2,3,1]){
+  store.dispatch({type:'selection',value:{mode:'separation',lines}});
+  const {state,result}=store.get();
+  assert.equal(state.mode,'full');assert.equal(state.lines,lines);
+  assert.equal(result.grossPrice,99500);close(result.load,.8);
+  assert.equal(result.payback.status,'individual');
+ }
+ store.dispatch({type:'input',value:0});
+ assert.ok(store.get().result.net>=0);assert.ok(store.get().result.yearNet>=0);
+ store.dispatch({type:'unit',value:'tonne'});
+ store.dispatch({type:'reset'});assert.deepEqual(store.get(),baseline);
+ assert.equal(createEconomicsStore().get().state.mode,'separation');
+});
 test('Укрупнение месячного кольца сохраняет все суммы, а при частичной загрузке остаются агрегаты модели',()=>{
  for(const mode of ['separation','full'])for(const lines of [1,2,3]){
   const r=calculateEconomics({mode,lines}),grouped=groupedMonth(r);

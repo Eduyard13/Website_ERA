@@ -11,7 +11,7 @@ test('Общее меню сохраняет семь смысловых гру�
  const order={
   '/':['resource','raw-material','feedstocks','process','engineering','products','russia-market','economics','solution','manufacturing','kair','discuss'],
   '/technology':['technology-intro','raw-material','contaminants','solution','dry-separation','hot-washing','granulation','products','granule-quality','applications','control-story','technology-next'],
-  '/economics':['economic-case','production-constructor','raw-material','economics','monthly-result','market','economic-conditions','economics-project'],
+  '/economics':['economic-case','raw-material','product-quality','market','economics','production-constructor','monthly-result','project-resilience','production-growth','economic-conditions','economics-project'],
  };
  const pages=new Map(navigation.pages.map(page=>[page.route.replace(/\/$/,'')||'/',page]));
  assert.deepEqual(new Set(pages.keys()),new Set(Object.keys(order)));
@@ -762,28 +762,44 @@ test('Контакты сохранены, КАИР перенесён в тех
  const single=kairMonitor([kairSlides[0]],{...kairPresentation,autoplay:false});
  assert.ok(!single.includes('data-kair-next'));assert.ok(!single.includes('data-kair-pause'));
 });
-test('Экономика связывает восемь разделов, месяц и год, сохраняя цены модели отдельно от рынка',async()=>{
+test('Экономика с первого HTML показывает только гранулу и расчёт полного цикла',async()=>{
  const {economicsConfig,marketOffers}=await import('../public/economics-config.js');
  const {calculateEconomics}=await import('../public/economics-model.js');
  const {millions}=await import('../public/economics-view.js');
- const html=await readFile('dist/economics/index.html','utf8'),result=calculateEconomics();
+ const html=await readFile('dist/economics/index.html','utf8'),result=calculateEconomics({mode:'full'});
  assert.ok(html.includes('Экономика вашего производства.'));assert.ok(!html.includes('class="pitch-stage-nav'));
  assert.ok(!html.includes('class="raw-story"'));assert.ok(!html.includes('data-kair-inspect'));
  for(const id of ['market','economics'])assert.equal([...html.matchAll(new RegExp(`id="${id}"`,'g'))].length,1,id);
  assert.ok(html.includes('База расходов — 05.11.2026'));assert.ok(html.includes(economicsConfig.taxDisclosure));
  assert.equal([...html.matchAll(/data-economics-page/g)].length,1);
- assert.equal([...html.matchAll(/class="ec-section(?: |")/g)].length,8);
+ assert.equal([...html.matchAll(/class="ec-section(?: |")/g)].length,11);
+ assert.match(html,/data-econ-mode="full" data-econ-locked-mode="full" data-econ-state="profit" data-econ-year-state="profit"/);
+ assert.doesNotMatch(html,/<button[^>]*data-econ-mode|45 ₽\/кг для плёнки|ЛСП · финансовая модель|data-market-source="spimex"|Плёнка в кипах · Россия/);
+ assert.deepEqual([...html.matchAll(/data-econ-preset="(\d+)"/g)].map(([,price])=>Number(price)),[80000,90000,100000,110000]);
+ assert.match(html,/aria-valuenow="90" value="90" data-econ-price/);
+ assert.match(html,/data-value="profitMillions">10,70</);
+ assert.match(html,/data-value="yearNetMillions">123,73</);
+ assert.match(html,/data-value="paybackLabel">6,5–8,2 мес\.</);
+ assert.match(html,/data-mass-bar[^>]*aria-label="[^"]*57,50?%/);
+ assert.match(html,/class="ec-photo ec-product-photo ec-product-photo--granules"/);
+ assert.match(html,/data-product-quality-copy>/);
+ assert.match(html,/КПП · финансовая модель v20/);
+ assert.match(html,/6 ₽\/кг<\/strong>Закупочная цена входящей смеси/);
+ assert.match(html,/90 ₽\/кг<\/strong>Базовая цена реализации гранулы с НДС/);
  assert.ok(html.includes('От цены реализации до чистой прибыли.'));
  assert.ok(html.includes('Выручка без НДС'));
  assert.ok(html.includes('Российские предложения гранулы'));
  assert.ok(!html.includes('Демонстрационный расчёт'));
  assert.ok(!html.includes('Условный налог'));
- for(const value of [result.revenue,result.net])assert.ok(html.includes(millions(value)));
+ for(const value of [result.revenue,result.totalCosts,result.net,result.yearNet])assert.ok(html.includes(millions(value)));
  for(const marker of ['data-econ-month','data-econ-bridge','data-econ-curve','data-econ-range','data-econ-number','data-econ-lines="3"'])assert.ok(html.includes(marker),marker);
  assert.ok(html.includes(`src="${basePath}/commercial.js?v=`));
- assert.ok(html.includes('Петербургская биржа'));assert.ok(html.includes('17.11.2026'));
+ assert.ok(html.includes('17.11.2026'));
  assert.ok(html.includes('Пластинфо · ППИ-вСТ'));assert.ok(html.includes('myCEPPI / PlasticPortal'));
- for(const offer of marketOffers){assert.ok(html.includes(`href="${offer.href}"`));assert.ok(offer.minimum);assert.ok(offer.vat);assert.ok(offer.delivery);}
+ for(const offer of marketOffers){
+  if(offer.category!=='film')assert.ok(html.includes(`href="${offer.href}"`));
+  assert.ok(offer.minimum);assert.ok(offer.vat);assert.ok(offer.delivery);
+ }
  const deployed=await readFile('dist/economics-page-state.js','utf8');assert.match(deployed,/from '\.\/economics-model\.js\?v=/);
 });
 test('Технология сохраняет сырьё, последовательность, качество, КАИР и прежние якоря',async()=>{

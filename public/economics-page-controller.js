@@ -1,10 +1,10 @@
 import {createEconomicsStore} from './economics-page-state.js';
 import {renderMonth,renderBridge,renderCurve,breakEvenText,priceStageText,resultSummary,millions,percentage,tonnes} from './economics-view.js';
-import {decimal,modeLabel,productCopy,renderScenarioPresets,groupedMonth,renderCostDetails,renderUnitDetail,renderSpecialist,basisText,financialValues,requestHref} from './economics-page-view.js';
+import {decimal,productCopy,renderScenarioPresets,groupedMonth,renderCostDetails,renderUnitDetail,renderSpecialist,basisText,financialValues,heroBasis,massBalanceLabel,requestHref} from './economics-page-view.js';
 
 export function initializeEconomicsPage(root){
  if(!root)return;
- const store=createEconomicsStore(),get=s=>root.querySelector(s),all=s=>[...root.querySelectorAll(s)];
+ const store=createEconomicsStore({lockedMode:root.dataset.econLockedMode}),get=s=>root.querySelector(s),all=s=>[...root.querySelectorAll(s)];
  const technology=get('[data-technology-page]');
  const base=technology?new URL(technology.href).pathname.replace(/\/technology\/?$/,''):'';
  const set=(selector,text)=>all(selector).forEach(e=>{if(e.textContent!==text)e.textContent=text;});
@@ -44,21 +44,21 @@ export function initializeEconomicsPage(root){
   const quality=get('[data-product-quality-copy]');if(quality)quality.hidden=state.mode!=='full';
   renderedMode=state.mode;
   const mass=get('[data-mass-product]');if(mass)mass.style.width=r.totalYield*100+'%';
-  get('[data-mass-bar]')?.setAttribute('aria-label',`Вход ${tonnes(state.input)}, готовая продукция ${tonnes(r.output)}, остальная масса ${tonnes(state.input-r.output)}; доля готовой продукции в сценарии ${percentage(r.totalYield)}.`);
+  get('[data-mass-bar]')?.setAttribute('aria-label',massBalanceLabel(r));
   monthResult=groupedMonth(r);
   if(!r.donutAvailable||!monthResult.segments.some(s=>s.id===pinned))pinned=null;
   html('[data-econ-month]',renderMonth(monthResult));selectSegment(pinned);
   html('[data-econ-bridge]',renderBridge(r,'kg'));html('[data-unit-details]',renderUnitDetail(r));
   html('[data-econ-curve]',renderCurve(r));html('[data-cost-details]',renderCostDetails(r));html('[data-specialist]',renderSpecialist(r));
   set('[data-month-basis]',basisText(r));set('[data-summary-break-even]',breakEvenText(r));
-  set('[data-hero-basis]',`${Math.abs(r.load-1)<1e-12?'При полной загрузке':'При загрузке '+percentage(r.load)} · ${state.lines} ${state.lines===1?'комплект':'комплекта'} · готовый цех · цена реализации ${values.grossPrice} с НДС`);
+  set('[data-hero-basis]',heroBasis(r,values));
   set('[data-capacity]',`Вход ${tonnes(state.input)}/мес. из ${tonnes(r.capacity)} · ${decimal(r.hoursPerLine,1)} ч на комплект. Допустимый диапазон загрузки: ${percentage(r.minimumInput/r.capacity)}–100%.`);
   if(range){range.min=String(r.minimumInput/r.capacity*100);range.step='any';range.value=String(r.load*100);range.setAttribute('aria-valuetext',`${decimal(r.load*100,4)}% загрузки, точный вход ${decimal(state.input,6)} т/мес.; минимум ${percentage(r.minimumInput/r.capacity)} для безубыточности месяца и года`);}
   if(price){price.setAttribute('aria-valuemin',String(r.minimumGrossPrice/1000));price.setAttribute('aria-valuenow',String(r.grossPrice/1000));if(document.activeElement!==price||action.type!=='price')price.value=String(r.grossPrice/1000);}
   if(numeric){numeric.setAttribute('aria-valuemin',String(r.minimumInput));numeric.setAttribute('aria-valuemax',String(r.capacity));numeric.setAttribute('aria-valuenow',String(state.input));if(document.activeElement!==numeric||action.type!=='input')numeric.value=String(Number(state.input.toFixed(6)));}
   set('#econ-price-limits',`От ${values.minimumPrice} до 1 000 ₽/кг. Нижняя цена покрывает расходы при полной загрузке. Можно ввести дробную цену через запятую.`);
   all('[data-economics-request]').forEach(link=>link.href=base+requestHref(r));
-  all('.ec-payback').forEach(e=>e.dataset.paybackStatus=r.payback.status);
+  all('[data-payback-status],.ec-payback').forEach(e=>e.dataset.paybackStatus=r.payback.status);
   if(action.type)set('[data-economics-status]',resultSummary(r)+` За год: ${millions(r.yearNet)}. ${values.paybackLabel}.`);
  }
  store.subscribe((snapshot,action)=>{

@@ -11,7 +11,7 @@ pages = json.loads((root / 'content/section-navigation.json').read_text())['page
 base = os.environ.get('ERA_PREVIEW_URL', 'http://127.0.0.1:3287/Website_ERA').rstrip('/')
 out = Path(os.environ.get('ERA_SCREENSHOT_DIR', '/tmp/era-section-navigation'))
 out.mkdir(parents=True, exist_ok=True)
-sizes = [(1440, 900), (1280, 800), (1024, 768), (768, 1024), (390, 844), (360, 800)]
+sizes = [(1920, 1080), (1440, 900), (1280, 800), (1024, 768), (768, 1024), (390, 844), (360, 800)]
 nav = '[data-section-navigation]'
 active = nav + ' [aria-current="location"]'
 rail = '.page-progress-rail'
@@ -20,12 +20,14 @@ anchors = {
     '/technology/': {'material-balance': 'raw-material', 'technology-next': 'standalone-equipment',
                      'detail-title': 'standalone-equipment', 'discuss': 'standalone-equipment'},
     '/': {'resource-business-title': 'russia-market', 'feedstock-methodology': 'raw-material'},
-    '/economics/': {'project-resilience': 'monthly-result', 'calculation-conditions': 'economic-conditions'},
+    '/economics/': {'product-quality': 'raw-material', 'market': 'raw-material',
+                    'econ-curve-title': 'project-resilience', 'calculation-conditions': 'economics-project'},
 }
 is_aligned = """id => {
     const item = document.getElementById(id).getBoundingClientRect();
     const bottom = document.querySelector('[data-section-navigation]').getBoundingClientRect().bottom;
-    return Math.abs(item.top - bottom - 16) < 2;
+    const atHero = id === 'economic-case' && scrollY < 2 && Math.abs(item.top - bottom) < 2;
+    return atHero || Math.abs(item.top - bottom - 16) < 2;
 }"""
 
 
@@ -91,9 +93,9 @@ with sync_playwright() as p:
             assert links.evaluate_all('as => as.map(a => a.hash.slice(1))') == [g['target'] for g in groups]
             assert page.locator(nav + ' + main').count() == 1
             assert page.locator('.tf-outline,.ec-toc').count() == 0
-            assert page.locator(rail + ' a').count() == (8 if route == '/economics/' else 12)
+            assert page.locator(rail + ' a').count() == (11 if route == '/economics/' else 12)
             check_sticky(page)
-            check_group(page, None)
+            check_group(page, 'economic-case' if route == '/economics/' else None)
             if page.locator('[data-cookie-choice="deny"]').is_visible():
                 page.locator('[data-cookie-choice="deny"]').click()
             for index, group in enumerate(groups):
@@ -170,7 +172,7 @@ with sync_playwright() as p:
     check_group(page, 'economics')
     page.locator('#economic-case').get_by_role('link', name='Условия расчёта', exact=True).click()
     check_target(page, 'calculation-conditions', 550)
-    check_group(page, 'economic-conditions')
+    check_group(page, 'economics-project')
     assert page.locator('#calculation-conditions').get_attribute('open') is not None
     page.close()
 

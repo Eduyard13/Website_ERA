@@ -12,7 +12,7 @@ base = os.environ.get('ERA_PREVIEW_URL', 'http://127.0.0.1:3000/Website_ERA').rs
 out = Path(os.environ.get('ERA_CHECK_DIR', '/workspace/work/era-brand/economics-037'))
 out.mkdir(parents=True, exist_ok=True)
 widths = [int(w) for w in os.environ.get('ERA_TEST_WIDTHS', '320,360,390,768,1024,1280,1440,1920').split(',')]
-node = """import {calculateEconomics} from './public/economics-model.js';import {normalizeProductionScenario} from './public/economics-page-state.js';import {financialValues,scenarioTopic} from './public/economics-page-view.js';const r=calculateEconomics(normalizeProductionScenario(JSON.parse(process.argv[1])));console.log(JSON.stringify({values:financialValues(r),mode:r.state.mode,capacity:r.capacity,net:r.net,yearNet:r.yearNet,pie:r.donutAvailable,payback:r.payback,topic:scenarioTopic(r)}))"""
+node = """import {calculateEconomics} from './public/economics-model.js';import {normalizeProductionScenario} from './public/economics-page-state.js';import {financialValues,scenarioTopic} from './public/economics-page-view.js';const r=calculateEconomics(normalizeProductionScenario({mode:"full",...JSON.parse(process.argv[1])}));console.log(JSON.stringify({values:financialValues(r),mode:r.state.mode,capacity:r.capacity,net:r.net,yearNet:r.yearNet,pie:r.donutAvailable,payback:r.payback,topic:scenarioTopic(r)}))"""
 @lru_cache(None)
 def expected(state):
     return json.loads(subprocess.check_output(['node', '--input-type=module', '-e', node, state], cwd=repo, text=True))
@@ -50,9 +50,6 @@ with sync_playwright() as p:
         plot, tip = page.locator('.econ-curve-plot:visible').bounding_box(), label.bounding_box()
         assert tip['x'] >= plot['x'] - 1 and tip['x'] + tip['width'] <= plot['x'] + plot['width'] + 1, (plot, tip)
         return r
-    def mode(name):
-        page.locator(f'button[data-econ-mode="{name}"]').click()
-        page.wait_for_function('(name)=>document.querySelector("[data-economics-page]").dataset.econMode===name',arg=name)
     def preset(value):
         page.locator(f'[data-econ-preset="{value}"]').click()
     def slider(fraction):
@@ -63,31 +60,29 @@ with sync_playwright() as p:
     for width in widths:
         page.set_viewport_size({'width': width, 'height': 950 if width >= 768 else 844})
         load(); verify({})
-        assert page.locator('.ec-section').count() == 8
-        assert page.locator('.page-progress-rail a').count() == 8
-        assert page.locator('.ec-modes').count() == 1
+        assert page.locator('.ec-section').count() == 11
+        assert page.locator('.page-progress-rail a').count() == 11
+        assert page.locator('button[data-econ-mode]').count() == 0
         assert page.locator('[data-price-presets]').count() == 1
         assert page.locator('[data-econ-range]').count() == 1
         assert page.locator('.ec-details[open]').count() == 0
-        for selected in ['separation', 'full']:
-            mode(selected)
-            for fraction in [0, .5, .8, 1]:
-                slider(fraction)
-                capacity = expected(json.dumps({'mode': selected}))['capacity']
-                verify({'mode': selected, 'input': capacity * fraction})
+        for fraction in [0, .5, .8, 1]:
+            slider(fraction)
+            verify({'input': expected('{}')['capacity'] * fraction})
         assert page.locator('[data-product-image]').get_attribute('src').startswith(urlparse(base).path + '/assets/')
         assert page.locator('[data-econ-preset]').evaluate_all('es=>es.every(e=>e.getBoundingClientRect().height>=44)')
         results.append({'width': width, 'monthlyAndAnnual': True, 'minimumHalf80Full': True, 'overflow': False})
-        print('Responsive finance, diagrams, break-even boundary and both products:', width, 'OK', flush=True)
+        print('Responsive finance, diagrams, break-even boundary and granule quality:', width, 'OK', flush=True)
 
     page.set_viewport_size({'width': 1440, 'height': 1000})
     load()
-    for selected, prices in [('separation', [40000, 45000, 50000]), ('full', [80000, 90000, 100000, 110000])]:
-        mode(selected)
-        for price in prices:
-            preset(price); verify({'mode': selected, 'salePrices': {selected: price}})
-    mode('separation'); verify({'salePrices': {'separation': 50000}})
-    mode('full'); verify({'mode': 'full', 'salePrices': {'full': 110000}})
+    hook = page.locator('.ec-value-flow figcaption strong')
+    assert hook.all_text_contents() == ['6 ₽/кг', '90 ₽/кг']
+    for price in [80000, 90000, 100000, 110000]:
+        preset(price); verify({'salePrices': {'full': price}})
+        assert hook.all_text_contents() == ['6 ₽/кг', '90 ₽/кг']
+    assert 'Текущий сценарий' in page.locator('[data-hero-basis]').inner_text()
+    assert '110 ₽/кг' in page.locator('[data-hero-basis]').inner_text()
     price = page.locator('[data-econ-price]'); reveal(price)
     price.fill('99,5'); assert price.evaluate('e=>document.activeElement===e')
     verify({'mode': 'full', 'salePrices': {'full': 99500}})
@@ -95,14 +90,26 @@ with sync_playwright() as p:
     price.press('Tab'); assert price.input_value() == '99.5'
     exact = page.locator('[data-econ-number]'); reveal(exact)
     exact.fill('777,123456'); verify({'mode': 'full', 'input': 777.123456, 'salePrices': {'full': 99500}})
-    assert page.locator('.ec-payback').get_attribute('data-payback-status') == 'individual'
+    assert page.locator('.ec-investment-payback').get_attribute('data-payback-status') == 'individual'
     assert '777,123456' in page.locator('[data-econ-range]').get_attribute('aria-valuetext')
     for lines in [2, 3, 1]:
         page.locator(f'[data-econ-lines="{lines}"]').click()
         verify({'mode': 'full', 'lines': lines, 'input': 777.123456 * lines, 'salePrices': {'full': 99500}})
     page.locator('[data-econ-reset]').click(); verify({})
-    assert page.locator('[data-econ-price]').input_value() == '45'
-    mode('full'); verify({'mode': 'full'})
+    assert page.locator('[data-econ-price]').input_value() == '90'
+    assert 'Базовый сценарий' in page.locator('[data-hero-basis]').inner_text()
+    assert page.locator('[data-econ-lines="1"]').get_attribute('aria-pressed') == 'true'
+    page.evaluate("""() => {
+        const button = document.createElement('button');
+        button.dataset.econMode = 'separation';
+        document.querySelector('[data-economics-page]').append(button);
+        button.click();
+        button.remove();
+    }""")
+    verify({})
+    assert page.goto(base + '/economics/?mode=separation').status == 200
+    page.wait_for_selector('[data-economics-ready="true"]', state='attached')
+    verify({})
 
     # Keyboard and touch-style selection of the native financial ring.
     segment = page.locator('.econ-legend button').first
@@ -133,7 +140,7 @@ with sync_playwright() as p:
 
     # Original deep links, one semantic H1, and the server-rendered fallback.
     load()
-    anchors = ['economic-case','raw-material','material-balance','product-quality','market','market-offers','economics','monthly-result','production-constructor','calculation-conditions','econ-month-title','econ-tonne-title','econ-curve-title','econ-monthly-price','econ-per-tonne-price','econ-volume']
+    anchors = ['economic-case','raw-material','material-balance','product-quality','market','market-offers','economics','monthly-result','production-constructor','calculation-conditions','project-resilience','production-growth','business-quality-title','econ-month-title','econ-tonne-title','econ-curve-title','econ-monthly-price','econ-per-tonne-price','econ-volume']
     for anchor in anchors:
         assert page.locator('[id="'+anchor+'"]').count() == 1, anchor
     assert page.locator('h1').count() == 1
@@ -143,9 +150,17 @@ with sync_playwright() as p:
         assert page.locator('[id="'+anchor+'"]').is_visible()
     static = browser.new_context(java_script_enabled=False, viewport={'width':390,'height':844})
     plain = static.new_page(); plain.goto(base + '/economics/')
-    assert plain.locator('.ec-hero [data-value="profitMillions"]').inner_text() == '2,74'
-    assert plain.locator('.ec-hero [data-value="yearNetMillions"]').inner_text() == '30,94'
-    assert plain.locator('.ec-section').count() == 8
+    assert plain.locator('.ec-hero [data-value="profitMillions"]').inner_text() == '10,70'
+    assert plain.locator('.ec-hero [data-value="yearNetMillions"]').inner_text() == '123,73'
+    assert plain.locator('.ec-section').count() == 11
+    assert plain.locator('[data-economics-page]').get_attribute('data-econ-mode') == 'full'
+    assert plain.locator('[data-econ-price]').input_value() == '90'
+    assert '558 т/мес.' in plain.locator('[data-hero-basis]').inner_text()
+    assert plain.locator('.ec-investment-payback [data-value]').inner_text() == '6,5–8,2'
+    assert plain.locator('[data-value="yield"]').inner_text() == '57,50%'
+    assert '57,5% входящей смеси' in plain.locator('#raw-material').inner_text()
+    assert plain.locator('button[data-econ-mode]').count() == 0
+    assert plain.locator('[data-product-quality-copy]').is_visible()
     assert plain.locator('.econ-ring').count() == 1
     assert plain.locator('[data-economics-page] noscript').count() == 1
     static.close()
@@ -155,6 +170,6 @@ with sync_playwright() as p:
         assert page.locator('.site-header .brand img').evaluate('e=>e.complete&&e.naturalWidth>0'), route
     assert not errors, errors
     assert not failures, failures
-    (out/'results.json').write_text(json.dumps({'responsive':results,'presets':7,'priceMemory':'OK','exactVolume':'OK','reset':'OK','ringKeyboard':'OK','requestContext':'OK','deepLinks':'OK','staticFallback':'OK','relatedRoutes':'OK','errors':errors,'httpFailures':failures},ensure_ascii=False,indent=2))
-    print('All presets, exact inputs, price memory, reset, keyboard ring, form, sources, deep links and no-JS: OK', flush=True)
+    (out/'results.json').write_text(json.dumps({'responsive':results,'presets':4,'fullCycleLock':'OK','basePriceHook':'OK','exactVolume':'OK','reset':'OK','ringKeyboard':'OK','requestContext':'OK','deepLinks':'OK','staticFallback':'OK','relatedRoutes':'OK','errors':errors,'httpFailures':failures},ensure_ascii=False,indent=2))
+    print('All presets, exact inputs, full-cycle lock, reset, keyboard ring, form, sources, deep links and no-JS: OK', flush=True)
     browser.close()

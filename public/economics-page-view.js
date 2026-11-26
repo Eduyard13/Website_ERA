@@ -16,21 +16,34 @@ export function scenarioTopic(r){
 }
 export const requestHref=r=>'/contacts?topic='+encodeURIComponent(scenarioTopic(r))+'#project-form';
 export function financialValues(r){
+ const payback=paybackLabel(r);
  return {input:tonnes(r.state.input),output:tonnes(r.output),yearInput:tonnes(r.yearInput),yearOutput:tonnes(r.yearOutput),
   revenue:millions(r.revenue),yearRevenue:millions(r.yearRevenue),costs:millions(r.totalCosts),yearCosts:millions(r.yearCosts),tax:millions(r.tax),yearTax:millions(r.yearTax),
   profit:millions(r.net),yearNet:millions(r.yearNet),profitMillions:decimal(r.net/1e6),yearNetMillions:decimal(r.yearNet/1e6),margin:percentage(r.margin),yearMargin:percentage(r.yearMargin),
   cost:unitMoney(r.perProduct?.totalCosts),yearUnitCosts:unitMoney(r.yearUnitCosts),grossPrice:decimal(r.grossPrice/1000,Number.isInteger(r.grossPrice/1000)?0:2)+' ₽/кг',grossTonne:decimal(r.grossPrice,2)+' ₽/т',
   minimumInput:tonnes(r.minimumInput),minimumLoad:percentage(r.minimumInput/r.capacity),minimumPrice:unitMoney(r.minimumGrossPrice),
   netPrice:unitMoney(r.netPrice),load:percentage(r.load),mode:modeLabel(r),product:r.mode.product,yield:percentage(r.totalYield),remainder:tonnes(r.state.input-r.output),remainderShare:percentage(1-r.totalYield),
-  paybackLabel:paybackLabel(r),breakEvenPrice:unitMoney(r.breakEvenGrossPrice),yearBreakEvenPrice:unitMoney(r.yearBreakEvenGrossPrice),
+  paybackLabel:payback,paybackFigure:payback.replace(/ мес\.$/,''),breakEvenPrice:unitMoney(r.breakEvenGrossPrice),yearBreakEvenPrice:unitMoney(r.yearBreakEvenGrossPrice),
   breakEven:r.breakEvenState==='within-capacity'?tonnes(r.breakEven)+'/мес.':r.breakEvenState==='outside-capacity'?'За пределом мощности':'Недостижим',
   priceHeadroom:r.breakEvenGrossPrice==null?'—':unitMoney(r.grossPrice-r.breakEvenGrossPrice),yearOperatingCash:millions(r.annualOperatingCash),
   yearFixedCash:millions(r.yearFixedCashCosts),yearVariableCash:millions(r.yearVariableCosts),yearDepreciation:millions(r.yearDepreciation),
   unitPrice:unitMoney(r.netPrice),unitCost:unitMoney(r.perProduct?.totalCosts),unitTax:unitMoney(r.perProduct?.tax),unitProfit:unitMoney(r.perProduct?.net)};
 }
+export function heroBasis(r,values=financialValues(r)){
+ const {lines}=r.state,fullLoad=Math.abs(r.load-1)<1e-12;
+ const label=lines===1&&fullLoad&&r.grossPrice===r.mode.defaultGrossPrice?'Базовый сценарий':'Текущий сценарий';
+ return `${label}: ${lines} ${lines===1?'комплект':'комплекта'} · ${fullLoad?'100%':values.load} загрузка · готовый цех · реализация ${values.grossPrice} с НДС. Выпуск ${fullLoad?'до ':''}${values.output}/мес.`;
+}
+export const massBalanceLabel=r=>`Вход ${tonnes(r.state.input)}, готовая продукция ${tonnes(r.output)}, остальная масса ${tonnes(r.state.input-r.output)}; доля готовой продукции в сценарии ${percentage(r.totalYield)}.`;
 export function renderScenarioPresets(result){
  return result.mode.priceStages.map(stage=>`<button type="button" data-econ-preset="${stage.price}" aria-pressed="${stage.price===result.grossPrice}"><strong>${stage.label}</strong><span>${escape(stage.period)}</span></button>`).join('');
 }
+const fullCycleCostNotes={
+ payroll:`Производственный штат — ${config.modes.full.staff} человека на комплект. ${config.activeSorters} сортировщика в активной смене.`,
+ water:'Вода и водоотведение для линии горячей мойки.',
+ reagents:'Моющие реагенты для обработки плёночного сырья в линии горячей мойки.',
+};
+const costNote=(segment,result)=>result.state.mode==='full'?fullCycleCostNotes[segment.id]??segment.description:segment.description;
 export function groupedMonth(result){
  if(result.load<1-1e-12)return result;
  const groups=[
@@ -44,19 +57,19 @@ export function groupedMonth(result){
  ];
  const segments=groups.map(([id,label,ids,color])=>{
   const members=result.segments.filter(s=>ids.includes(s.id));
-  return {id,label,color,value:members.reduce((sum,s)=>sum+s.value,0),members,description:members.map(s=>`${s.label}: ${money(s.value)}. ${s.description}`).join(' ')};
+  return {id,label,color,value:members.reduce((sum,s)=>sum+s.value,0),members,description:members.map(s=>`${s.label}: ${money(s.value)}. ${costNote(s,result)}`).join(' ')};
  });
  return {...result,segments};
 }
 export function renderCostDetails(result){
- return `<div class="ec-table-scroll"><table class="ec-table"><caption>Все статьи расходов и результат · за месяц, без НДС</caption><thead><tr><th scope="col">Статья и основание</th><th scope="col">Сумма, ₽/мес.</th></tr></thead><tbody>${result.segments.map(s=>`<tr><th scope="row">${escape(s.label)}<small>${escape(s.description)}</small></th><td>${money(s.value)}</td></tr>`).join('')}</tbody></table></div>`;
+ return `<div class="ec-table-scroll"><table class="ec-table"><caption>Все статьи расходов и результат · за месяц, без НДС</caption><thead><tr><th scope="col">Статья и основание</th><th scope="col">Сумма, ₽/мес.</th></tr></thead><tbody>${result.segments.map(s=>`<tr><th scope="row">${escape(s.label)}<small>${escape(costNote(s,result))}</small></th><td>${money(s.value)}</td></tr>`).join('')}</tbody></table></div>`;
 }
 export function renderUnitDetail(result){
  return `<div class="ec-table-scroll"><table class="ec-table"><caption>Состав себестоимости рабочего месяца</caption><thead><tr><th scope="col">Статья</th><th scope="col">₽/кг</th><th scope="col">₽/т</th></tr></thead><tbody>${result.costs.map(s=>`<tr><th scope="row">${escape(s.label)}</th><td>${unitMoney(result.output>0?s.value/result.output:null)}</td><td>${unitMoney(result.output>0?s.value/result.output:null,'tonne')}</td></tr>`).join('')}</tbody></table></div><p class="ec-note">${result.load<1-1e-12?'При частичной загрузке доступны только постоянные и переменные денежные расходы. Коэффициенты отдельных статей не заданы.':'Детализация рабочего месяца финансовых моделей ЭРА. Амортизация включена в себестоимость один раз.'}</p>`;
 }
 export function renderSpecialist(result){
  const rows=[['Входящая смесь',tonnes(result.state.input)+' / месяц'],['Выход готовой продукции',percentage(result.totalYield)],['Нормативный месяц',`${config.monthDays} день · ${config.availableHours} часа на комплект`],['Часы при выбранной загрузке',decimal(result.hoursPerLine,1)+' ч на комплект'],['Предельный выпуск готовой продукции',tonnes(result.state.lines*config.modes[result.state.mode].referenceOutput)+' / месяц'],['Цена закупки смеси','6 000 ₽/т без доставки и входящего НДС'],['Постоянные денежные расходы',money(result.fixedCashCosts)],['Переменные денежные расходы',money(result.variableCosts)],['Амортизация',money(result.depreciation)],['Производственный штат',`${result.mode.staff*result.state.lines} человек · ${config.activeSorters*result.state.lines} сортировщика в активной смене`],['База площадки','Существующий цех с готовой инфраструктурой'],['НДС / налог на прибыль','22% / 25% положительной прибыли']];
- return `<dl class="ec-assumptions">${rows.map(([k,v])=>`<div><dt>${escape(k)}</dt><dd>${escape(v)}</dd></div>`).join('')}</dl><p>Постоянные расходы и амортизация сохраняются при любой загрузке. Переменная часть меняется пропорционально входящему тоннажу. Для 2–3 комплектов масштабируются мощность, штат и расходы; экономия масштаба не заложена.</p><p>Тарифы, зарплаты, влажность, засорённость, ПТР и закупочная цена здесь не являются регулируемыми параметрами: индивидуальный пересчёт выполняется по согласованным исходным данным.</p><p>Полный цикл ограничен рабочей производительностью гранулятора 750 кг/ч, то есть 558 т/месяц на комплект. Электроэнергия сохранена по рабочему столбцу полной модели.</p><p>Самостоятельная ЛСП не включает сушильную установку, мойку и грануляцию. В составе линии горячей мойки гранулятор предусмотрен; при собственной грануляции возможна поставка без него.</p><p>Новая аренда и строительство не включены. Выручка рассчитывается без НДС, амортизация вычитается один раз, налог начисляется только на положительную прибыль. Календарный денежный поток, финансирование и капитальные вложения требуют отдельного инвестиционного расчёта.</p>`;
+ return `<dl class="ec-assumptions">${rows.map(([k,v])=>`<div><dt>${escape(k)}</dt><dd>${escape(v)}</dd></div>`).join('')}</dl><p>Постоянные расходы и амортизация сохраняются при любой загрузке. Переменная часть меняется пропорционально входящему тоннажу. Для 2–3 комплектов масштабируются мощность, штат и расходы; экономия масштаба не заложена.</p><p>Тарифы, зарплаты, влажность, засорённость, ПТР и закупочная цена здесь не являются регулируемыми параметрами: индивидуальный пересчёт выполняется по согласованным исходным данным.</p><p>Полный цикл ограничен рабочей производительностью гранулятора 750 кг/ч, то есть 558 т/месяц на комплект. Электроэнергия сохранена по рабочему столбцу полной модели.</p><p>${result.state.mode==='separation'?'Самостоятельная ЛСП не включает сушильную установку, мойку и грануляцию. ':''}В составе линии горячей мойки гранулятор предусмотрен; при собственной грануляции возможна поставка без него.</p><p>Новая аренда и строительство не включены. Выручка рассчитывается без НДС, амортизация вычитается один раз, налог начисляется только на положительную прибыль. Календарный денежный поток, финансирование и капитальные вложения требуют отдельного инвестиционного расчёта.</p>`;
 }
 export function productCopy(mode){
  return mode==='full'?{
