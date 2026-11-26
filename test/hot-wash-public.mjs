@@ -25,6 +25,7 @@ for(const asset of [...manifest.assets,...(manifest.catalogCardUpdate?.assets||[
  assert.equal(createHash('sha256').update(Buffer.from(await r.arrayBuffer())).digest('hex'),sha,file);
 }
 const rawAssets=JSON.parse(await readFile(new URL('../content/hot-wash-raw-assets.json',import.meta.url),'utf8'));
+const album=JSON.parse(await readFile(new URL('../content/hot-wash-album.json',import.meta.url),'utf8'));
 const rawDirectory='/assets/lines/moyka-plenki/raw-prepared/';
 for(const {files} of rawAssets){
  await Promise.all(files.map(async ({file,sha256})=>{
@@ -33,7 +34,14 @@ for(const {files} of rawAssets){
   assert.equal(createHash('sha256').update(Buffer.from(await r.arrayBuffer())).digest('hex'),sha256,file);
  }));
 }
-for(const path of ['/catalog/lines/','/technology/','/documents/technical/','/media/','/catalog/lines/separatsiya-02/'])assert.equal((await fetch(base+path,{cache:'no-store'})).status,200,path);
+for(const path of ['/catalog/lines/','/technology/','/documents/technical/','/media/'])assert.equal((await fetch(base+path,{cache:'no-store'})).status,200,path);
+for(const slug of ['separatsiya-01','separatsiya-02','separatsiya-03']){
+ const response=await fetch(base+'/catalog/lines/'+slug+'/?v='+version,{cache:'no-store'});
+ assert.equal(response.status,200,slug);
+ const raw=(await response.text()).match(/<section[^>]* id="raw-materials"[\s\S]*?<\/section>/)?.[0];
+ assert.ok(raw,slug);
+ assert.equal(/<summary>Как оборудование отделяет эти загрязнения<\/summary>/.test(raw),slug!=='separatsiya-02',slug);
+}
 for(const file of ['hot-film-washing.css','hot-wash-process.css','hot-film-washing.js']){const r=await fetch(base+'/'+file+'?v='+version,{cache:'no-store'});assert.equal(r.status,200,file);assert.ok(!r.headers.get('content-type').includes('text/html'));}
 const binary=process.env.ERA_CHROME_PATH||['/usr/bin/google-chrome','/usr/bin/chromium','/opt/google/chrome/chrome'].find(existsSync);
 if(!binary)throw new Error('Chrome is required to verify public hot-wash line');
@@ -75,25 +83,23 @@ try{
    document.head.append(style);await document.fonts.ready;
   })()`);
   const blocks=[
-   ['hero','.line-hero'],['raw','#raw-materials'],['process','#process'],['water','#water-circulation'],
-   ['products','#quality'],['specs','#specs'],['kair','#kair'],['photos','#photos']
+   ['raw-categories','.hw-raw-origins'],['cycle','[data-hotwash-cycle]'],
+   ['operations','[data-hotwash-operations]'],['quality','[data-hotwash-quality]'],
+   ['expansion','[data-hotwash-expansion]'],['photos','#photos']
   ];
-  async function capture([name,selector],maxHeight=0){
+  async function capture([name,selector]){
    const clip=await evaluate(`(async()=>{
     const block=document.querySelector(${JSON.stringify(selector)});
     block.scrollIntoView({block:'start',behavior:'instant'});
     await Promise.all([...block.querySelectorAll('img')].map(image=>image.decode()));
     await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
     const {top,height}=block.getBoundingClientRect();
-    return {x:0,y:Math.max(0,Math.floor(top+scrollY)-8),height:Math.ceil(Math.min(height,${maxHeight||'height'}))+8,width:innerWidth,scale:1};
+    return {x:0,y:Math.max(0,Math.floor(top+scrollY)-8),height:Math.ceil(height)+8,width:innerWidth,scale:1};
    })()`);
    const {data}=await command('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,clip});
    await writeFile(join(directory,`${width}-${name}.png`),Buffer.from(data,'base64'));
   }
   for(const block of blocks)await capture(block);
-  await click('#specs .line-power-details summary');
-  await capture(['specs-open','#specs .line-power-details'],860);
-  await click('#specs .line-power-details summary');
   await evaluate(`document.querySelector('#hot-wash-capture-style').remove()`);
  }
  await command('Page.enable');await command('Runtime.enable');
@@ -148,10 +154,40 @@ try{
      &&Math.abs(imgBox.width-box.width)<1&&Math.abs(imgBox.height-box.height)<1
      &&image.currentSrc.includes('/moyka-plenki/raw-prepared/')&&image.naturalWidth>0;
    });
-   const removed=document.querySelectorAll('#raw-materials :is(details,table), #kair img, #kair .line-note, #process details, #process .hw-process-archive, #quality details, #quality .line-note, #quality .hw-quality-metrics > p').length;
-   return {prepared:prepared.children.length,categories:categories.children.length,columns:[columns(prepared),columns(categories)],cover,removed};
+   const removed=document.querySelectorAll('#raw-materials :is(details,table,.dry-raw-evidence), #kair img, #kair .line-note, #process details, #process .hw-process-archive, #quality details, #quality .line-note, #quality .hw-quality-metrics, #placement .hw-placement-grid, #specs .hw-scaling').length;
+   const rows=[...categories.children].map(card=>[card,card.querySelector('figure'),card.querySelector('h3'),...card.querySelectorAll('dl>div')].map(e=>Math.round(e.getBoundingClientRect().top)));
+   const aligned=rows.every((row,i)=>row.length===5&&rows.slice(0,i).every(other=>row[0]!==other[0]||row.every((y,j)=>Math.abs(y-other[j])<=1)));
+   return {prepared:prepared.children.length,categories:categories.children.length,columns:[columns(prepared),columns(categories)],cover,removed,aligned};
   })()`);
-  assert.deepEqual(rawLayout,{prepared:2,categories:3,columns:width<=760?[1,1]:width<=1100?[2,2]:[2,3],cover:true,removed:0},String(width));
+  assert.deepEqual(rawLayout,{prepared:2,categories:3,columns:width<=760?[1,1]:width<=1100?[2,2]:[2,3],cover:true,removed:0,aligned:true},String(width));
+  const revised=await evaluate(`(()=>{
+   const find=selector=>document.querySelector(selector);
+   const all=selector=>[...document.querySelectorAll(selector)];
+   const columns=selector=>getComputedStyle(find(selector)).gridTemplateColumns.split(' ').length;
+   const visible=node=>getComputedStyle(node).display!=='none';
+   const panels=all('[data-hotwash-cycle],[data-hotwash-quality],[data-hotwash-expansion],[data-hotwash-operations]');
+   const cycle=find('[data-hotwash-cycle]');
+   return {
+    panels:panels.length,
+    fits:panels.every(panel=>panel.scrollWidth<=panel.clientWidth+1),
+    cycle:[...cycle.querySelectorAll('.hw-cycle-grid h3')].map(node=>node.textContent),
+    current:cycle.querySelector('.hw-cycle-grid [aria-current="step"] h3').textContent,
+    operationColumns:columns('.hw-operations-grid'),
+    operations:all('.hw-operations-grid li').length,
+    accented:all('.hw-operation-accent').map(node=>node.dataset.hotwashOperation),
+    quality:all('.hw-quality-value').map(node=>node.textContent),
+    connectors:all('.hw-expansion-connector').filter(visible).length,
+    granulators:all('.hw-expansion-rate').map(node=>node.textContent),
+    remainingDetails:all('#specs details').length,
+    album:all('#photos [data-dry-album-photo]').map(node=>new URL(node.dataset.image,location.href).pathname.split('/assets/')[1])
+   };
+  })()`);
+  assert.deepEqual(revised,{
+   panels:4,fits:true,cycle:['Сухая сепарация','Горячая мойка','Грануляция'],current:'Горячая мойка',
+   operationColumns:width<=650?1:width<=1024?2:3,operations:9,accented:['04','09'],
+   quality:['30–70ppm','1–2%','0,8–1,2г/10 мин'],connectors:2,granulators:['750 кг/ч','750 кг/ч'],
+   remainingDetails:1,album:album.map(item=>item.file)
+  },String(width));
   if(width===390||width===1440)await capturePresentation(width);
   if(width===390||width===1440)await auditNativeDiagram(evaluate,'hotwash-construction',{count:44,branches:47});
   for(let number=1;number<=36;number++){
@@ -162,13 +198,18 @@ try{
  }
  await command('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
  await load(compositionPath);await wait(`!!document.querySelector('[data-monitor-ready]')`);
- await click('#raw-materials .media-open');
- const expectedImages=['raw-prepared-01','raw-prepared-02','raw-household','raw-agricultural','raw-stretch'];
- for(const [index,key] of expectedImages.entries()){
-  if(index)await click('#media-viewer [data-next]');
-  await wait(`document.querySelector('#media-viewer').open&&document.querySelector('#viewer-image').getAttribute('src').endsWith(${JSON.stringify(rawDirectory+key+'.webp')})`);
+ async function verifyViewer(selector,paths){
+  await click(selector);
+  for(const [index,path] of paths.entries()){
+   if(index)await click('#media-viewer [data-next]');
+   await wait(`(()=>{const v=document.querySelector('#viewer-image');return document.querySelector('#media-viewer').open&&v.getAttribute('src')?.endsWith(${JSON.stringify(path)})&&v.complete&&v.naturalWidth>0;})()`);
+  }
+  await click('#media-viewer [data-close]');
+  await wait(`!document.querySelector('#media-viewer').open&&!document.body.classList.contains('viewer-open')`);
  }
- await click('#media-viewer [data-close]');
+ const rawKeys=['raw-prepared-01','raw-prepared-02','raw-household','raw-agricultural','raw-stretch'];
+ await verifyViewer('#raw-materials .media-open',rawKeys.map(key=>rawDirectory+key+'.webp'));
+ await verifyViewer('#photos .media-open',album.map(({file})=>'/assets/'+file));
  const sidebarSelect=await evaluate(`(()=>{
    const root=document.querySelector('#hotwash-construction'),row=root.querySelector('[data-architecture-part="18"]');row.click();
    return {row:row.getAttribute('aria-pressed'),pin:root.querySelectorAll('button[data-part="18"][aria-pressed="true"]').length,selected:root.querySelector('[data-detail-number]').textContent};
@@ -191,16 +232,24 @@ try{
  assert.ok(await evaluate(`document.querySelector('[data-pdf-canvas]').width>100`));
  await click('[data-pdf-next]');await wait(`document.querySelector('[data-pdf-status]').textContent==='Страница 2 из 22'`);
  await click('[data-pdf-close]');
+ await click('#photos [data-photo-gallery]');
+ await wait(`!!document.querySelector('[data-gallery-ready="true"]')&&document.querySelector('[name="product"]').value.endsWith('/catalog/lines/moyka-plenki')`);
+ assert.equal(await evaluate(`document.querySelectorAll('[data-gallery-archive-grid] [data-gallery-item]').length`),22);
  await load('/catalog/lines/?group=Мойка');await wait(`!!document.querySelector('[data-catalog-ready]')`);
  assert.equal(await evaluate(`document.querySelectorAll('[data-line]:not([hidden])').length`),1);
  assert.equal(await evaluate(`document.querySelector('[data-line]:not([hidden])').tagName`),'A');
  await click('[data-line-id="moyka-plenki"]');await wait(`!!document.querySelector('[data-context-ready]')`);
  await click('[data-context-back]');await wait(`!!document.querySelector('[data-catalog-ready]')`);
  assert.equal(await evaluate(`new URL(location.href).searchParams.get('group')`),'Мойка');
- await load('/technology/');await wait(`!!document.querySelector('[data-technology-line="moyka-plenki"]')`);
+ await load(compositionPath);await wait(`!!document.querySelector('[data-hotwash-cycle]')`);
+ await click('.hw-cycle-grid a');
+ await wait(`!!document.querySelector('[data-dry-raw="separatsiya-02"]')`);
+ assert.equal(await evaluate(`!!document.querySelector('#raw-materials .dry-raw-details')`),false);
+ await load(compositionPath);await wait(`!!document.querySelector('[data-hotwash-cycle]')`);
+ await click('.hw-cycle-links a:last-child');await wait(`!!document.querySelector('[data-technology-line="moyka-plenki"]')`);
  assert.ok(await evaluate(`document.querySelector('[data-technology-line="moyka-plenki"]').href.endsWith('/catalog/lines/moyka-plenki')`));
  assert.deepEqual(errors,[],'Published hot-wash console errors');
- console.log(`::notice title=Published hot wash verified::5 approved media cards and 15 WebP hashes, 10 material stages, 5 water routes, 37 specification rows (32 powered), 8 widths, 44/44 equipment badges and 47 leader ends, 36 monitor selections, original PDF/viewer, media checks, dimensions and navigation passed. ${url}`);
+ console.log(`::notice title=Published hot wash verified::Four new panels and nine operations, six approved gallery images and lightbox, five raw media cards and 15 WebP hashes, 10 material stages, 5 water routes, 37 specification rows, 8 widths, 44 equipment badges and 47 leader ends, original PDF and navigation passed. ${url}`);
 }finally{
  socket?.close();chrome.kill('SIGTERM');await delay(250);await rm(profile,{recursive:true,force:true});
 }

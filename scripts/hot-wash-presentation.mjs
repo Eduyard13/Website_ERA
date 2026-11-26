@@ -1,13 +1,14 @@
 import {hotWashProducts} from '../content/hot-film-washing.mjs';
 import {renderDryKair} from './dry-kair.mjs';
 import {hotWashPicture,hotWashRawMedia} from './hot-wash-media.mjs';
+import {renderHotWashCycle,renderHotWashQuality,renderHotWashScaling} from './hot-wash-panels.mjs';
 
 const rawMaterials=[
- ['raw-household','Крупные твёрдые и свободные включения','Этикетки, клей, жиры, масла, органика','Полимерный состав, скотч, многослойные и посторонние полимеры'],
- ['raw-agricultural','Свободные минеральные и растительные включения','Остаточная земля, песок, растительные частицы в складках','Толщина, длина фрагментов, влажность, абразив'],
- ['raw-stretch','Крупные и свободные посторонние включения','Клей, бумажные этикетки, ленты, остатки продукта','Слипание, совместимость, характер клея']
+ ['raw-household','Крупные твёрдые и свободные включения','Этикетки, клей, жиры, масла, органика'],
+ ['raw-agricultural','Свободные минеральные и растительные включения','Остаточная земля, песок, растительные частицы в складках'],
+ ['raw-stretch','Крупные и свободные посторонние включения','Клей, бумажные этикетки, ленты, остатки продукта']
 ];
-const rawFieldLabels=['Что отделяется на сухой стадии','Что остаётся для мойки','Что проверяем'];
+const rawFieldLabels=['Что отделяется на сухой стадии','Что остаётся для мойки'];
 const contaminants=[
  ['Клей и этикетки','Налипшие бумага, клеевые следы и ленты.','<path d="M3 4h10l8 8-9 9-9-9V4Z"/><circle cx="8.5" cy="8.5" r="1.5"/>'],
  ['Масла и жиры','Плёнка удерживает жировые загрязнения на поверхности.','<path d="M12 2c-3 5-7 9-7 13a7 7 0 0 0 14 0c0-4-4-8-7-13Zm-4 13a4 4 0 0 0 4 4"/>'],
@@ -30,23 +31,13 @@ export function renderHotWashRaw(){
     </dl></div>
    </article>`).join('')}
   </div>
-  <div class="dry-raw-evidence">
-   <h3>Сухая сепарация → горячая мойка → грануляция</h3>
-   <p>Сухая стадия раскрывает тюки и удаляет основную массу включений. В проекте на мойку поступает до 1 500 кг/ч подготовленной плёнки. Подачу уточняют по составу партии и выбранному исполнению линии.</p>
-   <a class="text-link" href="/catalog/lines/separatsiya-02">Первый этап — сухая сепарация ↗</a>
-  </div>
+  ${renderHotWashCycle()}
   <div class="dry-raw-categories-head"><h3>Что удаляет мойка</h3></div>
   <div class="dry-raw-categories hw-raw-contaminants">
    ${contaminants.map(([name,description,icon])=>`<article class="dry-raw-contaminant"><span class="dry-raw-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icon}</svg></span><h4>${name}</h4><p>${description}</p></article>`).join('')}
   </div>
  </section>`;
 }
-
-const qualityMetrics=[
- ['30–70','ppm','Остаточные включения в плёнке после сухой сепарации и горячей мойки','30–70 г/т, или 0,003–0,007% по массе'],
- ['1–2','%','Потери плёнки при мойке','От исходной массы плёнки'],
- ['0,8–1,2','г/10 мин','ПТР гранулы ПВД по ТО','190 °C / 2,16 кг']
-];
 
 export function renderHotWashProducts(){
  return `<section class="section" id="quality">
@@ -55,7 +46,8 @@ export function renderHotWashProducts(){
    ${hotWashPicture(key,{title,caption:'',group:'hot-wash-products'})}
    <div class="hw-product-copy">${key==='product-granule'?'<p class="eyebrow">Основной продукт</p>':''}<h3>${title}</h3><p class="hw-material-route">${route}</p><p>${text}</p></div>
   </article>`).join('')}</div>
-  <div class="line-metrics hw-quality-metrics"><dl>${qualityMetrics.map(([value,unit,label,detail])=>`<div><dt>${label}</dt><dd>${value}<small>${unit}</small></dd><span class="line-metric-detail">${detail}</span></div>`).join('')}</dl></div>
+  ${renderHotWashQuality()}
+  ${renderHotWashScaling()}
  </section>`;
 }
 

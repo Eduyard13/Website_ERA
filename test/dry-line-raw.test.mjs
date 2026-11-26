@@ -14,6 +14,7 @@ test('Все три страницы используют общие реаль�
   assert.ok(published.includes('data-dry-raw="'+slug+'"'),slug+' correct configuration');
   assert.equal((published.match(/data-raw-photo="/g)||[]).length,3,slug+' same photos in published HTML');
   assert.equal((published.match(/data-contaminant="/g)||[]).length,6,slug+' same categories in published HTML');
+  assert.equal(/<summary>Как оборудование отделяет эти загрязнения<\/summary>/.test(published),slug!=='separatsiya-02',slug);
   for(const key of photos)assert.ok(published.includes('/assets/'+filmSeparationMedia[key].file),slug+' '+key);
   assert.equal((block.match(/data-raw-photo="/g)||[]).length,3);
   assert.equal((block.match(/data-contaminant="/g)||[]).length,6);

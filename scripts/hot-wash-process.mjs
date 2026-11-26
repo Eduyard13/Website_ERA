@@ -1,5 +1,6 @@
 import flow from '../content/hot-wash-flow.json' with {type:'json'};
 import {escapeHtml} from './hot-wash-media.mjs';
+import {renderHotWashOperations} from './hot-wash-panels.mjs';
 
 const iconPaths={
  prep:'<path d="M7 5h18l-7 9v5h-4v-5L7 5ZM9 22h14a3 3 0 0 1 0 6H9a3 3 0 1 1 0-6Z"/><path d="M9 25h.1m7 0h.1m7 0h.1"/>',
@@ -127,6 +128,7 @@ function waterCircuit(){
 
 export function renderHotWashProcess(){
  return `<section class="section hw-process" id="process">
+  ${renderHotWashOperations()}
   <div class="line-section-heading hw-process-heading"><div><p class="eyebrow">МАРШРУТ МАТЕРИАЛА · HOT-WASH</p><h2>Как линия отмывает подготовленную плёнку и выпускает тюки, капсулят или гранулу</h2></div><p>Наглядная карта движения плёнки, рабочих жидкостей, чистой воды и трёх маршрутов готовой продукции.</p></div>
   <div class="hw-flow-map">
    <ul class="hw-flow-legend" aria-label="Обозначения на схеме">${legend.map(([kind,label])=>`<li>${arrow(kind)}<span>${label}</span></li>`).join('')}</ul>

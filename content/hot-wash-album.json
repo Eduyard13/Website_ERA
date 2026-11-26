@@ -1,0 +1,8 @@
+[
+ {"order":1,"file":"photos/plenochnyy-flotator/05.webp","thumbnail":"photos/plenochnyy-flotator/05-thumb.webp","title":"Плёночный флотатор","description":"Панорамный вид моечного оборудования со стороны загрузки.","type":"photo","width":1672,"height":941},
+ {"order":2,"file":"photos/vertikalno-rotornyy-izmelchitel/01.webp","thumbnail":"photos/vertikalno-rotornyy-izmelchitel/01-thumb.webp","title":"Подача плёнки на мокрое измельчение","description":"Транспортёр с подготовленным плёночным материалом.","type":"photo","width":1672,"height":941},
+ {"order":3,"file":"photos/vertikalno-rotornyy-izmelchitel/08.webp","thumbnail":"photos/vertikalno-rotornyy-izmelchitel/08-thumb.webp","title":"Вертикально-роторный измельчитель","description":"Оборудование на производственном участке.","type":"photo","width":1672,"height":941},
+ {"order":4,"file":"photos/rotornaya-tsentrifuga/01.webp","thumbnail":"photos/rotornaya-tsentrifuga/01-thumb.webp","title":"Роторная центрифуга","description":"Общий вид оборудования механического обезвоживания.","type":"photo","width":1448,"height":1086},
+ {"order":5,"file":"photos/kapsulyator/02.webp","thumbnail":"photos/kapsulyator/02-thumb.webp","title":"Капсуляция плёнки","description":"Приводы и загрузочные бункеры капсулятора.","type":"photo","width":1672,"height":941},
+ {"order":6,"file":"equipment/ochistka-stokov/operation.webp","title":"Очистка рабочей жидкости","description":"Отделение загрязнений на сите — кадр из видео.","type":"video-frame"}
+]

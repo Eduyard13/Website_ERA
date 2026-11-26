@@ -12,6 +12,28 @@
  --hw-gap:24px;
  --hw-mobile-track:19px;
 }
+.hw-process .hw-operations{margin-bottom:clamp(48px,5vw,76px)}
+.hw-process .hw-operations .line-section-heading{align-items:center;gap:clamp(16px,3vw,40px);margin-bottom:24px}
+.hw-process .hw-operations-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.hw-process .hw-operations-grid>li{
+ display:flex;flex-direction:column;gap:13px;min-width:0;
+ padding:clamp(16px,2vw,24px);border:1px solid #d8cdbb;border-radius:12px;background:#faf7f0;
+}
+.hw-process .hw-operation-top{display:flex;justify-content:space-between;align-items:center;color:var(--hw-gold);font-weight:600}
+.hw-process .hw-operations-grid h3{font-size:clamp(19px,1.7vw,25px);font-weight:600;line-height:1.25;margin:0;max-width:none}
+.hw-process .hw-operations-grid p{font-size:15px;line-height:1.55;margin:0}
+.hw-process .hw-operations-grid>.hw-operation-accent{
+ --hw-icon-color:#e5c371;background:#171f35;border-color:#bc9848;
+}
+.hw-process .hw-operation-accent :is(.hw-operation-top,h3){color:#f0d18a}
+.hw-process .hw-operation-accent p{color:#e0e4ec}
+.hw-process .hw-operations-note{max-width:none;text-align:center;font-size:14px;margin:16px 0 0;color:var(--muted)}
+@media(max-width:1024px){
+ .hw-process .hw-operations-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:650px){
+ .hw-process .hw-operations-grid{grid-template-columns:minmax(0,1fr)}
+}
 
 .hw-process .hw-flow-map {
  display:grid;

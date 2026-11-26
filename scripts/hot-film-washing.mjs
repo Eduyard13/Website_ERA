@@ -19,7 +19,6 @@ import {renderHotWashSpecs} from './hot-wash-specs.mjs';
 import {escapeHtml as escape} from './hot-wash-media.mjs';
 
 const heading=(index,title,lead='')=>`<div class="line-section-heading"><div><p class="eyebrow">${index}</p><h2>${title}</h2></div>${lead?`<p>${lead}</p>`:''}</div>`;
-const more=(summary,body)=>`<details class="line-more" data-keep-open><summary>${summary}</summary><div>${body}</div></details>`;
 function unitCard(item){
  const node=nodes.find(n=>n.slug===item.catalogSlug),image=equipmentCardImages[node.slug];
  return `<article class="line-unit-card line-unit-card--catalogue" data-catalogue-image="${node.slug}" style="--unit-stone-top:${image.stoneColors[0]};--unit-stone-left:${image.stoneColors[1]};--unit-stone-right:${image.stoneColors[4]}"><div class="line-unit-visual"><img src="/assets/${image.file}" srcset="/assets/${image.smallFile} 768w, /assets/${image.file} ${image.width}w" sizes="(min-width:1101px) 31vw, (min-width:801px) 47vw, calc(100vw - 40px)" width="${image.width}" height="${image.height}" alt="${escape(item.name)}" loading="lazy" decoding="async"><span>Поз. ${item.position}</span></div><div class="line-unit-copy"><h3>${escape(item.name)}</h3><p>${escape(item.purpose)}</p><strong>${escape(item.position===26?'Соответствующий тип узла':item.characteristic)}</strong>${item.position===26?'<p class="line-note">Параметры поставляемого исполнения закрепляются спецификацией.</p>':''}<a class="text-link" href="${node.path}">Подробнее об узле ↗</a></div></article>`;
@@ -58,12 +57,11 @@ export function renderHotFilmWashing(line){
 
  <section class="section line-soft" id="specs">
   ${renderHotWashSpecs(line)}
- ${more('Обслуживание и эксплуатация',`<div class="line-inclusions">${[['Резка и подача','Ножи, ленты и сетки; ножевые зазоры и герметичность мокрой камеры.'],['Мокрые узлы','Шнеки, сетки, лопатки и форсунки центрифуг; барабаны, затвор, насосы и осадок флотаторов.'],['Водооборот','Гидроциклон, очистка, уровни в баках и дозаторы.'],['Выдача продукта','Увязка, капсулятор, фильтры и дегазация гранулятора.']].map(([t,p])=>`<p><strong>${t}:</strong> ${p}</p>`).join('')}</div><p class="line-note">Плановое обслуживание — по паспортам поставляемых исполнений. Для указанной в ТО центрифуги: смазка цепей через 336 рабочих часов, масло через 4 300 ч, осмотр пластин каждые 100 т. Для флотатора: пополнение смазки подшипников раз в рабочую неделю, замена раз в 6 месяцев. Работы после остановки, отключения энергии и исключения пуска; реагенты — по эксплуатационной документации.</p>`)}
  </section>
 
  <section class="section" id="placement">
   ${renderHotWashEngineeringCenter()}
-  <div class="hw-placement-grid">${[['Склад и проезды','Сырьё, партии готовой продукции и маршруты погрузчика.'],['Основания и мокрая зона','Фундаменты, штробы и сбор загрязнённых стоков.'],['Вода и нагрев','Подпитка, циркуляция, тепловая мощность и режим сбросов.'],['Электроснабжение','Подключения, автоматика и заземление.'],['Реагенты и вентиляция','Хранение, дозирование и требования эксплуатационной документации.'],['Сервисный доступ','Остановки и обслуживание выбранных исполнений.']].map(([t,p])=>`<article><h3>${t}</h3><p>${p}</p></article>`).join('')}</div></section>
+ </section>
 
  ${renderHotWashPhotoAlbum()}
 

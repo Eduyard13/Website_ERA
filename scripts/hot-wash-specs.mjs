@@ -84,7 +84,6 @@ export function renderHotWashSpecs(line){
    <dl>${periods.map(([hours,label,duration])=>`<div data-base-output-hours="${hours}"><dt>${label} · ${duration}</dt><dd>${fmt(granuleRate*hours/1000)} <small>т</small></dd></div>`).join('')}</dl>
    <p>Расчёт по номиналу ${fmt(granuleRate)} кг/ч при работе без остановок. Фактический выпуск зависит от состава и влажности плёнки, потерь и рабочего режима.</p>
   </div>
-  <div class="line-routing hw-scaling"><div class="line-routing-main"><p class="eyebrow">МАСШТАБИРОВАНИЕ</p><h3>Две сухие линии → одна мойка → два гранулятора</h3><p>До 1,5 т/ч гранулы при достаточной подаче, подтверждённой пропускной способности и установке второго гранулятора. Материальный баланс проверяют с учётом влажности, потерь, простоев и требований покупателя. Электрическую мощность для расширенной комплектации рассчитывают отдельно.</p></div></div>
   <div class="base-spec-lower">
    <div class="base-spec-efficiency"><h3 class="eyebrow">ЭНЕРГЕТИЧЕСКИЕ РЕСУРСЫ</h3><div class="base-spec-energy-grid">
     ${fact('energy-output',fmt(totals.calculated*1000/granuleRate,true)+' <small>кВт·ч/т</small>','На тонну номинального выпуска гранулы')}

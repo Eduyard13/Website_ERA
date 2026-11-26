@@ -86,7 +86,7 @@ with sync_playwright() as p:
   dialog.locator('[data-pdf-download]').click()
  pdf=Path(download.value.path()).read_bytes();assert len(pdf)==4430978 and hashlib.sha256(pdf).hexdigest()=='5648714c2f667ddb9d2168803aac50faf927fedbecb5147deebb57b0186a704a'
  page.keyboard.press('Escape');expect(opener).to_be_focused()
- for selector,part in [('.line-hero .media-open','catalog-cover-detailed'),('#hot-dimension-view-workshop .media-open','placement-isometric')]:
+ for selector,part in [('.line-hero .media-open','catalog-cover-detailed'),('#photos .dry-album-card:first-child .media-open','plenochnyy-flotator/05.webp')]:
   page.locator(selector).click();expect(page.locator('#media-viewer')).to_be_visible()
   assert part in page.locator('#viewer-image').get_attribute('src');page.keyboard.press('Escape')
  page.locator('.line-hero [data-project-request]').click();expect(page.locator('#project-request')).to_be_visible();page.keyboard.press('Escape')

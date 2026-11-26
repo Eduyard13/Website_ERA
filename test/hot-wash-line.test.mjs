@@ -6,6 +6,7 @@ import {lines,nodes} from '../content/catalog.mjs';
 import {hotFilmWashing,hotWashDocument,hotWashSpecification,hotWashPower,hotWashEnergy,hotWashMedia,hotWashProducts} from '../content/hot-film-washing.mjs';
 import flow from '../content/hot-wash-flow.json' with {type:'json'};
 import rawAssets from '../content/hot-wash-raw-assets.json' with {type:'json'};
+import hotWashAlbum from '../content/hot-wash-album.json' with {type:'json'};
 import {formatLineNumber as fmt,linePowerData} from '../content/line-engineering.mjs';
 import {hotWashDiagram} from '../content/hot-wash-diagram.mjs';
 import {publicLibraryDocuments} from '../content/document-library.mjs';
@@ -69,7 +70,7 @@ test('Ведомость, календарные величины и энерг�
  assert.equal(.75*24,18);assert.equal(.75*720,540);assert.equal(.75*8760,6570);assert.equal(68*33,2244);
  const html=revisedPage(line.path);
  for(const text of ['70%','1 271,70','890,19','77,5','37,6','700–1 200','0,003–0,007%','190 °C / 2,16 кг','30 суток','720 ч','6 570'])assert.ok(html.includes(text),text);
- assert.match(html,/<dd>1–2<small>%<\/small>/);
+ assert.match(html,/<p class="hw-quality-value">1–2<small>%<\/small>/);
  assert.match(html,/Номинал одного гранулятора/);
 });
 test('Монитор связывает 44 номера и 47 ветвей выносок с контурами 36 позиций',()=>{
@@ -178,12 +179,12 @@ test('Сырьё HOT-WASH использует пять утверждённых
    assert.equal(hash(await readFile(local)),sha256,file);
   }
  }
- for(const label of ['Что отделяется на сухой стадии','Что остаётся для мойки','Что проверяем']){
+ for(const label of ['Что отделяется на сухой стадии','Что остаётся для мойки']){
   assert.equal(section.split(`<dt>${label}</dt>`).length-1,3);
  }
  assert.match(section,/Что удаляет мойка/);
- assert.ok(section.includes(`href="${basePath}/catalog/lines/separatsiya-02"`));
- assert.doesNotMatch(section,/<details|<table|Сырьё и контроль партии|raw-film-0[12]/);
+ assert.match(section,/<h3>Бытовые пакеты и упаковка<\/h3>/);
+ assert.doesNotMatch(section,/<details|<table|Сырьё и контроль партии|Что проверяем|raw-film-0[12]/);
  assert.doesNotMatch(render('/media'),/\/moyka-plenki\/raw-prepared\//);
 });
 test('На мойке сохранены основной КАИР, карта процесса и показатели готовой продукции',()=>{
@@ -199,6 +200,60 @@ test('На мойке сохранены основной КАИР, карта �
  assert.doesNotMatch(kair,/<img|line-process-views|Экраны из технического описания/);
  assert.equal((kair.match(/data-dry-kair-feature="/g)||[]).length,6);
  assert.ok(kair.includes(`class="dry-kair-link" href="${basePath}/automation"`));
+});
+test('Согласованные блоки цикла, операций, качества и расширения занимают правильные места',()=>{
+ const html=render(line.path);
+ const only=(attribute)=>[...html.matchAll(new RegExp(' '+attribute+'(?=[ >])','g'))].map(match=>match.index);
+ const within=(id,index,next)=>index>html.indexOf('id="'+id+'"')&&index<html.indexOf('id="'+next+'"');
+ for(const id of ['cycle','operations','quality','expansion'])assert.equal(only('data-hotwash-'+id).length,1,id);
+ const [cycle]=only('data-hotwash-cycle');
+ assert.ok(within('raw-materials',cycle,'composition'));
+ assert.ok(html.indexOf('class="hw-raw-origins"')<cycle&&cycle<html.indexOf('Что удаляет мойка'));
+ const navigation=html.slice(cycle,html.indexOf('</nav>',cycle));
+ assert.equal((navigation.match(/class="hw-cycle-card/g)||[]).length,3);
+ assert.equal((navigation.match(/aria-current="step"/g)||[]).length,1);
+ assert.equal((navigation.match(/class="hw-cycle-arrow"/g)||[]).length,2);
+ assert.deepEqual([...navigation.matchAll(/href="([^"]+)"/g)].map(match=>match[1]),[
+  basePath+'/catalog/lines/separatsiya-02/',basePath+'/catalog/lines/separatsiya-02/',basePath+'/technology/'
+ ]);
+ const [overview]=only('data-hotwash-operations');
+ assert.ok(within('process',overview,'quality'));
+ const intro=html.slice(overview,html.indexOf('class="line-section-heading hw-process-heading"'));
+ assert.deepEqual([...intro.matchAll(/data-hotwash-operation="(\d+)"/g)].map(match=>match[1]),Array.from({length:9},(_,i)=>'0'+(i+1)));
+ assert.deepEqual([...intro.matchAll(/data-hotwash-operation="(\d+)" class="hw-operation-accent"/g)].map(match=>match[1]),['04','09']);
+ assert.match(intro,/Водооборот функционирует параллельно/);
+ const [quality]=only('data-hotwash-quality'),[expansion]=only('data-hotwash-expansion');
+ assert.ok(within('quality',quality,'kair')&&within('quality',expansion,'kair'));
+ assert.ok(html.indexOf('data-hotwash-output="product-granule"')<quality&&quality<expansion);
+ const metrics=html.slice(quality,expansion);
+ for(const copy of ['Вторичное сырьё. Качество, близкое к первичному.','30–70 граммов на тонну плёнки после двух стадий очистки','От исходной массы плёнки','ПТР гранулы ПВД.','Из плёнки — снова в плёнку.']){
+  assert.ok(metrics.includes(copy),copy);
+ }
+ const scaling=html.slice(expansion,html.indexOf('id="kair"'));
+ assert.equal((scaling.match(/750 <small>кг\/ч<\/small>/g)||[]).length,2);
+ assert.match(scaling,/ПОТЕНЦИАЛ РАСШИРЕННОЙ КОМПЛЕКТАЦИИ/);
+ assert.match(scaling,/до 1 500 <small>кг\/ч<\/small>/);
+ const specs=html.slice(html.indexOf('id="specs"'),html.indexOf('id="placement"'));
+ assert.doesNotMatch(specs,/Обслуживание и эксплуатация|hw-scaling|hw-expansion/);
+ assert.equal((specs.match(/<details\b/g)||[]).length,1);
+ const placement=html.slice(html.indexOf('id="placement"'),html.indexOf('id="photos"'));
+ assert.doesNotMatch(placement,/hw-placement-grid/);
+ assert.equal((placement.match(/data-engineering-frame="/g)||[]).length,31);
+});
+test('HOT-WASH показывает шесть согласованных кадров в исходном порядке',()=>{
+ const html=render(line.path);
+ const album=html.slice(html.indexOf('id="photos"'),html.indexOf('id="documents"'));
+ const figures=[...album.matchAll(/<figure[^>]*data-media-group="hot-wash-album"[\s\S]*?<\/figure>/g)].map(match=>match[0]);
+ assert.equal(figures.length,6);
+ for(const [index,{file,thumbnail,title,description}] of hotWashAlbum.entries()){
+  const photo=figures[index],src=`${basePath}/assets/${file}`;
+  assert.ok(photo.includes(`data-image="${src}"`)&&photo.includes(`<h3>${title}</h3>`)&&photo.includes(description),file);
+  assert.match(photo,/loading="lazy"/);
+  assert.equal(photo.includes('srcset='),Boolean(thumbnail),file);
+  if(thumbnail)assert.ok(photo.includes(`/assets/${thumbnail} `)&&photo.includes('Обработанная фотография'),file);
+ }
+ assert.match(figures[5],/data-type="frame"[\s\S]*Кадр из видео/);
+ assert.ok(album.includes(`href="${basePath}/media/" data-photo-gallery data-product="${basePath}/catalog/lines/moyka-plenki"`));
 });
 test('Медиатека объединяет повторно используемые фотографии, считает материалы и выделяет новую линию',()=>{
  const gallery=buildGalleryData(),items=selectGalleryItems(gallery.items,{album:'moyka-plenki'});

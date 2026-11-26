@@ -69,8 +69,9 @@ export function renderDrySeparationRaw(slug){
   '<article class="dry-raw-contaminant" data-contaminant="'+(i+1)+'"><span class="dry-raw-icon" aria-hidden="true">'+
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">'+icons[key]+'</svg></span>'+
   '<h4>'+esc(title)+'</h4><p>'+esc(copy)+'</p></article>').join('');
- const detail=methods[slug].map(([title,copy],i)=>'<div class="dry-raw-method"><span>'+String(i+1).padStart(2,'0')+'</span>'+
-  '<div><strong>'+esc(title)+'</strong><p>'+esc(copy)+'</p></div></div>').join('');
+ const detail=slug==='separatsiya-02'?'':'<details class="line-more dry-raw-details"><summary>Как оборудование отделяет эти загрязнения</summary>'+
+  '<div class="dry-raw-methods">'+methods[slug].map(([title,copy],i)=>'<div class="dry-raw-method"><span>'+String(i+1).padStart(2,'0')+'</span>'+
+   '<div><strong>'+esc(title)+'</strong><p>'+esc(copy)+'</p></div></div>').join('')+'</div></details>';
  return '<section class="section line-soft dry-raw-section" id="raw-materials" data-dry-raw="'+slug+'">'+
  '<div class="dry-raw-heading"><div><p class="eyebrow">С ЧЕМ РАБОТАЕМ <span class="dry-raw-tier">/ '+tier+'</span></p>'+
  '<h2>Плёнка разного происхождения.<br>Настройки под вашу партию.</h2></div>'+
@@ -81,6 +82,5 @@ export function renderDrySeparationRaw(slug){
  '<div class="dry-raw-categories-head"><p class="eyebrow">ЧТО ОТДЕЛЯЕТ СУХАЯ СЕПАРАЦИЯ</p>'+
  '<h3>От крупного мусора до микровключений.</h3><p>Основные группы посторонних материалов, которые оборудование отделяет от плёночного потока.</p></div>'+
  '<div class="dry-raw-categories">'+contaminants+'</div>'+
- '<details class="line-more dry-raw-details"><summary>Как оборудование отделяет эти загрязнения</summary>'+
- '<div class="dry-raw-methods">'+detail+'</div></details></section>';
+ detail+'</section>';
 }
