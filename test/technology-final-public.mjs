@@ -309,6 +309,53 @@ try{
  }
  assert.deepEqual(errors,[],'Published section navigation console errors');
  console.log('::notice title=Published section navigation verified::All 21 approved links, sticky offsets, synchronized groups and asset checks passed on the three public pages at 390 and 1440 px.');
+
+ const kairPage=await fetch(base+'/automation/',{cache:'no-store'});
+ assert.equal(kairPage.status,200);
+ const kairMarkup=await kairPage.text();
+ const style=kairMarkup.match(/href="([^"]*\/kair-stage2\.css\?v=([a-f0-9]{12}))"/);
+ assert.ok(style,'Published KAIR stage two stylesheet');
+ const styleResponse=await fetch(new URL(style[1],base),{cache:'no-store'});
+ assert.equal(styleResponse.status,200);
+ assert.equal(digest('kair-stage2.css:'+digest(Buffer.from(await styleResponse.arrayBuffer()))).slice(0,12),style[2]);
+ const approvedArt={
+  'operator-station.webp':'f9fe1037837ce52c464549cb31e7d8d46834d95c364de8f3c018d1ad6449d05b',
+  'business-contact.webp':'3102803e32fce454c783c73db5d54fb9672bd907e87063498556cd16bcb61e33',
+  'business-contact-960.webp':'e8498299bf5b9609bd2ba4062a709a79c7f5289040fb4f27e622028dd95025d7',
+ };
+ for(const [file,checksum] of Object.entries(approvedArt)){
+  const path='/assets/kair/'+file;
+  assert.ok(kairMarkup.includes(path),file);
+  const image=await fetch(base+path,{cache:'no-store'});
+  assert.equal(image.status,200,file);
+  assert.equal(digest(Buffer.from(await image.arrayBuffer())),checksum,file);
+ }
+ for(const width of [390,1440]){
+  await command('Emulation.setDeviceMetricsOverride',{width,height:900,deviceScaleFactor:1,mobile:width<768});
+  await command('Page.navigate',{url:base+'/automation/#kair-functions-water'});
+  await wait(`document.querySelector('[data-kair-system][data-ready=true]')&&
+   document.querySelector('#ka-function-tab-water[aria-selected=true]')&&
+   document.querySelector('[data-kair-section-nav] [aria-current=location]')?.hash==='#kair-functions'`);
+  const counts=await evaluate(`['[data-kair-scenario]','[data-kair-function]','[data-kair-compact] [data-kair-slide]',
+   '[data-kair-section-nav] a','[data-kair-hardware]'].map(sel=>document.querySelectorAll(sel).length)`);
+  assert.deepEqual(counts,[24,29,7,8,8]);
+  const [scrollWidth,clientWidth]=await evaluate('[document.documentElement.scrollWidth,document.documentElement.clientWidth]');
+  assert.ok(scrollWidth<=clientWidth+1,`KAIR overflow at ${width}px: ${scrollWidth} > ${clientWidth}`);
+  await click('#ka-logic-tab-protection');
+  await wait(`!document.querySelector('#ka-logic-protection').hidden`);
+  await click('#ka-case-category-tab-service');
+  await click('#ka-scenario-tab-13');
+  await wait(`!document.querySelector('#ka-scenario-13').hidden&&document.querySelector('#ka-scenario-13').textContent.includes('Две ветки работают поочерёдно')`);
+  await click('#ka-process-tab-washing');
+  assert.equal(await evaluate(`document.querySelectorAll('.ka-water-circuits li').length`),4);
+  await click('[data-kair-compact] [data-kair-next]');
+  await wait(`document.querySelector('[data-kair-compact] [data-kair-counter]').textContent==='2 из 7'`);
+  await click('#kair-contact [data-project-request]');
+  await wait(`document.querySelector('#project-request[open] [data-request-submit]:disabled')`);
+  await click('#project-request [data-request-close]');
+ }
+ assert.deepEqual(errors,[],'Published KAIR stage two console errors');
+ console.log(`::notice title=Published KAIR stage two verified::Eight revised sections, 4 logic modes, 24 cases, 29 functions, 7 screens, technical gallery, historical bookmark and request dialog passed in Chrome at 390 and 1440 px. ${base}/automation/`);
 }finally{
  socket?.close();
  chrome.kill('SIGTERM');

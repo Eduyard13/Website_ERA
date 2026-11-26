@@ -1,238 +1,242 @@
-"""KAIR sticky navigation, benefits, independent controls and legacy links."""
+"""KAIR stage two acceptance, real monitor and preserved legacy links."""
+import json
+import os
 from pathlib import Path
+from urllib.parse import urlsplit
+
 from playwright.sync_api import sync_playwright
-import json, os
 
-base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3024/Website_ERA').rstrip('/')
-out=Path(os.environ.get('ERA_SCREENSHOT_DIR','/tmp/era-kair-system-024'));out.mkdir(parents=True,exist_ok=True)
-section_ids=['kair-'+slug for slug in (
- 'value','logic','scenarios','process','screens','functions','hardware','project','contact'
-)]
-nav_selector='[data-kair-section-nav]'
-anchor_in_view="""id=>{
- const top=document.getElementById(id).getBoundingClientRect().top;
- const bottom=document.querySelector('[data-kair-section-nav]').getBoundingClientRect().bottom;
- return top-bottom>=14 && top-bottom<=18;
-}"""
+base = os.environ.get('ERA_PREVIEW_URL', 'http://127.0.0.1:3289/Website_ERA').rstrip('/')
+out = Path(os.environ.get('ERA_SCREENSHOT_DIR', '/tmp/era-kair-stage2'))
+out.mkdir(parents=True, exist_ok=True)
+viewport_sizes = [(1920, 1080), (1440, 900), (1280, 800), (768, 1024), (390, 844), (360, 800)]
+sections = ['value', 'logic', 'scenarios', 'process', 'screens', 'functions', 'hardware', 'project', 'contact']
+case_groups = {
+    'control': [1, 2, 3, 12], 'protection': [6, 7, 8, 9, 10, 24], 'quality': [4, 5, 22, 23],
+    'service': [11, 13, 17, 18], 'washing': [14, 15, 16], 'water': [19, 20, 21],
+}
+function_groups = {'process': 5, 'protection': 6, 'visibility': 5, 'washing': 6, 'water': 4, 'local': 3}
+screens = ['01', '25', '26', '27', '28', '22', '24']
+nav = '[data-kair-section-nav]'
+rail = '.page-progress-rail'
+ready = '[data-kair-system][data-ready=true]'
+screenshot_style = '.site-header,.ka-outline,.page-progress-rail,.page-progress-tooltip,#quick-contact { visibility:hidden!important; }'
+rates_source = 'https://raw.githubusercontent.com/Eduyard13/Website_ERA/refs/heads/data/cbr-rates/cbr.json'
+errors, failed, external, results = [], [], [], []
 
-def check_anchor(page,id):
- page.wait_for_function(anchor_in_view,arg=id)
- page.wait_for_function("""id=>{
-  const active=document.querySelector('.page-progress-rail [aria-current=location]');
-  return active?.hash==='#'+(id.startsWith('kair-functions-')?'kair-functions':id);
- }""",arg=id)
 
-def check_sticky(page):
- assert page.evaluate("""()=>{
-  const header=document.querySelector('.site-header').getBoundingClientRect();
-  const nav=document.querySelector('[data-kair-section-nav]').getBoundingClientRect();
-  return Math.abs(header.bottom-nav.top)<1 && nav.height>=44 && nav.height<=52;
- }""")
+def load(page, fragment=''):
+    response = page.goto(base + '/automation/' + fragment, wait_until='domcontentloaded')
+    if response:
+        assert response.status == 200
+    page.wait_for_selector(ready)
 
-def check_active(page,id):
- active_id='kair-project' if id=='kair-contact' else id
- page.wait_for_function("""id=>{
-  const link=document.querySelector('[data-kair-section-nav] [aria-current=location]');
-  if(link?.hash!=='#'+id)return false;
-  const item=link.getBoundingClientRect(),track=link.parentElement.getBoundingClientRect();
-  return item.left>=track.left-1 && item.right<=track.right+1;
- }""",arg=active_id)
- assert page.locator(nav_selector+' [aria-current=location]').count()==1
- check_sticky(page)
+
+def check_nav(page, section):
+    upper = 'project' if section == 'contact' else section
+    page.wait_for_function("""({top, side}) =>
+        document.querySelector('[data-kair-section-nav] [aria-current=location]')?.hash === '#kair-' + top &&
+        document.querySelector('.page-progress-rail [aria-current=location]')?.hash === '#kair-' + side
+        """, arg={'top': upper, 'side': section})
+    assert page.evaluate("""() => {
+        const bar = document.querySelector('[data-kair-section-nav]').getBoundingClientRect();
+        const head = document.querySelector('.site-header').getBoundingClientRect();
+        const link = document.querySelector('[data-kair-section-nav] [aria-current=location]');
+        const item = link.getBoundingClientRect(), row = link.parentElement.getBoundingClientRect();
+        return Math.abs(bar.top-head.bottom)<1 && item.left>=row.left-1 && item.right<=row.right+1;
+    }""")
+
+
+def check_anchor(page, anchor):
+    page.wait_for_function("""id => {
+        const target = document.getElementById(id);
+        const nav = document.querySelector('[data-kair-section-nav]').getBoundingClientRect();
+        return Math.abs(target.getBoundingClientRect().top-nav.bottom-16)<2;
+    }""", arg=anchor, timeout=7000)
+
+
+def capture(page, section, width):
+    block = page.locator('#kair-' + section)
+    block.locator('img:visible').evaluate_all('imgs=>Promise.all(imgs.map(i=>{i.loading="eager";return i.decode()}))')
+    if section in ['screens', 'functions']:
+        page.screenshot(path=str(out / f'{section}-with-nav-{width}.png'))
+    block.screenshot(path=str(out / f'{section}-{width}.png'), style=screenshot_style, animations='disabled')
+
+
+def assert_fit(page):
+    assert page.evaluate('document.documentElement.scrollWidth === innerWidth'), page.viewport_size
+    assert page.locator('#kair-logic button:visible,#kair-scenarios button:visible,#kair-process button:visible,#kair-functions button:visible').evaluate_all(
+        'els=>els.every(e=>e.getBoundingClientRect().height>=44)')
+
 
 with sync_playwright() as p:
- browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'])
- errors=[];failures=[];results=[]
- for width in [320,390,768,1024,1440,1600]:
-  height=1200 if width==1440 else 1000
-  context=browser.new_context(viewport={'width':width,'height':height},reduced_motion='reduce',has_touch=width<560)
-  page=context.new_page()
-  page.on('pageerror',lambda e:errors.append(str(e)))
-  page.on('response',lambda r:failures.append((r.status,r.url)) if r.status>=400 and r.url.startswith(base) else None)
-  assert page.goto(base+'/automation/').status==200
-  page.wait_for_selector('[data-kair-system][data-ready=true]')
-  assert page.title()=='Система управления КАИР — ЭРА'
-  assert page.locator('h1').count()==1
-  assert page.locator('[data-kair-slide]').count()==23
-  assert page.locator('[data-kair-scenario]').count()==24
-  assert page.locator('[data-kair-function]').count()==29
-  assert page.locator('a[href$="/ai"]').count()==0
-  assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),(width,'hero')
-  nav=page.locator(nav_selector)
-  assert page.locator('[data-kair-system]').evaluate('e=>e.firstElementChild.matches("[data-kair-section-nav]")')
-  assert page.locator('.kair-system > section').evaluate_all('ss=>ss.slice(1).map(s=>s.id)')==section_ids
-  assert nav.locator('a').evaluate_all('links=>links.map(a=>a.hash.slice(1))')==section_ids[:-1]
-  assert page.locator('.page-progress-rail a').evaluate_all('links=>links.map(a=>a.hash.slice(1))')==['page-section-1']+section_ids
-  assert nav.locator('[aria-current]').count()==0
-  check_sticky(page)
-  if width in [390,1440]:
-   page.locator('[data-cookie-choice="deny"]').click()
-   page.mouse.move(0,0)
-   page.screenshot(path=str(out/f'hero-{width}.png'))
-  for id in section_ids[:-1]:
-   nav.locator('a[href="#'+id+'"]').click()
-   assert page.evaluate('location.hash')=='#'+id
-   check_anchor(page,id)
-   check_active(page,id)
-   heading=page.locator('#'+id+' h2').first.bounding_box()
-   assert nav.bounding_box()['y']+nav.bounding_box()['height']<heading['y']<height
-   if id=='kair-value' and width in [390,1440]:page.screenshot(path=str(out/f'benefits-{width}.png'))
-  assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),(width,'section navigation')
-  cards=page.locator('.ka-value-card')
-  assert cards.count()==6
-  assert cards.locator('a,button,[tabindex]').count()==0
-  assert cards.last.locator('h3').inner_text()=='Свобода владельца'
-  assert cards.last.evaluate('e=>getComputedStyle(e).backgroundImage.includes("rgb(28, 41, 64)")')
-  assert cards.locator('svg').evaluate_all('icons=>icons.every(e=>e.getBoundingClientRect().width===46)')
-  columns=3 if width>850 else 2 if width>560 else 1
-  assert page.locator('.ka-value-grid').evaluate('e=>getComputedStyle(e).gridTemplateColumns.split(" ").length')==columns
-  for start in range(0,6,columns):
-   sizes=[cards.nth(i).bounding_box()['height'] for i in range(start,start+columns)]
-   assert max(sizes)-min(sizes)<1
-  # Manual scrolling keeps the URL and moves the active mark in either direction.
-  for id in ('kair-screens','kair-logic','kair-scenarios'):
-   page.evaluate('(id)=>window.scrollBy(0,document.getElementById(id).getBoundingClientRect().top-150)',id)
-   check_active(page,id)
-   assert page.evaluate('location.hash')=='#kair-project'
-  page.locator('.page-progress-rail a[href="#kair-contact"]').click()
-  check_anchor(page,'kair-contact')
-  check_active(page,'kair-contact')
-  if width==1440:
-   page.mouse.move(0,0)
-   page.screenshot(path=str(out/'project-1440.png'))
-  if width==390:
-   page.locator('#kair-contact [data-project-request]').click()
-   assert page.locator('dialog#project-request').is_visible()
-   page.keyboard.press('Escape')
-   page.locator('#kair-contact a[href$="/economics"]').click()
-   assert page.url.rstrip('/').endswith('/economics')
-   page.goto(base+'/automation/#kair-screens')
-   check_anchor(page,'kair-screens')
-   page.reload();check_anchor(page,'kair-screens')
-   page.locator('#kair-screens a[href="#kair-scenarios"]').click()
-   check_anchor(page,'kair-scenarios')
-   page.go_back();check_active(page,'kair-screens')
-   page.go_forward();check_active(page,'kair-scenarios')
-   nav.locator('a[href="#kair-value"]').click()
-   page.locator('.ka-value-hook').scroll_into_view_if_needed()
-   check_active(page,'kair-value')
-   page.mouse.move(0,0)
-   page.screenshot(path=str(out/'benefits-accent-390.png'))
-  # Both tab lists retain their own active panel; keyboard implements the tab pattern.
-  protection=page.locator('#ka-logic-tab-protection');protection.click()
-  assert protection.get_attribute('aria-selected')=='true'
-  assert page.locator('#ka-logic-protection').is_visible()
-  assert not page.locator('#ka-logic-coordination').is_visible()
-  assert 'Отключение главного привода' in page.locator('#ka-logic-protection').inner_text()
-  protection.press('End');assert page.locator('#ka-logic-tab-washing').evaluate('(e)=>e===document.activeElement')
-  assert page.locator('#ka-logic-washing').is_visible()
-  page.keyboard.press('ArrowRight');assert page.locator('#ka-logic-tab-coordination').evaluate('(e)=>e===document.activeElement')
-  page.keyboard.press('ArrowLeft');assert page.locator('#ka-logic-washing').is_visible()
-  page.keyboard.press('Home');assert page.locator('#ka-logic-coordination').is_visible()
-  page.locator('#ka-process-tab-washing').click()
-  assert page.locator('#ka-process-washing').is_visible()
-  assert page.locator('#ka-logic-coordination').get_attribute('hidden') is None
-  assert page.locator('.ka-water-route').count()==3
-  assert page.locator('.ka-water-route').nth(2).inner_text().endswith('Ополаскивание')
-  assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),(width,'water')
-  # Scope covers shared functions and keeps local equipment automation distinct.
-  controls=page.locator('[data-kair-function-form]')
-  expected=page.locator('[data-kair-function][data-scope=both],[data-kair-function][data-scope=separation]').count()
-  controls.locator('[data-kair-scope=separation]').click()
-  assert page.locator('[data-kair-function]:visible').count()==expected
-  assert page.locator('[data-kair-function][data-scope=washing]:visible').count()==0
-  assert page.locator('[data-kair-function][data-scope=equipment]:visible').count()==0
-  controls.locator('[data-kair-scope=washing]').click()
-  assert page.locator('[data-function-id=alkali]').is_visible()
-  assert not page.locator('[data-function-id=recipes]').is_visible()
-  controls.locator('[data-kair-scope=equipment]').click()
-  assert page.locator('[data-kair-function]:visible').count()==3
-  assert page.locator('[data-function-id=granulator]').is_visible()
-  assert not page.locator('[data-function-id=alkali]').is_visible()
-  controls.locator('button[type=reset]').click()
-  search=page.locator('[data-kair-function-search]')
-  search.fill('ЖУРНАЛ')
-  assert page.locator('[data-kair-function]:visible').count()==1
-  assert page.locator('[data-function-id=events]').is_visible()
-  assert 'Найдено: 1 из 29' in page.locator('[data-kair-function-result]').inner_text()
-  search.fill('дозирован')
-  assert page.locator('[data-function-id=alkali]').is_visible()
-  search.fill('пленки');without_yo=page.locator('[data-kair-function]:visible').count()
-  search.fill('плёнки');assert page.locator('[data-kair-function]:visible').count()==without_yo>0
-  search.fill('<script>несуществующаяфункция</script>')
-  assert page.locator('[data-kair-function-empty]').is_visible()
-  assert page.locator('[data-kair-function]:visible').count()==0
-  controls.locator('button[type=reset]').click()
-  assert search.input_value()==''
-  assert not page.locator('[data-kair-function-empty]').is_visible()
-  assert page.locator('[data-kair-function-group]:not([hidden])').count()==6
-  assert page.locator('[data-kair-function-group][open]').count()==1
-  # A direct bookmark opens its function group without filtering out the others.
-  page.goto(base+'/automation/#kair-functions-protection')
-  check_anchor(page,'kair-functions-protection')
-  assert page.locator('[data-function-id=vibration]').is_visible()
-  assert '29 описаний в 6 группах' in page.locator('[data-kair-function-result]').inner_text()
-  controls.locator('button[type=reset]').click()
-  page.locator('#kair-functions-protection>summary').click()
-  assert page.locator('[data-function-id=vibration]').is_visible()
-  assert page.locator('#kair-functions-process').get_attribute('open') is not None
-  # Native scenario disclosures expose every delivered scenario, including the long list.
-  scenario=page.locator('[data-kair-scenario="1"]');scenario.locator('summary').click()
-  assert scenario.locator('.ka-scenario-content').is_visible()
-  assert 'на площадке остаётся персонал' in scenario.inner_text()
-  scenario.locator('summary').click();assert not scenario.locator('.ka-scenario-content').is_visible()
-  more=page.locator('.ka-more-scenarios');more.locator('>summary').click()
-  assert page.locator('[data-kair-scenario="24"]').is_visible()
-  page.locator('[data-kair-scenario="24"]>summary').click()
-  assert page.locator('[data-kair-scenario="24"] .ka-scenario-content').is_visible()
-  check_active(page,'kair-scenarios')
-  assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),(width,'disclosures')
-  assert page.locator('[data-kair-function-group]>.ka-function-grid').first.evaluate('(e)=>getComputedStyle(e).position')=='static'
-  assert page.locator('[data-kair-scenario="24"]>.ka-scenario-content').evaluate('(e)=>getComputedStyle(e).position')=='static'
-  assert page.locator('[data-ka-tab],[data-kair-scope],.ka-reset').evaluate_all('(es)=>es.filter(e=>e.getBoundingClientRect().height).every(e=>e.getBoundingClientRect().height>=44)')
-  # The deleted standalone AI page is a compatibility redirect only, with query retained.
-  page.goto(base+'/ai/?source=legacy')
-  page.wait_for_url(base+'/automation?source=legacy')
-  assert page.locator('[data-kair-system]').count()==1
-  page.locator('[data-menu-toggle]').click()
-  assert page.locator('#site-menu a[href$="/automation"]').count()==1
-  assert 'Искусственный интеллект' not in page.locator('#site-menu').inner_text()
-  results.append({'width':width,'overflow':False,'anchors':8,'sticky':True,
-                  'columns':columns,'tabs':True,'filters':True,'scenarios':True,'legacyRedirect':True})
-  print('KAIR: sticky navigation, benefits, tabs, 29 functions, 24 scenarios and redirect:',width,'OK',flush=True)
-  context.close()
- # Keyboard focus, full-motion scrolling and respect for the browser's reduced motion preference.
- page=browser.new_page(viewport={'width':1440,'height':1000})
- page.goto(base+'/automation/')
- link=page.locator(nav_selector+' a[href="#kair-project"]')
- link.press('Tab')
- page.keyboard.press('Shift+Tab')
- assert link.evaluate('e=>e.matches(":focus-visible")')
- assert link.evaluate('e=>getComputedStyle(e).outlineStyle')=='solid'
- assert page.evaluate('getComputedStyle(document.documentElement).scrollBehavior')=='smooth'
- page.keyboard.press('Enter')
- check_anchor(page,'kair-project')
- page.emulate_media(reduced_motion='reduce')
- assert page.evaluate('getComputedStyle(document.documentElement).scrollBehavior')=='auto'
- page.set_viewport_size({'width':640,'height':360})
- link.press('Enter')
- check_anchor(page,'kair-project')
- check_active(page,'kair-project')
- assert page.locator('.page-progress-rail').bounding_box()['y']>=page.locator(nav_selector).bounding_box()['y']+49
- page.close()
- # Native disclosures and redirect stay usable when JavaScript is disabled.
- context=browser.new_context(java_script_enabled=False,viewport={'width':390,'height':1000},reduced_motion='reduce')
- page=context.new_page();page.goto(base+'/automation/')
- page.locator(nav_selector+' a[href="#kair-scenarios"]').click()
- assert page.evaluate(anchor_in_view,'kair-scenarios')
- page.locator('#kair-functions-water>summary').click()
- assert page.locator('[data-function-id=water-treatment]').is_visible()
- page.locator('[data-kair-scenario="1"]>summary').click()
- assert page.locator('[data-kair-scenario="1"] .ka-scenario-content').is_visible()
- page.goto(base+'/ai/');page.wait_for_url(base+'/automation')
- assert page.locator('h1').count()==1
- context.close()
- assert not errors,errors
- assert not failures,failures
- (out/'acceptance.json').write_text(json.dumps({'responsive':results,'pageErrors':errors,'failedLocalResponses':failures},ensure_ascii=False,indent=2)+'\n')
- browser.close()
+    browser = p.chromium.launch(executable_path='/usr/bin/chromium', args=['--no-sandbox'])
+    for width, height in viewport_sizes:
+        context = browser.new_context(viewport={'width': width, 'height': height}, reduced_motion='reduce',
+                                      has_touch=width < 500, is_mobile=width < 500)
+        page = context.new_page()
+        page.on('pageerror', lambda error: errors.append(str(error)))
+        page.on('response', lambda response: failed.append((response.status, response.url))
+                if response.status >= 400 and response.url.startswith(base) else None)
+        page.on('request', lambda request: external.append(request.url)
+                if request.url.startswith(('http:', 'https:')) and not request.url.startswith(base) else None)
+        load(page)
+        assert page.locator('main h1').count() == 1
+        assert page.locator('.kair-system > section').evaluate_all('es=>es.slice(1).map(e=>e.id)') == ['kair-' + s for s in sections]
+        assert page.locator(nav + ' a').count() == 8
+        assert page.locator(rail + ' a').count() == 10
+        assert page.locator(nav + ' [aria-current]').count() == 0
+        assert page.locator('.ka-value-card').count() == 6
+        assert page.locator('[data-kair-scenario]').count() == 24
+        assert page.locator('[data-kair-function]').count() == 29
+        assert page.locator('[data-kair-function-form],[data-kair-pause],[data-kair-inspect],#kair-scenarios details,#kair-functions details').count() == 0
+        if page.locator('[data-cookie-choice=deny]').is_visible():
+            page.locator('[data-cookie-choice=deny]').click()
+        for section in sections:
+            link = page.locator((nav if section != 'contact' else rail) + f' a[href="#kair-{section}"]')
+            if width < 500:
+                link.tap()
+            else:
+                link.click()
+            assert urlsplit(page.url).fragment == 'kair-' + section
+            check_anchor(page, 'kair-' + section)
+            check_nav(page, section)
+            assert_fit(page)
+            if width in [390, 1440] and section != 'value':
+                capture(page, section, width)
+        compact = page.locator('[data-kair-compact]')
+        assert compact.get_attribute('data-autoplay') == 'false'
+        assert compact.locator('[data-kair-slide]').count() == len(screens)
+        assert compact.locator('.kair-controls button').count() == 2
+        assert page.locator('[data-kair-hardware]').count() == 8
+        assert page.locator('#kair-hardware button,#kair-hardware a,#kair-process a,#kair-project a').count() == 0
+        assert page.locator('#kair-contact a[href^="tel:"]').count() == 1
+        assert page.locator('#kair-contact a[href^="mailto:"]').count() == 1
+        assert 'Показатели на экране условные' in page.locator('#kair-contact figcaption').inner_text()
+        assert page.locator('.ka-efficiency-chart circle').count() == 8
+        assert page.locator('.ka-graph-line').first.evaluate('e=>getComputedStyle(e).animationName') == 'none'
+        if width not in [390, 1440]:
+            results.append({'width': width, 'height': height, 'sticky_links': 9})
+            context.close()
+            print(f'{width}×{height}: rendering, anchors, navigation and overflow OK', flush=True)
+            continue
+
+        for i, mode in enumerate(['coordination', 'protection', 'memory', 'washing']):
+            choice = page.locator('#ka-logic-tab-' + mode)
+            choice.click()
+            panel = page.locator('#ka-logic-' + mode)
+            assert panel.is_visible() and panel.locator('.ka-signal-stages li').count() == 4
+            assert panel.locator('.ka-signal-stages li').nth(2).locator('.ka-technical-label').text_content() == 'Действие'
+            assert page.locator('#kair-logic [data-ka-count]').inner_text() == f'{i+1} из 4'
+        page.locator('#kair-logic [data-ka-next]').click()
+        assert page.locator('#ka-logic-coordination').is_visible()
+        page.locator('#ka-logic-tab-coordination').press('ArrowRight')
+        assert page.locator('#ka-logic-protection').is_visible()
+        assert page.locator('#ka-logic-tab-protection').evaluate('e=>document.activeElement===e')
+        assert 'персонал' in page.locator('#ka-logic-protection .ka-technical').inner_text() or 'проверки' in page.locator('#ka-logic-protection .ka-technical').inner_text()
+
+        for category, ids in case_groups.items():
+            page.locator('#ka-case-category-tab-' + category).click()
+            group = page.locator('#ka-case-category-' + category)
+            assert group.locator('[data-kair-scenario]').count() == len(ids)
+            for index, number in enumerate(ids):
+                page.locator(f'#ka-scenario-tab-{number}').click()
+                case = page.locator(f'[data-kair-scenario="{number}"]')
+                assert case.is_visible()
+                assert page.locator('[data-kair-scenario]:visible').count() == 1
+                assert case.locator('.ka-case-compare h4').all_text_contents() == ['Без возможностей КАИР', 'С системой КАИР']
+                assert group.locator('[data-ka-count]').inner_text() == f'{index+1} из {len(ids)}'
+            group.locator('[data-ka-next]').click()
+            assert page.locator(f'[data-kair-scenario="{ids[0]}"]').is_visible()
+
+        for mode in ['separation', 'washing']:
+            page.locator('#ka-process-tab-' + mode).click()
+            assert page.locator(f'#ka-process-{mode} .ka-route-stations li:visible').count() == 4
+        assert page.locator('.ka-water-circuits li:visible').count() == 4
+        assert 'Стоки → очистка → бак возврата → основная мойка.' in page.locator('.ka-water-circuits').inner_text()
+        assert 'Чистая вода из резервуара → второй флотатор → ополаскивание.' in page.locator('.ka-water-circuits').inner_text()
+
+        for group, count in function_groups.items():
+            page.locator('#ka-function-tab-' + group).click()
+            panel = page.locator('#kair-functions-' + group)
+            assert panel.is_visible() and panel.locator('[data-kair-function]').count() == count
+            assert page.locator('[data-ka-architecture]').get_attribute('data-direction') == group
+        assert 'Собственный цикл узла' in page.locator('#kair-functions-local').inner_text()
+        for group in function_groups:
+            load(page, '#kair-functions-' + group)
+            assert page.locator('#kair-functions-' + group).is_visible()
+            assert page.locator('#ka-function-tab-' + group).get_attribute('aria-selected') == 'true'
+            check_anchor(page, 'kair-functions-' + group)
+            check_nav(page, 'functions')
+
+        load(page, '#kair-screens')
+        for index, screen in enumerate(screens):
+            page.wait_for_function('index=>document.querySelector("[data-kair-counter]").textContent===index+" из 7"', arg=index+1)
+            image = compact.locator('[data-kair-slide][data-current=true] img')
+            image.evaluate('i=>{i.loading="eager";return i.decode()}')
+            assert image.get_attribute('src').endswith(f'/kair/{screen}.webp')
+            assert image.evaluate('i=>getComputedStyle(i).objectFit') == 'contain'
+            if index+1 < len(screens):
+                compact.locator('[data-kair-next]').click()
+        compact.locator('[data-kair-next]').click()
+        page.wait_for_function('document.querySelector("[data-kair-counter]").textContent==="1 из 7"')
+        compact.evaluate("""m=>{const next=m.querySelector('[data-kair-next]'),prev=m.querySelector('[data-kair-prev]');
+            next.click();next.click();prev.click();
+        }""")
+        page.wait_for_function('document.querySelector("[data-kair-counter]").textContent==="2 из 7"')
+        opener = compact.locator('[data-kair-slide][data-current=true] a')
+        opener.click()
+        viewer = compact.locator('dialog')
+        assert viewer.is_visible()
+        page.wait_for_function('document.fullscreenElement===document.querySelector(".kair-viewer-shell")')
+        page.wait_for_function('document.querySelector("[data-kair-viewer-image]").naturalWidth>0')
+        assert viewer.locator('[data-kair-viewer-image]').get_attribute('src').endswith('KAIR_25_Screen_Current_Monitoring.jpg')
+        page.screenshot(path=str(out / f'fullscreen-{width}.png'))
+        page.keyboard.press('End')
+        page.wait_for_function('document.querySelector("[data-kair-viewer-counter]").textContent==="7 из 7"')
+        page.keyboard.press('Escape')
+        page.wait_for_function('!document.querySelector("[data-kair-viewer]").open')
+        assert compact.locator('[data-kair-slide][data-current=true] a').evaluate('e=>e===document.activeElement')
+
+        load(page, '#kair-contact')
+        cta = page.locator('#kair-contact').get_by_role('link', name='Оставить заявку', exact=True)
+        cta.click()
+        dialog = page.locator('#project-request')
+        assert dialog.is_visible() and dialog.locator('[data-request-submit]').is_disabled()
+        assert dialog.locator('[data-request-topic]').input_value() == 'Запрос ЭРА: система управления КАИР'
+        page.keyboard.press('Escape')
+        assert cta.evaluate('e=>e===document.activeElement') and not dialog.is_visible()
+        assert_fit(page)
+        results.append({'width': width, 'height': height, 'sticky_links': 9,
+                        'logic': 4, 'cases': 24, 'maps': 2, 'functions': 29, 'images': 7})
+        context.close()
+        print(f'{width}×{height}: all interactions, full screen, anchors and request modal OK', flush=True)
+
+    page = browser.new_page(viewport={'width': 1440, 'height': 900})
+    load(page)
+    page.locator(nav + ' a[href="#kair-project"]').click()
+    check_anchor(page, 'kair-project')
+    page.wait_for_selector('.ka-graph[data-in-view]')
+    assert page.locator('.ka-graph-line').first.evaluate('e=>getComputedStyle(e).animationName') == 'ka-graph-draw'
+    page.wait_for_function('document.querySelector(".ka-graph-line").getAnimations().every(a=>a.playState==="finished")')
+    page.reload()
+    check_anchor(page, 'kair-project')
+    page.goto(base + '/ai/?source=legacy')
+    page.wait_for_url(base + '/automation?source=legacy')
+    assert page.locator('[data-kair-system]').count() == 1
+    page.close()
+    plain = browser.new_page(viewport={'width': 390, 'height': 844}, java_script_enabled=False)
+    assert plain.goto(base + '/automation/').status == 200
+    assert plain.locator('[data-kair-scenario]:visible').count() == 24
+    assert plain.locator('[data-kair-function]:visible').count() == 29
+    assert plain.locator('#kair-process .ka-panel:visible').count() == 2
+    plain.close()
+    browser.close()
+    assert not errors, errors
+    assert not failed, failed
+    extra_requests = sorted({url for url in external if url.split('?', 1)[0] != rates_source})
+    assert not extra_requests, extra_requests
+    (out / 'acceptance.json').write_text(json.dumps({
+        'viewports': results, 'errors': errors, 'failed': failed, 'extra_requests': extra_requests,
+        'existing_rates_source': rates_source,
+    }, ensure_ascii=False, indent=2) + '\n')

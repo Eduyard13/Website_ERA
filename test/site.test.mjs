@@ -874,31 +874,53 @@ test('Страница КАИР охватывает реестр владель
  assert.ok(fn('makeup').detail.includes('разные величины'));assert.ok(fn('rinse').detail.includes('потери'));
  assert.equal(kairLogicModes.length,4);assert.equal(kairHardware.length,8);
 });
-test('Сценарии КАИР представлены как типовые задачи с раскрытием действий и условий',async()=>{
+test('Все 24 сценария КАИР распределены по темам и сохраняют действия и условия',async()=>{
  const {kairScenarios}=await import('../content/kair-scenarios.mjs');
+ const {default:approved}=await import('../content/kair-stage2.json',{with:{type:'json'}});
  assert.deepEqual(kairScenarios.map(s=>s.number),Array.from({length:24},(_,i)=>i+1));
  assert.equal(kairScenarios.filter(s=>s.featured).length,8);
  for(const s of kairScenarios)assert.ok(s.title&&s.situation&&s.action&&s.benefit);
  assert.ok(kairScenarios.find(s=>s.number===1).note.includes('на площадке остаётся персонал'));
  assert.ok(kairScenarios.find(s=>s.number===13).note.includes('порядок переключения'));
  const html=await readFile('dist/automation/index.html','utf8');
- assert.equal([...html.matchAll(/data-kair-scenario="\d+"/g)].length,24);
- assert.ok(html.includes('Типовые сценарии'));assert.ok(html.includes('Ещё 16 практических ситуаций'));
- assert.ok(!html.includes('КАИР рассчитывает прибыль'));
+ assert.deepEqual(approved.scenarioGroups.map(([id])=>approved.scenarios.filter(s=>s.group===id).map(s=>s.number)),
+  [[1,2,3,12],[6,7,8,9,10,24],[4,5,22,23],[11,13,17,18],[14,15,16],[19,20,21]]);
+ assert.deepEqual([...html.matchAll(/data-kair-scenario="(\d+)"/g)].map(m=>Number(m[1])).sort((a,b)=>a-b),kairScenarios.map(s=>s.number));
+ for(const scenario of kairScenarios){
+  const start=html.indexOf(`data-kair-scenario="${scenario.number}"`);
+  const markup=html.slice(start,html.indexOf('</div></div>',start));
+  for(const text of [scenario.situation,scenario.action,scenario.benefit,scenario.note])if(text)assert.ok(markup.includes(text),scenario.number);
+ }
+ assert.ok(html.includes('Одна ситуация. Два подхода.'));
+ assert.doesNotMatch(html,/Ещё 16 практических ситуаций|class="ka-more-scenarios"|КАИР рассчитывает прибыль/);
 });
-test('КАИР имеет связные схемы, независимые вкладки, поиск и прежние 23 фотографии',async()=>{
+test('Вторая редакция КАИР сохраняет условия внедрения, четыре схемы, два маршрута, 29 функций и семь оригиналов в витрине',async()=>{
  const html=await readFile('dist/automation/index.html','utf8');
+ const technology=await readFile('dist/technology/index.html','utf8');
+ const {kairSlides}=await import('../content/kair.mjs');
+ const {kairFunctions}=await import('../content/kair-system.mjs');
+ const {kairShowcaseIds}=await import('../scripts/kair-stage2.mjs');
  assert.equal([...html.matchAll(/<h1[\s>]/g)].length,1);
- assert.equal([...html.matchAll(/data-kair-slide(?=[\s>])/g)].length,23);
- assert.equal([...html.matchAll(/data-kair-function(?=[\s>])/g)].length,29);
- assert.equal([...html.matchAll(/data-kair-tabs(?=[\s>])/g)].length,2);
+ assert.match(html,/data-kair data-kair-compact data-autoplay="false"/);
+ assert.deepEqual([...html.matchAll(/data-kair-slide[^>]+data-image="([^"]+)"/g)].map(m=>m[1]),
+  kairShowcaseIds.map(id=>`${basePath}/assets/${kairSlides.find(slide=>slide.id===id).original}`));
+ assert.equal(kairShowcaseIds.length,7);
+ assert.equal((technology.match(/data-kair-slide(?=[\s>])/g)||[]).length,23);
+ assert.doesNotMatch(technology,/data-kair-compact|kair-stage2\.css|kair-system\.css/);
+ assert.doesNotMatch(html,/data-kair-(?:function-search|function-form|group-link|scope|pause|inspect|play-note)\b/);
+ const rows=[...html.matchAll(/data-kair-function data-function-id="([^"]+)" data-scope="([^"]+)" data-group="([^"]+)" data-source-codes="([^"]*)"/g)].map(m=>m.slice(1));
+ assert.deepEqual(rows,kairFunctions.map(f=>[f.id,f.scope,f.group,f.codes.join(' ')]));
+ assert.equal((html.match(/data-kair-hardware(?=[\s>])/g)||[]).length,8);
+ assert.match(html,/Схематичная иллюстрация экономического потенциала/);
+ assert.match(html,/Производство работает\. Вы развиваете бизнес\./);
  for(const id of ['value','screens','logic','functions','process','scenarios','hardware','project'])assert.equal([...html.matchAll(new RegExp(`id="kair-${id}"`,'g'))].length,1,id);
- for(const [,id] of html.matchAll(/aria-controls="(ka-(?:logic|process)-[^"]+)"/g))assert.ok(html.includes(`id="${id}"`),id);
+ for(const [,id] of html.matchAll(/aria-controls="((?:ka|kair)-(?:logic|process|case|scenario|functions)-[^"]+)"/g))assert.ok(html.includes(`id="${id}"`),id);
  for(const slot of ['kair-overview','kair-logic-protection','kair-logic-memory','kair-process-separation','kair-process-washing','kair-water-circuits'])assert.ok(html.includes(`data-artwork-slot="${slot}"`));
  assert.ok(html.includes('Стоки → очистка → бак возврата'));assert.ok(html.includes('Чистая вода из резервуара'));
- assert.ok(html.includes('data-kair-function-search'));assert.ok(html.includes('data-kair-scope="washing"'));
+ const route=html.slice(html.indexOf('id="kair-process"'),html.indexOf('id="kair-screens"'));
+ assert.doesNotMatch(route,/<a\b/);
+ for(const id of ['process','protection','visibility','washing','water','local'])assert.equal(html.split(`id="kair-functions-${id}"`).length,2,id);
  assert.ok(html.includes(`${basePath}/kair-system.js?v=`));assert.ok(html.includes(`${basePath}/kair-system.css?v=`));
- assert.ok(!(await readFile('dist/technology/index.html','utf8')).includes('/kair-system.css'));
 });
 test('Порядок разделов КАИР совпадает с меню, а преимущества представлены статичными карточками',async()=>{
  const html=await readFile('dist/automation/index.html','utf8');
@@ -922,8 +944,12 @@ test('Порядок разделов КАИР совпадает с меню, �
  assert.doesNotMatch(value,/<a\b|<button\b|tabindex=|Посмотреть функции|(?:0[1-6]|↗)\s*<\//);
  assert.ok(value.includes(`<div class="ka-value-hook"><h3>${benefits.hook}</h3><p>${benefits.hookText}</p></div>`));
  const contact=html.slice(sections.at(-1).index,html.indexOf('</main>'));
- assert.equal((html.match(/class="ka-business-result /g)||[]).length,1);
- assert.ok(contact.includes('class="ka-business-result '));assert.ok(contact.includes(`href="${basePath}/economics"`));
+ assert.equal((contact.match(/data-project-request\b/g)||[]).length,1);
+ assert.match(contact,/>Оставить заявку</);
+ assert.match(contact,/Концептуальная визуализация\. Показатели на экране условные/);
+ assert.match(contact,/href="tel:\+\d+"/);
+ assert.match(contact,/href="mailto:info@era-cycle\.ru"/);
+ assert.doesNotMatch(contact.replace(/<[^>]*>/g,''),/Экономика проекта|98%|\+27%|[-−]32%/);
  const ids=[...html.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);
  assert.equal(new Set(ids).size,ids.length);
  for(const [,id] of html.matchAll(/href="#(kair-[^"]+)"/g))assert.ok(ids.includes(id),id);

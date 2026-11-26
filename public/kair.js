@@ -2,6 +2,7 @@ for(const monitor of document.querySelectorAll('[data-kair]')){
  const slides=[...monitor.querySelectorAll('[data-kair-slide]')];if(!slides.length)continue;
  const viewer=monitor.querySelector('[data-kair-viewer]'),viewerImage=viewer.querySelector('[data-kair-viewer-image]'),fullscreenRoot=viewer.querySelector('.kair-viewer-shell');
  const pause=monitor.querySelector('[data-kair-pause]'),status=monitor.querySelector('[data-kair-status]');
+ const caption=monitor.querySelector('[data-kair-caption]'),inspect=monitor.querySelector('[data-kair-inspect]');
  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
  const interval=Math.max(1000,Number(monitor.dataset.interval)||8000),transition=Math.max(0,Number(monitor.dataset.transition)||600);
  let index=0,desired=0,serial=0,timer=null,changing=false,hovered=false,focused=false,inView=false,manualPause=false,opener=null,wasFullscreen=false,closing=false;
@@ -28,7 +29,7 @@ for(const monitor of document.querySelectorAll('[data-kair]')){
   if(note)note.textContent=paused?'Показ приостановлен · листайте стрелками':`Автопоказ · ${Math.round(interval/1000)} секунд на экран`;
  }
  function update(){
-  monitor.querySelector('[data-kair-caption]').textContent=slides[index].dataset.title;
+  if(caption)caption.textContent=slides[index].dataset.title;
   const counter=monitor.querySelector('[data-kair-counter]');if(counter)counter.textContent=`${index+1} из ${slides.length}`;
   viewer.querySelector('[data-kair-viewer-title]').textContent=slides[index].dataset.title;
   viewer.querySelector('[data-kair-viewer-counter]').textContent=`${index+1} из ${slides.length}`;
@@ -66,7 +67,7 @@ for(const monitor of document.querySelectorAll('[data-kair]')){
  const move=direction=>select(desired+direction);
  function pauseForInspection(){manualPause=true;resumeRequested=false;stop();updatePause();}
  async function openInspection(trigger){
-  pauseForInspection();opener=trigger||monitor.querySelector('[data-kair-inspect]');
+  pauseForInspection();opener=trigger||inspect;
   viewer.querySelector('[data-kair-viewer-error]').hidden=true;
   viewer.showModal();document.body.classList.add('kair-viewer-open');update();
   viewer.querySelector('[data-kair-close]').focus();
@@ -83,12 +84,12 @@ for(const monitor of document.querySelectorAll('[data-kair]')){
   slide.hidden=i!==0;slide.dataset.current=String(i===0);slide.querySelector('a').tabIndex=i===0?0:-1;
   slide.querySelector('a').addEventListener('click',event=>{event.preventDefault();openInspection(event.currentTarget);});
  });
- monitor.querySelector('[data-kair-inspect]').addEventListener('click',event=>openInspection(event.currentTarget));
+ inspect?.addEventListener('click',event=>openInspection(event.currentTarget));
  viewer.querySelector('[data-kair-close]').addEventListener('click',closeInspection);
  viewer.addEventListener('cancel',event=>{event.preventDefault();closeInspection();});
  viewer.addEventListener('close',()=>{
   document.body.classList.remove('kair-viewer-open');viewerImage.removeAttribute('src');
-  const target=opener?.isConnected&&opener.getClientRects().length?opener:monitor.querySelector('[data-kair-inspect]');
+  const target=opener?.isConnected&&opener.getClientRects().length?opener:inspect||slides[index].querySelector('a');
   target.focus({preventScroll:true});schedule();
  });
  document.addEventListener('fullscreenchange',()=>{
@@ -107,7 +108,7 @@ for(const monitor of document.querySelectorAll('[data-kair]')){
   monitor.querySelector('[data-kair-next]').addEventListener('click',()=>move(1));
   viewer.querySelector('[data-kair-viewer-prev]').addEventListener('click',()=>move(-1));
   viewer.querySelector('[data-kair-viewer-next]').addEventListener('click',()=>move(1));
-  pause.addEventListener('click',()=>{if(!playing||manualPause){playing=true;manualPause=false;resumeRequested=true;}else{manualPause=true;resumeRequested=false;}updatePause();schedule();});
+  pause?.addEventListener('click',()=>{if(!playing||manualPause){playing=true;manualPause=false;resumeRequested=true;}else{manualPause=true;resumeRequested=false;}updatePause();schedule();});
  }
  monitor.addEventListener('pointerenter',()=>{hovered=true;resumeRequested=false;stop();});
  monitor.addEventListener('pointerleave',()=>{hovered=false;schedule();});

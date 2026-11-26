@@ -34,73 +34,85 @@ if(root){
   if(rail)connectSectionNav(nav,rail);
  },{once:true});
 
+ const panelTabs=new Map();
  for(const group of root.querySelectorAll('[data-kair-tabs]')){
-  const tabs=[...group.querySelectorAll('[data-ka-tab]')];
-  const select=(tab,focus=false)=>{
-   for(const item of tabs){
-    const active=item===tab;
-    item.setAttribute('aria-selected',String(active));item.tabIndex=active?0:-1;
-    const panel=group.querySelector('#'+item.getAttribute('aria-controls'));
-    if(panel)panel.hidden=!active;
-   }
-   if(focus)tab.focus();
-  };
-  for(const tab of tabs){
-   tab.addEventListener('click',()=>select(tab));
-   tab.addEventListener('keydown',event=>{
-    let index=tabs.indexOf(tab);
-    if(event.key==='ArrowRight')index=(index+1)%tabs.length;
-    else if(event.key==='ArrowLeft')index=(index+tabs.length-1)%tabs.length;
-    else if(event.key==='Home')index=0;
-    else if(event.key==='End')index=tabs.length-1;
-    else return;
-    event.preventDefault();select(tabs[index],true);
+  const list=group.querySelector('[role=tablist]');
+  if(!list)continue;
+  const tabs=[...list.querySelectorAll(':scope > [data-ka-tab]')];
+  const pairs=tabs.flatMap(tab=>{
+   const panel=document.getElementById(tab.getAttribute('aria-controls'));
+   return panel&&group.contains(panel)?[{tab,panel}]:[];
+  });
+  if(!pairs.length)continue;
+  const pager=group.querySelector(':scope > [data-ka-pager]');
+  const dots=pager?.querySelectorAll('.ka-pager-dots i')??[];
+  const count=pager?.querySelector('[data-ka-count]');
+  let current=Math.max(0,pairs.findIndex(({tab})=>tab.getAttribute('aria-selected')==='true'));
+
+  function select(index,focus=false){
+   current=(index+pairs.length)%pairs.length;
+   pairs.forEach(({tab,panel},i)=>{
+    const active=i===current;
+    tab.setAttribute('aria-selected',String(active));
+    tab.tabIndex=active?0:-1;
+    panel.hidden=!active;
+    panel.removeAttribute('data-ka-inactive');
    });
+   dots.forEach((dot,i)=>{
+    dot.toggleAttribute('data-current',i===current);
+    if(i===current)dot.setAttribute('data-viewed','');
+   });
+   if(count)count.textContent=`${current+1} из ${pairs.length}`;
+   const {tab}=pairs[current];
+   if(tab.dataset.kaDirection)group.dataset.direction=tab.dataset.kaDirection;
+   if(focus)tab.focus({preventScroll:true});
   }
+
+  pairs.forEach(({tab,panel},i)=>{
+   panelTabs.set(panel,()=>select(i));
+   tab.addEventListener('click',()=>select(i));
+   tab.addEventListener('keydown',event=>{
+    let next;
+    if(event.key==='ArrowRight'||event.key==='ArrowDown')next=i+1;
+    else if(event.key==='ArrowLeft'||event.key==='ArrowUp')next=i-1;
+    else if(event.key==='Home')next=0;
+    else if(event.key==='End')next=pairs.length-1;
+    else return;
+    event.preventDefault();
+    select(next,true);
+   });
+  });
+  pager?.querySelector('[data-ka-prev]')?.addEventListener('click',()=>select(current-1));
+  pager?.querySelector('[data-ka-next]')?.addEventListener('click',()=>select(current+1));
+  select(current);
  }
- const form=root.querySelector('[data-kair-function-form]');
- const input=form.querySelector('[data-kair-function-search]');
- const controls=[...form.querySelectorAll('[data-kair-scope]')];
- const groups=[...root.querySelectorAll('[data-kair-function-group]')];
- const cards=[...root.querySelectorAll('[data-kair-function]')];
- const result=root.querySelector('[data-kair-function-result]');
- const empty=root.querySelector('[data-kair-function-empty]');
- const normalise=value=>value.toLocaleLowerCase('ru-RU').replaceAll('ё','е').trim();
- let scope='all';
- function update(){
-  const words=normalise(input.value).split(/\s+/).filter(Boolean);
-  const filtering=words.length>0||scope!=='all';
-  let count=0,groupCount=0;
-  for(const card of cards){
-   const text=normalise(card.dataset.search);
-   const scopeMatch=scope==='all'||card.dataset.scope===scope||card.dataset.scope==='both'&&scope!=='equipment';
-   const visible=scopeMatch&&words.every(word=>text.includes(word));
-   card.hidden=!visible;if(visible)count++;
+
+ function openLinkedPanel(){
+  let id;
+  try{id=decodeURIComponent(location.hash.slice(1));}catch{return;}
+  const target=document.getElementById(id);
+  if(!target||!root.contains(target))return;
+  const ancestors=[];
+  for(let panel=target.closest('.ka-panel');panel;panel=panel.parentElement?.closest('.ka-panel')){
+   ancestors.unshift(panel);
   }
-  for(const group of groups){
-   const visible=[...group.querySelectorAll('[data-kair-function]')].filter(card=>!card.hidden).length;
-   group.hidden=visible===0;
-   group.querySelector('[data-kair-group-count]').textContent=String(visible);
-   if(visible){groupCount++;if(filtering)group.open=true;}
-  }
-  for(const control of controls)control.setAttribute('aria-pressed',String(control.dataset.kairScope===scope));
-  result.textContent=filtering?`Найдено: ${count} из ${cards.length}`:`${count} описаний в ${groupCount} группах`;
-  empty.hidden=count!==0;
+  const hidden=ancestors.filter(panel=>panel.hidden);
+  if(!hidden.length)return;
+  for(const panel of hidden)panelTabs.get(panel)?.();
+  requestAnimationFrame(()=>target.scrollIntoView({block:'start',behavior:'instant'}));
  }
- input.addEventListener('input',update);
- form.addEventListener('submit',event=>event.preventDefault());
- for(const control of controls)control.addEventListener('click',()=>{scope=control.dataset.kairScope;update();});
- form.addEventListener('reset',()=>{
-  input.value='';scope='all';
-  for(const group of groups)group.open=group.dataset.kairFunctionGroup==='process';
-  update();
- });
- // Open a deep-linked function group without changing the visitor's other controls.
- const openLinkedGroup=()=>{
-  const id=location.hash.slice(1);
-  const linked=groups.find(group=>group.id===id);
-  if(linked){if(linked.hidden){scope='all';input.value='';update();}linked.open=true;}
- };
- window.addEventListener('hashchange',openLinkedGroup);
- update();openLinkedGroup();root.dataset.ready='true';
+ window.addEventListener('hashchange',openLinkedPanel);
+ window.addEventListener('pageshow',openLinkedPanel);
+ openLinkedPanel();
+
+ const graph=root.querySelector('[data-ka-graph]');
+ if(graph&&'IntersectionObserver' in window){
+  const observeGraph=new IntersectionObserver(([entry])=>{
+   if(!entry.isIntersecting)return;
+   graph.dataset.inView='';
+   observeGraph.disconnect();
+  },{threshold:.2});
+  observeGraph.observe(graph);
+ }
+ root.dataset.ready='true';
 }
