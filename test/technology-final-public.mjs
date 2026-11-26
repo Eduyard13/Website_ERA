@@ -1,4 +1,4 @@
-// Check the published technology and homepage in Chrome without extra packages.
+// Check the published technology, homepage and shared section navigation in Chrome.
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {spawn} from 'node:child_process';
@@ -121,8 +121,8 @@ try{
   assert.deepEqual(s.renders,['lines/separatsiya-01/catalog-cover.webp','lines/moyka-plenki/catalog-cover-detailed.webp']);
   assert.ok(!s.overflow,'Layout '+width);assert.deepEqual(s.broken,[]);
   for(const value of ['0,8–1,2','190 °C / 2,16 кг','30–70','ppm','30–70 г/т','0,003–0,007%','3–5%'])assert.ok(s.quality.includes(value),value);
-  await click('.tf-outline a[href="#products"]');
-  await wait(`document.querySelector('.tf-outline a[aria-current="location"]')?.hash==='#products'`);
+  await click('[data-section-navigation] a[href="#products"]');
+  await wait(`document.querySelector('[data-section-navigation] a[aria-current="location"]')?.hash==='#products'`);
   await load('#material-balance');
   await wait(`document.querySelector('#material-balance').getClientRects().length>0`);
   assert.deepEqual((await balance()).selected,['50']);
@@ -263,6 +263,52 @@ try{
  }
  assert.deepEqual(errors,[],'Homepage console errors');
  console.log(`::notice title=Published homepage verified::Hero, 12 sections, five interactive sectors, national map, shared figures and five economics cards at 390 and 1440 px. ${base}/`);
+
+ const menus={
+  '/technology/':['raw-material','solution','products','granule-quality','applications','control-story','standalone-equipment'],
+  '/':['raw-material','process','products','russia-market','solution','manufacturing','kair'],
+  '/economics/':['production-constructor','raw-material','economics','monthly-result','market','economic-conditions','economics-project'],
+ };
+ const digest=bytes=>createHash('sha256').update(bytes).digest('hex');
+ for(const path of ['/technology/','/','/economics/']){
+  const pageResponse=await fetch(base+path,{cache:'no-store'});assert.equal(pageResponse.status,200,path);
+  const published=await pageResponse.text();
+  for(const file of ['section-navigation.css','page-progress.js']){
+   const asset=published.match(new RegExp(`(?:href|src)="([^"]+/${file.replace('.','\\.') }\\?v=([a-f0-9]{12}))"`));
+   assert.ok(asset,path+' '+file);
+   const bytes=await fetch(new URL(asset[1],base),{cache:'no-store'});
+   assert.equal(bytes.status,200,file);
+   const revision=digest(file+':'+digest(Buffer.from(await bytes.arrayBuffer()))).slice(0,12);
+   assert.equal(revision,asset[2],path+' '+file+' release');
+  }
+ }
+ for(const width of [390,1440]){
+  await command('Emulation.setDeviceMetricsOverride',{width,height:900,deviceScaleFactor:1,mobile:width<768});
+  for(const [path,ids] of Object.entries(menus)){
+   await command('Page.navigate',{url:base+path});
+   await wait(`document.readyState==='complete'&&document.querySelector('[data-section-navigation]+main')&&document.querySelector('.page-progress-rail a')`);
+   const menu='[data-section-navigation]';
+   assert.deepEqual(await evaluate(`[...document.querySelectorAll('${menu} a')].map(a=>a.hash.slice(1))`),ids);
+   assert.equal(await evaluate(`document.querySelectorAll('${menu} [aria-current],.tf-outline,.ec-toc').length`),0);
+   for(const target of ids){
+    await click(`${menu} a[href="#${target}"]`);
+    await wait(`(()=>{
+     const nav=document.querySelector('${menu}');
+     const link=nav.querySelector('[aria-current=location]'), hash='#${target}';
+     if(!link||link.hash!==hash||location.hash!==hash)return false;
+     const rail=document.querySelector('.page-progress-rail [aria-current=location]');
+     const bounds=nav.getBoundingClientRect(), heading=document.getElementById('${target}').getBoundingClientRect();
+     const item=link.getBoundingClientRect(), track=link.parentElement.getBoundingClientRect();
+     return rail&&link.dataset.sectionGroup.split(' ').includes(rail.hash.slice(1))
+      &&Math.abs(heading.top-bounds.bottom-16)<2&&item.left>=track.left-1&&item.right<=track.right+1
+      &&Math.abs(bounds.top-document.querySelector('.site-header').getBoundingClientRect().bottom)<2
+      &&document.documentElement.scrollWidth<=innerWidth;
+    })()`);
+   }
+  }
+ }
+ assert.deepEqual(errors,[],'Published section navigation console errors');
+ console.log('::notice title=Published section navigation verified::All 21 approved links, sticky offsets, synchronized groups and asset checks passed on the three public pages at 390 and 1440 px.');
 }finally{
  socket?.close();
  chrome.kill('SIGTERM');

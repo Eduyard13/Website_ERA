@@ -2,18 +2,24 @@
  'use strict';
  const main=document.querySelector('main');if(!main)return;
  const header=document.querySelector('.site-header'),footer=document.querySelector('footer');
- const kairNav=main.querySelector('[data-kair-section-nav]');
+ const sectionNav=document.querySelector('[data-section-navigation]');
+ const stickyNav=sectionNav||main.querySelector('[data-kair-section-nav]');
+ const track=sectionNav?.querySelector('.section-navigation-track');
+ const groupLinks=new Map();
+ for(const link of track?.querySelectorAll('a[data-section-group]')??[]){
+  for(const id of link.dataset.sectionGroup.split(' '))groupLinks.set(id,link);
+ }
  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
  const homeLabels={hero:'Ресурс',problem:'Сырьё',process:'Обработка',products:'Продукты',evidence:'Практика',business:'Экономика',integration:'Интеграция',contact:'Ваш проект'};
  const rail=document.createElement('nav');rail.className='page-progress-rail';rail.setAttribute('aria-label','Разделы страницы');rail.hidden=true;
  document.body.append(rail);
- let entries=[],links=[],frame=0;
+ let entries=[],links=[],frame=0,activeGroup;
  const clean=text=>text?.replace(/\s+/g,' ').trim()||'';
  const visible=element=>!element.closest('[hidden],[aria-hidden="true"],dialog,details:not([open])')&&element.getClientRects().length>0;
  function headerHeight(){
   const offset=(header?.getBoundingClientRect().height||0)+(document.querySelector('[data-context-navigation]')?.getBoundingClientRect().height||0);
-  if(!kairNav)return offset;
-  const {top,bottom}=kairNav.getBoundingClientRect();
+  if(!stickyNav)return offset;
+  const {top,bottom}=stickyNav.getBoundingClientRect();
   return top<=offset+1?Math.max(offset,bottom):offset;
  }
  function labelFor(element){
@@ -69,20 +75,42 @@
    if(rgba?.length>=3&&(rgba[3]??1)>.7)return rgba[0]*.2126+rgba[1]*.7152+rgba[2]*.0722<125?'dark':'light';
   }return 'light';
  }
+ function revealActiveGroup(){
+  if(!activeGroup)return;
+  const link=activeGroup.getBoundingClientRect(),row=track.getBoundingClientRect();
+  if(link.left<row.left)track.scrollLeft+=link.left-row.left;
+  else if(link.right>row.right)track.scrollLeft+=link.right-row.right;
+ }
+ function syncSectionNavigation({fragment,element}){
+  const next=groupLinks.get(fragment)||groupLinks.get(element.closest('section')?.id);
+  if(next===activeGroup)return;
+  activeGroup?.removeAttribute('aria-current');
+  activeGroup=next;
+  activeGroup?.setAttribute('aria-current','location');
+  revealActiveGroup();
+ }
  function update(){
   frame=0;collect();
   const head=headerHeight(),probe=head+Math.min(180,(innerHeight-head)*.25);
   let active=0;entries.forEach(({element},index)=>{if(element.getBoundingClientRect().top<=probe)active=index;});
+  if(sectionNav&&scrollY>0&&scrollY+innerHeight>=document.documentElement.scrollHeight-1)active=entries.length-1;
   links.forEach((link,index)=>{if(index===active){if(!link.hasAttribute('aria-current'))link.setAttribute('aria-current','location');}else link.removeAttribute('aria-current');});
+  if(sectionNav)syncSectionNavigation(entries[active]);
   const bounds=main.getBoundingClientRect();
   rail.hidden=!!document.fullscreenElement||bounds.bottom<=head+16;
   rail.dataset.activeSection=String(active+1);rail.dataset.tone=toneFor(footer&&bounds.bottom<(head+innerHeight)/2?footer:entries[active].element);
   rail.style.setProperty('--progress-step',Math.max(10,Math.min(innerWidth<768?28:36,(innerHeight-head-36)/entries.length))+'px');
  }
  function queue(){if(!frame)frame=requestAnimationFrame(update);}
- const resize='ResizeObserver' in window?new ResizeObserver(queue):null;
+ const resize='ResizeObserver' in window?new ResizeObserver(records=>{
+  if(sectionNav&&records.some(record=>record.target===sectionNav)){
+   document.documentElement.style.setProperty('--section-nav-height',sectionNav.getBoundingClientRect().height+'px');
+   revealActiveGroup();
+  }
+  queue();
+ }):null;
  resize?.observe(main);if(header)resize?.observe(header);
- if(kairNav)resize?.observe(kairNav);
+ if(stickyNav)resize?.observe(stickyNav);
  // New content sections and visibility changes update the outline; card lists,
  // graphs and individual values do not add navigation stops.
  new MutationObserver(records=>{

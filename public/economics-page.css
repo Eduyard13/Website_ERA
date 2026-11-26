@@ -1,6 +1,6 @@
 /* Economics only: one financial case, eight chapters, ordinary document scrolling. */
 .economics-page{--ec-line:#a58b4e40;--ec-paper:#fcfaf6;--ec-soft:#eee8de;--ec-loss:#99493e;font-variant-numeric:tabular-nums;background:var(--era-white)}
-.economics-page .ec-section{padding:76px var(--story-pad);min-width:0;scroll-margin-top:120px}
+.economics-page .ec-section{padding:76px var(--story-pad);min-width:0}
 .economics-page .ec-section--soft{background:var(--ec-soft)}
 .economics-page .ec-heading{display:block;position:static;inset:auto;padding:0;margin:0 0 36px;max-width:990px;background:transparent;border:0;box-shadow:none}
 .economics-page .ec-heading .eyebrow{margin-bottom:18px}
@@ -10,7 +10,7 @@
 .economics-page strong{font-weight:500}
 .economics-page button{cursor:pointer;font:inherit}
 .economics-page :is(button,a,input,summary):focus-visible{outline:2px solid var(--era-gold);outline-offset:4px}
-.economics-page .ec-anchor{display:block;scroll-margin-top:130px}
+.economics-page .ec-anchor{display:block}
 .economics-page .ec-hero{background-color:var(--era-blue);background-image:var(--era-blue-gradient);color:var(--era-white);padding-top:54px;padding-bottom:28px}
 .economics-page .ec-hero>.eyebrow{color:#ddc265;margin-bottom:24px}
 .economics-page .ec-hero h1{font-size:clamp(37px,4.6vw,66px);line-height:1.12;letter-spacing:-.045em;max-width:1180px;margin:0 0 22px;color:inherit}
@@ -36,9 +36,6 @@
 .ec-hero .button,.ec-investment .button{background:var(--era-gold);border-color:var(--era-gold);color:var(--era-blue)}
 .ec-hero .button:hover,.ec-investment .button:hover{background:#dfc56e;border-color:#dfc56e}
 .ec-condition-link{font-size:14px;color:var(--era-on-dark-muted);border-bottom:1px solid #c6a43b88;padding:10px 0}
-.ec-toc{display:flex;gap:14px 32px;border-top:1px solid #ffffff26;margin-top:32px;padding-top:15px;flex-wrap:wrap}
-.ec-toc a{font-size:13px;min-height:40px;display:flex;align-items:center;color:var(--era-on-dark-muted)}
-.ec-toc a:hover{color:#e2c76d}
 .ec-split{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:50px;align-items:start}
 .ec-copy{min-width:0}
 .ec-copy>p:first-child{margin-top:0}
@@ -184,12 +181,11 @@
  .economics-page .econ-month-layout{gap:25px}.economics-page .econ-legend>button>span:nth-child(2){display:block}.economics-page .econ-legend strong{margin-top:4px}
 }
 @media(max-width:767px){
- .economics-page{--story-pad:24px}.economics-page .ec-section{padding:48px var(--story-pad);scroll-margin-top:100px}.economics-page .ec-heading{margin-bottom:28px}.economics-page .ec-heading .eyebrow{font-size:11px;margin-bottom:14px}
+ .economics-page{--story-pad:24px}.economics-page .ec-section{padding:48px var(--story-pad)}.economics-page .ec-heading{margin-bottom:28px}.economics-page .ec-heading .eyebrow{font-size:11px;margin-bottom:14px}
  .economics-page .ec-hero{padding-top:38px;padding-bottom:22px}.economics-page .ec-hero h1{font-size:40px}.economics-page .ec-lead{font-size:16px;line-height:1.75;margin-bottom:24px}
  .ec-hero .ec-modes{display:grid;width:100%}.ec-modes button{padding:12px 10px;min-height:56px;font-size:14px}
  .ec-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-bottom:22px}.ec-kpi{padding:17px 15px}.ec-kpi>span{font-size:12px;min-height:3em;margin-bottom:12px}.ec-kpi>strong{font-size:28px;line-height:1.25}
  .ec-hero .ec-kpi>strong{font-size:27px}.ec-hero-actions{gap:15px}.ec-hero-actions .button{width:100%;justify-content:space-between;font-size:14px}.ec-condition-link{min-height:44px;display:flex;align-items:center}
- .ec-toc{gap:5px 25px;margin-top:24px;padding-top:14px}.ec-toc a{font-size:12px}
  .ec-split{grid-template-columns:1fr;gap:27px}.ec-raw-photo{height:390px}.ec-copy>p{font-size:15px}.ec-raw-values{margin:27px 0;gap:12px}.ec-raw-values strong{font-size:25px}.ec-raw-values span{font-size:11px}
  .ec-product-photo,.ec-product-photo--granules{height:410px}.ec-product-photo:not(.ec-product-photo--granules) img{max-height:100%}.economics-page .ec-product h3{font-size:27px}
  .ec-passport{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}.ec-passport dd{font-size:14px}.ec-passport strong{font-size:24px}.ec-passport span{font-size:12px}
@@ -239,7 +235,6 @@
 .economics-page .ec-calendar-note a{text-decoration:underline;text-underline-offset:4px}
 .economics-page .ec-hero .ec-note{color:var(--era-on-dark-muted);max-width:1050px;font-size:12px;line-height:1.65;margin:10px 0 17px}
 .economics-page .ec-hero .button.secondary{background:transparent;border-color:#ffffff55;color:var(--era-white)}
-.economics-page .ec-toc{margin-top:25px}
 .economics-page .ec-constructor{grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);gap:48px;margin:0;align-items:start}
 .economics-page .ec-controls{padding:0 35px 0 0;border:0;border-right:1px solid var(--ec-line);background:transparent;border-radius:0}
 .economics-page .ec-controls fieldset{padding:0 0 25px;margin:0 0 25px;border:0;border-bottom:1px solid var(--ec-line);min-width:0}
@@ -280,7 +275,7 @@
 .economics-page .ec-raw-photo{height:550px}
 .economics-page .ec-raw-values{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-block:24px}
 .economics-page .ec-raw-values strong{font-size:27px}
-.economics-page .ec-material-balance{margin-top:35px;border-top:1px solid var(--ec-line);padding-top:25px;scroll-margin-top:105px}
+.economics-page .ec-material-balance{margin-top:35px;border-top:1px solid var(--ec-line);padding-top:25px}
 .economics-page .ec-material-balance h3{font-size:22px;margin:0 0 22px}
 .economics-page .ec-flow{grid-template-columns:1fr 25px 1.35fr;gap:16px;margin:20px 0}
 .economics-page .ec-flow strong{font-size:27px;margin:5px 0}
@@ -290,7 +285,7 @@
 .economics-page .ec-flow-output{grid-template-columns:1fr;gap:18px}
 .economics-page .ec-flow-arrow{font-size:28px}
 .economics-page .ec-mass-legend{font-size:12px;gap:10px 20px}
-.economics-page .ec-product-block{border-top:1px solid var(--ec-line);padding-top:55px;margin-top:55px;scroll-margin-top:105px}
+.economics-page .ec-product-block{border-top:1px solid var(--ec-line);padding-top:55px;margin-top:55px}
 .economics-page .ec-product-photo{height:530px}
 .economics-page .ec-product-photo--granules{height:490px}
 .economics-page .ec-unit-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:30px;margin:32px 0 12px}
@@ -402,8 +397,6 @@
  .economics-page .ec-payback>strong{font-size:25px}
  .economics-page .ec-payback>a{font-size:11px;min-height:44px}
  .economics-page .ec-hero-actions .button{font-size:13px}
- .economics-page .ec-toc{gap:3px 23px}
- .economics-page .ec-toc a{min-height:44px}
  .economics-page .ec-controls .ec-presets strong{font-size:18px}
  .economics-page[data-econ-mode=full] .ec-controls .ec-presets strong{font-size:16px}
  .economics-page .ec-presets button{padding:11px 8px;min-height:76px}

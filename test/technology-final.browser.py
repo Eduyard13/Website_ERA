@@ -133,7 +133,7 @@ with sync_playwright() as p:
         assert_fit(page)
 
         for section, label in outline.items():
-            link = page.locator('.tf-outline').get_by_role('link', name=label, exact=True)
+            link = page.locator('[data-section-navigation]').get_by_role('link', name=label, exact=True)
             link.click()
             anchor_visible(page, '#' + section)
             expect(link).to_have_attribute('aria-current', 'location')
@@ -189,7 +189,7 @@ with sync_playwright() as p:
     expect(no_js.locator('[data-tf-scenario="50"]')).to_have_attribute('aria-pressed', 'true')
     expect(no_js.locator('.tf-baseline > strong')).to_have_text('750 кг/ч')
     expect(no_js.locator('[data-technology-application]:visible')).to_have_count(5)
-    no_js.locator('.tf-outline a[href="#applications"]').press('Enter')
+    no_js.locator('[data-section-navigation] a[href="#applications"]').press('Enter')
     no_js.wait_for_url(base + '/technology/#applications')
     assert_fit(no_js)
     assert not errors, errors

@@ -15,7 +15,6 @@
 }
 .tf-page {
  --tf-gutter:clamp(20px,4.4vw,64px);
- --tf-outline-height:58px;
  --tf-border:#d6d0c2;
  --tf-paper:#faf8f3;
  --tf-section:#f4f0e8;
@@ -26,7 +25,6 @@
 }
 .tf-page .tf-container {width:calc(100% - var(--tf-gutter) - var(--tf-gutter));max-width:1280px;margin-inline:auto;min-width:0}
 .tf-page .tf-section {padding:clamp(54px,7.1vw,104px) 0}
-.tf-page :is(section,article,div,h2,h3,summary,input)[id] {scroll-margin-top:calc(var(--tf-outline-height) + 2px)}
 .tf-page :is(a,button,summary,input):focus-visible {outline:2px solid var(--era-gold-dark);outline-offset:4px}
 .tf-page .tf-dark :is(a,button,summary,input):focus-visible {outline-color:var(--tf-accent)}
 .tf-page figure {margin:0}
@@ -119,37 +117,6 @@
 @supports not (mask-image:linear-gradient(black,transparent)) {
  .tf-hero-art::after {content:'';position:absolute;inset:0;background:var(--tf-hero-fallback);pointer-events:none}
 }
-.tf-outline {
- position:sticky;
- top:var(--site-header-space,82px);
- z-index:26;
- background:#f9f6ef;
- border-bottom:1px solid var(--tf-border);
- box-shadow:0 4px 14px #1923390b;
-}
-.tf-outline-track {
- display:flex;
- width:calc(100% - var(--tf-gutter) - var(--tf-gutter));
- max-width:1280px;
- margin-inline:auto;
- gap:clamp(14px,3.1vw,44px);
- overflow-x:auto;
- scrollbar-width:thin;
- scrollbar-color:#c8b993 transparent;
-}
-.tf-outline a {
- display:grid;place-items:center;
- min-height:56px;
- padding:8px 4px;
- border-bottom:3px solid transparent;
- color:var(--era-blue);
- text-decoration:none;
- white-space:nowrap;
- font-size:15px;
-}
-.tf-page .tf-outline a:focus-visible {outline-offset:-5px}
-.tf-outline a:hover,.tf-outline a[aria-current] {border-color:var(--era-gold-dark)}
-.tf-outline a[aria-current] {font-weight:600;color:#70522b}
 .tf-stage-lead,.tf-engineering-feature,.tf-control-grid {display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.16fr);gap:clamp(24px,4vw,54px);align-items:center}
 .tf-stage-lead>div,.tf-engineering-feature>div,.tf-control-grid>div {min-width:0}
 .tf-stage-lead .tf-heading,.tf-control-grid .tf-heading {margin-bottom:0}
@@ -402,9 +369,6 @@
 }
 @media(max-width:719px){
  .tf-trials,.tf-process-route,.tf-quality-metrics {grid-template-columns:minmax(0,1fr)}
- .tf-outline-track {width:100%;padding-inline:var(--tf-gutter)}
- .tf-outline a {font-size:14px;min-height:50px}
- .tf-page {--tf-outline-height:52px}
  .tf-equipment-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
  .tf-products {grid-template-columns:minmax(0,1fr)}
  .tf-page .tf-products figure img {aspect-ratio:1.52}

@@ -1,0 +1,185 @@
+{
+  "referenceVersion": "0.49.22",
+  "pages": [
+    {
+      "route": "/technology/",
+      "groups": [
+        {
+          "label": "Сырьё",
+          "target": "raw-material",
+          "activeSections": [
+            "raw-material",
+            "contaminants"
+          ]
+        },
+        {
+          "label": "Технология",
+          "target": "solution",
+          "activeSections": [
+            "solution",
+            "dry-separation",
+            "hot-washing",
+            "granulation"
+          ]
+        },
+        {
+          "label": "Продукция",
+          "target": "products",
+          "activeSections": [
+            "products"
+          ]
+        },
+        {
+          "label": "Качество",
+          "target": "granule-quality",
+          "activeSections": [
+            "granule-quality"
+          ]
+        },
+        {
+          "label": "Применение",
+          "target": "applications",
+          "activeSections": [
+            "applications"
+          ]
+        },
+        {
+          "label": "КАИР",
+          "target": "control-story",
+          "activeSections": [
+            "control-story"
+          ]
+        },
+        {
+          "label": "Оборудование",
+          "target": "standalone-equipment",
+          "activeSections": [
+            "technology-next"
+          ]
+        }
+      ],
+      "noActiveSections": [
+        "technology-intro"
+      ]
+    },
+    {
+      "route": "/",
+      "groups": [
+        {
+          "label": "Сырьё",
+          "target": "raw-material",
+          "activeSections": [
+            "raw-material",
+            "feedstocks"
+          ]
+        },
+        {
+          "label": "Технология",
+          "target": "process",
+          "activeSections": [
+            "process",
+            "engineering"
+          ]
+        },
+        {
+          "label": "Продукция",
+          "target": "products",
+          "activeSections": [
+            "products"
+          ]
+        },
+        {
+          "label": "Экономика",
+          "target": "russia-market",
+          "activeSections": [
+            "russia-market",
+            "economics",
+            "resource-business-title"
+          ]
+        },
+        {
+          "label": "Запуск производства",
+          "target": "solution",
+          "activeSections": [
+            "solution"
+          ]
+        },
+        {
+          "label": "Оборудование",
+          "target": "manufacturing",
+          "activeSections": [
+            "manufacturing"
+          ]
+        },
+        {
+          "label": "КАИР",
+          "target": "kair",
+          "activeSections": [
+            "kair"
+          ]
+        }
+      ],
+      "noActiveSections": [
+        "resource",
+        "discuss"
+      ]
+    },
+    {
+      "route": "/economics/",
+      "groups": [
+        {
+          "label": "Калькулятор",
+          "target": "production-constructor",
+          "activeSections": [
+            "production-constructor"
+          ]
+        },
+        {
+          "label": "Сырьё и продукт",
+          "target": "raw-material",
+          "activeSections": [
+            "raw-material"
+          ]
+        },
+        {
+          "label": "Себестоимость",
+          "target": "economics",
+          "activeSections": [
+            "economics"
+          ]
+        },
+        {
+          "label": "Рентабельность",
+          "target": "monthly-result",
+          "activeSections": [
+            "monthly-result"
+          ]
+        },
+        {
+          "label": "Рынок",
+          "target": "market",
+          "activeSections": [
+            "market"
+          ]
+        },
+        {
+          "label": "Условия расчёта",
+          "target": "economic-conditions",
+          "activeSections": [
+            "economic-conditions"
+          ]
+        },
+        {
+          "label": "Ваш проект",
+          "target": "economics-project",
+          "activeSections": [
+            "economics-project"
+          ]
+        }
+      ],
+      "noActiveSections": [
+        "economic-case"
+      ]
+    }
+  ]
+}

@@ -32,7 +32,6 @@
  margin-inline:auto;
 }
 .resource-page .resource-section {padding:clamp(52px,6.4vw,92px) 0}
-.resource-page :is(section,div,h2,span)[id] {scroll-margin-top:10px}
 .resource-page figure {margin:0}
 .resource-page .resource-heading {
  display:block;
@@ -216,7 +215,7 @@
 .resource-page .feedstock-caption {margin-top:23px}
 .feedstock-sources {margin-top:24px;border-top:1px solid #ae966a80;padding-top:12px}
 .resource-page .feedstock-sources>p {margin:0;color:#654a29;font-size:14px;font-weight:600}
-.feedstock-method {max-width:1000px;scroll-margin-top:12px}
+.feedstock-method {max-width:1000px}
 .feedstock-method summary {display:flex;min-height:44px;align-items:center;justify-content:space-between;gap:10px;font-weight:600;cursor:pointer}
 .feedstock-method summary::-webkit-details-marker {display:none}
 .feedstock-method summary::after {content:'+';font-size:22px;line-height:1;font-weight:400;color:#8b6433}

@@ -66,11 +66,6 @@ function hero(){
  </section>`;
 }
 
-function outline(){
- const sections=[['Сырьё','raw-material'],['Технология','solution'],['Продукция','products'],['Качество','granule-quality'],['Применение','applications']];
- return `<nav class="tf-outline" aria-label="Разделы технологии"><div class="tf-outline-track">${sections.map(([label,id])=>`<a href="#${id}">${label}</a>`).join('')}</div></nav>`;
-}
-
 function rawMaterials(){
  return `<section class="tf-section" id="raw-material" data-page-progress-label="Сырьё">
   <div class="tf-container">
@@ -443,7 +438,7 @@ function nextSteps(){
 
 export function presentationTechnology(){
  return `<div class="story technology-story tf-page" data-technology-final>
-  ${hero()}${outline()}${rawMaterials()}${contaminants()}${route()}${dryStage()}${washStage()}
+  ${hero()}${rawMaterials()}${contaminants()}${route()}${dryStage()}${washStage()}
   ${granulation()}${products()}${quality()}${applications()}${control()}${nextSteps()}
  </div>`;
 }

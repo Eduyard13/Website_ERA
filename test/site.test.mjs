@@ -5,6 +5,49 @@ import {resolve} from 'node:path';
 import {routes,product,assetBaseVersion,basePath,previewMode,siteUrl} from '../scripts/build.mjs';
 import {canonicalOrigin} from '../scripts/deploy-target.mjs';
 import {dryLineNames} from '../content/line-names.mjs';
+import navigation from '../content/section-navigation.json' with {type:'json'};
+
+test('Общее меню сохраняет семь смысловых групп и порядок физических разделов на трёх страницах',async()=>{
+ const order={
+  '/':['resource','raw-material','feedstocks','process','engineering','products','russia-market','economics','solution','manufacturing','kair','discuss'],
+  '/technology':['technology-intro','raw-material','contaminants','solution','dry-separation','hot-washing','granulation','products','granule-quality','applications','control-story','technology-next'],
+  '/economics':['economic-case','production-constructor','raw-material','economics','monthly-result','market','economic-conditions','economics-project'],
+ };
+ const pages=new Map(navigation.pages.map(page=>[page.route.replace(/\/$/,'')||'/',page]));
+ assert.deepEqual(new Set(pages.keys()),new Set(Object.keys(order)));
+ for(const path of new Set(routes)){
+  const html=await readFile(resolve('dist','.'+path,'index.html'),'utf8');
+  const page=pages.get(path);
+  if(!page){assert.doesNotMatch(html,/data-section-navigation|section-navigation\.css\?v=/,path);continue;}
+  const nav=html.match(/<nav class="section-navigation" data-section-navigation [^>]*>([\s\S]*?)<\/nav><main id="main">/);
+  assert.ok(nav&&nav.index>html.indexOf('</header>'),path);
+  assert.match(html,/\/section-navigation\.css\?v=/);
+  assert.equal((html.match(/data-section-navigation\b/g)||[]).length,1,path);
+  assert.doesNotMatch(html,/class="(?:ec-toc|tf-outline)\b/,path);
+  const links=[...nav[1].matchAll(/<a href="#([^"]+)" data-section-group="([^"]+)">([^<]+)<\/a>/g)]
+   .map(([,target,groups,label])=>({label,target,activeSections:groups.split(' ')}));
+  assert.equal(links.length,7,path);
+  assert.deepEqual(links,page.groups,path);
+  assert.equal(new Set(links.map(link=>link.target)).size,7,path);
+  const main=html.slice(nav.index+nav[0].length,html.indexOf('</main>'));
+  const ids=[...main.matchAll(/\sid="([^"]+)"/g)].map(match=>match[1]);
+  for(const id of [...page.noActiveSections,...links.flatMap(link=>[link.target,...link.activeSections])]){
+   assert.equal(ids.filter(value=>value===id).length,1,path+'#'+id);
+  }
+  let depth=0;const blocks=[];
+  for(const [tag] of main.matchAll(/<\/?section\b[^>]*>/g)){
+   if(tag.startsWith('</'))depth--;
+   else if(depth++===0)blocks.push(tag.match(/\sid="([^"]+)"/)?.[1]);
+  }
+  assert.deepEqual(blocks,order[path],path);
+  const grouped=links.flatMap(link=>link.activeSections);
+  assert.equal(new Set(grouped).size,grouped.length,path);
+  assert.deepEqual(new Set([...grouped.filter(id=>id!=='resource-business-title'),...page.noActiveSections]),new Set(blocks),path);
+  if(path==='/')assert.equal(links[3].target,'russia-market');
+  if(path==='/technology')assert.match(main,/<section[^>]+id="technology-next"[\s\S]*?id="standalone-equipment"/);
+ }
+});
+
 test('На главной четыре фотокарточки сырья, пять секторов и пять карточек экономики',async()=>{
  const html=await readFile('dist/index.html','utf8');
  assert.deepEqual([...html.matchAll(/data-process-step="([^"]+)"/g)].map(match=>match[1]),['01','02','03']);
