@@ -321,7 +321,8 @@ try{
  assert.equal(styleResponse.status,200);
  assert.equal(digest('kair-stage2.css:'+digest(Buffer.from(await styleResponse.arrayBuffer()))).slice(0,12),style[2]);
  const approvedArt={
-  'operator-station.webp':'f9fe1037837ce52c464549cb31e7d8d46834d95c364de8f3c018d1ad6449d05b',
+  'operator-workplace.webp':'51d127acd744a472130f51e5b712c7215d20b952a8c4657a50d1e6253b7bf354',
+  'operator-workplace-960.webp':'534bef2da9787e0ceecaccdc5d80f7735d685f35f07d802c53c0e1195ecce8bd',
   'business-contact.webp':'3102803e32fce454c783c73db5d54fb9672bd907e87063498556cd16bcb61e33',
   'business-contact-960.webp':'e8498299bf5b9609bd2ba4062a709a79c7f5289040fb4f27e622028dd95025d7',
  };
@@ -345,11 +346,16 @@ try{
   assert.ok(scrollWidth<=clientWidth+1,`KAIR overflow at ${width}px: ${scrollWidth} > ${clientWidth}`);
   await click('#ka-logic-tab-protection');
   await wait(`!document.querySelector('#ka-logic-protection').hidden`);
+  assert.equal(await evaluate(`getComputedStyle(document.querySelector('#ka-logic-protection .ka-signal-stages li p')).color`),'rgb(220, 226, 237)');
   await click('#ka-case-category-tab-service');
   await click('#ka-scenario-tab-13');
   await wait(`!document.querySelector('#ka-scenario-13').hidden&&document.querySelector('#ka-scenario-13').textContent.includes('Две ветки работают поочерёдно')`);
+  assert.equal(await evaluate(`getComputedStyle(document.querySelector('#ka-scenario-13 .ka-case-compare article:nth-child(2) p')).color`),'rgb(225, 230, 240)');
   await click('#ka-process-tab-washing');
   assert.equal(await evaluate(`document.querySelectorAll('.ka-water-circuits li').length`),4);
+  assert.ok(await evaluate(`getComputedStyle(document.querySelector('.ka-station-display')).transform.startsWith('matrix3d(')`));
+  assert.equal(await evaluate(`document.querySelectorAll('.ka-function-result').length`),6);
+  assert.equal(await evaluate(`document.querySelector('.ka-contact-screen-label').textContent`),'Демонстрационные данные');
   await click('[data-kair-compact] [data-kair-next]');
   await wait(`document.querySelector('[data-kair-compact] [data-kair-counter]').textContent==='2 из 7'`);
   await click('#kair-contact [data-project-request]');

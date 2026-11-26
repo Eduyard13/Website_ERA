@@ -24,8 +24,41 @@ function connectSectionNav(nav,progress){
  syncSection();
 }
 
+function connectStation(plane){
+ const display=plane.querySelector('.ka-station-display');
+ // Inner glass corners measured in the 1824 × 862 artwork, clockwise from the top left.
+ const glass=[[934,184],[1730,142],[1733,631],[934,617]];
+ function project(){
+  const {clientWidth:width,clientHeight:height}=plane;
+  if(!width||!height)return;
+  display.dataset.projected='';
+  const w=display.offsetWidth,h=display.offsetHeight;
+  const [[x0,y0],[x1,y1],[x2,y2],[x3,y3]]=glass.map(([x,y])=>[x*width/1824,y*height/862]);
+  // Map the rectangle to the photographed quadrilateral by a projective transform.
+  const dx1=x1-x2,dx2=x3-x2,dx3=x0-x1+x2-x3;
+  const dy1=y1-y2,dy2=y3-y2,dy3=y0-y1+y2-y3;
+  const determinant=dx1*dy2-dx2*dy1;
+  const g=(dx3*dy2-dx2*dy3)/determinant,q=(dx1*dy3-dx3*dy1)/determinant;
+  const matrix=[(x1-x0+g*x1)/w,(y1-y0+g*y1)/w,0,g/w,
+   (x3-x0+q*x3)/h,(y3-y0+q*y3)/h,0,q/h,0,0,1,0,x0,y0,0,1];
+  display.style.transform=`matrix3d(${matrix.join(',')})`;
+ }
+ project();
+ if('ResizeObserver' in window)new ResizeObserver(project).observe(plane);
+ else window.addEventListener('resize',project);
+
+ const monitor=plane.closest('[data-kair]');
+ const viewer=monitor.querySelector('[data-kair-viewer]');
+ // A frame change inside fullscreen can hide the original opener before the dialog restores focus.
+ viewer.addEventListener('close',()=>requestAnimationFrame(()=>{
+  if(!viewer.open)monitor.querySelector('[data-kair-slide][data-current="true"] .media-open')?.focus({preventScroll:true});
+ }));
+}
+
 const root=document.querySelector('[data-kair-system]');
 if(root){
+ const station=root.querySelector('[data-ka-station-plane]');
+ if(station)connectStation(station);
  const nav=root.querySelector('[data-kair-section-nav]');
  const progress=document.querySelector('.page-progress-rail');
  if(progress)connectSectionNav(nav,progress);

@@ -916,6 +916,7 @@ test('Вторая редакция КАИР сохраняет условия �
  const {kairSlides}=await import('../content/kair.mjs');
  const {kairFunctions}=await import('../content/kair-system.mjs');
  const {kairShowcaseIds}=await import('../scripts/kair-stage2.mjs');
+ const {default:approved}=await import('../content/kair-stage2.json',{with:{type:'json'}});
  assert.equal([...html.matchAll(/<h1[\s>]/g)].length,1);
  assert.match(html,/data-kair data-kair-compact data-autoplay="false"/);
  assert.deepEqual([...html.matchAll(/data-kair-slide[^>]+data-image="([^"]+)"/g)].map(m=>m[1]),
@@ -923,11 +924,15 @@ test('Вторая редакция КАИР сохраняет условия �
  assert.equal(kairShowcaseIds.length,7);
  assert.equal((technology.match(/data-kair-slide(?=[\s>])/g)||[]).length,23);
  assert.doesNotMatch(technology,/data-kair-compact|kair-stage2\.css|kair-system\.css/);
+ assert.doesNotMatch(technology,/data-ka-station-plane|operator-workplace/);
+ assert.match(html,/data-ka-station-plane[\s\S]*?ka-station-display[\s\S]*?class="media-open"/);
+ assert.match(html,/operator-workplace-960\.webp/);
  assert.doesNotMatch(html,/data-kair-(?:function-search|function-form|group-link|scope|pause|inspect|play-note)\b/);
  const rows=[...html.matchAll(/data-kair-function data-function-id="([^"]+)" data-scope="([^"]+)" data-group="([^"]+)" data-source-codes="([^"]*)"/g)].map(m=>m.slice(1));
  assert.deepEqual(rows,kairFunctions.map(f=>[f.id,f.scope,f.group,f.codes.join(' ')]));
  assert.equal((html.match(/data-kair-hardware(?=[\s>])/g)||[]).length,8);
- assert.match(html,/Схематичная иллюстрация экономического потенциала/);
+ assert.match(html,/data-ka-graph role="img" aria-label="Схематичная иллюстрация экономического потенциала"/);
+ assert.doesNotMatch(html,/<figcaption>Схематичная иллюстрация|ka-hardware-note|Условные схемы типов приборов/);
  assert.match(html,/Производство работает\. Вы развиваете бизнес\./);
  for(const id of ['value','screens','logic','functions','process','scenarios','hardware','project'])assert.equal([...html.matchAll(new RegExp(`id="kair-${id}"`,'g'))].length,1,id);
  for(const [,id] of html.matchAll(/aria-controls="((?:ka|kair)-(?:logic|process|case|scenario|functions)-[^"]+)"/g))assert.ok(html.includes(`id="${id}"`),id);
@@ -935,7 +940,16 @@ test('Вторая редакция КАИР сохраняет условия �
  assert.ok(html.includes('Стоки → очистка → бак возврата'));assert.ok(html.includes('Чистая вода из резервуара'));
  const route=html.slice(html.indexOf('id="kair-process"'),html.indexOf('id="kair-screens"'));
  assert.doesNotMatch(route,/<a\b/);
- for(const id of ['process','protection','visibility','washing','water','local'])assert.equal(html.split(`id="kair-functions-${id}"`).length,2,id);
+ for(const map of approved.process)assert.ok(!route.includes(map.note));
+ for(const group of approved.functions){
+  assert.equal(html.split(`id="kair-functions-${group.id}"`).length,2,group.id);
+  assert.ok(html.includes(`<h4>Результат для предприятия</h4><p>${group.result}</p>`));
+ }
+ const functionCopy=[...html.matchAll(/<article class="ka-function-row"[^>]*>([\s\S]*?)<\/article>/g)].map(([,row])=>{
+  assert.equal((row.match(/<p\b/g)||[]).length,1);
+  return row.match(/<p class="ka-function-summary">([^<]+)<\/p>/)?.[1];
+ });
+ assert.deepEqual(functionCopy,approved.functions.flatMap(group=>group.items.map(item=>item.summary)));
  assert.ok(html.includes(`${basePath}/kair-system.js?v=`));assert.ok(html.includes(`${basePath}/kair-system.css?v=`));
 });
 test('Порядок разделов КАИР совпадает с меню, а преимущества представлены статичными карточками',async()=>{
@@ -962,7 +976,9 @@ test('Порядок разделов КАИР совпадает с меню, �
  const contact=html.slice(sections.at(-1).index,html.indexOf('</main>'));
  assert.equal((contact.match(/data-project-request\b/g)||[]).length,1);
  assert.match(contact,/>Оставить заявку</);
- assert.match(contact,/Концептуальная визуализация\. Показатели на экране условные/);
+ assert.match(contact,/class="ka-contact-screen-label">Демонстрационные данные</);
+ assert.match(contact,/Технологии работают на вашу прибыль\. Производство под контролем\./);
+ assert.doesNotMatch(contact,/<figcaption|ka-contact-meta|Концептуальная визуализация/);
  assert.match(contact,/href="tel:\+\d+"/);
  assert.match(contact,/href="mailto:info@era-cycle\.ru"/);
  assert.doesNotMatch(contact.replace(/<[^>]*>/g,''),/Экономика проекта|98%|\+27%|[-−]32%/);

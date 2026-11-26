@@ -10,14 +10,13 @@ import {kairIcon,kairBenefitIcon} from './kair-visuals.mjs';
 export const kairShowcaseIds=['kair-01','kair-25','kair-26','kair-27','kair-28','kair-22','kair-24'];
 const showcase=kairShowcaseIds.map(id=>kairSlides.find(slide=>slide.id===id));
 const scopeLabel={both:'Сепарация и мойка',separation:'Сепарация',washing:'Мойка',equipment:'Автоматика узла'};
-const levelLabel={project:'По исполнению',local:'Собственный цикл узла'};
 const sourceScenarios=new Map(kairScenarios.map(scenario=>[scenario.number,scenario]));
 const sourceFunctions=new Map(kairFunctions.map(item=>[item.id,item]));
 const groupIcons={process:'flow',protection:'shield',visibility:'screen',washing:'cycle',water:'water',local:'stack'};
 const iconArrow=direction=>`<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="${direction==='prev'?'M19 12H5m6-6-6 6 6 6':'M5 12h14m-6-6 6 6-6 6'}" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const escape=text=>String(text).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const heading=(label,title,lead)=>`<div class="ka-stage-heading">
- <p class="eyebrow">КАИР / ${label}</p><h2>${title}</h2><p class="ka-stage-lead">${lead}</p>
+ <p class="eyebrow">КАИР${label?' / '+label:''}</p><h2>${title}</h2><p class="ka-stage-lead">${lead}</p>
 </div>`;
 const tab=(id,panel,active,copy,extra='')=>`<button type="button" role="tab" id="${id}" aria-controls="${panel}" aria-selected="${active}" tabindex="${active?0:-1}" data-ka-tab${extra}>${copy}</button>`;
 const panel=(id,tabId,active,copy,extra='')=>`<div id="${id}" class="ka-panel" role="tabpanel" aria-labelledby="${tabId}"${active?'':' data-ka-inactive'}${extra}>${copy}</div>`;
@@ -103,7 +102,7 @@ function process(){
     <h4>${escape(title)}</h4><p>${escape(physical)}</p><p class="ka-station-role"><strong>КАИР</strong> ${escape(kair)}</p>
    </li>`).join('')}</ol>
    <div class="ka-route-coordinator"><div>${kairIcon('controller')}<strong>КАИР координирует маршрут, а не отдельный узел</strong></div></div>
-   <ul class="ka-route-outcomes"><li>Согласованность участков</li><li>Предсказуемость движения материала</li><li>Понятная логика для смены</li></ul>
+   <ul class="ka-route-outcomes">${['Согласованность участков','Предсказуемость движения материала','Понятная логика для смены'].map(text=>`<li><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.4"/><path d="m7.4 12 3.2 3.2 6.2-6.2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg><span>${text}</span></li>`).join('')}</ul>
    ${map.water?`<div class="ka-water-circuits" data-artwork-slot="kair-water-circuits">
     <h4>Разные задачи — отдельные водные маршруты</h4>
     <ul><li>${kairIcon('cycle')}<span><strong>Возврат рабочей жидкости</strong>Шнеки и центрифуги отделяют жидкость. Локальные контуры возвращают её на предыдущие участки.</span></li>
@@ -111,9 +110,20 @@ function process(){
      <li>${kairIcon('water')}<span><strong>Ополаскивание</strong>Чистая вода из резервуара → второй флотатор → ополаскивание.</span></li>
      <li>${kairIcon('controls')}<span><strong>Подпитка</strong>${escape(map.water[3][1])}. Состояние среды, температура, уровень и расход рассматриваются отдельно.</span></li></ul>
    </div>`:''}
-   <p class="ka-technical">${escape(map.note)}</p>
   </div>`)).join('')}
  </div>`;
+}
+
+function stationBody(screen){
+ return `<div class="ka-station-window">
+  <div class="ka-station-plane" data-ka-station-plane>
+   <img class="ka-station-photo" src="/assets/kair/operator-workplace.webp"
+    srcset="/assets/kair/operator-workplace-960.webp 960w, /assets/kair/operator-workplace.webp 1824w"
+    sizes="(max-width:1000px) 150vw, 100vw" width="1824" height="862" alt="" loading="lazy" decoding="async">
+   <div class="ka-station-display">${screen}</div>
+  </div>
+ </div>
+ <div class="ka-studio-name">${kairIcon('screen')}<strong>Интерфейс КАИР</strong><span>Реальные экраны на оборудовании</span></div>`;
 }
 
 function screens(){
@@ -121,16 +131,11 @@ function screens(){
   ['controls','Настройки скоростей и доступные параметры'],['stack','Экраны отдельных узлов и всей линии']];
  return `<div class="ka-studio">
   <div class="ka-studio-copy">
-   ${heading('ИНТЕРФЕЙС','Настоящие экраны.<br>Реальная система управления.','Интерфейс КАИР показывает линию и отдельные узлы в поле зрения оператора. Состояние приводов, доступные команды и настройки процесса отображаются на реальных экранах оборудования.')}
+   ${heading('','Настоящие экраны.<span>Реальная система управления.</span>','Интерфейс КАИР показывает линию и отдельные узлы в поле зрения оператора. Состояние приводов, доступные команды и настройки процесса отображаются на реальных экранах оборудования.')}
    <ul>${points.map(([icon,text])=>`<li><span>${kairIcon(icon)}</span>${text}</li>`).join('')}</ul>
    <p class="ka-technical">Состав экранов и доступных команд определяется исполнением линии.</p>
   </div>
-  <div class="ka-studio-desk">
-   <div class="ka-studio-name">${kairIcon('screen')}<strong>Интерфейс КАИР</strong><span>Реальные экраны на оборудовании</span></div>
-   ${kairMonitor(showcase,{...kairPresentation,autoplay:false,compact:true,transitionMs:160})}
-   <div class="ka-desk-accessories" aria-hidden="true"><span></span></div>
-  </div>
-  <img class="ka-studio-operator" src="/assets/kair/operator-station.webp" width="891" height="514" alt="" loading="lazy" decoding="async">
+  ${kairMonitor(showcase,{...kairPresentation,autoplay:false,compact:true,transitionMs:160,renderBody:stationBody})}
  </div>`;
 }
 
@@ -161,8 +166,7 @@ function functionOrbit(){
 function functionRow(item){
  const f=sourceFunctions.get(item.id);
  return `<article class="ka-function-row" data-kair-function data-function-id="${f.id}" data-scope="${f.scope}" data-group="${f.group}" data-source-codes="${f.codes.join(' ')}">
-  <div>${kairIcon(groupIcons[f.group])}<div><h4>${escape(item.title)}</h4><p class="ka-function-tags"><span>${scopeLabel[f.scope]}</span>${levelLabel[f.level]?`<span>${levelLabel[f.level]}</span>`:''}</p></div></div>
-  <div><p class="ka-function-summary">${escape(item.summary)}</p><p>${escape(f.text)} ${escape(f.detail)}</p></div>
+  ${kairIcon(groupIcons[f.group])}<div><h4>${escape(item.title)}</h4><p class="ka-function-summary">${escape(item.summary)}</p></div>
  </article>`;
 }
 function functions(){
@@ -174,7 +178,8 @@ function functions(){
   ${functionOrbit()}
   <div class="ka-function-panels">${approved.functions.map(group=>panel('kair-functions-'+group.id,'ka-function-tab-'+group.id,group.id==='protection',
    `<div class="ka-function-direction">${kairIcon(groupIcons[group.id])}<div><h3>${escape(group.title)}</h3><p>${escape(kairGroups.find(item=>item.id===group.id).text)}</p></div></div>
-   <div class="ka-function-rows">${group.items.map(functionRow).join('')}</div>`,` data-kair-function-group="${group.id}"`)).join('')}</div>
+   <div class="ka-function-rows">${group.items.map(functionRow).join('')}</div>
+   <aside class="ka-function-result"><h4>Результат для предприятия</h4><p>${escape(group.result)}</p></aside>`,` data-kair-function-group="${group.id}"`)).join('')}</div>
  </div>`;
 }
 
@@ -184,7 +189,7 @@ function hardware(){
   'pH и дозирование':'Измерение pH и подача реагентов выполняются разными устройствами. Состав средств контроля и подачи определяется исполнением.',
  };
  return `${heading('ТЕХНИЧЕСКОЕ ОСНАЩЕНИЕ','Точность измерений. Интеллект управления.','Промышленная электроника, измерительные приборы и исполнительные механизмы объединены в систему контроля технологического процесса.')}
- <div class="ka-hardware-showcase">
+ <div class="ka-hardware-frame"><div class="ka-hardware-showcase">
   <div class="ka-hardware-core">
    <p class="ka-technical-label">Промышленная основа</p>
    ${approved.hardware.slice(0,2).map(([title,text],i)=>`<article data-kair-hardware>${kairIcon(i===0?'controller':'screen')}<div><h3>${escape(title)}</h3><p>${escape(text)}</p></div></article>`).join('')}
@@ -194,19 +199,20 @@ function hardware(){
    ${kairIcon(types[i])}<h3>${escape(title)}</h3><p>${escape(text)}</p>${notes[title]?`<p class="ka-technical">${escape(notes[title])}</p>`:''}
   </article>`).join('')}</div>
  </div>
- <p class="ka-technical ka-hardware-note">Условные схемы типов приборов. Состав оснащения определяется комплектацией линии.</p>
  <div class="ka-hardware-footer">
   <ol><li>${kairIcon('sensor')}Измерение</li><li>${kairIcon('controller')}Обработка</li><li>${kairIcon('nodes')}Управление</li></ol>
   <p>От точности сигнала — к точности управления.</p>
- </div>`;
+ </div></div>`;
 }
 
 const graph=readFileSync(new URL('../content/kair-efficiency.svg',import.meta.url),'utf8').trim();
 function efficiency(){
  const icons=['clock','shield','coins','eye'];
- return `${heading('ЭФФЕКТИВНОСТЬ БИЗНЕСА','Интеллект производства.<br><span>Капитал вашего бизнеса.</span>','Ценность автоматизации измеряется не количеством функций, а тем, что она помогает сохранить и приумножить.')}
- <div class="ka-efficiency-layout">
-  <figure class="ka-graph" data-ka-graph>${graph}<figcaption>Схематичная иллюстрация экономического потенциала</figcaption></figure>
+ return `<div class="ka-efficiency-layout">
+  <div class="ka-efficiency-main">
+   ${heading('ЭФФЕКТИВНОСТЬ БИЗНЕСА','Интеллект производства.<br><span>Капитал вашего бизнеса.</span>','Ценность автоматизации измеряется не количеством функций, а тем, что она помогает сохранить и приумножить.')}
+   <figure class="ka-graph" data-ka-graph role="img" aria-label="Схематичная иллюстрация экономического потенциала">${graph}</figure>
+  </div>
   <div class="ka-efficiency-benefits">${approved.benefits.map(([label,title,text],i)=>`<article>${kairBenefitIcon(icons[i])}<div>
    <span>${escape(label)}</span><h3>${escape(title)}</h3><p>${escape(text)}${i===2?' Согласование операций помогает оптимизировать трудозатраты.':i===3?' Возможности наблюдения определяются конфигурацией.':''}</p>
   </div></article>`).join('')}</div>
@@ -231,10 +237,9 @@ export function renderKairContact(contactHref){
    <a class="button" href="${escape(contactHref)}">${escape(c.cta)}<span aria-hidden="true">↗</span></a>
    <div class="ka-project-contact-links"><a href="${escape(siteContacts.phoneHref)}">${escape(siteContacts.phone)}</a>
     <a href="mailto:${escape(siteContacts.email)}">${escape(siteContacts.email)}</a></div>
-   <p class="ka-contact-meta">${escape(c.meta)}</p>
   </div>
-  <figure><picture><source media="(max-width:767px)" srcset="/assets/kair/business-contact-960.webp">
-   <img src="/assets/kair/business-contact.webp" srcset="/assets/kair/business-contact-960.webp 960w, /assets/kair/business-contact.webp 1671w" sizes="(max-width:900px) 100vw, 60vw" width="1671" height="941" alt="Иллюстрация рабочего места руководителя с панорамой промышленной площадки" loading="lazy" decoding="async">
-  </picture><figcaption>${escape(c.caption)}</figcaption></figure>
+  <figure class="ka-project-contact-art"><div class="ka-contact-plate"><picture><source media="(max-width:767px)" srcset="/assets/kair/business-contact-960.webp">
+   <img src="/assets/kair/business-contact.webp" srcset="/assets/kair/business-contact-960.webp 960w, /assets/kair/business-contact.webp 1671w" sizes="(max-width:1150px) 100vw, 62vw" width="1671" height="941" alt="Иллюстрация рабочего места руководителя с панорамой промышленной площадки" loading="lazy" decoding="async">
+  </picture><span class="ka-contact-screen-label">${escape(c.screenLabel)}</span></div></figure>
  </div>`;
 }
