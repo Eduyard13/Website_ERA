@@ -1,87 +1,109 @@
-import {economicsConfig as config} from './economics-config.js';
-import {escape,money,millions,percentage,tonnes} from './economics-view.js';
+import {escape,tonnes} from './economics-view.js';
 
-export const decimal=(value,digits=2)=>value==null||!Number.isFinite(value)?'—':new Intl.NumberFormat('ru-RU',{maximumFractionDigits:digits,minimumFractionDigits:digits}).format(value);
-export const unitMoney=(value,unit='kg')=>value==null||!Number.isFinite(value)?'—':`${decimal(value/(unit==='kg'?1000:1),unit==='kg'?2:0)} ₽/${unit==='kg'?'кг':'т'}`;
-export const modeLabel=result=>result.state.mode==='full'?'Полный цикл':'Сухая сепарация';
-export function paybackLabel(result){
- const p=result.payback;
- if(p.status==='estimate')return p.months.map(n=>decimal(n,1)).join('–')+' мес.';
- if(p.status==='unreachable')return 'Не достигается в выбранном сценарии';
- if(p.status==='review')return 'Требуется инвестиционная оценка';
- return 'Индивидуальная оценка';
-}
+export const decimal=(value,max=2,min=0)=>value==null||!Number.isFinite(value)?'—':
+ new Intl.NumberFormat('ru-RU',{maximumFractionDigits:max,minimumFractionDigits:min}).format(value).replace(/^-/,'−');
+export const percent=(value,max=1)=>value==null?'—':decimal(value*100,max)+'%';
+export const priceText=(value,decimals=0)=>value==null?'—':decimal(value/1000,2,decimals)+' ₽/кг';
+export const compact=(amount,currency='₽')=>{
+ if(amount==null||!Number.isFinite(amount))return '—';
+ if(Math.abs(amount)>=1e6)return decimal(amount/1e6,2,2)+' млн '+currency;
+ if(currency==='$'&&Math.abs(amount)>=1000)return decimal(amount/1000,2,2)+' тыс. $';
+ return decimal(amount,currency==='$'?2:0)+' '+currency;
+};
+export const rublesPerTonne=amount=>amount==null?'—':decimal(amount,0)+' ₽/т';
+export const day=iso=>iso?iso.split('-').reverse().join('.'):'Не указана';
+export const paybackLabel=result=>{
+ const {status,months}=result.payback;
+ if(status==='estimate')return months.map(n=>decimal(n,1,1)).join('–')+' мес.';
+ return status==='unreachable'?'Не определяется':'Индивидуальная оценка';
+};
+const annualLabel=r=>r.yearNet<0?'Расчётный убыток за стабильный год':'Расчётная чистая прибыль за стабильный год';
+export const monthLabel=r=>r.net<0?'Расчётный убыток в месяц':'Расчётная чистая прибыль в месяц';
+export const massText=(amount,period)=>period==='hour'?decimal(amount*1000)+' кг/ч':decimal(amount)+' т';
+export const complexes=n=>n===1?'1 комплекс':n>=2&&n<=4?n+' комплекса':n+' комплексов';
 export function scenarioTopic(r){
- return `Экономическое обоснование ЭРА · ${modeLabel(r)} · ${decimal(r.grossPrice/1000,2)} ₽/кг с НДС · ${r.state.lines} компл. · загрузка ${percentage(r.load)} · вход ${tonnes(r.state.input)}/мес. · выпуск ${tonnes(r.output)}/мес. · результат ${millions(r.net)}/мес. и ${millions(r.yearNet)}/год`;
+ return `Полный цикл · ${complexes(r.state.lines)} · ${priceText(r.grossPrice)} с НДС · загрузка ${percent(r.load)} · выход ${percent(r.totalYield)} · ${tonnes(r.output)}/мес. · результат ${compact(r.net)}/мес. и ${compact(r.yearNet)}/год`;
 }
 export const requestHref=r=>'/contacts?topic='+encodeURIComponent(scenarioTopic(r))+'#project-form';
-export function financialValues(r){
- const payback=paybackLabel(r);
- return {input:tonnes(r.state.input),output:tonnes(r.output),yearInput:tonnes(r.yearInput),yearOutput:tonnes(r.yearOutput),
-  revenue:millions(r.revenue),yearRevenue:millions(r.yearRevenue),costs:millions(r.totalCosts),yearCosts:millions(r.yearCosts),tax:millions(r.tax),yearTax:millions(r.yearTax),
-  profit:millions(r.net),yearNet:millions(r.yearNet),profitMillions:decimal(r.net/1e6),yearNetMillions:decimal(r.yearNet/1e6),margin:percentage(r.margin),yearMargin:percentage(r.yearMargin),
-  cost:unitMoney(r.perProduct?.totalCosts),yearUnitCosts:unitMoney(r.yearUnitCosts),grossPrice:decimal(r.grossPrice/1000,Number.isInteger(r.grossPrice/1000)?0:2)+' ₽/кг',grossTonne:decimal(r.grossPrice,2)+' ₽/т',
-  minimumInput:tonnes(r.minimumInput),minimumLoad:percentage(r.minimumInput/r.capacity),minimumPrice:unitMoney(r.minimumGrossPrice),
-  netPrice:unitMoney(r.netPrice),load:percentage(r.load),mode:modeLabel(r),product:r.mode.product,yield:percentage(r.totalYield),remainder:tonnes(r.state.input-r.output),remainderShare:percentage(1-r.totalYield),
-  paybackLabel:payback,paybackFigure:payback.replace(/ мес\.$/,''),breakEvenPrice:unitMoney(r.breakEvenGrossPrice),yearBreakEvenPrice:unitMoney(r.yearBreakEvenGrossPrice),
-  breakEven:r.breakEvenState==='within-capacity'?tonnes(r.breakEven)+'/мес.':r.breakEvenState==='outside-capacity'?'За пределом мощности':'Недостижим',
-  priceHeadroom:r.breakEvenGrossPrice==null?'—':unitMoney(r.grossPrice-r.breakEvenGrossPrice),yearOperatingCash:millions(r.annualOperatingCash),
-  yearFixedCash:millions(r.yearFixedCashCosts),yearVariableCash:millions(r.yearVariableCosts),yearDepreciation:millions(r.yearDepreciation),
-  unitPrice:unitMoney(r.netPrice),unitCost:unitMoney(r.perProduct?.totalCosts),unitTax:unitMoney(r.perProduct?.tax),unitProfit:unitMoney(r.perProduct?.net)};
-}
-export function heroBasis(r,values=financialValues(r)){
- const {lines}=r.state,fullLoad=Math.abs(r.load-1)<1e-12;
- const label=lines===1&&fullLoad&&r.grossPrice===r.mode.defaultGrossPrice?'Базовый сценарий':'Текущий сценарий';
- return `${label}: ${lines} ${lines===1?'комплект':'комплекта'} · ${fullLoad?'100%':values.load} загрузка · готовый цех · реализация ${values.grossPrice} с НДС. Выпуск ${fullLoad?'до ':''}${values.output}/мес.`;
-}
-export const massBalanceLabel=r=>`Вход ${tonnes(r.state.input)}, готовая продукция ${tonnes(r.output)}, остальная масса ${tonnes(r.state.input-r.output)}; доля готовой продукции в сценарии ${percentage(r.totalYield)}.`;
-export function renderScenarioPresets(result){
- return result.mode.priceStages.map(stage=>`<button type="button" data-econ-preset="${stage.price}" aria-pressed="${stage.price===result.grossPrice}"><strong>${stage.label}</strong><span>${escape(stage.period)}</span></button>`).join('');
-}
-const fullCycleCostNotes={
- payroll:`Производственный штат — ${config.modes.full.staff} человека на комплект. ${config.activeSorters} сортировщика в активной смене.`,
- water:'Вода и водоотведение для линии горячей мойки.',
- reagents:'Моющие реагенты для обработки плёночного сырья в линии горячей мойки.',
-};
-const costNote=(segment,result)=>result.state.mode==='full'?fullCycleCostNotes[segment.id]??segment.description:segment.description;
-export function groupedMonth(result){
- if(result.load<1-1e-12)return result;
- const groups=[
-  ['feedstock','Сырьё',['feedstock'],'#242844'],
-  ['payroll','Фонд оплаты труда и взносы',['payroll'],'#414663'],
-  ['utilities','Энергия и вода',['electricity','water'],'#737b8f'],
-  ['other','Остальные производственные расходы',['reagents','transport','ppe','supplies','office','disposal','building'],'#a9aa99'],
-  ['depreciation','Амортизация',['depreciation'],'#bcb5a7'],
-  ['tax','Налог на прибыль',['tax'],'#ded9cd'],
-  ['profit',result.net<0?'Убыток':'Чистая прибыль',['profit'],result.net<0?'#a54e44':'#c6a43b'],
- ];
- const segments=groups.map(([id,label,ids,color])=>{
-  const members=result.segments.filter(s=>ids.includes(s.id));
-  return {id,label,color,value:members.reduce((sum,s)=>sum+s.value,0),members,description:members.map(s=>`${s.label}: ${money(s.value)}. ${costNote(s,result)}`).join(' ')};
- });
- return {...result,segments};
-}
-export function renderCostDetails(result){
- return `<div class="ec-table-scroll"><table class="ec-table"><caption>Все статьи расходов и результат · за месяц, без НДС</caption><thead><tr><th scope="col">Статья и основание</th><th scope="col">Сумма, ₽/мес.</th></tr></thead><tbody>${result.segments.map(s=>`<tr><th scope="row">${escape(s.label)}<small>${escape(costNote(s,result))}</small></th><td>${money(s.value)}</td></tr>`).join('')}</tbody></table></div>`;
-}
-export function renderUnitDetail(result){
- return `<div class="ec-table-scroll"><table class="ec-table"><caption>Состав себестоимости рабочего месяца</caption><thead><tr><th scope="col">Статья</th><th scope="col">₽/кг</th><th scope="col">₽/т</th></tr></thead><tbody>${result.costs.map(s=>`<tr><th scope="row">${escape(s.label)}</th><td>${unitMoney(result.output>0?s.value/result.output:null)}</td><td>${unitMoney(result.output>0?s.value/result.output:null,'tonne')}</td></tr>`).join('')}</tbody></table></div><p class="ec-note">${result.load<1-1e-12?'При частичной загрузке доступны только постоянные и переменные денежные расходы. Коэффициенты отдельных статей не заданы.':'Детализация рабочего месяца финансовых моделей ЭРА. Амортизация включена в себестоимость один раз.'}</p>`;
-}
-export function renderSpecialist(result){
- const rows=[['Входящая смесь',tonnes(result.state.input)+' / месяц'],['Выход готовой продукции',percentage(result.totalYield)],['Нормативный месяц',`${config.monthDays} день · ${config.availableHours} часа на комплект`],['Часы при выбранной загрузке',decimal(result.hoursPerLine,1)+' ч на комплект'],['Предельный выпуск готовой продукции',tonnes(result.state.lines*config.modes[result.state.mode].referenceOutput)+' / месяц'],['Цена закупки смеси','6 000 ₽/т без доставки и входящего НДС'],['Постоянные денежные расходы',money(result.fixedCashCosts)],['Переменные денежные расходы',money(result.variableCosts)],['Амортизация',money(result.depreciation)],['Производственный штат',`${result.mode.staff*result.state.lines} человек · ${config.activeSorters*result.state.lines} сортировщика в активной смене`],['База площадки','Существующий цех с готовой инфраструктурой'],['НДС / налог на прибыль','22% / 25% положительной прибыли']];
- return `<dl class="ec-assumptions">${rows.map(([k,v])=>`<div><dt>${escape(k)}</dt><dd>${escape(v)}</dd></div>`).join('')}</dl><p>Постоянные расходы и амортизация сохраняются при любой загрузке. Переменная часть меняется пропорционально входящему тоннажу. Для 2–3 комплектов масштабируются мощность, штат и расходы; экономия масштаба не заложена.</p><p>Тарифы, зарплаты, влажность, засорённость, ПТР и закупочная цена здесь не являются регулируемыми параметрами: индивидуальный пересчёт выполняется по согласованным исходным данным.</p><p>Полный цикл ограничен рабочей производительностью гранулятора 750 кг/ч, то есть 558 т/месяц на комплект. Электроэнергия сохранена по рабочему столбцу полной модели.</p><p>${result.state.mode==='separation'?'Самостоятельная ЛСП не включает сушильную установку, мойку и грануляцию. ':''}В составе линии горячей мойки гранулятор предусмотрен; при собственной грануляции возможна поставка без него.</p><p>Новая аренда и строительство не включены. Выручка рассчитывается без НДС, амортизация вычитается один раз, налог начисляется только на положительную прибыль. Календарный денежный поток, финансирование и капитальные вложения требуют отдельного инвестиционного расчёта.</p>`;
-}
-export function productCopy(mode){
- return mode==='full'?{
-  title:'Вторичная ПЭ-гранула для нового производства',src:'/assets/presentation/granules.webp',width:390,height:304,alt:'Существующий образец вторичной полиэтиленовой гранулы ЭРА',caption:'Образец высококачественной вторичной ПЭ-гранулы',
-  passport:`<div><dt>Остаточные посторонние включения</dt><dd><strong>30–70 ppm</strong><span>30–70 г/т · 0,003–0,007% по массе · целевой показатель ЭРА</span></dd></div><div><dt>Показатель текучести расплава (ПТР)</dt><dd><strong>0,8–1,2 г/10 мин</strong><span>190 °C / 2,16 кг · предварительный ориентир под плёнки и пакеты. Значение конкретной партии закрепляется в спецификации; диапазон не является универсальным для всех плёночных марок.</span></dd></div><div><dt>Назначение</dt><dd>Плёнки, пакеты и другая ПЭ-продукция по согласованной спецификации и результатам пробной переработки.</dd></div><div><dt>Основа стоимости</dt><dd>Чистота, стабильность состава и требуемый ПТР определяют промышленное применение и цену партии.</dd></div>`,
-  applications:'Производство плёнок и пакетов, отдельных ПЭ-изделий и другие согласованные применения. Подбор рецептуры и требования к материалу зависят от изделия и оборудования покупателя.',
-  href:'/technology#granule-quality',link:'Как обеспечивается качество гранулы',
- }:{
-  title:'Очищенная полиэтиленовая плёночная фракция',src:'/assets/project-home/products/clean_film_bale.webp',width:960,height:1704,alt:'Реальная очищенная полиэтиленовая плёнка после подготовки на оборудовании ЭРА',caption:'Очищенная плёночная фракция после переработки',
-  passport:`<div><dt>Готовая продукция</dt><dd><strong>Очищенная плёнка</strong><span>Подготовленная фракция для следующего передела</span></dd></div><div><dt>Форма отгрузки</dt><dd>По комплектации линии. В расширенной линии сепарации — прессование в тюки.</dd></div><div><dt>Назначение</dt><dd>Дальнейшая мойка и грануляция на предприятии покупателя.</dd></div><div><dt>Приёмка партии</dt><dd>По полимерному составу, остаточным загрязнениям и согласованным требованиям покупателя.</dd></div>`,
-  applications:'Поставки переработчикам плёночного сырья с собственной мойкой и грануляцией. Требования к составу, загрязнениям и форме поставки закрепляются с покупателем партии.',
-  href:'/catalog/lines/separatsiya-02',link:'Оборудование сухой сепарации',
+export const fxLabel=fx=>fx?
+ `Курс ЦБ РФ · 1 USD = ${decimal(fx.rateRubPerUsd,4,2)} ₽ · действует с ${day(fx.effectiveDate)}${fx.status==='live'?'':fx.status==='stale'?' · последний доступный курс':' · сохранённый курс'}`:
+ 'Курс ЦБ РФ недоступен';
+const dollars=(n,fx)=>fx&&n!=null?'≈ '+compact(n/fx.rateRubPerUsd,'$'):'USD недоступен';
+
+export function financialValues({state,result:r,network:n,balance,fx}){
+ const {period}=state;
+ const netPerTonne=r.perProduct?.net??null;
+ return {
+  monthLabel:monthLabel(r),yearLabel:annualLabel(r),
+  monthNet:compact(r.net),yearNet:compact(r.yearNet),monthUsd:dollars(r.net,fx),yearUsd:dollars(r.yearNet,fx),
+  price:priceText(r.grossPrice),payback:paybackLabel(r),rate:fxLabel(fx),
+  unitPrice:priceText(r.netPrice,2),unitCost:priceText(r.perProduct?.totalCosts,2),unitTax:priceText(r.perProduct?.tax,2),
+  unitProfit:priceText(netPerTonne,2),tonneNet:rublesPerTonne(netPerTonne),
+  tonneUsd:fx&&netPerTonne!=null?'≈ '+decimal(netPerTonne/fx.rateRubPerUsd,2)+' $/т':'USD недоступен',
+  margin:percent(r.margin),revenue:compact(r.revenue),expenses:compact(r.totalCosts),
+  output:tonnes(r.output),yearOutput:tonnes(r.yearOutput),load:percent(r.load),
+  balanceInput:massText(balance.input,period),balanceOutput:massText(balance.output,period),
+  balanceOther:massText(balance.input-balance.output,period),
+  networkSize:complexes(n.state.lines),networkMonth:compact(n.net),networkMonthLabel:monthLabel(n),
+  networkYear:compact(n.yearNet),networkYearLabel:annualLabel(n),networkMonthUsd:dollars(n.net,fx),networkYearUsd:dollars(n.yearNet,fx),
+  networkInput:tonnes(n.state.input),networkOutput:tonnes(n.output),networkYearOutput:tonnes(n.yearOutput),
+  networkRevenue:compact(n.revenue),networkMargin:percent(n.margin),networkPayback:paybackLabel(n),
+  networkInvestment:compact(n.equipmentInvestment),networkInvestmentUsd:dollars(n.equipmentInvestment,fx),
  };
 }
-export function basisText(result){return `${result.state.lines} ${result.state.lines===1?'комплект':'комплекта'} · вход ${tonnes(result.state.input)}/мес. · ${decimal(result.hoursPerLine,1)} ч из нормативных 744 ч/мес. · выход готовой продукции ${percentage(result.totalYield)} · штат ${result.mode.staff*result.state.lines} человек · ${config.activeSorters*result.state.lines} сортировщика в активной смене.`;}
+
+export function renderAllocation(result){
+ const rows=[['cost','Полная себестоимость',result.totalCosts],['tax','Налог на прибыль',result.tax],
+  ['profit',result.net<0?'Убыток':'Чистая прибыль',result.net]];
+ const available=result.revenue>0&&result.net>=0;
+ const share=value=>available?value/result.revenue:null;
+ const segments=available?`<div class="ec-allocation-track" aria-hidden="true">${rows.map(([key,,amount])=>
+  `<span data-part="${key}" style="flex-basis:${share(amount)*100}%"></span>`).join('')}</div>`:'';
+ return `${segments}<dl class="ec-allocation-items">${rows.map(([key,label,amount])=>
+  `<div data-part="${key}"><dt>${label}</dt><dd>${compact(amount)}${available?` <small>${percent(share(amount),2)}</small>`:''}</dd></div>`).join('')}</dl>`;
+}
+
+function chartDomain(values){
+ const low=Math.min(0,...values),high=Math.max(0,...values);
+ const rough=(high-low)/4||1;
+ const magnitude=10**Math.floor(Math.log10(rough));
+ const step=([1,2,2.5,5,10].find(n=>n*magnitude>=rough)??10)*magnitude;
+ const from=Math.floor(low/step),to=Math.max(from+1,Math.ceil(high/step));
+ return {ticks:Array.from({length:to-from+1},(_,i)=>(from+i)*step),low:from*step,high:to*step};
+}
+export function renderProfitChart(stages,selected){
+ const values=stages.map(stage=>stage.result.net/1e6);
+ const {ticks,low,high}=chartDomain(values);
+ const top=value=>(high-value)/(high-low)*100;
+ const scale=ticks.map(value=>`<span data-zero="${value===0}" style="--at:${top(value)}%">${decimal(value)}</span>`).join('');
+ const columns=stages.map(({id,price,result},index)=>{
+  const v=values[index],a=top(Math.max(0,v)),b=top(Math.min(0,v));
+  return `<div class="ec-bar-column" data-active="${id===selected}" data-loss="${v<0}" aria-label="${priceText(price)} с НДС. ${monthLabel(result)} ${compact(result.net)}">
+   <div class="ec-bar-plot"><i style="top:${a}%;height:${b-a}%"></i><b style="--at:${v<0?b:a}%">${decimal(v)}</b></div>
+   <span class="ec-bar-label">${priceText(price)}</span>
+  </div>`;
+ }).join('');
+ return `<div class="ec-profit-chart" role="group" aria-label="Сравнение чистой прибыли, млн рублей в месяц">
+  <div class="ec-chart-scale" aria-hidden="true">${scale}</div><div class="ec-bar-columns">${columns}</div>
+ </div>`;
+}
+
+export function renderResilienceScale({threshold,basePrice,reserve}){
+ if(threshold==null)return '<p class="ec-scale-missing">Цена безубыточности не определяется при текущем выпуске.</p>';
+ const upper=Math.max(basePrice,threshold,1)*1.08;
+ const from=threshold/upper*100,to=basePrice/upper*100;
+ const start=Math.min(from,to),length=Math.abs(from-to);
+ return `<div class="ec-price-scale" role="group" aria-label="Цена реализации с НДС. Порог ${priceText(threshold,2)}. Базовая цена ${priceText(basePrice)}.">
+  <div class="ec-scale-legend">
+   <div><span>Цена безубыточности</span><strong>${priceText(threshold,2)}</strong></div>
+   <div class="ec-scale-reserve" data-negative="${reserve<0}"><span>${reserve<0?'До порога не хватает':'Запас цены'}</span><strong>${priceText(Math.abs(reserve),2)}</strong></div>
+   <div><span>Базовая цена</span><strong>${priceText(basePrice)}</strong></div>
+  </div>
+  <div class="ec-scale-track" style="--threshold:${from}%;--base:${to}%;--gap-start:${start}%;--gap-length:${length}%">
+   <span class="ec-scale-threshold" title="Нулевой результат">0</span><span class="ec-scale-base" title="Базовый сценарий"></span>
+  </div>
+  <div class="ec-scale-caption"><span>До порога · убыток</span><span>На пороге · нулевой результат</span><span>Выше порога · прибыль</span></div>
+ </div>`;
+}
+
+export const valueMarkup=(values,key,tag='strong')=>`<${tag} data-econ-value="${key}">${escape(values[key])}</${tag}>`;

@@ -1,23 +1,25 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {economicsConfig as config} from '../public/economics-config.js';
-import {calculateEconomics,initialEconomicsState,normalizeEconomicsState,changeEconomicsSelection,profitCurve} from '../public/economics-model.js';
+import {economicsConfig as config,scenarioPrices,marketOffers} from '../public/economics-config.js';
+import {calculateEconomics,initialEconomicsState,normalizeEconomicsState,changeEconomicsSelection,profitCurve,productionBasis} from '../public/economics-model.js';
 import {renderCurve,renderBridge,renderMonth,renderMarketPrice,priceStageText} from '../public/economics-view.js';
-import {createEconomicsStore} from '../public/economics-page-state.js';
-import {groupedMonth,productCopy,unitMoney} from '../public/economics-page-view.js';
+import {createEconomicsStore,createInvestmentStore,getFxSnapshot} from '../public/economics-page-state.js';
+import {financialValues,priceText,renderAllocation,renderProfitChart,renderResilienceScale,scenarioTopic} from '../public/economics-page-view.js';
+import {moscowDay} from '../public/fx-core.js';
+import {economicsPage} from '../scripts/economics-page.mjs';
 const close=(actual,expected,tolerance=.00001)=>assert.ok(Math.abs(actual-expected)<tolerance,`${actual} != ${expected}`);
 
-test('Рабочие месяцы ЛСП и КПП точно воспроизводят финансовые модели 05.11.2026',()=>{
+test('Рабочий месяц сохраняет ЛСП и пересчитывает КПП для выхода 50%',()=>{
  for(const [state,input,price,revenue,cash,dep,cost,tax,net,unit] of [
   [{salePrices:{separation:50000}},1116,50000,22868852.46,16288252.39,645536.95,16933789.34,1483765.78,4451297.34,7977.24],
-  [{mode:'full',salePrices:{full:110000}},970.4347826086957,110000,50311475.41,24930006.22,1961047.90,26891054.12,5855105.32,17565315.97,31479.06],
-  [{mode:'full',salePrices:{full:100000}},970.4347826086957,100000,45737704.92,24930006.22,1961047.90,26891054.12,4711662.70,14134988.10,25331.52],
+  [{mode:'full',salePrices:{full:110000}},1116,110000,50311475.41,25803397.53,1961047.90,27764445.42,5636757.50,16910272.49,30305.15],
+  [{mode:'full',salePrices:{full:100000}},1116,100000,45737704.92,25803397.53,1961047.90,27764445.42,4493314.87,13479944.62,24157.61],
  ]){
   const r=calculateEconomics(state);close(r.state.input,input);close(r.output,558);close(r.grossPrice,price);close(r.revenue,revenue,.01);close(r.cashOpex,cash,.01);close(r.depreciation,dep,.01);close(r.totalCosts,cost,.01);close(r.tax,tax,.01);close(r.net,net,.01);close(r.perProduct.net,unit,.01);close(r.hoursPerLine,744);
  }
  const sep=calculateEconomics({salePrices:{separation:50000}}),full=calculateEconomics({mode:'full',salePrices:{full:110000}});
- close(sep.margin,.19464454288,.00001);close(full.margin,.3491314032,.00001);
- close(sep.totalYield,.5);close(full.totalYield,.575);close(full.output,config.availableHours*config.outputRate);
+ close(sep.margin,.19464454288,.00001);close(full.margin,.33611163957,.00001);
+ close(sep.totalYield,.5);close(full.totalYield,.5);close(full.output,744*.75);
  assert.equal(config.modes.separation.staff,39);assert.equal(config.modes.full.staff,54);
 });
 test('НДС исключается из цены один раз, амортизация не дублируется, налог равен 25% положительной прибыли',()=>{
@@ -35,7 +37,7 @@ test('Категории месячного кольца сходятся с в�
   const r=calculateEconomics({mode,salePrices:{[mode]:grossPrice}});
   close(r.segments.reduce((sum,s)=>sum+s.value,0),r.revenue);
   close(r.costs.reduce((sum,s)=>sum+s.value,0),r.totalCosts);
-  for(const cost of config.costs)close(r.costs.find(c=>c.id===cost.id).value,cost[mode],.02);
+  for(const cost of config.costs)close(r.costs.find(c=>c.id===cost.id).value,cost.id==='feedstock'?6696000:cost[mode],.02);
   for(const id of ['water','reagents','building'])if(mode==='separation'||id==='building')close(r.costs.find(c=>c.id===id).value,0);
   assert.equal(r.costs.filter(c=>c.id==='depreciation').length,1);
  }
@@ -44,7 +46,7 @@ test('Нулевая загрузка сохраняет постоянные р
  for(const mode of ['separation','full']){
   const r=calculateEconomics({mode,input:0,lines:2});
   close(r.output,0);close(r.revenue,0);close(r.variableCosts,0);close(r.tax,0);close(r.net,-r.fixedCosts);
-  close(r.cashOpex,2*config.modes[mode].fixedCashOpex);close(r.depreciation,2*config.modes[mode].depreciation);
+  close(r.cashOpex,2*productionBasis(mode).fixedCashOpex);close(r.depreciation,2*config.modes[mode].depreciation);
   assert.equal(r.margin,null);assert.equal(r.perProduct,null);assert.equal(r.perInput,null);assert.equal(r.donutAvailable,false);
   assert.ok(renderBridge(r).includes('—'));assert.ok(renderCurve(r).includes('безубыточный объём'));
  }
@@ -58,7 +60,7 @@ test('Убыточная цена не создаёт отрицательный
 test('1/2/3 одинаковых полностью загруженных комплекта масштабируют выпуск, штатные расходы и прибыль линейно',()=>{
  for(const mode of ['separation','full']){
   const one=calculateEconomics({mode});
-  for(const lines of [2,3]){
+  for(const lines of mode==='full'?[2,3,5]:[2,3]){
    const many=calculateEconomics({mode,lines});
    for(const field of ['output','revenue','cashOpex','depreciation','tax','net','capacity'])close(many[field],one[field]*lines);
    close(many.margin,one.margin);close(many.hoursPerLine,744);
@@ -70,7 +72,7 @@ test('Смена количества комплектов и режима со�
   let state=initialEconomicsState();state.input*=load;state.salePrices.full=100000;
   for(const lines of [3,1,2])for(const mode of ['full','separation']){
    state=changeEconomicsSelection(state,{mode,lines});const r=calculateEconomics(state);
-   close(r.load,load);close(r.state.input,lines*config.modes[mode].referenceInput*load);assert.equal(state.salePrices.full,100000);assert.equal(state.salePrices.separation,45000);
+   close(r.load,load);close(r.state.input,lines*productionBasis(mode).referenceInput*load);assert.equal(state.salePrices.full,100000);assert.equal(state.salePrices.separation,45000);
   }
  }
  const a=initialEconomicsState(),b=initialEconomicsState();a.salePrices.full=90000;assert.equal(b.salePrices.full,90000);
@@ -83,13 +85,13 @@ test('Финансовые границы и кривая согласованы
  }
  const normalized=normalizeEconomicsState({input:Infinity,lines:-5,salePrices:{full:-12}});
  assert.equal(normalized.lines,1);assert.equal(normalized.input,1116);assert.equal(normalized.salePrices.full,0);
- close(normalizeEconomicsState({mode:'full',input:999999}).input,config.modes.full.referenceInput);
+ close(normalizeEconomicsState({mode:'full',input:999999}).input,productionBasis('full').referenceInput);
  assert.ok(profitCurve({},0).length>=2);
 });
 test('Ценовые пресеты описывают цену, а не обещание роста по рабочим месяцам',()=>{
- const r=calculateEconomics({mode:'full',salePrices:{full:110000}});assert.equal(priceStageText(r),'Повышенная');
- assert.equal(priceStageText(calculateEconomics({mode:'full'})),'Базовая цена');
- assert.equal(priceStageText(calculateEconomics({mode:'full',salePrices:{full:100000}})),'Дополнительная');
+ const r=calculateEconomics({mode:'full',salePrices:{full:110000}});assert.equal(priceStageText(r),'Премиальный');
+ assert.equal(priceStageText(calculateEconomics({mode:'full'})),'Базовый');
+ assert.equal(priceStageText(calculateEconomics({mode:'full',salePrices:{full:100000}})),'Развитие');
  assert.match(renderMarketPrice(r),/110 ₽\/кг с НДС/);assert.match(renderMarketPrice(r),/80 ₽\/кг/);
  for(const mode of Object.values(config.modes))for(const p of mode.priceStages)assert.doesNotMatch(p.period,/месяц|этап|перв/iu);
  assert.ok(!('granulationYield' in config));assert.ok(!('granulationYield' in r.state));
@@ -97,10 +99,10 @@ test('Ценовые пресеты описывают цену, а не обе�
 test('SSR, модель и единое состояние начинают с согласованной базы 45/90 ₽ за кг',()=>{
  const store=createEconomicsStore();assert.equal(store.get().state.salePrices.separation,45000);assert.equal(store.get().state.salePrices.full,90000);
  assert.equal(config.modes.full.defaultGrossPrice,90000);assert.equal(calculateEconomics({mode:'full'}).grossPrice,90000);
- store.dispatch({type:'selection',value:{mode:'full'}});close(store.get().result.net,10704660.23,.01);
+ store.dispatch({type:'selection',value:{mode:'full'}});close(store.get().result.net,10049616.75,.01);
  store.dispatch({type:'price',value:100000});const r=store.get().result;
- close(r.net,14134988.10,.01);close(r.margin,.30904454288,.00001);
- assert.equal(unitMoney(r.perProduct.totalCosts),'48,19 ₽/кг');assert.equal(unitMoney(r.perProduct.tax),'8,44 ₽/кг');assert.equal(unitMoney(r.perProduct.net),'25,33 ₽/кг');
+ close(r.net,13479944.62,.01);close(r.margin,.29472280353,.00001);
+ assert.equal(priceText(r.perProduct.totalCosts),'49,76 ₽/кг');assert.equal(priceText(r.perProduct.tax),'8,05 ₽/кг');assert.equal(priceText(r.perProduct.net),'24,16 ₽/кг');
 });
 test('Подписчики единого состояния получают один согласованный результат; память цен и загрузка сохраняются',()=>{
  const store=createEconomicsStore(),seen=[];const unsubscribe=store.subscribe(snapshot=>seen.push(snapshot));
@@ -114,18 +116,18 @@ test('Подписчики единого состояния получают о
  const copy=store.get();copy.state.salePrices.full=1;assert.equal(store.get().state.salePrices.full,100000);
  unsubscribe();const count=seen.length;store.dispatch({type:'input',value:0});assert.equal(seen.length,count);assert.ok(store.get().result.net>=0);assert.ok(store.get().result.yearNet>=0);
 });
-test('Публичная экономика фиксирует полный цикл при открытии, смене комплектов и сбросе',()=>{
+test('Прежний режим состояния фиксирует полный цикл при открытии, смене комплектов и сбросе',()=>{
  const store=createEconomicsStore({lockedMode:'full'});
  const baseline=store.get();
  assert.equal(baseline.state.mode,'full');assert.equal(baseline.state.lines,1);
  assert.equal(baseline.result.grossPrice,90000);assert.equal(baseline.result.load,1);assert.equal(baseline.result.output,558);
- close(baseline.result.revenue,41163934.43,.01);close(baseline.result.totalCosts,26891054.12,.01);
- close(baseline.result.net,10704660.23,.01);close(baseline.result.yearNet,123733828.27,.01);
- assert.deepEqual(baseline.result.payback.months,[6.5,8.2]);
+ close(baseline.result.revenue,41163934.43,.01);close(baseline.result.totalCosts,27764445.42,.01);
+ close(baseline.result.net,10049616.75,.01);close(baseline.result.yearNet,116021219.57,.01);
+ assert.deepEqual(baseline.result.payback,{status:'individual'});
  store.dispatch({type:'price',value:100000});
  const at100=store.get().result;
- close(at100.net,14134988.10,.01);close(at100.yearNet,164123172.53,.01);
- assert.deepEqual(at100.payback.months,[5.1,6.4]);
+ close(at100.net,13479944.62,.01);close(at100.yearNet,156410563.84,.01);
+ assert.deepEqual(at100.payback,{status:'individual'});
  store.dispatch({type:'price',value:99500});
  store.dispatch({type:'input',value:baseline.result.capacity*.8});
  for(const lines of [2,3,1]){
@@ -141,23 +143,8 @@ test('Публичная экономика фиксирует полный ци
  store.dispatch({type:'reset'});assert.deepEqual(store.get(),baseline);
  assert.equal(createEconomicsStore().get().state.mode,'separation');
 });
-test('Укрупнение месячного кольца сохраняет все суммы, а при частичной загрузке остаются агрегаты модели',()=>{
- for(const mode of ['separation','full'])for(const lines of [1,2,3]){
-  const r=calculateEconomics({mode,lines}),grouped=groupedMonth(r);
-  assert.equal(grouped.segments.length,7);close(grouped.segments.reduce((a,s)=>a+s.value,0),r.revenue);
-  assert.equal(grouped.segments.find(s=>s.id==='utilities').members.length,2);
-  const originalIds=grouped.segments.flatMap(s=>s.members.map(m=>m.id));assert.deepEqual(originalIds.sort(),r.segments.map(s=>s.id).sort());
-  const half=calculateEconomics({mode,lines,input:r.capacity/2});assert.equal(groupedMonth(half),half);assert.equal(half.costs.length,3);
- }
-});
-test('Паспорт гранулы отделён от плёнки; ПТР указан как предварительный ориентир с условиями измерения',()=>{
- const film=productCopy('separation'),granule=productCopy('full');
- assert.doesNotMatch(film.passport,/ppm|ПТР|г\/10/);assert.match(granule.passport,/30–70 ppm/);
- assert.match(granule.passport,/0,8–1,2 г\/10 мин/);assert.match(granule.passport,/190 °C \/ 2,16 кг/);assert.match(granule.passport,/предварительный ориентир/);
- assert.notEqual(film.src,granule.src);
-});
 test('Непредставимо малый положительный выпуск не выводит Infinity или NaN в денежных показателях',()=>{
- const r=calculateEconomics({input:1e-308});assert.equal(unitMoney(r.perProduct.totalCosts),'—');
+ const r=calculateEconomics({input:1e-308});assert.equal(priceText(r.perProduct.totalCosts),'—');
  assert.doesNotMatch(renderBridge(r),/NaN|Infinity|∞/);assert.match(renderBridge(r),/Объём слишком мал/);
 });
 
@@ -166,49 +153,49 @@ test('Семь ценовых ориентиров: независимые де�
   ['separation',40000,18295081.97,1020969.47,215409836.07,10750124.35,[13,19.5]],
   ['separation',45000,20581967.21,2736133.40,242336065.57,30944796.49,[6.2,9.3]],
   ['separation',50000,22868852.46,4451297.34,269262295.08,51139468.62,[4.1,6.1]],
-  ['full',80000,36590163.93,7274332.36,430819672.13,83344484.01,[9,11.2]],
-  ['full',90000,41163934.43,10704660.23,484672131.15,123733828.27,[6.5,8.2]],
-  ['full',100000,45737704.92,14134988.10,538524590.16,164123172.53,[5.1,6.4]],
-  ['full',110000,50311475.41,17565315.97,592377049.18,204512516.79,[4.2,5.3]],
+  ['full',80000,36590163.93,6619288.88,430819672.13,75631875.31,null],
+  ['full',90000,41163934.43,10049616.75,484672131.15,116021219.57,null],
+  ['full',100000,45737704.92,13479944.62,538524590.16,156410563.84,null],
+  ['full',110000,50311475.41,16910272.49,592377049.18,196799908.10,null],
  ];
  for(const [mode,price,revenue,net,yearRevenue,yearNet,range] of controls){
   const r=calculateEconomics({mode,salePrices:{[mode]:price}});
   close(r.revenue,revenue,.01);close(r.net,net,.01);close(r.yearRevenue,yearRevenue,.01);close(r.yearNet,yearNet,.01);
-  assert.equal(r.payback.status,'estimate');assert.deepEqual(r.payback.months,range);
+  assert.equal(r.payback.status,range?'estimate':'individual');assert.deepEqual(r.payback.months??null,range);
   close(r.yearOutput,6570);close(r.yearHoursPerLine,8760);assert.notEqual(r.yearNet,r.net*12);
  }
- close(calculateEconomics().yearInput,13140);close(calculateEconomics({mode:'full'}).yearInput,11426.08695652174);
+ close(calculateEconomics().yearInput,13140);close(calculateEconomics({mode:'full'}).yearInput,13140);
  close(calculateEconomics().breakEvenGrossPrice/1000,37.0236971238792,.00001);
- close(calculateEconomics({mode:'full'}).breakEvenGrossPrice/1000,58.79406097864388,.00001);
+ close(calculateEconomics({mode:'full'}).breakEvenGrossPrice/1000,60.70362619603518,.00001);
 });
 test('Год сохраняет 12 месяцев постоянных расходов, объёмные переменные и положительный налог во всех масштабах',()=>{
- for(const mode of ['separation','full'])for(const lines of [1,2,3])for(const load of [0,.5,.8,1])for(const preset of config.modes[mode].priceStages){
-  const r=calculateEconomics({mode,lines,input:config.modes[mode].referenceInput*lines*load,salePrices:{[mode]:preset.price}});
+ for(const mode of ['separation','full'])for(const lines of [1,2,3])for(const load of [0,.5,.8,1])for(const preset of scenarioPrices(config.modes[mode])){
+  const r=calculateEconomics({mode,lines,input:productionBasis(mode).referenceInput*lines*load,salePrices:{[mode]:preset.price}});
   close(r.yearOutput,6570*lines*load);close(r.yearDepreciation,12*config.modes[mode].depreciation*lines);
-  close(r.yearFixedCashCosts,12*config.modes[mode].fixedCashOpex*lines);
+  close(r.yearFixedCashCosts,12*productionBasis(mode).fixedCashOpex*lines);
   close(r.yearVariableCosts,r.variableCosts*365/31);
   close(r.revenue,r.totalCosts+r.tax+r.net);close(r.yearRevenue,r.yearCosts+r.yearTax+r.yearNet);
   close(r.annualOperatingCash,r.yearNet+r.yearDepreciation);close(r.averageMonthlyOperatingCash,r.annualOperatingCash/12);
   assert.ok(r.tax>=0&&r.yearTax>=0);
   if(!load){assert.equal(r.yearVariableCosts,0);assert.equal(r.yearTax,0);assert.equal(r.yearMargin,null);assert.equal(r.yearUnitCosts,null);assert.equal(r.breakEvenGrossPrice,null);assert.equal(r.yearBreakEvenGrossPrice,null);assert.equal(r.payback.status,'unreachable');}
   else{close(r.yearUnitCosts*r.yearOutput,r.yearCosts);close(r.yearBreakEvenGrossPrice/1.22*r.yearOutput,r.yearCosts);}
-  const one=calculateEconomics({mode,input:config.modes[mode].referenceInput*load,salePrices:{[mode]:preset.price}});
+  const one=calculateEconomics({mode,input:productionBasis(mode).referenceInput*load,salePrices:{[mode]:preset.price}});
   for(const field of ['yearInput','yearOutput','yearRevenue','yearCosts','yearTax','yearNet'])close(r[field],one[field]*lines,.00001);
   assert.deepEqual(r.payback,one.payback);
  }
 });
 test('Контроль неполной загрузки: 80%, 50%, убыток и поток при нуле',()=>{
  for(const [mode,load,net,yearNet] of [
-  ['separation',.8,1063192.39,11247265.19],['full',.8,6522233.68,74489128.59],
-  ['separation',.5,-1928292.17,-24398709.00],['full',.5,248593.86,622079.08],
- ]){const r=calculateEconomics({mode,input:config.modes[mode].referenceInput*load});close(r.net,net,.01);close(r.yearNet,yearNet,.01);}
- const lossWithCash=calculateEconomics({mode:'full',input:config.modes.full.referenceInput*.49});
- assert.ok(lossWithCash.yearNet<0&&lossWithCash.annualOperatingCash>0);assert.equal(lossWithCash.payback.status,'review');
+  ['separation',.8,1063192.39,11247265.19],['full',.8,5998198.90,68319041.64],
+  ['separation',.5,-1928292.17,-24398709.00],['full',.5,-105237.17,-4312300.35],
+ ]){const r=calculateEconomics({mode,input:productionBasis(mode).referenceInput*load});close(r.net,net,.01);close(r.yearNet,yearNet,.01);}
+ const lossWithCash=calculateEconomics({mode:'full',input:productionBasis('full').referenceInput*.49});
+ assert.ok(lossWithCash.yearNet<0&&lossWithCash.annualOperatingCash>0);assert.equal(lossWithCash.payback.status,'individual');
 });
 test('Своя цена и точный объём пересчитывают год; срок не интерполируется за пределами утверждённых узлов',()=>{
  const exact=calculateEconomics({mode:'full',input:777.123456,salePrices:{full:90555.55}});
  close(exact.grossPrice,90555.55);close(exact.state.input,777.123456);assert.equal(exact.payback.status,'individual');
- const offGrid=calculateEconomics({mode:'full',input:config.modes.full.referenceInput*.82345});
+ const offGrid=calculateEconomics({mode:'full',input:productionBasis('full').referenceInput*.82345});
  close(offGrid.load,.82345);assert.equal(offGrid.payback.status,'individual');
  const zeroPrice=calculateEconomics({salePrices:{separation:0}});assert.equal(zeroPrice.yearRevenue,0);assert.equal(zeroPrice.yearTax,0);assert.equal(zeroPrice.payback.status,'unreachable');
 });
@@ -219,12 +206,12 @@ test('Сброс восстанавливает обе базовые цены, 
  const {state,result}=store.get();assert.deepEqual(state,initialEconomicsState());close(result.load,1);assert.equal(result.grossPrice,45000);assert.equal(state.salePrices.full,90000);
 });
 
-test('Публичный расчёт начинается с безубыточности и не допускает отрицательный месяц или год',()=>{
+test('Прежний интерфейс расчёта начинается с безубыточности и не допускает отрицательный месяц или год',()=>{
  for(const mode of ['separation','full'])for(const lines of [1,2,3]){
   const store=createEconomicsStore();store.dispatch({type:'selection',value:{mode,lines}});
-  for(const price of [0,...config.modes[mode].priceStages.map(p=>p.price),99555.55]){
+  for(const price of [0,...scenarioPrices(config.modes[mode]).map(p=>p.price),99555.55]){
    store.dispatch({type:'price',value:price});
-   for(const input of [0,1,config.modes[mode].referenceInput*lines*.5,config.modes[mode].referenceInput*lines]){
+   for(const input of [0,1,productionBasis(mode).referenceInput*lines*.5,productionBasis(mode).referenceInput*lines]){
     store.dispatch({type:'input',value:input});const r=store.get().result;
     assert.ok(r.net>=0&&r.yearNet>=0,`${mode}: public scenario is below break-even`);
     assert.ok(r.state.input>=r.minimumInput&&r.state.input<=r.capacity);
@@ -236,4 +223,138 @@ test('Публичный расчёт начинается с безубыточ
   const r=store.get().result;close(r.yearNet,0,.01);assert.ok(r.net>0);
   const points=profitCurve(r.state,40,r.breakEven);close(points[0].net,0,.01);assert.ok(points.every(p=>p.net>=-.01));
  }
+});
+
+test('Независимый контроль полного цикла во всех 16 сценариях',()=>{
+ // 05.11.2026 workbook extraction: cash monthly budgets and depreciation.
+ // Remove the old feed purchase from the running budget. Add the approved 1.5 t/h at 6,000 RUB/t.
+ const fixedMonthly=11648915.449213509,depreciation=1961047.8954266747;
+ const hourCash=(13281090.775100213-970.4347826086957*6000)/744+1.5*6000;
+ const monthCosts=fixedMonthly+depreciation+hourCash*744;
+ const yearCosts=12*(fixedMonthly+depreciation)+hourCash*8760;
+ for(const lines of [1,2,3,5])for(const grossPrice of [80000,90000,100000,110000]){
+  const r=calculateEconomics({mode:'full',grossPrice,lines});
+  assert.equal(r.state.lines,lines);assert.equal(r.mode.staff,54);
+  close(r.state.input,1116*lines);close(r.output,558*lines);close(r.other,558*lines);
+  close(r.yearInput,13140*lines);close(r.yearOutput,6570*lines);close(r.yearOther,6570*lines);
+  const monthRevenue=558*lines*grossPrice/1.22,yearRevenue=6570*lines*grossPrice/1.22;
+  close(r.totalCosts,monthCosts*lines);close(r.yearCosts,yearCosts*lines);
+  close(r.revenue,monthRevenue);close(r.yearRevenue,yearRevenue);
+  close(r.tax,.25*(monthRevenue-r.totalCosts));close(r.yearTax,.25*(yearRevenue-r.yearCosts));
+  close(r.net,.75*(monthRevenue-r.totalCosts));close(r.yearNet,.75*(yearRevenue-r.yearCosts));
+  close(r.margin,r.net/monthRevenue);close(r.perProduct.net,r.net/(558*lines));
+  close(r.breakEvenGrossPrice,monthCosts*1.22/558);
+  close(r.costs.reduce((s,cost)=>s+cost.value,0),r.totalCosts);
+  close([r.totalCosts,r.tax,r.net].reduce((s,amount)=>s+amount/r.revenue,0),1);
+ }
+});
+
+test('Единое состояние синхронизирует цену, сохраняя масштаб, период и базовые показатели отдельно',()=>{
+ const store=createInvestmentStore(),base=store.get();
+ assert.deepEqual(base.state,{scenario:'base',complexes:1,period:'hour'});
+ assert.equal(base.result.state.mode,'full');assert.equal(base.separation.state.mode,'separation');
+ const actions=[];store.subscribe((value,action)=>actions.push([value,action]));
+ store.dispatch({type:'network',value:5});
+ close(store.get().network.net,5*base.result.net);
+ assert.equal(store.get().result,base.result);
+ assert.equal(store.get().network.margin,base.result.margin);
+ store.dispatch({type:'price',value:'development'});
+ const updated=store.get();
+ assert.equal(updated.result.grossPrice,100000);assert.equal(updated.network.grossPrice,100000);
+ close(updated.network.yearNet,5*updated.result.yearNet);
+ assert.equal(updated.baseline,base.baseline);assert.equal(updated.resilience,base.resilience);
+ assert.match(scenarioTopic(updated.network),/Полный цикл · 5 комплексов · 100 ₽\/кг с НДС · загрузка 100% · выход 50%/);
+ store.dispatch({type:'period',value:'year'});
+ assert.deepEqual(store.get().balance,{input:13140,output:6570});
+ assert.equal(store.get().result,updated.result);
+ store.dispatch({type:'reset'});
+ assert.deepEqual(store.get(),base);
+ assert.deepEqual(actions.map(([,action])=>action),['network','price','period','reset']);
+});
+
+const mutableConfig=()=>structuredClone(config);
+test('Тестовые вводные автоматически обновляют исходные суммы, статический HTML и интерактивные сценарии',()=>{
+ const custom=mutableConfig(),base=calculateEconomics({mode:'full'});
+ custom.feedstockPrice=7000;
+ const moreRaw=calculateEconomics({mode:'full'},custom);
+ close(moreRaw.totalCosts-base.totalCosts,1116000);
+ close(moreRaw.perProduct.totalCosts-base.perProduct.totalCosts,2000);
+ assert.match(economicsPage({config:custom}),/7 ₽\/кг<\/strong>.*?Входящее сырьё/s);
+ assert.match(economicsPage({config:custom}),/×12,86</);
+ custom.modes.full.defaultGrossPrice=95000;
+ custom.costs.find(cost=>cost.id==='electricity').rateMultiplier=1.1;
+ custom.costs.find(cost=>cost.id==='payroll').full+=400000;
+ custom.vatRate=.2;custom.taxRate=.3;
+ const revised=calculateEconomics({mode:'full'},custom),html=economicsPage({config:custom});
+ close(revised.totalCosts,moreRaw.totalCosts+767584.726+400000);
+ assert.equal(revised.grossPrice,95000);close(revised.revenue,558*95000/1.2);
+ close(revised.tax,.3*(revised.revenue-revised.totalCosts));
+ assert.match(html,/data-econ-price="base" data-price-rub="95000" aria-pressed="true"/);
+ assert.match(html,/data-econ-value="price">95 ₽\/кг</);
+ assert.match(html,/НДС 20%/);
+ const next=mutableConfig();
+ next.modes.full.inputRate=2;next.modes.full.outputRate=.9;next.monthDays=30;next.yearDays=360;
+ const rates=calculateEconomics({mode:'full'},next),snapshot=createInvestmentStore({config:next}).get();
+ close(rates.totalYield,.45);close(rates.output,648);close(rates.yearOutput,7776);close(rates.feedCost,8640000);
+ close(rates.costs.reduce((s,c)=>s+c.value,0),rates.totalCosts);
+ assert.equal(financialValues(snapshot).balanceInput,'2\u00a0000 кг/ч');
+ assert.match(economicsPage({config:next}),/900 кг готовой гранулы/);
+ assert.match(economicsPage({config:next}),/45%/);
+ const offers=marketOffers.map(o=>o.id==='alfa-stretch'?{...o,price:78,checkedAt:'2026-11-26'}:o);
+ const marketUpdate=economicsPage({offers});
+ assert.match(marketUpdate,/78 ₽\/кг/);assert.match(marketUpdate,/26\.11\.2026/);
+ assert.match(marketUpdate,/data-econ-value="price">90 ₽\/кг</);
+});
+
+test('Окупаемость использует денежный поток при подтверждённом CAPEX; убытки не исключаются из графиков',()=>{
+ const custom=mutableConfig();custom.modes.full.equipmentCost=90000000;
+ const base=calculateEconomics({mode:'full'},custom),network=calculateEconomics({mode:'full',lines:5},custom);
+ assert.equal(network.equipmentInvestment,450000000);
+ close(base.payback.months[0],90000000/((base.yearNet+base.yearDepreciation)/12));
+ close(network.payback.months[0],base.payback.months[0]);
+ assert.equal(calculateEconomics({mode:'full',grossPrice:0},custom).payback.status,'unreachable');
+
+ custom.modes.full.defaultGrossPrice=50000;
+ const snapshot=createInvestmentStore({config:custom}).get();
+ assert.equal(snapshot.result.grossPrice,50000);assert.ok(snapshot.result.net<0);assert.equal(snapshot.result.tax,0);
+ assert.ok(snapshot.resilience.reserve<0);
+ assert.match(renderResilienceScale(snapshot.resilience),/data-negative="true"/);
+ const loss=renderAllocation(snapshot.result);
+ assert.doesNotMatch(loss,/ec-allocation-track|NaN|Infinity|flex-basis:-/);
+ assert.match(loss,/Убыток.*?−/s);
+ assert.match(renderProfitChart(snapshot.scenarios,'base'),/data-active="true" data-loss="true"/);
+
+ const atZero=calculateEconomics({mode:'full',grossPrice:base.breakEvenGrossPrice},custom);
+ close(atZero.net,0);
+ assert.ok(calculateEconomics({mode:'full',grossPrice:base.breakEvenGrossPrice-1},custom).net<0);
+ assert.ok(calculateEconomics({mode:'full',grossPrice:base.breakEvenGrossPrice+1},custom).net>0);
+ custom.modes.full.outputRate=0;
+ const noOutput=calculateEconomics({mode:'full'},custom);
+ assert.equal(noOutput.perProduct,null);assert.equal(noOutput.breakEvenGrossPrice,null);assert.equal(noOutput.margin,null);
+ assert.doesNotMatch(economicsPage({config:custom}),/NaN|Infinity/);
+});
+
+function cbrFixture(day='2026-11-26'){
+ return {schemaVersion:1,source:'CBR',requestedDate:day,effectiveDate:day,fetchedAt:day+'T09:00:00Z',
+  sourceUrl:'https://www.cbr.ru/scripts/XML_daily.asp?date_req='+day.split('-').reverse().join('/'),
+  rates:{USD:{nominal:2,value:160,rate:80},EUR:{nominal:1,value:95,rate:95},CNY:{nominal:10,value:115,rate:11.5}}};
+}
+
+test('Единый официальный курс конвертирует значения и показывает дату, состояние кэша или недоступность',()=>{
+ const fixture=cbrFixture(),event={data:fixture,status:'live'};
+ const live=getFxSnapshot(event,'2026-11-26');
+ assert.deepEqual(live,{rateRubPerUsd:80,effectiveDate:'2026-11-26',status:'live'});
+ assert.equal(getFxSnapshot(event,'2026-11-27').status,'stale');
+ assert.equal(getFxSnapshot(event,'2026-11-25'),null);
+ const store=createInvestmentStore({fx:live});
+ const base=financialValues(store.get());
+ assert.equal(base.monthUsd,'≈ 125,62 тыс. $');assert.equal(base.tonneUsd,'≈ 225,13 $/т');
+ assert.match(base.rate,/26\.11\.2026/);
+ store.dispatch({type:'network',value:5});
+ assert.equal(financialValues(store.get()).networkMonthUsd,'≈ 628,10 тыс. $');
+ store.dispatch({type:'fx',value:{data:{...fixture,source:'other'}}});
+ assert.equal(financialValues(store.get()).rate,base.rate);
+ assert.equal(financialValues(createInvestmentStore().get()).monthUsd,'USD недоступен');
+ assert.match(economicsPage({rates:cbrFixture(moscowDay())}),/data-econ-fx-seed/);
+ assert.match(economicsPage(),/data-econ-value="rate">Курс ЦБ РФ недоступен/);
 });

@@ -14,13 +14,13 @@ assert.equal(response.status,200,'Published economics HTTP status');
 const html=await response.text();
 assert.ok(html.includes('Экономика вашего производства.'),'Published economics heading');
 assert.match(html,/data-econ-mode="full" data-econ-locked-mode="full"/);
-assert.match(html,/data-value="profitMillions">10,70</);
-assert.match(html,/data-value="yearNetMillions">123,73</);
-assert.match(html,/data-value="paybackFigure">6,5–8,2</);
-assert.match(html,/aria-valuenow="90" value="90" data-econ-price/);
-assert.doesNotMatch(html,/<button[^>]*data-econ-mode|45 ₽\/кг для плёнки|data-market-source="spimex"/);
+assert.match(html,/data-econ-value="monthNet">10,05 млн ₽/);
+assert.match(html,/data-econ-value="yearNet">116,02 млн ₽/);
+assert.match(html,/data-econ-value="payback">Индивидуальная оценка/);
+assert.match(html,/data-econ-price="base" data-price-rub="90000" aria-pressed="true"/);
+assert.doesNotMatch(html,/<button[^>]*data-econ-mode|data-econ-range|data-econ-number|data-market-source="spimex"/);
 for(const source of ['ppi','plasticker','myceppi'])assert.ok(html.includes('data-market-source="'+source+'"'),'Published source '+source);
-for(const asset of ['economics-page-controller.js','economics-page-state.js','economics-model.js','economics-payback.js','economics-page.css','assets/project-home/hero/feedstock_hero-880.webp','assets/presentation/granules.webp']){
+for(const asset of ['economics-page-controller.js','economics-page-state.js','economics-model.js','economics-payback.js','economics-page.css','assets/project-home/hero/feedstock_hero-880.webp','assets/lines/moyka-plenki/product-granule.webp','assets/economics/hero.webp','assets/economics/factory.webp']){
  const resource=await fetch(base+'/'+asset,{cache:'no-store'});
  assert.equal(resource.status,200,'Published resource '+asset);
  assert.ok(!resource.headers.get('content-type')?.includes('text/html'),'Asset MIME '+asset);
@@ -58,50 +58,56 @@ try{
  };
  const wait=async expression=>{for(let i=0;i<300;i++){if(await evaluate(expression))return;await delay(100);}throw new Error('Public economics condition failed: '+expression);};
  const click=selector=>evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
- const snapshot=()=>evaluate(`(()=>{const r=document.querySelector('[data-economics-page]');return {mode:r.dataset.econMode,lockedMode:r.dataset.econLockedMode,month:r.dataset.econState,year:r.dataset.econYearState,values:Object.fromEntries([...r.querySelectorAll('[data-value]')].map(e=>[e.dataset.value,e.textContent])),range:{min:Number(r.querySelector('[data-econ-range]').min),value:Number(r.querySelector('[data-econ-range]').value)},overflow:document.documentElement.scrollWidth>innerWidth,tableOverflow:r.querySelector('.ec-financial-table').scrollWidth>r.querySelector('.ec-financial-table').clientWidth+1,sections:r.querySelectorAll('.ec-section').length,modes:r.querySelectorAll('button[data-econ-mode]').length,presets:[...r.querySelectorAll('[data-econ-preset]')].map(e=>Number(e.dataset.econPreset)),hook:[...r.querySelectorAll('.ec-value-flow figcaption strong')].map(e=>e.textContent),basis:r.querySelector('[data-hero-basis]').textContent,request:r.querySelector('[data-economics-request]').href}})()`);
- const amount=text=>Number(text.replace(/\s/g,'').replace(',','.'));
- const verifyBoundary=async()=>{
-  await evaluate(`(()=>{const e=document.querySelector('[data-econ-range]');e.value=e.min;e.dispatchEvent(new Event('input',{bubbles:true}));})()`);
-  await wait(`document.querySelector('[data-value="yearNetMillions"]').textContent==='0,00'`);
-  const s=await snapshot();assert.equal(s.month,'profit');assert.equal(s.year,'profit');assert.ok(s.range.min>0);assert.ok(amount(s.values.profitMillions)>=0);assert.equal(s.values.yearNetMillions,'0,00');assert.ok(!s.overflow&&!s.tableOverflow);
- };
+ const snapshot=()=>evaluate("(()=>{const r=document.querySelector('[data-economics-page]');return {mode:r.dataset.econMode,scenario:r.dataset.econScenario,values:Object.fromEntries([...r.querySelectorAll('[data-econ-value]')].map(e=>[e.dataset.econValue,e.textContent])),overflow:document.documentElement.scrollWidth>innerWidth,sections:r.querySelectorAll(':scope>section').length,presets:[...r.querySelectorAll('[data-price-rub]')].map(e=>Number(e.dataset.priceRub)),setSizes:[...r.querySelectorAll('[data-econ-network]')].map(e=>Number(e.dataset.econNetwork)),hook:[...r.querySelectorAll('.ec-value-flow figcaption strong')].map(e=>e.textContent),chart:r.querySelectorAll('.ec-bar-column').length,parts:[...r.querySelectorAll('.ec-allocation-track span')].map(el=>parseFloat(el.style.flexBasis)),networkTopic:r.querySelector('[data-economics-request=network]').href}})()");
+ const ready="document.readyState==='complete'&&document.querySelector('[data-economics-page][data-economics-ready=true]')";
+ const setWidth=width=>command('Emulation.setDeviceMetricsOverride',{width,height:900,deviceScaleFactor:1,mobile:width<768});
  await command('Page.enable');await command('Runtime.enable');
- await command('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
+ await setWidth(1440);
  await command('Page.navigate',{url});
- await wait(`document.readyState==='complete'&&document.querySelector('[data-economics-page][data-economics-ready="true"]')`);
+ await wait(ready);
  let s=await snapshot();
- assert.equal(s.mode,'full');assert.equal(s.lockedMode,'full');
- assert.equal(s.values.profitMillions,'10,70');assert.equal(s.values.yearNetMillions,'123,73');
- assert.equal(s.values.yearOutput,'6 570 т');assert.equal(s.values.output,'558 т');assert.equal(s.values.yield,'57,50%');
- assert.equal(s.sections,11);assert.equal(s.modes,0);assert.deepEqual(s.presets,[80000,90000,100000,110000]);
- assert.match(s.basis,/Базовый сценарий: 1 комплект · 100% загрузка .* 90 ₽\/кг с НДС\. Выпуск до 558 т\/мес\./);
- const controls=[[80000,'7,27','83,34','9,0–11,2 мес.'],[90000,'10,70','123,73','6,5–8,2 мес.'],[100000,'14,13','164,12','5,1–6,4 мес.'],[110000,'17,57','204,51','4,2–5,3 мес.']];
- for(const [price,month,year,payback] of controls){
-  await click('[data-econ-preset="'+price+'"]');
-  await evaluate(`(()=>{const e=document.querySelector('[data-econ-range]');e.value=100;e.dispatchEvent(new Event('input',{bubbles:true}));})()`);
-  await wait(`document.querySelector('[data-value="profitMillions"]').textContent===${JSON.stringify(month)}&&document.querySelector('[data-value="yearNetMillions"]').textContent===${JSON.stringify(year)}`);
-  s=await snapshot();assert.equal(s.mode,'full');assert.equal(s.values.paybackLabel,payback);
-  assert.deepEqual(s.hook,['6 ₽/кг','90 ₽/кг']);assert.ok(!s.overflow&&!s.tableOverflow);
-  await verifyBoundary();
+ assert.equal(s.mode,'full');assert.equal(s.scenario,'base');assert.equal(s.sections,11);
+ assert.deepEqual(s.presets,[80000,90000,100000,110000]);assert.deepEqual(s.setSizes,[1,2,3,5]);
+ assert.equal(s.values.balanceInput,'1\u00a0500 кг/ч');assert.equal(s.values.balanceOutput,'750 кг/ч');assert.equal(s.values.balanceOther,'750 кг/ч');
+ const controls=[['conservative','6,62','75,63','33,10','378,16'],['base','10,05','116,02','50,25','580,11'],
+  ['development','13,48','156,41','67,40','782,05'],['premium','16,91','196,80','84,55','984,00']];
+ for(const [price,month,year,networkMonth,networkYear] of controls){
+  await click('[data-econ-price="'+price+'"]');
+  await click('[data-econ-network="1"]');
+  s=await snapshot();
+  assert.equal(s.scenario,price);assert.equal(s.values.monthNet,month+' млн ₽');assert.equal(s.values.yearNet,year+' млн ₽');
+  assert.equal(s.values.payback,'Индивидуальная оценка');assert.equal(s.values.output,'558 т');assert.equal(s.values.yearOutput,'6\u00a0570 т');
+  assert.deepEqual(s.hook,['6 ₽/кг','90 ₽/кг']);assert.equal(s.chart,4);assert.equal(s.parts.length,3);
+  assert.ok(Math.abs(s.parts.reduce((a,b)=>a+b,0)-100)<.001);
+  await click('[data-econ-network="5"]');
+  s=await snapshot();
+  assert.equal(s.values.monthNet,month+' млн ₽');assert.equal(s.values.yearNet,year+' млн ₽');
+  assert.equal(s.values.networkMonth,networkMonth+' млн ₽');assert.equal(s.values.networkYear,networkYear+' млн ₽');
+  assert.equal(s.values.networkOutput,'2\u00a0790 т');assert.equal(s.values.networkYearOutput,'32\u00a0850 т');
+  assert.equal(s.values.networkMargin,s.values.margin);
  }
- await click('[data-econ-reset]');await wait(`document.querySelector('[data-value="profitMillions"]').textContent==='10,70'`);
- s=await snapshot();assert.equal(s.mode,'full');assert.equal(s.values.grossPrice,'90 ₽/кг');assert.equal(s.range.value,100);
- await click('[data-econ-lines="3"]');await wait(`document.querySelector('[data-value="yearNetMillions"]').textContent==='371,20'`);
- await evaluate(`(()=>{const e=document.querySelector('[data-econ-price]');e.value='99,5';e.dispatchEvent(new Event('input',{bubbles:true}));})()`);
- await wait(`document.querySelector('[data-value="grossPrice"]').textContent==='99,50 ₽/кг'`);
- s=await snapshot();assert.equal(s.values.paybackLabel,'Индивидуальная оценка');
- const topic=new URL(s.request).searchParams.get('topic');assert.ok(topic.includes('Полный цикл')&&topic.includes('/год')&&topic.includes('99,50')&&topic.includes('3 компл.'));assert.ok(topic.length<=200);
- await evaluate(`(()=>{const e=document.querySelector('[data-econ-number]');e.value='0';e.dispatchEvent(new Event('input',{bubbles:true}));})()`);
- await wait(`document.querySelector('[data-value="yearNetMillions"]').textContent==='0,00'`);
- s=await snapshot();assert.equal(s.month,'profit');assert.equal(s.year,'profit');
+ await evaluate("(()=>{const e=document.querySelector('[data-econ-network-price]');e.value='base';e.dispatchEvent(new Event('change',{bubbles:true}));})()");
+ await wait("document.querySelector('[data-econ-price=base]').getAttribute('aria-pressed')==='true'");
+ for(const [period,input,output] of [['month','1\u00a0116 т','558 т'],['year','13\u00a0140 т','6\u00a0570 т'],['hour','1\u00a0500 кг/ч','750 кг/ч']]){
+  await click('[data-econ-period="'+period+'"]');s=await snapshot();
+  assert.equal(s.values.balanceInput,input);assert.equal(s.values.balanceOutput,output);assert.equal(s.values.balanceOther,output);
+ }
+ const topic=new URL(s.networkTopic).searchParams.get('topic');
+ assert.ok(topic.includes('Полный цикл · 5 комплексов · 90 ₽/кг с НДС · загрузка 100% · выход 50%'));
+ assert.ok(topic.includes('580,11 млн ₽/год')&&topic.length<=200);
+ await click('[data-economics-request=network]');
+ await wait("document.querySelector('#project-request').open");
+ assert.equal(await evaluate("document.querySelector('#project-request [data-request-topic]').value"),topic);
+ await click('[data-request-close]');
  for(const width of [360,390,768,1280,1440,1920]){
-  await command('Emulation.setDeviceMetricsOverride',{width,height:900,deviceScaleFactor:1,mobile:width<768});
+  await setWidth(width);
   await command('Page.navigate',{url:url+'#production-constructor'});
-  await wait(`document.readyState==='complete'&&document.querySelector('[data-economics-page][data-economics-ready="true"]')`);
-  await verifyBoundary();s=await snapshot();assert.ok(!s.overflow&&!s.tableOverflow,'Published responsive layout '+width);
+  await wait(ready);
+  s=await snapshot();assert.ok(!s.overflow,'Published responsive layout '+width);
+  assert.equal(s.sections,11);
  }
- assert.deepEqual(errors,[],'Published browser console errors');
- console.log('::notice title=Published economics verified::Actual public HTML and assets, Full-cycle SSR, 4 granule prices, monthly and annual profits, payback, static 6/90 hook, break-even floor, 3 sets, custom price, request context, reset and six responsive widths passed in Chrome. '+url);
+ assert.deepEqual(errors,[],'Published browser exceptions');
+ console.log('::notice title=Published economics verified::Live full-cycle SSR, all prices, scenario figures, five-complex network, three balance periods, proportional allocation, request context and six viewport widths passed in Chrome. '+url);
 }finally{
  socket?.close();chrome.kill('SIGTERM');await delay(250);await rm(profile,{recursive:true,force:true});
 }

@@ -5,8 +5,14 @@ if(bar){
  const local=feed.origin===location.origin;
  const key='era-cbr-rates-v1',date=bar.querySelector('[data-fx-date]'),status=bar.querySelector('[data-fx-status]');
  const formatter=new Intl.NumberFormat('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2});
+ const economics=document.querySelector('[data-economics-page]');
  let current=null,inFlight=false,offline=false,lastDay=moscowDay();
  const setStatus=text=>{if(status.textContent!==text)status.textContent=text;};
+ function publish(){
+  if(!economics)return;
+  bar.eraFxSnapshot={data:current,status:bar.dataset.state};
+  bar.dispatchEvent(new CustomEvent('era:fx-snapshot',{detail:bar.eraFxSnapshot}));
+ }
  function render(){
   if(!current)return;
   const today=moscowDay(),isToday=current.requestedDate===today;
@@ -19,6 +25,7 @@ if(bar){
   const since='Действуют с '+shortDay(current.effectiveDate);
   status.title=`${since}. Проверены ${shortDay(moscowDay(new Date(current.fetchedAt)))} в ${checked} МСК. Рубли за одну единицу валюты.`;
   setStatus(!isToday?'Ожидаем обновление · ₽ за 1':cached?'Сохранённые курсы · ₽ за 1':current.effectiveDate!==current.requestedDate?since+' · ₽ за 1':`Проверено ${checked} МСК · ₽ за 1`);
+  publish();
  }
  try{const saved=localStorage.getItem(key);if(saved){current=validateRates(JSON.parse(saved));offline=true;render();}}catch{}
  async function refresh(){
@@ -34,7 +41,7 @@ if(bar){
   }catch{
    offline=true;
    if(current)render();
-   else{bar.dataset.state='unavailable';date.textContent='Курсы недоступны';date.removeAttribute('datetime');setStatus('Повторим автоматически');}
+   else{bar.dataset.state='unavailable';date.textContent='Курсы недоступны';date.removeAttribute('datetime');setStatus('Повторим автоматически');publish();}
   }finally{clearTimeout(timeout);inFlight=false;}
  }
  document.addEventListener('click',event=>{if(!bar.contains(event.target))bar.querySelector('.fx-details').open=false;});

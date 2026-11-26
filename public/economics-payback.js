@@ -279,6 +279,12 @@ export const paybackIntervals = {
 
 export function equipmentPayback(result){
  if(result.annualOperatingCash<=0)return {status:'unreachable'};
+ if(result.equipmentInvestment!=null){
+  const months=result.equipmentInvestment/result.averageMonthlyOperatingCash;
+  return Number.isFinite(months)?{status:'estimate',months:[months],basis:'operating-cash'}:{status:'individual'};
+ }
+ // The full-cycle historical outcomes predate the revised feedstock balance.
+ if(result.state.mode==='full')return {status:'individual'};
  if(result.yearNet<0)return {status:'review'};
  const percentage=result.load*100,node=Math.round(percentage/5)*5;
  const interval=Math.abs(percentage-node)<1e-7?paybackIntervals[result.state.mode]?.[result.grossPrice]?.[node]:null;

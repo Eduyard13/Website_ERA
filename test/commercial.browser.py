@@ -1,175 +1,272 @@
-"""One production scenario: monthly/yearly finance, transparent payback and responsive UX."""
+"""Browser acceptance of the Economics page at its normal static entry point."""
+from datetime import datetime, timedelta, timezone
+from decimal import Decimal
 from pathlib import Path
-from functools import lru_cache
-from urllib.parse import urlparse, parse_qs
-import json, os, subprocess
+from urllib.parse import parse_qs, urlsplit
+from zoneinfo import ZoneInfo
+import json
+import os
+import re
+import subprocess
+
 from playwright.sync_api import sync_playwright
 
 repo = Path(__file__).resolve().parents[1]
-if not (repo / 'package.json').exists():
-    repo = Path('/workspace/Website_ERA')
 base = os.environ.get('ERA_PREVIEW_URL', 'http://127.0.0.1:3000/Website_ERA').rstrip('/')
-out = Path(os.environ.get('ERA_CHECK_DIR', '/workspace/work/era-brand/economics-037'))
-out.mkdir(parents=True, exist_ok=True)
-widths = [int(w) for w in os.environ.get('ERA_TEST_WIDTHS', '320,360,390,768,1024,1280,1440,1920').split(',')]
-node = """import {calculateEconomics} from './public/economics-model.js';import {normalizeProductionScenario} from './public/economics-page-state.js';import {financialValues,scenarioTopic} from './public/economics-page-view.js';const r=calculateEconomics(normalizeProductionScenario({mode:"full",...JSON.parse(process.argv[1])}));console.log(JSON.stringify({values:financialValues(r),mode:r.state.mode,capacity:r.capacity,net:r.net,yearNet:r.yearNet,pie:r.donutAvailable,payback:r.payback,topic:scenarioTopic(r)}))"""
-@lru_cache(None)
-def expected(state):
-    return json.loads(subprocess.check_output(['node', '--input-type=module', '-e', node, state], cwd=repo, text=True))
-def compact(s):
-    return ''.join(s.split())
+url = base + '/economics/'
+widths = [(1920, 1080), (1440, 900), (1280, 800), (768, 1024), (390, 844), (360, 800)]
+prices = {'conservative': 80000, 'base': 90000, 'development': 100000, 'premium': 110000}
+sections = ['economic-case', 'raw-material', 'material-balance', 'product-quality', 'market', 'economics',
+            'production-constructor', 'project-resilience', 'production-growth', 'economic-conditions', 'economics-project']
+anchors = ['monthly-result', 'market-offers', 'calculation-conditions', 'econ-per-tonne-price',
+           'econ-monthly-price', 'business-quality-title', 'econ-tonne-title', 'econ-curve-title', 'econ-volume']
+today = datetime.now(ZoneInfo('Europe/Moscow')).date()
+nb = '\u00a0'
 
-errors, failures, results = [], [], []
-with sync_playwright() as p:
-    browser = p.chromium.launch(executable_path='/usr/bin/chromium', args=['--no-sandbox'])
-    page = browser.new_page(reduced_motion='reduce')
-    page.on('pageerror', lambda error: errors.append(str(error)))
-    page.on('response', lambda response: failures.append([response.status, response.url]) if response.status >= 400 and response.url.startswith(base) else None)
-    page.route('**/api/request.php', lambda route: route.abort())
-    def load():
-        assert page.goto(base + '/economics/').status == 200
-        page.wait_for_function('document.querySelector("[data-economics-page]").dataset.economicsReady === "true"')
-    def verify(state):
-        r = expected(json.dumps(state, sort_keys=True))
-        page.wait_for_function("""(values) => ['profit','yearNet','grossPrice','input'].every(key => [...document.querySelectorAll('[data-value="'+key+'"]')].every(e => e.textContent.replace(/\\s/g,'') === values[key].replace(/\\s/g,'')))""", arg=r['values'])
-        actual = page.locator('[data-economics-page]').evaluate("""root => ({mode:root.dataset.econMode,month:root.dataset.econState,year:root.dataset.econYearState,values:[...root.querySelectorAll('[data-value]')].map(e=>[e.dataset.value,e.textContent]),text:root.innerText})""")
-        assert actual['mode'] == r['mode']
-        for key, text in actual['values']:
-            if key in r['values']:
-                assert compact(text) == compact(r['values'][key]), (key, state, text, r['values'][key])
-        assert (actual['month'] == 'loss') == (r['net'] < 0)
-        assert (actual['year'] == 'loss') == (r['yearNet'] < 0)
-        assert r['net'] >= 0 and r['yearNet'] >= 0, ('Public scenario must cover both periods',state)
-        assert bool(page.locator('.econ-ring').count()) == r['pie']
-        assert not any(word in actual['text'] for word in ['NaN', 'Infinity', 'undefined'])
-        assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), (page.viewport_size, state)
-        assert page.locator('.ec-financial-table').evaluate('e => e.scrollWidth <= e.clientWidth + 1'), (page.viewport_size, state)
-        assert bool(page.locator('[data-product-passport]').get_by_text('30–70 ppm', exact=True).count()) == (r['mode'] == 'full')
-        label = page.locator('[data-point-label]:visible')
-        assert r['values']['profit'] in label.inner_text()
-        plot, tip = page.locator('.econ-curve-plot:visible').bounding_box(), label.bounding_box()
-        assert tip['x'] >= plot['x'] - 1 and tip['x'] + tip['width'] <= plot['x'] + plot['width'] + 1, (plot, tip)
-        return r
-    def preset(value):
-        page.locator(f'[data-econ-preset="{value}"]').click()
-    def slider(fraction):
-        page.locator('[data-econ-range]').evaluate('(e,v)=>{e.value=100*v;e.dispatchEvent(new Event("input",{bubbles:true}))}', fraction)
-    def reveal(field):
-        field.evaluate("e => {for(let p=e.parentElement;p;p=p.parentElement)if(p.tagName==='DETAILS')p.open=true}")
 
-    for width in widths:
-        page.set_viewport_size({'width': width, 'height': 950 if width >= 768 else 844})
-        load(); verify({})
-        assert page.locator('.ec-section').count() == 11
-        assert page.locator('.page-progress-rail a').count() == 11
-        assert page.locator('button[data-econ-mode]').count() == 0
-        assert page.locator('[data-price-presets]').count() == 1
-        assert page.locator('[data-econ-range]').count() == 1
-        assert page.locator('.ec-details[open]').count() == 0
-        for fraction in [0, .5, .8, 1]:
-            slider(fraction)
-            verify({'input': expected('{}')['capacity'] * fraction})
-        assert page.locator('[data-product-image]').get_attribute('src').startswith(urlparse(base).path + '/assets/')
-        assert page.locator('[data-econ-preset]').evaluate_all('es=>es.every(e=>e.getBoundingClientRect().height>=44)')
-        results.append({'width': width, 'monthlyAndAnnual': True, 'minimumHalf80Full': True, 'overflow': False})
-        print('Responsive finance, diagrams, break-even boundary and granule quality:', width, 'OK', flush=True)
+def finance(price, annual=False):
+    """Independent working-book control with the revised input mass and its purchase price."""
+    hours = 8760 if annual else 744
+    months = 12 if annual else 1
+    cost = (Decimal('11648915.449213509') + Decimal('1961047.8954266747')) * months
+    running_before_feed = Decimal('13281090.775100213') - Decimal('970.4347826086957') * 6000
+    cost += hours * (running_before_feed / 744 + 9000)
+    revenue = Decimal('0.75') * hours * price / Decimal('1.22')
+    tax = max(revenue - cost, 0) * Decimal('0.25')
+    return revenue - cost - tax, [part / revenue * 100 for part in (cost, tax, revenue - cost - tax)]
 
-    page.set_viewport_size({'width': 1440, 'height': 1000})
-    load()
-    hook = page.locator('.ec-value-flow figcaption strong')
-    assert hook.all_text_contents() == ['6 ₽/кг', '90 ₽/кг']
-    for price in [80000, 90000, 100000, 110000]:
-        preset(price); verify({'salePrices': {'full': price}})
-        assert hook.all_text_contents() == ['6 ₽/кг', '90 ₽/кг']
-    assert 'Текущий сценарий' in page.locator('[data-hero-basis]').inner_text()
-    assert '110 ₽/кг' in page.locator('[data-hero-basis]').inner_text()
-    price = page.locator('[data-econ-price]'); reveal(price)
-    price.fill('99,5'); assert price.evaluate('e=>document.activeElement===e')
-    verify({'mode': 'full', 'salePrices': {'full': 99500}})
-    price.fill(''); verify({'mode': 'full', 'salePrices': {'full': 99500}})
-    price.press('Tab'); assert price.input_value() == '99.5'
-    exact = page.locator('[data-econ-number]'); reveal(exact)
-    exact.fill('777,123456'); verify({'mode': 'full', 'input': 777.123456, 'salePrices': {'full': 99500}})
-    assert page.locator('.ec-investment-payback').get_attribute('data-payback-status') == 'individual'
-    assert '777,123456' in page.locator('[data-econ-range]').get_attribute('aria-valuetext')
-    for lines in [2, 3, 1]:
-        page.locator(f'[data-econ-lines="{lines}"]').click()
-        verify({'mode': 'full', 'lines': lines, 'input': 777.123456 * lines, 'salePrices': {'full': 99500}})
-    page.locator('[data-econ-reset]').click(); verify({})
-    assert page.locator('[data-econ-price]').input_value() == '90'
-    assert 'Базовый сценарий' in page.locator('[data-hero-basis]').inner_text()
-    assert page.locator('[data-econ-lines="1"]').get_attribute('aria-pressed') == 'true'
-    page.evaluate("""() => {
-        const button = document.createElement('button');
-        button.dataset.econMode = 'separation';
-        document.querySelector('[data-economics-page]').append(button);
-        button.click();
-        button.remove();
+
+def money(amount, unit='млн ₽', divisor=1000000):
+    return f'{amount/divisor:.2f}'.replace('.', ',') + ' ' + unit
+
+
+def cbr(day):
+    iso = day.isoformat()
+    return {
+        'schemaVersion': 1, 'source': 'CBR', 'requestedDate': iso, 'effectiveDate': iso,
+        'fetchedAt': datetime.now(timezone.utc).isoformat(),
+        'sourceUrl': 'https://www.cbr.ru/scripts/XML_daily.asp?date_req=' + day.strftime('%d/%m/%Y'),
+        'rates': {'USD': {'nominal': 2, 'value': 160, 'rate': 80}, 'EUR': {'nominal': 1, 'value': 95, 'rate': 95},
+                  'CNY': {'nominal': 10, 'value': 115, 'rate': 11.5}}
+    }
+
+
+def setup(context, snapshot=None):
+    values = ['localStorage.setItem("era-map-consent-v1", "deny")']
+    if snapshot is not None:
+        values.append('localStorage.setItem("era-cbr-rates-v1", ' + json.dumps(json.dumps(snapshot)) + ')')
+    context.add_init_script('\n'.join(values))
+
+
+def await_model(page):
+    page.wait_for_selector('[data-economics-ready=true]', state='attached')
+
+
+def value(page, name, scope=''):
+    return page.locator(f'{scope} [data-econ-value="{name}"]').first.text_content()
+
+
+def check_fit(page, width):
+    result = page.evaluate("""() => {
+        const clipped = [...document.querySelectorAll('.economics-page [data-econ-value]')].filter(el => {
+          if (!el.getClientRects().length || el.closest('details:not([open]),[hidden]')) return false;
+          const range = document.createRange();
+          range.selectNodeContents(el);
+          return [...range.getClientRects()].some(rect => rect.left < -0.5 || rect.right > innerWidth+0.5);
+        });
+        return {width: document.documentElement.scrollWidth, clipped: clipped.map(el=>el.dataset.econValue)};
     }""")
-    verify({})
-    assert page.goto(base + '/economics/?mode=separation').status == 200
-    page.wait_for_selector('[data-economics-ready="true"]', state='attached')
-    verify({})
+    assert result == {'width': width, 'clipped': []}, (width, result)
 
-    # Keyboard and touch-style selection of the native financial ring.
-    segment = page.locator('.econ-legend button').first
-    segment.focus(); segment.press('Enter')
-    assert segment.get_attribute('aria-pressed') == 'true'
-    segment.press('Enter'); assert segment.get_attribute('aria-pressed') == 'false'
-    segment.click(); preset(100000); verify({'mode': 'full', 'salePrices': {'full': 100000}})
-    assert page.locator('.econ-legend button[aria-pressed="true"]').count() == 1
-    page.locator('[data-open-conditions]').first.click()
-    assert page.locator('#calculation-conditions').get_attribute('open') is not None
-    page.locator('[data-open-offers]').first.click()
-    before = page.locator('#market-offers').inner_html()
-    price = page.locator('[data-econ-price]'); reveal(price); price.fill('90')
-    r = verify({'mode': 'full'})
-    assert page.locator('#market-offers').inner_html() == before
-    assert page.locator('#market-offers').get_attribute('open') is not None
-    assert page.locator('#calculation-conditions').get_attribute('open') is not None
-    link = page.locator('[data-economics-request]').last
-    href = link.get_attribute('href')
-    assert urlparse(href).path == urlparse(base).path + '/contacts'
-    assert parse_qs(urlparse(href).query)['topic'][0] == r['topic']
-    assert len(r['topic']) <= 200
-    link.click(); assert page.locator('#project-request').is_visible()
-    assert page.locator('#project-request [data-request-topic]').input_value() == r['topic']
+
+def request_context(page, scope, price, count):
+    cta = page.locator(f'[data-economics-request={scope}]')
+    topic = parse_qs(urlsplit(cta.get_attribute('href')).query)['topic'][0]
+    assert f'{price} ₽/кг с НДС · загрузка 100% · выход 50%' in topic
+    assert f'· {count} комплекс' in topic
+    assert len(topic) <= 200
+    cta.click()
+    dialog = page.locator('#project-request')
+    dialog.wait_for()
+    assert dialog.locator('[data-request-topic]').input_value() == topic
+    assert dialog.locator('[name="Имя"]').evaluate('(el) => document.activeElement === el')
+    assert not dialog.locator('input[type=checkbox]').first.is_checked()
     page.keyboard.press('Escape')
-    page.goto(base + '/contacts?topic=' + href.split('topic=')[1])
-    assert page.locator('#project-form [data-request-topic]').input_value() == r['topic']
+    assert not dialog.is_visible()
+    assert cta.evaluate('(el) => document.activeElement === el')
 
-    # Original deep links, one semantic H1, and the server-rendered fallback.
-    load()
-    anchors = ['economic-case','raw-material','material-balance','product-quality','market','market-offers','economics','monthly-result','production-constructor','calculation-conditions','project-resilience','production-growth','business-quality-title','econ-month-title','econ-tonne-title','econ-curve-title','econ-monthly-price','econ-per-tonne-price','econ-volume']
+
+with sync_playwright() as p:
+    chromium = p.chromium.launch(executable_path=os.getenv('ERA_CHROME_PATH', '/usr/bin/chromium'),
+                                  args=['--no-sandbox', '--disable-dev-shm-usage'])
+    context = chromium.new_context(viewport={'width': 1440, 'height': 900}, reduced_motion='reduce')
+    setup(context)
+    requests = []
+    errors = []
+    console_errors = []
+    broken = []
+
+    def serve_rates(route):
+        requests.append(route.request.url)
+        route.fulfill(status=200, json=cbr(today), headers={'Access-Control-Allow-Origin': '*'})
+
+    context.route('**/cbr.json*', serve_rates)
+    page = context.new_page()
+    page.on('pageerror', lambda e: errors.append(str(e)))
+    page.on('console', lambda message: console_errors.append(message.text) if message.type == 'error' else None)
+    page.on('response', lambda r: broken.append((r.status, r.url)) if r.url.startswith(base) and r.status >= 400 else None)
+    assert page.goto(url).status == 200
+    await_model(page)
+    page.wait_for_function("document.querySelector('[data-econ-value=rate]').textContent.includes('1 USD')")
+    assert today.strftime('%d.%m.%Y') in value(page, 'rate')
+    assert value(page, 'monthUsd') == '≈ 125,62 тыс. $'
+    assert page.locator('[data-econ-chart] .ec-bar-column').count() == 4
+    assert page.locator('[data-economics-page] > section').evaluate_all('items => items.map(e=>e.id)') == sections
+    assert page.locator('[data-growth-mode=separation]').count() == 1
+    assert page.locator('[data-econ-range],.econ-ring,button[data-econ-mode]').count() == 0
+
+    for scenario, price in prices.items():
+        net, shares = finance(price)
+        year, _ = finance(price, annual=True)
+        page.locator(f'[data-econ-price={scenario}]').click()
+        assert page.locator('[data-econ-network-price]').input_value() == scenario
+        assert value(page, 'monthNet', '.ec-hero') == money(net)
+        assert value(page, 'monthNet', '.ec-unit-result') == money(net)
+        assert value(page, 'yearNet') == money(year)
+        assert page.locator('[data-econ-chart] .ec-bar-column[data-active=true]').count() == 1
+        parts = page.locator('.ec-allocation-track >span').evaluate_all('items => items.map(e=>parseFloat(e.style.flexBasis))')
+        assert len(parts) == 3 and all(abs(a - float(b)) < 0.0001 for a, b in zip(parts, shares))
+        for count in (1, 2, 3, 5):
+            page.locator(f'[data-econ-network="{count}"]').click()
+            assert value(page, 'networkMonth') == money(net * count)
+            assert value(page, 'networkYear') == money(year * count)
+            assert value(page, 'monthNet') == money(net)
+            assert value(page, 'networkMargin') == value(page, 'margin')
+
+    network = page.locator('[data-econ-network-price]')
+    network.select_option('base')
+    assert page.locator('[data-econ-price=base]').get_attribute('aria-pressed') == 'true'
+    assert value(page, 'networkMonthUsd') == '≈ 628,10 тыс. $'
+    assert value(page, 'networkOutput') == f'2{nb}790 т'
+    assert value(page, 'networkYearOutput') == f'32{nb}850 т'
+    assert len(requests) == 1, requests
+    request_context(page, 'complex', 90, 1)
+    request_context(page, 'network', 90, 5)
+
+    for period, feed, output in [('hour', f'1{nb}500 кг/ч', '750 кг/ч'),
+                                 ('month', f'1{nb}116 т', '558 т'), ('year', f'13{nb}140 т', f'6{nb}570 т')]:
+        control = page.locator(f'[data-econ-period={period}]')
+        control.focus()
+        page.keyboard.press('Enter')
+        assert control.get_attribute('aria-pressed') == 'true'
+        assert value(page, 'balanceInput') == feed
+        assert value(page, 'balanceOutput') == output == value(page, 'balanceOther')
     for anchor in anchors:
-        assert page.locator('[id="'+anchor+'"]').count() == 1, anchor
-    assert page.locator('h1').count() == 1
-    for anchor in ['market-offers','calculation-conditions','econ-volume']:
-        page.goto(base+'/economics/#'+anchor)
-        page.wait_for_function('document.querySelector("[data-economics-page]").dataset.economicsReady === "true"')
-        assert page.locator('[id="'+anchor+'"]').is_visible()
-    static = browser.new_context(java_script_enabled=False, viewport={'width':390,'height':844})
-    plain = static.new_page(); plain.goto(base + '/economics/')
-    assert plain.locator('.ec-hero [data-value="profitMillions"]').inner_text() == '10,70'
-    assert plain.locator('.ec-hero [data-value="yearNetMillions"]').inner_text() == '123,73'
-    assert plain.locator('.ec-section').count() == 11
-    assert plain.locator('[data-economics-page]').get_attribute('data-econ-mode') == 'full'
-    assert plain.locator('[data-econ-price]').input_value() == '90'
-    assert '558 т/мес.' in plain.locator('[data-hero-basis]').inner_text()
-    assert plain.locator('.ec-investment-payback [data-value]').inner_text() == '6,5–8,2'
-    assert plain.locator('[data-value="yield"]').inner_text() == '57,50%'
-    assert '57,5% входящей смеси' in plain.locator('#raw-material').inner_text()
-    assert plain.locator('button[data-econ-mode]').count() == 0
-    assert plain.locator('[data-product-quality-copy]').is_visible()
-    assert plain.locator('.econ-ring').count() == 1
-    assert plain.locator('[data-economics-page] noscript').count() == 1
-    static.close()
-    for route in ['/', '/documents/', '/catalog/', '/catalog/lines/separatsiya-02/', '/contacts/']:
-        assert page.goto(base+route).status == 200, route
-        assert page.locator('h1').count() == 1, route
-        assert page.locator('.site-header .brand img').evaluate('e=>e.complete&&e.naturalWidth>0'), route
-    assert not errors, errors
-    assert not failures, failures
-    (out/'results.json').write_text(json.dumps({'responsive':results,'presets':4,'fullCycleLock':'OK','basePriceHook':'OK','exactVolume':'OK','reset':'OK','ringKeyboard':'OK','requestContext':'OK','deepLinks':'OK','staticFallback':'OK','relatedRoutes':'OK','errors':errors,'httpFailures':failures},ensure_ascii=False,indent=2))
-    print('All presets, exact inputs, full-cycle lock, reset, keyboard ring, form, sources, deep links and no-JS: OK', flush=True)
-    browser.close()
+        assert page.locator('#' + anchor).count() == 1, anchor
+    for anchor in ('calculation-conditions', 'market-offers'):
+        page.evaluate('(id) => location.hash = id', anchor)
+        page.wait_for_function('(id) => document.getElementById(id).open', arg=anchor)
+    assert page.locator('.ec-international').get_by_text('950 €/т').is_visible()
+    assert page.locator('.ec-international').get_by_text(f'1{nb}368 €/т').is_visible()
+    assert not errors and not console_errors and not broken, (errors, console_errors, broken)
+    print('PASS: 4 prices × 4 network sizes, both price controls, all periods, allocation, live dated USD, 2 CTAs, deep links and browser console', flush=True)
+    context.close()
+
+    for width, height in widths:
+        ctx = chromium.new_context(viewport={'width': width, 'height': height}, is_mobile=width < 768,
+                                   has_touch=width < 768, reduced_motion='reduce')
+        setup(ctx)
+        ctx.route('**/cbr.json*', serve_rates)
+        responsive = ctx.new_page()
+        assert responsive.goto(url).status == 200
+        await_model(responsive)
+        assert responsive.locator('[data-section-navigation] a').count() == 7
+        check_fit(responsive, width)
+        assert responsive.locator('#market-offers').get_attribute('open') is None
+        responsive.locator('#market-offers summary').focus()
+        responsive.keyboard.press('Enter')
+        assert responsive.locator('#market-offers').get_attribute('open') is not None
+        check_fit(responsive, width)
+        responsive.locator('[data-econ-price=premium]').click()
+        responsive.locator('[data-econ-network="5"]').click()
+        check_fit(responsive, width)
+        assert value(responsive, 'networkYear') == '984,00 млн ₽'
+        assert responsive.locator('.ec-hero-art img').evaluate('(img) => img.complete && img.naturalWidth > 0')
+        print(f'PASS: responsive {width}×{height}, expanded market, primary and network figures', flush=True)
+        ctx.close()
+
+    plain = chromium.new_context(java_script_enabled=False, viewport={'width': 390, 'height': 844})
+    html_only = plain.new_page()
+    assert html_only.goto(url).status == 200
+    assert html_only.locator('[data-economics-page]').get_attribute('data-econ-mode') == 'full'
+    assert value(html_only, 'monthNet') == '10,05 млн ₽'
+    assert value(html_only, 'yearNet') == '116,02 млн ₽'
+    assert value(html_only, 'balanceInput') == f'1{nb}500 кг/ч'
+    assert html_only.locator('.ec-scenario-picker').is_hidden()
+    assert html_only.locator('#market-offers summary').is_visible()
+    assert html_only.locator('#economics-project [data-economics-request]').is_visible()
+    plain.close()
+
+    for cached in (None, cbr(today - timedelta(days=3))):
+        ctx = chromium.new_context()
+        setup(ctx, cached)
+        ctx.route('**/cbr.json*', lambda route: route.abort())
+        fallback = ctx.new_page()
+        assert fallback.goto(url).status == 200
+        await_model(fallback)
+        if cached:
+            assert 'последний доступный курс' in value(fallback, 'rate')
+            assert (today - timedelta(days=3)).strftime('%d.%m.%Y') in value(fallback, 'rate')
+            assert value(fallback, 'monthUsd') == '≈ 125,62 тыс. $'
+        else:
+            assert value(fallback, 'rate') == 'Курс ЦБ РФ недоступен'
+            assert value(fallback, 'monthUsd') == 'USD недоступен'
+        assert value(fallback, 'monthNet') == '10,05 млн ₽'
+        ctx.close()
+    print('PASS: no-JavaScript full-cycle HTML, missing and stale exchange rates', flush=True)
+
+    # Intercept a test copy of the compiled config and substitute matching SSR HTML.
+    # No production inputs or repository files are written.
+    alternate = """import {economicsPage} from './scripts/economics-page.mjs';
+import {economicsConfig} from './public/economics-config.js';
+const config = structuredClone(economicsConfig);
+config.feedstockPrice = 7000; config.modes.full.defaultGrossPrice = 50000;
+process.stdout.write(economicsPage({config}));"""
+    changed = subprocess.check_output(['node', '--input-type=module', '-e', alternate], cwd=repo, text=True)
+    prefix = urlsplit(base).path
+    changed = re.sub(r'(\b(?:href|src|srcset)="|,\s*)/(?=[a-z])', r'\1' + prefix + '/', changed)
+    ctx = chromium.new_context(viewport={'width': 390, 'height': 844})
+    setup(ctx)
+    ctx.route('**/cbr.json*', serve_rates)
+
+    def amend_config(route):
+        res = route.fetch()
+        copy = res.text().replace('feedstockPrice:6000', 'feedstockPrice:7000')
+        copy = copy.replace('defaultGrossPrice:90000', 'defaultGrossPrice:50000')
+        route.fulfill(response=res, body=copy)
+
+    def amend_html(route):
+        res = route.fetch()
+        html = re.sub(r'<div class="story commercial-page economics-page"[\s\S]*?</main>',
+                      lambda _: changed + '</main>', res.text(), count=1)
+        assert changed in html
+        route.fulfill(response=res, body=html)
+
+    ctx.route('**/economics-config.js*', amend_config)
+    ctx.route(url, amend_html)
+    loss = ctx.new_page()
+    assert loss.goto(url).status == 200
+    await_model(loss)
+    assert value(loss, 'price') == '50 ₽/кг'
+    assert value(loss, 'monthNet').startswith('−')
+    assert loss.locator('[data-econ-price=base]').get_attribute('aria-pressed') == 'true'
+    assert loss.locator('.ec-allocation-track').count() == 0
+    assert loss.locator('.ec-scale-reserve[data-negative=true]').is_visible()
+    assert loss.locator('.ec-bar-column[data-loss=true]').count() == 1
+    assert '×7,14' in loss.locator('.ec-value-band').inner_text()
+    loss.locator('[data-econ-price=premium]').click()
+    assert loss.locator('.ec-allocation-track >span').count() == 3
+    check_fit(loss, 390)
+    ctx.close()
+    chromium.close()
+    print('PASS: altered config, SSR/hydration, negative reserve, negative profit, switch to profit', flush=True)

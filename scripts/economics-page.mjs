@@ -1,113 +1,306 @@
-import {economicsConfig as config,marketOffers} from '../public/economics-config.js';
+import {economicsConfig,marketOffers} from '../public/economics-config.js';
 import {marketSources,additionalMarketSources} from '../public/economics-market.js';
-import {calculateEconomics} from '../public/economics-model.js';
-import {renderMonth,renderBridge,renderCurve,breakEvenText,escape} from '../public/economics-view.js';
-import {decimal,productCopy,renderScenarioPresets,groupedMonth,renderCostDetails,renderUnitDetail,renderSpecialist,basisText,financialValues,heroBasis,massBalanceLabel,requestHref} from '../public/economics-page-view.js';
+import {createInvestmentStore,getFxSnapshot} from '../public/economics-page-state.js';
+import {escape,tonnes} from '../public/economics-view.js';
+import {compact,complexes,day,decimal,financialValues,monthLabel,paybackLabel,percent,priceText,renderAllocation,renderProfitChart,renderResilienceScale,requestHref,valueMarkup} from '../public/economics-page-view.js';
+import {technologyContent} from '../content/technology-final.mjs';
+import {siteContacts} from '../content/contact.mjs';
+import {eraMedallion,factoryArt,icon,networkArt,ribbon} from './economics-art.mjs';
 
+const feed='/assets/project-home/hero/feedstock_hero';
+const granules='/assets/lines/moyka-plenki/product-granule.webp';
+const bales='/assets/lines/separatsiya-03/product-bales.webp';
 const arrow='<span aria-hidden="true">↗</span>';
-const heading=(label,id,title)=>`<header class="ec-heading"><p class="eyebrow">${label}</p><h2 id="${id}">${title}</h2></header>`;
-const detail=(label,content,attributes='')=>`<details class="ec-details" data-keep-open ${attributes}><summary>${label}</summary><div>${content}</div></details>`;
-const value=(r,key,tag='strong')=>`<${tag} data-value="${key}">${financialValues(r)[key]}</${tag}>`;
-const request=(r,label,secondary=false)=>`<a class="button${secondary?' secondary':''}" href="${requestHref(r)}" data-economics-request data-project-request>${label} ${arrow}</a>`;
-const date=iso=>iso?iso.split('-').reverse().join('.'):'Не указана';
-const paybackNote='<p class="ec-note">Расчётный срок возврата вложений в оборудование при стабильной работе. Полная инвестиционная окупаемость определяется отдельно с учётом комплектации, запуска и инфраструктуры.</p>';
+const granuleAlt='Образец гранулы из технического описания линии ЭРА';
+const photoGranules=(alt=granuleAlt)=>`<img src="${granules}" width="600" height="394" alt="${alt}" loading="lazy" decoding="async">`;
+const heading=(label,id,title,lead='',classes='')=>`<div class="ec-heading ${classes}">
+ <p class="eyebrow">${label}</p><h2 id="${id}">${title}</h2>${lead?`<p class="ec-lead">${lead}</p>`:''}
+</div>`;
+const band=(mark,text,{art=false}={})=>`<div class="ec-band ec-indigo${art?' ec-band-art':''}">
+ ${art?photoGranules(''):''}${icon(mark)}<div>${text}</div>${ribbon()}
+</div>`;
+const request=(r,scope,secondary=false)=>`<a href="${requestHref(r)}" class="button${secondary?' secondary':''}" data-project-request data-economics-request="${scope}">Оставить заявку ${arrow}</a>`;
+const details=(id,label,body)=>`<details id="${id}" class="ec-details" data-keep-open><summary>${label}</summary><div class="ec-detail-body">${body}</div></details>`;
+const hint=(id,text)=>`<a href="#${id}" class="ec-link" data-econ-disclose="${id}">${text} ${arrow}</a>`;
 
-function hero(r){
- return `<section class="ec-section ec-hero" id="economic-case" data-page-progress-label="Инвестиционный потенциал" aria-labelledby="economic-case-title">
-  <p class="eyebrow">ЭРА / ЭКОНОМИКА ПОЛНОГО ЦИКЛА</p>
-  <h1 id="economic-case-title">Переработка плёнки в гранулу. <span>Экономика вашего производства.</span></h1>
-  <p class="ec-lead">От невостребованного сырья до готового полимерного продукта. Оцените финансовый потенциал предприятия полного цикла переработки.</p>
-  <dl class="ec-investment-kpis">
-   <div data-profit-period="month">
-    <dt>Расчётная чистая прибыль / месяц</dt>
-    <dd>${value(r,'profitMillions')} <span>млн ₽</span></dd>
-   </div>
-   <div data-profit-period="year">
-    <dt>Расчётная чистая прибыль / стабильный год</dt>
-    <dd>${value(r,'yearNetMillions')} <span>млн ₽</span></dd>
-   </div>
-   <div class="ec-investment-payback" data-payback-status="${r.payback.status}">
-    <dt>Расчётный срок возврата вложений в оборудование</dt>
-    <dd>${value(r,'paybackFigure')} <span>мес.</span></dd>
-   </div>
-  </dl>
-  <p class="ec-hero-basis" data-hero-basis>${heroBasis(r)}</p>
-  <p class="ec-note">Расчёт после выхода на рабочий режим. Не является гарантией доходности. Возврат вложений рассчитан для оборудования, без дополнительных капитальных затрат, оборотного капитала и периода запуска. Месяц — ${config.monthDays} день, стабильный год — ${config.yearDays} дней. <a href="#calculation-conditions" data-open-conditions>Условия расчёта</a></p>
-  <div class="ec-hero-actions">
-   <a class="button" href="#production-constructor">Рассчитать своё производство ${arrow}</a>
-   ${request(r,'Оставить заявку',true)}
+function hero(snapshot,v){
+ return `<section class="ec-hero ec-edge" id="economic-case" data-page-progress-label="Инвестиционный потенциал" aria-labelledby="economic-case-title">
+ <div class="ec-hero-art"><img src="/assets/economics/hero.webp" srcset="/assets/economics/hero-720.webp 720w, /assets/economics/hero.webp 1448w" sizes="(max-width:767px) 100vw, 57vw" width="1448" height="1086" alt="Концептуальная композиция с гранулой, промышленной площадкой и золотой линией роста" fetchpriority="high" decoding="async"></div>
+ <div class="ec-shell ec-hero-inner">
+  <div class="ec-hero-copy">
+   <p class="eyebrow">ЭРА / ЭКОНОМИКА ПОЛНОГО ЦИКЛА</p>
+   <h1 id="economic-case-title">Переработка плёнки в гранулу. <span>Экономика вашего производства.</span></h1>
+   <p class="ec-hero-lead">От невостребованного сырья до готового полимерного продукта. Оцените финансовый потенциал предприятия полного цикла переработки.</p>
+   <dl class="ec-hero-numbers">
+    <div><dt>${v('monthLabel','span')}</dt><dd>${v('monthNet')}</dd></div>
+    <div><dt>${v('yearLabel','span')}</dt><dd>${v('yearNet')}</dd></div>
+    <div class="ec-hero-payback"><dt>Расчётный срок возврата вложений в оборудование</dt><dd>${v('payback')}</dd></div>
+   </dl>
+   <div class="ec-actions"><a class="button" href="#production-constructor">Рассчитать своё производство ${arrow}</a>${request(snapshot.result,'complex',true)}</div>
   </div>
-  <noscript><p class="ec-note">Показан базовый сценарий полного цикла. Изменение параметров расчёта требует JavaScript.</p></noscript>
+ </div>
  </section>`;
 }
 
-function summaryTable(r){
- const rows=[['Входящая смесь, т','input','yearInput'],['Выпуск готовой продукции, т','output','yearOutput'],['Выручка без НДС','revenue','yearRevenue'],['Полные расходы','costs','yearCosts'],['Налог на прибыль','tax','yearTax'],['Чистая прибыль','profit','yearNet'],['Рентабельность продаж','margin','yearMargin']];
- return `<table class="ec-financial-table"><caption>Финансовый результат</caption><thead><tr><th scope="col">Показатель</th><th scope="col">За месяц</th><th scope="col">За год</th></tr></thead><tbody>${rows.map(([label,month,year])=>`<tr${month==='profit'?' class="ec-financial-profit"':''}><th scope="row"${month==='profit'?' data-summary-profit-label':''}>${label}</th>${value(r,month,'td')}${value(r,year,'td')}</tr>`).join('')}</tbody></table>`;
-}
-function constructor(r){return `<section class="ec-section" id="production-constructor" data-page-progress-label="Рассчитайте производство" aria-labelledby="ec-constructor-title">${heading('ВАШ РАСЧЁТ','ec-constructor-title','Рассчитайте своё производство.')}<div class="ec-constructor"><div class="ec-controls"><fieldset><legend>Цена реализации с НДС</legend><span id="econ-monthly-price" class="ec-anchor"></span><div class="ec-presets" data-price-presets>${renderScenarioPresets(r)}</div><p class="ec-note"><span data-value="grossTonne">${financialValues(r).grossTonne}</span> с НДС · <span data-value="priceStage">Базовая цена</span></p>${detail('Своя цена',`<label class="ec-field" for="econ-curve-price">Цена реализации, ₽/кг с НДС<input type="text" role="spinbutton" id="econ-curve-price" inputmode="decimal" aria-valuemin="${r.minimumGrossPrice/1000}" aria-valuemax="1000" aria-valuenow="${r.grossPrice/1000}" value="${r.grossPrice/1000}" data-econ-price aria-describedby="econ-price-limits"></label><p class="ec-note" id="econ-price-limits">От ${financialValues(r).minimumPrice} до 1 000 ₽/кг. Минимум покрывает расходы при полной загрузке. Можно ввести дробную цену через запятую.</p>`)}</fieldset><fieldset><legend>Одинаковые комплекты оборудования</legend><div class="ec-line-count" role="group" aria-label="Количество комплектов оборудования">${[1,2,3].map(n=>`<button type="button" data-econ-lines="${n}" aria-pressed="${n===r.state.lines}">${n}<span>${n===1?'комплект':'комплекта'}</span></button>`).join('')}</div></fieldset><fieldset><legend>Загрузка производства</legend><label class="ec-slider-label" for="econ-volume">Доля загрузки ${value(r,'load')}</label><input type="range" id="econ-volume" min="${r.minimumInput/r.capacity*100}" max="100" step="any" value="${r.load*100}" data-econ-range aria-label="Загрузка производства, проценты" aria-valuetext="${financialValues(r).load} загрузки" aria-describedby="econ-capacity"><p class="ec-note" id="econ-capacity" data-capacity>Вход ${financialValues(r).input}/мес. · 744 ч на комплект. Рабочий диапазон: ${financialValues(r).minimumLoad}–100%.</p>${detail('Указать точный объём сырья',`<label class="ec-field" for="econ-volume-number">Входящая смесь, т/мес.<input type="text" role="spinbutton" inputmode="decimal" id="econ-volume-number" aria-valuemin="${r.minimumInput}" aria-valuemax="${r.capacity}" aria-valuenow="${r.state.input}" value="${Number(r.state.input.toFixed(6))}" data-econ-number aria-describedby="econ-capacity"></label><p class="ec-note">Доступный диапазон начинается от безубыточного объёма. Более низкий ввод поднимается до порога; точность допустимого объёма сохраняется.</p>`)}</fieldset><p class="ec-clamp" data-econ-clamp role="status" hidden></p><button class="ec-reset" type="button" data-econ-reset>Сбросить расчёт ↺</button></div><div class="ec-summary"><p class="eyebrow">ТЕКУЩИЙ СЦЕНАРИЙ</p><h3 data-value="mode">${financialValues(r).mode}</h3>${summaryTable(r)}<dl class="ec-summary-notes"><div><dt>Цена реализации без НДС</dt><dd data-value="netPrice">${financialValues(r).netPrice}</dd></div><div><dt>Себестоимость рабочего месяца</dt><dd data-value="cost">${financialValues(r).cost}</dd></div><div><dt>Возврат вложений в оборудование</dt><dd data-value="paybackLabel">${financialValues(r).paybackLabel}</dd></div></dl><p class="ec-note">Месяц — 31 день; год — 365 дней. Годовые суммы не равны двенадцати нормативным месяцам.</p>${request(r,'Получить расчёт под мой проект')}</div></div></section>`;}
-
-function raw(r){
- const p=productCopy(r.state.mode);
- const feedstock='/assets/project-home/hero/feedstock_hero';
- return `<section class="ec-section ec-value-section" id="raw-material" data-page-progress-label="Сырьё и материальный баланс" aria-labelledby="ec-raw-title">
-  ${heading('СОЗДАНИЕ ДОБАВЛЕННОЙ СТОИМОСТИ','ec-raw-title','Сырьё, которое недооценили. <span>Продукт, который востребован.</span>')}
+function raw({baseline,config}){
+ const purchase=config.feedstockPrice,ratio=purchase>0?baseline.grossPrice/purchase:null;
+ return `<section class="ec-section ec-value-section" id="raw-material" data-page-progress-label="Создание добавленной стоимости" aria-labelledby="ec-raw-title"><div class="ec-shell">
+  ${heading('ЭРА / СОЗДАНИЕ ДОБАВЛЕННОЙ СТОИМОСТИ','ec-raw-title','Сырьё, которое недооценили. <span>Продукт, который востребован.</span>','Технология, меняющая экономическую ценность материала.','ec-heading-center')}
   <div class="ec-value-flow">
-   <figure>
-    <img src="${feedstock}.webp" srcset="${feedstock}-480.webp 480w, ${feedstock}-880.webp 880w" sizes="(max-width:767px) 100vw, 40vw" width="1688" height="3000" loading="lazy" decoding="async" alt="Реальное плёночное сырьё ЭРА с посторонними включениями">
-    <figcaption><strong>${decimal(config.feedstockPrice/1000,0)} ₽/кг</strong>Закупочная цена входящей смеси</figcaption>
-   </figure>
-   <div class="ec-value-transition">
-    <svg viewBox="0 0 200 30" fill="none" aria-hidden="true" focusable="false"><path d="M1 15h194m-14-14 14 14-14 14" stroke="currentColor" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <strong>Технология ЭРА</strong>
-    <span>Создание добавленной стоимости</span>
+   <figure class="ec-photo-card ec-value-input"><img src="${feed}.webp" srcset="${feed}-480.webp 480w, ${feed}-880.webp 880w, ${feed}-1280.webp 1280w" sizes="(max-width:700px) 94vw, 40vw" width="1688" height="3000" loading="lazy" decoding="async" alt="Загрязнённая плёнка, поступающая на переработку">
+    <figcaption><strong>${priceText(purchase)}</strong><span>Входящее сырьё<br><small>Закупка смеси</small></span></figcaption></figure>
+   <div class="ec-value-stream" aria-label="Технология ЭРА">
+    <svg class="ec-stream-lines" viewBox="0 0 440 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0 32C98 38 109 61 232 60S351 63 416 60M0 86C107 91 130 52 240 57S360 53 418 60M0 58H427" fill="none" stroke="currentColor" stroke-width="2"/><path d="m416 43 22 17-22 17Z" fill="currentColor"/></svg>
+    ${eraMedallion()}
    </div>
-   <figure>
-    <img src="${p.src}" width="${p.width}" height="${p.height}" loading="lazy" decoding="async" alt="${p.alt}">
-    <figcaption><strong>${decimal(config.modes.full.defaultGrossPrice/1000,0)} ₽/кг</strong>Базовая цена реализации гранулы с НДС</figcaption>
-   </figure>
+   <figure class="ec-photo-card ec-value-output">${photoGranules()}<figcaption><strong>${priceText(baseline.grossPrice)}</strong><span>Готовая продукция<br><small>Базовая цена с НДС</small></span></figcaption></figure>
   </div>
-  <p class="ec-value-lead">Сухая сепарация, горячая мойка и грануляция превращают загрязнённую плёнку в полимерное сырьё для нового производства.</p>
-  <p class="ec-note">Цены базовой финансовой модели ЭРА от ${date(config.asOf)}: закупка без доставки и входящего НДС; реализация с НДС ${decimal(config.vatRate*100,0)}%. Разница цен не является прибылью: учитываются выход готовой продукции и расходы на переработку.</p>
-  <div id="material-balance" class="ec-material-balance"><h3>Материальный баланс</h3><div class="ec-flow"><div class="ec-flow-input"><span>Входящая смесь / месяц</span>${value(r,'input')}<small>За год: <span data-value="yearInput">${financialValues(r).yearInput}</span></small></div><div class="ec-flow-arrow" aria-hidden="true">→</div><div class="ec-flow-output"><div><span>Выпуск готовой продукции / месяц</span>${value(r,'output')}<small>За год: <span data-value="yearOutput">${financialValues(r).yearOutput}</span></small></div><div><span>Остальная масса / месяц</span>${value(r,'remainder')}<small>Включения, влага и другие составляющие</small></div></div></div><div class="ec-mass-bar" data-mass-bar role="img" aria-label="${massBalanceLabel(r)}"><span data-mass-product style="width:${r.totalYield*100}%"></span><span class="ec-mass-rest"></span></div><div class="ec-mass-legend"><span><i></i>Выход готовой продукции <strong data-value="yield">${financialValues(r).yield}</strong></span><span><i></i>Остальная масса <strong data-value="remainderShare">${financialValues(r).remainderShare}</strong></span></div></div>
-  <p class="ec-note">Выход готовой продукции в базовом сценарии — ${decimal(r.totalYield*100,1)}% входящей смеси. Фактический выход зависит от состава и состояния сырья. В отдельных испытаниях входная засорённость достигала 80%.</p>
-  <p>Бытовая и сельскохозяйственная плёнка требуют подготовки, включая раскрытие и отделение посторонних включений.</p>
-  <a class="business-text-link" href="/technology#raw-material" data-technology-page>Технология подготовки ${arrow}</a>
+  <div class="ec-band ec-value-band ec-indigo">${ratio==null?'':`<div><strong>×${decimal(ratio)}</strong><small>Соотношение цен за 1 кг, не прибыль</small></div>`}
+   <p>Мы не просто перерабатываем отходы.<br><strong>Мы создаём экономическую ценность.</strong></p>${ribbon()}</div>
+ </div></section>`;
+}
+
+const rangeText=values=>values.map(n=>decimal(n)).join('–')+'%';
+function material({baseline:r,config},v){
+ const input=r.mode.inputRate,output=r.mode.outputRate, yieldShare=r.totalYield;
+ const title=`Из ${decimal(input)} ${Number.isInteger(input)&&new Intl.PluralRules('ru-RU').select(input)!=='one'?'тонн':'тонны'} сырья — <span>${decimal(output*1000)} кг готовой гранулы.</span>`;
+ const inlet=40,product=inlet*yieldShare,remaining=inlet-product;
+ return `<section class="ec-section ec-material" id="material-balance" data-page-progress-label="Материальный баланс" aria-labelledby="ec-balance-title"><div class="ec-shell">
+  <div class="ec-balance-head">
+   ${heading('ЭРА / ПРОИЗВОДСТВЕННЫЙ ПОТЕНЦИАЛ','ec-balance-title',title,'Расчётная производительность комплекса полного цикла.')}
+   <div class="ec-periods" role="group" aria-label="Период материального баланса">${[['hour','Час','clock'],['month','Месяц','calendar'],['year','Год','calendar']].map(([id,label,mark])=>`<button type="button" data-econ-period="${id}" aria-pressed="${id==='hour'}">${icon(mark)}${label}</button>`).join('')}</div>
+  </div>
+  <div class="ec-material-flow" id="econ-volume">
+   <svg class="ec-balance-branches" viewBox="0 0 960 240" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M195 120H501" stroke="#d9b675" stroke-width="${inlet}"/>
+    <path d="M500 ${100+product/2}C560 ${100+product/2} 566 61 673 61" stroke="#e2b857" fill="none" stroke-width="${product}"/>
+    <path d="M500 ${140-remaining/2}C560 ${140-remaining/2} 566 180 673 180" stroke="#bfb5a5" fill="none" stroke-width="${remaining}"/>
+    ${product>0?'<path d="m665 43 25 18-25 18Z" fill="#e2b857"/>':''}${remaining>0?'<path d="m665 162 25 18-25 18Z" fill="#bfb5a5"/>':''}
+   </svg>
+   <article class="ec-flow-in ec-indigo"><span>${icon('layers')} Входящее сырьё</span>${v('balanceInput')}<small>${percent(input>0?1:null)}</small></article>
+   <div class="ec-flow-medal">${eraMedallion('Полный цикл')}</div>
+   <div class="ec-flow-out">
+    <svg class="ec-balance-mobile" viewBox="0 0 100 200" preserveAspectRatio="none" aria-hidden="true">
+     <path d="M50 0V29" stroke="#d9b675" stroke-width="12"/>
+     <path d="M50 24Q8 24 8 57H100" stroke="#d7ae5b" fill="none" stroke-width="${product*.3}"/>
+     <path d="M50 24Q8 24 8 79V146Q8 156 24 156H100" stroke="#b9ae9c" fill="none" stroke-width="${remaining*.3}"/>
+    </svg>
+    <article class="ec-flow-product"><span>${icon('granules')} Готовая гранула</span>${v('balanceOutput')}<b>${percent(input>0?yieldShare:null)}</b></article>
+    <article class="ec-flow-other"><span>${icon('recycle')} Остальная масса</span>${v('balanceOther')}<b>${percent(input>0?1-yieldShare:null)}</b></article>
+   </div>
+  </div>
+  <dl class="ec-material-facts">
+   ${[['coins','Ежемесячный выпуск',tonnes(r.output)],['calendar','Годовой выпуск',tonnes(r.yearOutput)],['recycle','Ориентир загрязнённости сырья',rangeText(config.materialGuides.contamination)],['gear','Ориентир потерь полимерной фракции',rangeText(config.materialGuides.polymerLoss)]].map(([mark,label,value])=>`<div>${icon(mark)}<dt>${label}</dt><dd>${value}</dd></div>`).join('')}
+  </dl>
+  <p class="ec-notebox">В финансовую модель заложен консервативный выход готовой продукции — <strong>${percent(yieldShare)}</strong>. Остальная масса включает влагу, включения, потери материала и другие составляющие.</p>
+  ${band('factory','<p>Консервативный расчёт. <strong>Промышленный масштаб.</strong></p>')}
+ </div></section>`;
+}
+
+function product(){
+ const q=technologyContent.quality;
+ const benefits=[
+  ['coins','Стабильное качество открывает доступ к более высокому ценовому сегменту.'],
+  ['growth','После подтверждения качества покупателем возможен переход к верхнему порогу рыночной цены.'],
+  ['handshake','Повторяемость помогает заключать долгосрочные контракты с предоплатой.'],
+  ['calendar','При согласованной предоплате предприятие получает денежный поток заранее.'],
+ ];
+ const uses=[['film','Плёнки и пакеты'],['pipes','Трубы'],['bag','Тара'],['box','ПЭ-изделия']];
+ return `<section class="ec-section ec-quality" id="product-quality" data-page-progress-label="Коммерческая ценность продукта" aria-labelledby="business-quality-title"><div class="ec-shell">
+  ${heading('ЭРА / КОММЕРЧЕСКАЯ ЦЕННОСТЬ ПРОДУКТА','business-quality-title','Качество, за которое <span class="inline">платит рынок.</span>','Высококачественная вторичная ПЭ-гранула для нового производства.','ec-heading-center')}
+  <div class="ec-quality-grid"><div>
+   <div class="ec-quality-specs ec-indigo">
+    <div>${icon('diamond')}<span>Остаточные включения</span><strong>${q.inclusions} ${q.inclusionsUnit}</strong><small>Целевой уровень ЭРА</small></div>
+    <div>${icon('layers')}<span>Показатель текучести расплава</span><strong>${q.mfr} ${q.mfrUnit}</strong><small>Ориентир для плёночных марок ПВД · ${q.conditions}</small></div>${ribbon()}
+   </div>
+   <p class="ec-quality-tuning">ПТР гранулы можно настраивать под требования будущей продукции. Технологический режим подбирается под сырьё и согласованную спецификацию. Параметры партии подтверждаются испытаниями.</p>
+   <ul class="ec-quality-benefits">${benefits.map(([mark,text])=>`<li>${icon(mark)}<span>${text}</span></li>`).join('')}</ul>
+  </div><figure class="ec-quality-photo">${photoGranules()}<figcaption>Образец из технического описания линии ЭРА</figcaption></figure></div>
+  <div class="ec-uses"><div class="ec-uses-head ec-indigo">Области применения<small>При соответствии марки и спецификации</small></div>
+   ${uses.map(([mark,label])=>`<div>${icon(mark)}${label}</div>`).join('')}
+  </div>
+  <div class="ec-alternatives"><h3>Другие направления переработки полимерных потоков</h3><span>${icon('lab')} Пиролиз → нефтепродукты, включая бензиновые фракции</span><span>${icon('power')} Энергетика</span></div>
+  ${band('layers','<p>Чистота. Стабильность. <strong>Цена выше.</strong></p><small>Качество открывает путь к долгосрочным контрактам и предсказуемой выручке.</small>')}
+ </div></section>`;
+}
+
+const offerPrice=o=>(o.from?'от ':'')+decimal(o.price)+(o.priceMax?'–'+decimal(o.priceMax):'')+' ₽/кг';
+const supplier=o=>`<a href="${escape(o.href)}" target="_blank" rel="noopener noreferrer">${escape(o.supplier)} ${arrow}</a>`;
+function market({baseline},offers){
+ const offer=id=>offers.find(row=>row.id===id);
+ const start=offer('alfa-stretch'),top=offer('vtorplast-catalog');
+ const selected=['soyuz-ldpe','vtorplast-clear','vtorplast-caramel','vtorplast-catalog'].map(offer);
+ const steps=[
+  {price:start.price,label:'Стартовое предложение',icon:'layers',amount:decimal(start.price)+' ₽/кг',copy:`${supplier(start)} · ${escape(start.title)}`},
+  {price:baseline.grossPrice/1000,label:'Рабочий рынок',icon:'gear',amount:priceText(baseline.grossPrice),copy:'Базовый сценарий ЭРА · цена с НДС',base:true},
+  {price:top.price,label:'Верхний ценовой сегмент',icon:'diamond',amount:offerPrice(top),copy:`${supplier(top)} · ${escape(top.title)}`},
+ ].sort((a,b)=>a.price-b.price);
+ const eu=marketSources.find(source=>source.id==='myceppi');
+ const rows=[['ldpe','ПВД / LDPE'],['hdpe','ПНД / HDPE']].map(([kind,label])=>`<h3>Гранула ${label}</h3><div class="ec-table-scroll" role="region" aria-label="Предложения гранулы ${label}" tabindex="0">
+  <table><thead><tr><th scope="col">Источник и материал</th><th scope="col">Предложение</th><th scope="col">Условия и проверка</th></tr></thead>
+  <tbody>${offers.filter(o=>o.category===kind).map(o=>`<tr><th scope="row">${supplier(o)}<small>${escape(o.title)} · ${escape(o.polymer)}</small></th>
+    <td>${offerPrice(o)}<small>НДС — ${escape(o.vat)} · ${escape(o.delivery)}</small></td><td>${escape(o.mfi)}<small>${escape(o.region)} · партия: ${escape(o.minimum)} · ${escape(o.packaging)}</small><small>${escape(o.note)} ${o.priceDate==='Не указана'?'':`Прайс ${escape(o.priceDate)}. `}Проверено ${day(o.checkedAt)}.</small></td></tr>`).join('')}</tbody>
+  </table></div>`).join('');
+ const refs=`<ul class="ec-reference-list">${marketSources.filter(s=>s.id!=='spimex').map(s=>`<li data-market-source="${s.id}"><a href="${escape(s.href)}" target="_blank" rel="noopener noreferrer">${escape(s.title)} ${arrow}</a><p>${escape(s.kind)} · ${escape(s.period)}. ${escape(s.note)} Проверено ${day(s.checkedAt)}.</p></li>`).join('')}
+ ${additionalMarketSources.map(([label,href,note])=>`<li><a href="${href}" target="_blank" rel="noopener noreferrer">${escape(label)} ${arrow}</a><p>${escape(note)}</p></li>`).join('')}</ul>`;
+ return `<section class="ec-section ec-market" id="market" data-page-progress-label="Рыночные ориентиры" aria-labelledby="market-title"><div class="ec-shell">
+  ${heading('РЫНОЧНЫЕ ОРИЕНТИРЫ','market-title','Рынок вторичной гранулы. <span>Обоснованная цена реализации.</span>','В основе модели ЭРА — рыночные предложения и отраслевые ориентиры.')}
+  <div class="ec-ladder ec-indigo">${steps.map((s,i)=>`<article data-basis="${Boolean(s.base)}" style="--step:${i}"><div class="ec-ladder-price"><strong>${s.amount}</strong></div><div class="ec-ladder-copy">${icon(s.icon)}<h3>${s.label}</h3><p>${s.copy}</p></div></article>`).join('')}${ribbon()}</div>
+  <h3 class="ec-rule-title">Примеры рыночных источников</h3>
+  <div class="ec-market-offers">${selected.map((s,i)=>`<article data-offer="${s.id}">${icon(i===1?'pipes':'layers')}<div>${supplier(s)}<strong>${offerPrice(s)}</strong><p>${escape(s.title)}</p><small>${escape(s.vat==='Не указан'?'НДС не указан':s.vat)} · ${s.priceDate==='Не указана'?'Проверено '+day(s.checkedAt):'Прайс '+escape(s.priceDate)}</small></div></article>`).join('')}</div>
+  <h3 class="ec-rule-title">Международный ориентир</h3>
+  <div class="ec-international ec-indigo">${icon('globe')}
+   <div><span>Вторичный rLDPE Film</span><strong>${decimal(eu.value)} ${eu.unit}</strong></div>
+   <div><span>Первичный LDPE Film</span><strong>${decimal(eu.primaryValue)} ${eu.unit}</strong></div>
+   <p><a href="${eu.href}" target="_blank" rel="noopener noreferrer">${eu.title} ${arrow}</a><br>${eu.period} · проверено ${day(eu.checkedAt)}</p>
+  </div>
+  ${details('market-offers','Источники и предложения рынка',rows+refs+'<p>Цены относятся к разным маркам и условиям поставки. Объявления продавцов служат ориентиром для переговоров. Международные значения приводятся в исходной валюте.</p>')}
+  ${band('growth','<p>Стабильное качество открывает возможность перехода <strong>к верхнему ценовому диапазону.</strong></p>',{art:true})}
+ </div></section>`;
+}
+
+const expenseIcons={feedstock:'layers',payroll:'people',electricity:'power',water:'water',reagents:'lab',transport:'truck',ppe:'shield',
+ supplies:'gear',office:'lab',disposal:'box',building:'factory',depreciation:'calendar'};
+function unit({result:r},v){
+ const equation=[['coins','Цена реализации без НДС','unitPrice'],['gear','Полная себестоимость','unitCost'],
+  ['layers','Налог на прибыль','unitTax'],['growth',r.net<0?'Убыток':'Чистая прибыль','unitProfit']];
+ return `<section class="ec-section ec-unit" id="economics" data-page-progress-label="Себестоимость" aria-labelledby="econ-tonne-title"><div class="ec-shell">
+  <div class="ec-art-heading">${heading('ЭРА / СЕБЕСТОИМОСТЬ','econ-tonne-title','От цены реализации <span>до чистой прибыли.</span>','Прозрачная структура экономики для 1 кг готовой гранулы.')}${factoryArt()}</div>
+  <div class="ec-unit-equation ec-indigo">
+   <dl class="ec-equation-overview">${equation.map(([,title,key])=>`<div data-equation="${key}"><dt${key==='unitProfit'?' data-econ-unit-caption':''}>${title}</dt><dd>${v(key)}</dd></div>`).join('')}</dl>
+   <div class="ec-equation-steps" role="group" aria-label="Расчёт на килограмм гранулы">${equation.map(([mark,title,key],i)=>`<div data-equation="${key}">${icon(mark)}<span class="ec-equation-label"${i===3?' data-econ-unit-caption':''}>${title}</span>${v(key)}</div>${i<3?`<span class="ec-equation-symbol">${i===2?'=':'−'}</span>`:''}`).join('')}</div>
+   ${ribbon()}
+  </div>
+  <h3 class="ec-rule-title">Состав полной себестоимости</h3><p class="ec-subnote">Расходы на 1 кг готовой гранулы.</p>
+  <ul class="ec-costs">${r.costs.map(cost=>`<li>${icon(expenseIcons[cost.id])}<div><strong>${escape(cost.label)}</strong><small>${escape(cost.description)}</small></div><b data-econ-cost="${cost.id}">${priceText(r.output>0?cost.value/r.output:null,2)}</b></li>`).join('')}</ul>
+  <div class="ec-unit-result ec-indigo" id="econ-per-tonne-price">${photoGranules('')}${icon('growth')}
+   <div><span>Чистый результат на тонну</span>${v('tonneNet')}${v('tonneUsd','small')}</div>
+   <div><span>Чистый результат в месяц</span>${v('monthNet')}${v('monthUsd','small')}</div>
+   ${v('rate','p')}${ribbon()}
+  </div>
+ </div></section>`;
+}
+
+function calculator(snapshot,v){
+ const {result:r,scenarios,state,baseline}=snapshot;
+ const facts=[['coins','Прибыль с тонны','tonneNet'],['percent','Рентабельность продаж','margin'],
+  ['growth','Выручка без НДС в месяц','revenue'],['layers','Полные расходы в месяц','expenses']];
+ const parameters=[['factory','Комплектация','1 комплекс'],['granules','Выпуск в месяц',v('output')],['calendar','Выпуск за стабильный год',v('yearOutput')],['clock','Возврат вложений в оборудование',v('payback')]];
+ return `<section class="ec-section ec-calculator" id="production-constructor" data-page-progress-label="Инвестиционный калькулятор" aria-labelledby="econ-calculator-title"><div class="ec-shell">
+  ${heading('ЭРА / ИНВЕСТИЦИОННЫЙ КАЛЬКУЛЯТОР','econ-calculator-title','Рассчитайте экономику <span class="inline">своего производства.</span>','Выберите цену реализации гранулы и оцените финансовый результат предприятия.')}
+  <div class="ec-calculator-grid">
+   <div class="ec-scenario-picker" role="group" aria-label="Цена гранулы с НДС для одного комплекса" id="econ-monthly-price">${scenarios.map(stage=>`<button type="button" data-econ-price="${stage.id}" data-price-rub="${stage.price}" aria-pressed="${state.scenario===stage.id}">
+    ${icon(stage.icon)}<span><strong>${priceText(stage.price)}</strong><b>${stage.period}</b><small>${stage.description}</small></span><i aria-hidden="true"></i>
+    <span class="ec-scenario-net"><small>${monthLabel(stage.result)}</small><strong>${compact(stage.result.net)}</strong></span></button>`).join('')}</div>
+   <div class="ec-finance ec-indigo">
+    <div class="ec-finance-head"><h3>Финансовый результат</h3><span>Цена гранулы с НДС · ${v('price')}</span></div>
+    <dl class="ec-finance-primary">
+     <div>${icon('calendar')}<dt>${v('monthLabel','span')}</dt><dd>${v('monthNet')}${v('monthUsd','small')}</dd></div>
+     <div>${icon('calendar')}<dt>${v('yearLabel','span')}</dt><dd>${v('yearNet')}${v('yearUsd','small')}</dd></div>
+    </dl>
+    ${v('rate','p')}
+    <dl class="ec-finance-facts">${facts.map(([mark,title,key])=>`<div>${icon(mark)}<dt>${key==='tonneNet'?'<span data-econ-tonne-caption>'+ (r.net<0?'Убыток с тонны':title)+'</span>':title}</dt><dd>${v(key)}</dd></div>`).join('')}</dl>
+    <div class="ec-comparison"><h4>Сравнение чистого результата по сценариям <small>млн ₽ / месяц</small></h4><div data-econ-chart>${renderProfitChart(scenarios,state.scenario)}</div></div>
+    <div class="ec-allocation" id="monthly-result"><h4>Распределение выручки без НДС</h4><div data-econ-allocation>${renderAllocation(r)}</div></div>
+   </div>
+  </div>
+  <h3 class="ec-rule-title">Ключевые параметры проекта</h3>
+  <dl class="ec-project-params">${parameters.map(([mark,title,value])=>`<div>${icon(mark)}<dt>${title}</dt><dd>${value}</dd></div>`).join('')}</dl>
+  ${band('growth',baseline.net>0?'<p>Прибыль уже в базовом сценарии. <strong>Потенциал роста — вместе с вашим бизнесом.</strong></p>':'<p>Оцените финансовый результат <strong>при разных ценах реализации.</strong></p>',{art:true})}
+  <p class="ec-subnote">Расчёт при номинальной загрузке одного комплекса и реализации всего выпуска. Выбранная цена включает НДС. ${hint('calculation-conditions','Условия расчёта')}</p>
+ </div></section>`;
+}
+
+function resilience({resilience:s}){
+ const facts=[
+  ['layers','Цена безубыточности',priceText(s.threshold,2)],
+  ['coins',s.reserve<0?'Необходимое повышение цены':'Запас до порога',priceText(s.reserve==null?null:Math.abs(s.reserve),2)],
+  ['percent',s.share<0?'Запас относительно базовой цены':'Допустимое снижение до порога',percent(s.share)],
+  ['growth',(s.conservativeNet<0?'Убыток':'Чистая прибыль')+' при цене '+priceText(s.conservativePrice),compact(s.conservativeNet)+'/мес.'],
+ ];
+ return `<section class="ec-section ec-resilience" id="project-resilience" data-page-progress-label="Устойчивость бизнеса" aria-labelledby="econ-curve-title"><div class="ec-shell">
+  <div class="ec-art-heading ec-resilience-heading">${photoGranules('')}${heading('ЭРА / ЭКОНОМИЧЕСКАЯ УСТОЙЧИВОСТЬ','econ-curve-title','Бизнес с <span class="inline">запасом прочности.</span>','Оцените запас базовой модели при изменении цены реализации.')}</div>
+  <div class="ec-resilience-panel ec-indigo"><div class="ec-resilience-intro">${icon('layers')}<div><h3>Запас экономической устойчивости</h3><p>Цена реализации с НДС · ₽/кг готовой гранулы</p></div></div>
+   ${renderResilienceScale(s)}${ribbon()}
+  </div>
+  <dl class="ec-resilience-facts">${facts.map(([mark,title,value])=>`<div>${icon(mark)}<dt>${title}</dt><dd>${value}</dd></div>`).join('')}</dl>
+  ${band('growth','<p>Модель позволяет оценить запас финансовой устойчивости <strong>даже при снижении цены реализации.</strong></p>')}
+  <p class="ec-subnote">Порог рассчитан при полной загрузке, неизменных расходах и реализации всего выпуска. Ценовой запас отражает чувствительность к цене и охватывает только этот фактор.</p>
+ </div></section>`;
+}
+
+function growth(snapshot,v){
+ const {config,baseline,separation,scenarios,state,network}=snapshot;
+ const options=scenarios.map(s=>`<option value="${s.id}"${s.id===state.scenario?' selected':''}>${priceText(s.price)} · ${s.period}</option>`).join('');
+ const compare=(result,mode,title,cop)=>`<article class="ec-stage-card ${mode==='full'?'ec-indigo':''}" data-growth-mode="${mode}">
+  <figure>${mode==='full'?photoGranules():`<img src="${bales}" width="1510" height="370" alt="Упакованная очищенная плёнка в тюках из техописания сухой сепарации ЭРА" loading="lazy" decoding="async">`}</figure>
+  <div><p class="eyebrow">${mode==='full'?'02 / РАЗВИТИЕ':'01 / СТАРТ'}</p><h3>${icon(mode==='full'?'granules':'layers')} ${title}</h3><p>${cop}</p>
+   <dl>${[['Цена с НДС',priceText(result.grossPrice)],['Выпуск в месяц',tonnes(result.output)],[result.net<0?'Убыток в месяц':'Чистая прибыль в месяц',compact(result.net)],['Рентабельность продаж',percent(result.margin)]].map(([label,value])=>`<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl>
+  </div></article>`;
+ const goods=[['granules','Гранула в месяц','networkOutput'],['calendar','Гранула за год','networkYearOutput'],['recycle','Сырьё в месяц','networkInput'],
+  ['growth','Выручка без НДС в месяц','networkRevenue'],['percent','Рентабельность продаж','networkMargin']];
+ return `<section class="ec-section ec-growth" id="production-growth" data-page-progress-label="Поэтапное развитие" aria-labelledby="ec-growth-title"><div class="ec-shell">
+  <div class="ec-stages">
+   ${heading('ЭРА / ПОЭТАПНОЕ РАЗВИТИЕ','ec-growth-title','Два пути входа в отрасль. <span>Единая перспектива развития.</span>','Начните с доступного масштаба и поэтапно переходите к производству гранулы. Состав расширения определяется проектом.')}
+   ${compare(separation,'separation','Сухая сепарация','Подготовка и реализация очищенной плёнки в тюках.')}
+   ${icon('arrow')}${compare(baseline,'full','Полный цикл','Сепарация, горячая мойка и производство гранулы.')}
+  </div>
+  <div class="ec-network ec-indigo">
+   ${networkArt()}
+   <div class="ec-network-intro">
+    ${heading('ЭРА / МАСШТАБИРОВАНИЕ БИЗНЕСА','ec-network-title','От одного предприятия <span>к промышленной сети.</span>','Выберите число одинаковых комплексов и оцените финансовый результат.')}
+    <label class="ec-network-price"><span>Цена гранулы с НДС</span><select data-econ-network-price aria-label="Цена гранулы с НДС для сети">${options}</select></label>
+   </div>
+   <div class="ec-network-sizes" role="group" aria-label="Количество комплексов в сети">${config.networkSizes.map(n=>`<button type="button" data-econ-network="${n}" aria-pressed="${n===state.complexes}">${icon('factory')}<b>${n}</b><span>${complexes(n).split(' ')[1]}</span></button>`).join('')}</div>
+   <p class="ec-network-selected">Полный цикл · ${v('networkSize')} · номинальная загрузка</p>
+   <dl class="ec-network-profits">
+    <div>${icon('coins')}<dt>${v('networkMonthLabel','span')}</dt><dd>${v('networkMonth')}${v('networkMonthUsd','small')}</dd></div>
+    <div>${icon('calendar')}<dt>${v('networkYearLabel','span')}</dt><dd>${v('networkYear')}${v('networkYearUsd','small')}</dd></div>
+   </dl>
+   <dl class="ec-network-facts">${goods.map(([mark,label,key])=>`<div>${icon(mark)}<dt>${label}</dt><dd>${v(key)}</dd></div>`).join('')}</dl>
+   <p class="ec-network-payback">Возврат вложений в оборудование · ${v('networkPayback')}${network.equipmentInvestment!=null?` <span>Инвестиции в оборудование · ${v('networkInvestment')} · ${v('networkInvestmentUsd','small')}</span>`:''}</p>
+   ${v('rate','p')}
+   <div class="ec-network-finale">${icon('growth')}<p><strong>Масштабируйте производство.</strong> Единая технология. Тиражируемая экономика. Региональный охват.</p></div>
+   <p class="ec-network-note">Линейный сценарий одинаковых комплексов. Региональные различия и общесетевые расходы уточняются для проекта. Точки на карте условные.</p>
+  </div>
+ </div></section>`;
+}
+
+function conditions({config,baseline:r}){
+ return `<section class="ec-section ec-conditions" id="economic-conditions" data-page-progress-label="Условия расчёта"><div class="ec-shell">
+  ${details('calculation-conditions','Условия расчёта и источники',`<h3>Производственная база</h3>
+   <p>Нормативный месяц — ${config.monthDays} день и ${decimal(r.mode.monthHours)} ч. Стабильный год — ${config.yearDays} дней и ${decimal(r.mode.yearHours)} ч. Расчёт относится к полной загрузке и реализации всего выпуска. Предусмотрен готовый цех заказчика.</p>
+   <h3>Цены, НДС и расходы</h3>
+   <p>Закупка — ${priceText(config.feedstockPrice)} за кг входящей смеси без доставки и входящего НДС. Реализация — с НДС ${percent(config.vatRate)} за кг готового продукта. У этих цен разные массы и база НДС. Выручка в расчёте — без НДС, полная себестоимость включает амортизацию. Налог на прибыль — ${percent(config.taxRate)} положительной прибыли до налога.</p>
+   <p>При номинальных часах используются статьи рабочего столбца. Годовые переменные расходы учитывают годовой объём и часы. Постоянные расходы и амортизация учитываются за ${config.monthsPerYear} месяцев. Энергия, ФОТ и бюджеты действующих статей основаны на исходных моделях.</p>
+   <h3>Оценка вложений</h3>
+   <p>Подтверждение стоимости оборудования для пересчитанного сценария требуется для оценки срока возврата. При наличии согласованной стоимости метод учитывает операционный поток как чистую прибыль за год плюс амортизацию. Запуск, оборотный капитал и дополнительные капитальные затраты оцениваются отдельно. Расчёт не гарантирует фактическую доходность.</p>
+   <h3>Финансовые и рыночные источники</h3>
+   <p>${config.sources.map(s=>`${escape(s.title)} · ${escape(s.sheets)}`).join('<br>')}. База расходов — ${day(config.asOf)}. Проверка опубликованных рыночных ориентиров — ${day(config.marketAsOf)}.</p>
+   <p>${escape(config.priceDisclosure)} ${hint('market-offers','Источники рынка')} <a class="ec-link" href="/technology#raw-material" data-technology-page>Технология переработки ${arrow}</a></p>`)}
+ </div></section>`;
+}
+
+function discuss({network},v){
+ return `<section class="ec-cta ec-edge" id="economics-project" data-page-progress-label="Ваш проект" aria-labelledby="ec-project-title">
+  <div class="ec-cta-art"><img src="/assets/economics/factory.webp" width="890" height="819" alt="Концептуальная визуализация будущего производства переработки" loading="lazy" decoding="async"></div>
+  ${ribbon()}<div class="ec-shell ec-cta-inner"><div class="ec-cta-copy">
+   ${heading('ВАШ ПРОЕКТ С ЭРА','ec-project-title','Запустите собственное <span>производство переработки.</span>','Подберём оборудование, рассчитаем экономику, подготовим технико-коммерческое предложение и сопроводим проект до запуска производства.')}
+   <ul>${[['layers','Индивидуальный расчёт'],['calendar','Прозрачная экономика'],['handshake','Сопровождение на всех этапах']].map(([mark,label])=>`<li>${icon(mark)}${label}</li>`).join('')}</ul>
+   <div class="ec-cta-action">${request(network,'network')}<p>Обсудим ваш проект, рассчитаем инвестиции и сроки окупаемости.</p></div>
+   <p class="ec-request-scenario" data-econ-request-scenario hidden>Сценарий сети · ${v('networkSize')}</p>
+   <div class="ec-cta-links"><a href="${siteContacts.phoneHref}">${siteContacts.phone}</a><a href="mailto:${siteContacts.email}">${siteContacts.email}</a></div>
+  </div></div>
  </section>`;
 }
 
-function product(r){
- const p=productCopy(r.state.mode);
- return `<section class="ec-section ec-section--soft ec-product-block" id="product-quality" data-page-progress-label="Продукт и качество" aria-labelledby="business-quality-title"><div class="ec-split ec-product"><div class="ec-copy"><p class="eyebrow">ПРОДУКТ ВАШЕГО ПРОИЗВОДСТВА</p><h2 id="business-quality-title" data-product-title>${p.title}</h2><dl class="ec-passport" data-product-passport>${p.passport}</dl><p data-product-quality-copy>Ключ к высокой стоимости вторичной гранулы — чистота материала, стабильность состава и управляемый показатель текучести расплава. Подтверждённое качество открывает доступ к более высокому ценовому сегменту.</p><p class="ec-note">Параметры конкретной партии закрепляются в спецификации и подтверждаются контролем качества. Источник характеристик — технологические данные ЭРА.</p>${detail('Где используется продукт?',`<p data-product-applications>${p.applications}</p>`)}<a class="business-text-link" href="${p.href}" data-product-link>${p.link} ${arrow}</a></div><figure class="ec-photo ec-product-photo ec-product-photo--granules" data-product-photo><img src="${p.src}" width="${p.width}" height="${p.height}" alt="${p.alt}" loading="lazy" data-product-image><figcaption data-product-caption>${p.caption}</figcaption></figure></div></section>`;}
-
-function unit(r){return `<section class="ec-section" id="economics" data-page-progress-label="Себестоимость" aria-labelledby="econ-tonne-title">${heading('СЕБЕСТОИМОСТЬ','econ-tonne-title','От цены реализации до чистой прибыли.')}<span class="ec-anchor" id="econ-per-tonne-price"></span><p>При расчёте учтены закупка сырья, производственный персонал и взносы, энергоресурсы, расходные материалы, обслуживание, транспорт, обращение с отсевом, лабораторные расходы и амортизация. В полном цикле дополнительно учитываются вода и моющие реагенты.</p><p class="ec-editorial-note">В основу модели заложен консервативный подход к планированию затрат: прибыль в базовом сценарии не зависит от достижения премиальной цены продукта.</p><div class="ec-unit-kpis">${[['Цена без НДС','unitPrice'],['Полная себестоимость','unitCost'],['Налог на прибыль','unitTax'],['Чистая прибыль','unitProfit']].map(([label,key])=>`<div><span${key==='unitProfit'?' data-profit-label="unit"':''}>${label}</span>${value(r,key)}</div>`).join('')}</div><div data-econ-bridge>${renderBridge(r,'kg')}</div>${detail('Все статьи себестоимости',`<div data-unit-details>${renderUnitDetail(r)}</div>`)}</section>`;}
-function yearCosts(r){return `<dl class="ec-year-costs">${[['Постоянные денежные расходы · 12 месяцев','yearFixedCash'],['Переменные денежные расходы · 365 дней','yearVariableCash'],['Амортизация · 12 месяцев','yearDepreciation'],['Операционный денежный поток за год','yearOperatingCash']].map(([label,key])=>`<div><dt>${label}</dt>${value(r,key,'dd')}</div>`).join('')}</dl><p class="ec-note">Денежный поток — чистая прибыль плюс амортизация; это не EBITDA. Для отдельных статей доступна месячная детализация. Годовые удельные расходы: <span data-value="yearUnitCosts">${financialValues(r).yearUnitCosts}</span>.</p>`;}
-function monthly(r){return `<section class="ec-section ec-section--soft" id="monthly-result" data-page-progress-label="Финансовый результат" aria-labelledby="econ-month-title">${heading('ФИНАНСОВЫЙ РЕЗУЛЬТАТ','econ-month-title','Финансовый результат предприятия.')}<div class="ec-chart-panel" data-econ-month>${renderMonth(groupedMonth(r))}</div><p class="ec-note" data-month-basis>${basisText(r)}</p>${detail('Расходы: месячные статьи и годовые агрегаты',`<div data-cost-details>${renderCostDetails(r)}</div>${yearCosts(r)}`)}</section>`;}
-
-function resilience(r){return `<section class="ec-section ec-resilience" id="project-resilience" data-page-progress-label="Устойчивость бизнеса" aria-labelledby="econ-curve-title"><h2 id="econ-curve-title">Устойчивость при изменении загрузки</h2><p>График начинается с точки безубыточности нормативного месяца: нулевой результат, затем чистая прибыль. Маркер соответствует текущему сценарию.</p><div class="ec-chart-panel" data-econ-curve>${renderCurve(r)}</div><div class="ec-resilience-values"><div><span>Цена безубыточности месяца · с НДС</span>${value(r,'breakEvenPrice')}</div><div><span>Объём безубыточности · вход в месяц</span>${value(r,'breakEven')}</div><div><span>Запас цены относительно порога</span>${value(r,'priceHeadroom')}</div></div><p class="ec-note" data-summary-break-even>${breakEvenText(r)}</p><p class="ec-note">Производственная модель позволяет оценить устойчивость при разных ценах и загрузке; индивидуальный расчёт учитывает условия площадки.</p></section>`;}
-
-function sourceCard(s){return `<article class="ec-market-source" data-market-source="${s.id}"><p class="eyebrow">${escape(s.subtitle)}</p><h4>${escape(s.title)}</h4><strong class="ec-market-quote">${s.value}<small>${s.unit}</small></strong><p>${escape(s.material)}</p><span class="ec-market-kind">${s.kind}</span><span class="ec-market-period">${s.period}</span>${s.id==='myceppi'?'<div class="ec-europe-bars" aria-label="Разные материалы: вторичный rLDPE Film 950 евро за тонну; первичный LDPE Film 1368 евро за тонну"><div><span>rLDPE Film · 950 €/т</span><i style="width:69.44%"></i></div><div><span>LDPE Film · 1 368 €/т</span><i style="width:100%"></i></div></div>':''}<p class="ec-note">${escape(s.note)}</p><div class="ec-source-footer"><span>Источник: <a href="${s.href}" target="_blank" rel="noopener noreferrer">${s.source} ${arrow}</a></span><span>Проверено <time datetime="${s.checkedAt}">${date(s.checkedAt)}</time></span></div></article>`;}
-const offerPrice=o=>(o.from?'от ':'')+decimal(o.price,0)+(o.priceMax?'–'+decimal(o.priceMax,0):'')+' ₽/кг';
-const sourceLink=o=>`<a href="${o.href}" target="_blank" rel="noopener noreferrer">${escape(o.supplier)} ${arrow}</a>`;
-function offers(){return detail('Источники и предложения рынка',`${[['ldpe','Гранула ПВД / LDPE · Россия'],['hdpe','Гранула ПНД / HDPE · Россия']].map(([category,label])=>`<h3>${label}</h3><div class="ec-table-scroll"><table class="ec-table ec-offer-table"><thead><tr><th scope="col">Источник и материал</th><th scope="col">Предложение</th><th scope="col">Характеристики и дата</th></tr></thead><tbody>${marketOffers.filter(o=>o.category===category).map(o=>`<tr><th scope="row">${sourceLink(o)}<small>${escape(o.title)} · ${escape(o.polymer)}</small></th><td>${offerPrice(o)}<small>${escape(o.vat)} · ${escape(o.delivery)}</small></td><td>${escape(o.mfi)}<small>${escape(o.note||'Остаток включений в ppm не опубликован.')}<br>Прайс: ${escape(o.priceDate)}<br>Проверено ${date(o.checkedAt)}</small></td></tr>`).join('')}</tbody></table></div>`).join('')}<h3>Другие отраслевые ориентиры</h3><ul class="ec-market-links">${additionalMarketSources.map(([name,href,note])=>`<li><a href="${href}" target="_blank" rel="noopener noreferrer">${name} ${arrow}</a><span>${note}</span></li>`).join('')}</ul><p class="ec-note">Профессиональные отчёты — источники дальнейшего мониторинга. Числовые ряды автоматически не заимствуются. Международные цены не пересчитываются в рубли. Гранула, дроблёнка и кипы рассматриваются отдельно.</p>`,'id="market-offers"');}
-function market(r){const selected=marketOffers.filter(o=>['soyuz-ldpe','vtorplast-catalog','alfa-stretch'].includes(o.id));return `<section class="ec-section" id="market" data-page-progress-label="Рыночные цены" aria-labelledby="market-title">${heading('РЫНОЧНЫЕ ОРИЕНТИРЫ','market-title','Рыночные ориентиры стоимости гранулы.')}<p class="ec-section-lead">В основе коммерческой модели — российский рынок вторичного полиэтилена. Для оценки используются данные организованных торгов, отраслевые индексы и предложения производителей. Международные источники дают дополнительный ориентир.</p><div class="ec-market-model"><div><span>Расчётная цена ЭРА · <span data-value="mode">${financialValues(r).mode}</span></span>${value(r,'grossPrice')}<small>с НДС 22% · <span data-value="priceStage">Базовая цена</span></small></div><p>${decimal(config.modes.full.defaultGrossPrice/1000,0)} ₽/кг для гранулы — базовая цена модели ЭРА с НДС. Предложения отличаются по сорту, качеству, НДС и поставке; их среднее не определяет цену модели. <a href="#production-constructor">Изменить расчёт ↑</a></p></div><div class="ec-market-regions">${[['russia','Россия'],['international','Международный рынок']].map(([region,title])=>`<div class="ec-market-region"><h3>${title}</h3><div class="ec-market-source-grid">${marketSources.filter(s=>s.region===region&&s.id!=='spimex').map(sourceCard).join('')}</div></div>`).join('')}</div><div class="ec-market-producers"><h3>Российские предложения гранулы</h3><div class="ec-producer-grid">${selected.map(o=>`<article><span>${sourceLink(o)}</span><strong>${offerPrice(o)}</strong><p>${escape(o.title)}</p><small>${escape(o.vat)} · ${escape(o.priceDate)}<br>Проверено ${date(o.checkedAt)}</small></article>`).join('')}</div><p class="ec-note">Предложения не подтверждены одновременно по цене, ПТР и остатку 30–70 ppm как полные аналоги гранулы ЭРА. Цены продавцов не равны фактическим сделкам. Более высокая реализация требует квалификации партии и согласования с покупателем.</p></div><a class="business-text-link" href="#market-offers" data-open-offers>Подробнее об источниках ${arrow}</a>${offers()}</section>`;}
-
-function growth(){
- return `<section class="ec-section ec-section--soft ec-growth" id="production-growth" data-page-progress-label="Масштабирование" aria-labelledby="ec-growth-title">
-  ${heading('ПОЭТАПНОЕ РАЗВИТИЕ','ec-growth-title','Начните с доступного масштаба. <span>Развивайтесь до полного цикла.</span>')}
-  <div class="ec-growth-stages">
-   <div><h3>Сухая сепарация</h3><p>Можно начать с самостоятельной линии подготовки и реализации очищенной плёнки.</p></div>
-   <div class="ec-growth-transition"><span aria-hidden="true">→</span>Поэтапное развитие производства</div>
-   <div><h3>Полный цикл</h3><p>При расширении производства добавить горячую мойку и грануляцию для выпуска готового полимерного сырья.</p></div>
-  </div>
-  <p class="ec-note">Состав оборудования и этапы расширения определяются проектом.</p>
- </section>`;
-}
-
-function conditions(r){return `<section class="ec-section ec-section--soft" id="economic-conditions" data-page-progress-label="Условия расчёта" aria-labelledby="ec-conditions-title">${heading('ОСНОВАНИЯ МОДЕЛИ','ec-conditions-title','Понятные условия. Проверяемый результат.')}${detail('Условия расчёта и источники',`<div class="ec-source-list"><div><h3>Модель покупателя оборудования</h3><p>Расчёт относится к производству заказчика, не к прибыли ЭРА от продажи оборудования. База расходов — 05.11.2026; рыночные источники перепроверены 17.11.2026.</p></div><div><h3>Месяц и стабильный год</h3><p>Месяц — 31 день и 744 часа; год — 365 дней и 8 760 часов. По умолчанию один комплект и полная загрузка. Нижний предел выбора — больший из порогов безубыточности месяца и стабильного года: оба периода остаются без убытка. Порог определяется финансовой моделью; минимальная подача оборудования уточняется по сырью и комплектации. Выпуск готовой продукции — до 0,75 т/ч на комплект. Год означает стабильную работу при неизменных цене, загрузке и условиях, а не первый год проекта с изготовлением и пуском.</p></div><div><h3>Расходы и налоги</h3><p>${config.taxDisclosure} Возмещаемый входящий НДС уже исключён из расходов. В году постоянные расходы и амортизация учитываются за 12 месяцев, переменные — по 365 дням. Налог не начисляется на убыток. Календарный ДДС с налоговыми платежами, вычетами и оборотным капиталом составляется отдельно.</p></div><div><h3>Возврат вложений в оборудование</h3><p>Метод опирается на условный операционный денежный поток: годовая чистая прибыль плюс годовая амортизация. Это не EBITDA, DCF, NPV, IRR и не срок с даты аванса. Показаны округлённые интервалы для утверждённых цен и загрузок с шагом 5%. При своей цене или объёме вне этих сценариев — индивидуальная оценка. Публичный расчёт допускает только безубыточные объёмы. При более низкой цене объём поднимается до порога; цена ограничена уровнем безубыточности полной загрузки.</p><p>Не включены дополнительные капитальные расходы, оборотный капитал, кредиты, запуск, простои и календарные налоговые разрывы. Налоговая база стоимости оборудования отдельно не задана; возмещение капитального НДС не моделируется.</p>${paybackNote}</div><div><h3>Финансовые основания</h3><p>${config.sources.filter(s=>s.file==='ERA_KPP_Finmodel_PriceReview.xlsx').map(s=>escape(s.title)+' · '+escape(s.sheets)).join('<br>')}. Использованы предоставленные рабочие показатели. Аудит первичных договоров и каждой ячейки книг не проводился; исходные Excel на сайте не распространяются.</p></div><div><h3>Безубыточность</h3><p>Цена безубыточности месяца с НДС: <strong data-value="breakEvenPrice">${financialValues(r).breakEvenPrice}</strong>. Цена безубыточности стабильного года с НДС: <strong data-value="yearBreakEvenPrice">${financialValues(r).yearBreakEvenPrice}</strong>. Удельные показатели зависят от текущей загрузки. Месячный и годовой пороги различаются из-за календарной базы.</p><p>Закупка всей входящей смеси — 6 000 ₽/т без доставки и входящего НДС. Фактическая цена продажи зависит от приёмки качества и договора; результат не является гарантией доходности.</p></div></div><div data-specialist>${renderSpecialist(r)}</div>`,'id="calculation-conditions"')}</section>`;}
-function discuss(r){return `<section class="ec-section ec-discuss" id="economics-project" data-page-progress-label="Обсудить проект" aria-labelledby="ec-project-title">${heading('ВАШ СЛЕДУЮЩИЙ ШАГ','ec-project-title','Рассчитаем экономику под ваше сырьё.')}<p class="ec-section-lead">Подберём состав оборудования, оценим производственные параметры и подготовим технико-коммерческое предложение с расчётом экономики под ваши условия.</p>${request(r,'Обсудить проект')}<p class="ec-note">В обращение передаются выбранные цена, загрузка, число комплектов и результаты за месяц и год.</p></section>`;}
-
-export function economicsPage(){
- const r=calculateEconomics({mode:'full'});
- return `<div class="story commercial-page economics-page" data-commercial-home data-economics-page data-econ-mode="${r.state.mode}" data-econ-locked-mode="full" data-econ-state="${r.net<0?'loss':'profit'}" data-econ-year-state="${r.yearNet<0?'loss':'profit'}">${hero(r)}${raw(r)}${product(r)}${market(r)}${unit(r)}${constructor(r)}${monthly(r)}${resilience(r)}${growth()}${conditions(r)}${discuss(r)}<p class="visually-hidden" data-economics-status role="status" aria-live="polite" aria-atomic="true"></p></div>`;
+export function economicsPage({config=economicsConfig,rates,offers=marketOffers}={}){
+ const snapshot=createInvestmentStore({config,fx:getFxSnapshot({data:rates,status:'cached'})}).get();
+ const values=financialValues(snapshot),v=(key,tag)=>valueMarkup(values,key,tag);
+ return `<div class="story commercial-page economics-page" data-commercial-home data-economics-page data-econ-mode="full" data-econ-locked-mode="full" data-econ-state="${snapshot.result.net<0?'loss':'profit'}" data-econ-scenario="base">
+  ${snapshot.fx?`<script type="application/json" data-econ-fx-seed>${JSON.stringify(snapshot.fx)}</script>`:''}
+  ${hero(snapshot,v)}${raw(snapshot)}${material(snapshot,v)}${product()}${market(snapshot,offers)}${unit(snapshot,v)}${calculator(snapshot,v)}
+  ${resilience(snapshot)}${growth(snapshot,v)}${conditions(snapshot)}${discuss(snapshot,v)}
+  <p class="visually-hidden" data-economics-status role="status" aria-live="polite" aria-atomic="true"></p>
+ </div>`;
 }

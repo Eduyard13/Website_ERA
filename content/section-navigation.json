@@ -139,6 +139,7 @@
           "target": "raw-material",
           "activeSections": [
             "raw-material",
+            "material-balance",
             "product-quality",
             "market"
           ]
@@ -154,8 +155,7 @@
           "label": "Калькулятор",
           "target": "production-constructor",
           "activeSections": [
-            "production-constructor",
-            "monthly-result"
+            "production-constructor"
           ]
         },
         {

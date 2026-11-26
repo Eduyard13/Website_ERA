@@ -20,7 +20,8 @@ anchors = {
     '/technology/': {'material-balance': 'raw-material', 'technology-next': 'standalone-equipment',
                      'detail-title': 'standalone-equipment', 'discuss': 'standalone-equipment'},
     '/': {'resource-business-title': 'russia-market', 'feedstock-methodology': 'raw-material'},
-    '/economics/': {'product-quality': 'raw-material', 'market': 'raw-material',
+    '/economics/': {'material-balance': 'raw-material', 'product-quality': 'raw-material', 'market': 'raw-material',
+                    'monthly-result': 'production-constructor',
                     'econ-curve-title': 'project-resilience', 'calculation-conditions': 'economics-project'},
 }
 is_aligned = """id => {

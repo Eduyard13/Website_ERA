@@ -39,7 +39,7 @@ const checksums=new Map([...sources].filter(([,bytes])=>bytes).map(([file,bytes]
 const importPattern=/(?:from|import) '(\.\/[^']+\.js)'/g;
 const dependentFiles=file=>file==='line-monitor.js'?['line-callout-layout.mjs']:
  moduleAssets.includes(file.replace(/\.js$/,''))&&sources.get(file)?[...sources.get(file).toString().matchAll(importPattern)].map(match=>match[1].slice(2)):[];
-function assetRevision(file,fallback=version){
+export function assetRevision(file,fallback=version){
  if(!checksums.has(file))return fallback;
  const closure=new Set([file]);
  for(const resource of closure)for(const dependency of dependentFiles(resource))closure.add(dependency);
@@ -47,7 +47,7 @@ function assetRevision(file,fallback=version){
  return digest([...closure].sort().map(name=>name+':'+checksums.get(name)).join('\n')).slice(0,12);
 }
 // Preserve the published 0.48.1 legal HTML byte for byte.
-const legalShellRevisions = {'legal.css':'35839ab08f58', 'cookie-consent.js':'be334a6d6754'};
+const legalShellRevisions = {'legal.css':'35839ab08f58', 'cookie-consent.js':'be334a6d6754', 'fx.js':version};
 // The shared monitor retains its existing behavior on these reference pages.
 const referenceLineRoutes=new Set(['/catalog/lines/separatsiya-01','/catalog/lines/separatsiya-02']);
 const revisionedMarkup=(html,path)=>html.replace(/((?:src|href)="\/([^"?]+)\?v=)([^"&]+)/g,(_,prefix,file,key)=>{
@@ -66,7 +66,7 @@ const simplePages={
 function page(path){
  if(path==='/')return presentationHome();
  if(path==='/about-us')return aboutUsPage();
- if(path==='/economics')return economicsPage();
+ if(path==='/economics')return economicsPage({rates:ratesSeed});
  const revised=revisedPage(path);if(revised!==null)return revised;
  if(path==='/contacts')return contactPage({basePath});
  if(path==='/contacts/sent')return requestSentPage();
