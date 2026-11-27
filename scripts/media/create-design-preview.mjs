@@ -8,7 +8,7 @@ const output=resolve(process.argv[2]||'/tmp/era-about-contacts-preview/export');
 const base=(process.env.BASE_PATH||'').replace(/\/$/,'');
 const origin='https://eduyard13.github.io/Website_ERA';
 const files=new Map([['/about-us','about-us.html'],['/contacts','contacts.html']]);
-const mime={'.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.jpeg':'image/jpeg','.svg':'image/svg+xml','.woff2':'font/woff2'};
+const mime={'.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.jpeg':'image/jpeg','.svg':'image/svg+xml','.ico':'image/x-icon','.woff2':'font/woff2'};
 const escape=value=>value.replaceAll('&','&amp;').replaceAll('"','&quot;');
 function localPath(value){
  const url=new URL(value.replaceAll('&amp;','&'),'https://preview.invalid');
