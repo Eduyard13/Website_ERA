@@ -1,3 +1,4 @@
+from io import BytesIO
 from pathlib import Path
 import sys
 from tempfile import TemporaryDirectory
@@ -6,7 +7,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / 'scripts' / 'build'), str(ROOT / 'scripts' / 'deploy')]
 from regru_cleanup import cleanup_plan, transfer
-from regru_release import build_manifest, make_manifest
+from regru_release import build_manifest, make_manifest, PINNED_PDF_VIEWER, verified_payload
 from validate_structure import check_dist, verify_tree
 
 
@@ -58,6 +59,15 @@ class Architecture(unittest.TestCase):
             self.put('index.html', f'<a href="{url}">Details</a>')
             with self.assertRaisesRegex(ValueError, error):
                 check_dist(self.web, self.registry, '/Website_ERA', [])
+
+    def test_only_the_reviewed_vendor_bytes_can_bypass_the_literal_check(self):
+        viewer = 'vendor/pdfjs/pdf.mjs'
+        with (ROOT / 'node_modules/pdfjs-dist/build/pdf.mjs').open('rb') as source:
+            self.assertEqual(verified_payload(source, viewer), PINNED_PDF_VIEWER)
+        with self.assertRaisesRegex(ValueError, 'reviewed npm dependency'):
+            verified_payload(BytesIO(b'const changed=true;'), viewer)
+        with self.assertRaisesRegex(ValueError, 'Possible credential'):
+            verified_payload(BytesIO(b'{"password": "fixture-only"}'), 'assets/data.json')
 
     def test_quarantine_and_restore_are_idempotent_and_keep_other_paths(self):
         self.put('index.html', self.home)

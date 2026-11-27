@@ -31,6 +31,8 @@ SECRET_BYTES = re.compile(
 )
 TEXT_EXT = set('.html .css .js .mjs .json .txt .xml .map .vtt .md .svg'.split())
 ZIP_METADATA = {'PATCH_MANIFEST.md', 'BEFORE.json', 'RELEASE.json', 'PLAN.json'}
+# PDF.js contains a literal password example. Accept the locked upstream bytes.
+PINNED_PDF_VIEWER = 'cbabeebf4df66f3fe736f2fa2792d332e019a878b0aa88d5e2be17d439079de4'
 
 
 def protected(path):
@@ -55,6 +57,11 @@ def public_path(path):
 
 
 def verified_payload(stream, path):
+    if path == 'vendor/pdfjs/pdf.mjs':
+        actual = hashlib.file_digest(stream, 'sha256').hexdigest()
+        if actual != PINNED_PDF_VIEWER:
+            raise ValueError('PDF.js differs from the reviewed npm dependency')
+        return actual
     hasher = hashlib.sha256()
     tail = b''
     is_text = PurePosixPath(path).suffix.lower() in TEXT_EXT
