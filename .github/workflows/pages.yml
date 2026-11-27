@@ -462,6 +462,7 @@ jobs:
           path: tmp/base-engineering/*.png
           if-no-files-found: ignore
       - name: Verify published economics in Chrome
+        timeout-minutes: 3
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
         run: node test/browser/economics-public.mjs

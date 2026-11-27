@@ -9,7 +9,19 @@ import {setTimeout as delay} from 'node:timers/promises';
 
 const base=(process.env.ERA_PREVIEW_URL||process.env.ERA_SITE_URL||'http://127.0.0.1:3000/Website_ERA').replace(/\/$/,'');
 const url=base+'/economics/';
-const response=await fetch(url,{cache:'no-store'});
+async function fetchPublished(path,method='GET'){
+ for(const pause of [1000,2500,null]){
+  try{
+   const response=await fetch(path,{method,cache:'no-store',signal:AbortSignal.timeout(15000)});
+   if(pause===null||![429,500,502,503,504].includes(response.status))return response;
+   await response.body?.cancel();
+  }catch(error){
+   if(pause===null)throw new Error(`Cannot verify ${path}`,{cause:error});
+  }
+  await delay(pause);
+ }
+}
+const response=await fetchPublished(url);
 assert.equal(response.status,200,'Published economics HTTP status');
 const html=await response.text();
 assert.ok(html.includes('Экономика вашего производства.'),'Published economics heading');
@@ -27,14 +39,16 @@ assert.match(html,/data-econ-price="base" data-price-rub="90000" aria-pressed="t
 assert.doesNotMatch(html,/<button[^>]*data-econ-mode|data-econ-range|data-econ-number|data-market-source="spimex"/);
 for(const source of ['ppi','plasticker','myceppi'])assert.ok(html.includes('data-market-source="'+source+'"'),'Published source '+source);
 for(const asset of ['assets/js/economics/economics-page-controller.js','assets/js/economics/economics-page-state.js','assets/js/economics/economics-model.js','assets/js/economics/economics-payback.js','assets/css/pages/economics/economics-page.css','assets/project-home/hero/feedstock_hero-880.webp','assets/lines/moyka-plenki/product-granule.webp','assets/economics/hero.webp','assets/economics/factory.webp']){
- const resource=await fetch(base+'/'+asset,{cache:'no-store'});
+ const resource=await fetchPublished(base+'/'+asset,'HEAD');
  assert.equal(resource.status,200,'Published resource '+asset);
  assert.ok(!resource.headers.get('content-type')?.includes('text/html'),'Asset MIME '+asset);
 }
+console.log('Published economics HTML and asset headers verified');
 const binary=process.env.ERA_CHROME_PATH||['/usr/bin/google-chrome','/usr/bin/chromium','/opt/google/chrome/chrome'].find(existsSync);
 if(!binary)throw new Error('Chrome is required to verify public economics');
 const profile=await mkdtemp(join(tmpdir(),'era-economics-browser-'));
 const chrome=spawn(binary,['--headless=new','--no-sandbox','--disable-dev-shm-usage','--disable-background-networking','--no-first-run','--no-default-browser-check','--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{stdio:'ignore'});
+const chromeClosed=new Promise(resolve=>chrome.once('close',resolve));
 let socket;
 try{
  let port;
@@ -45,13 +59,17 @@ try{
  assert.ok(port,'Chrome debugging endpoint');
  let page;
  for(let i=0;i<50&&!page;i++){
-  const targets=await(await fetch(`http://127.0.0.1:${port}/json/list`)).json();
+  const targets=await(await fetch(`http://127.0.0.1:${port}/json/list`,{signal:AbortSignal.timeout(5000)})).json();
   page=targets.find(target=>target.type==='page');
   if(!page)await delay(100);
  }
  assert.ok(page,'Chrome page target');
  socket=new WebSocket(page.webSocketDebuggerUrl);
- await new Promise((resolve,reject)=>{socket.addEventListener('open',resolve,{once:true});socket.addEventListener('error',reject,{once:true});});
+ await new Promise((resolve,reject)=>{
+  const watchdog=setTimeout(()=>reject(new Error('Chrome WebSocket open timed out')),10000);
+  socket.addEventListener('open',()=>{clearTimeout(watchdog);resolve();},{once:true});
+  socket.addEventListener('error',error=>{clearTimeout(watchdog);reject(error);},{once:true});
+ });
  let id=0;const pending=new Map(),errors=[];
  socket.addEventListener('message',event=>{
   const message=JSON.parse(event.data);
@@ -77,6 +95,7 @@ try{
  await setWidth(1440);
  await command('Page.navigate',{url});
  await wait(ready);
+ console.log('Chrome initialized the published economics model');
  let s=await snapshot();
  assert.equal(s.mode,'full');assert.equal(s.scenario,'base');assert.equal(s.sections,10);
  const references=await evaluate(`document.querySelectorAll('details#market-offers,details#calculation-conditions').length`);
@@ -132,5 +151,5 @@ try{
  assert.deepEqual(errors,[],'Published browser exceptions');
  console.log('::notice title=Published economics verified::Live full-cycle SSR, all prices, scenario figures, five-complex network, three balance periods, proportional allocation, request context and six viewport widths passed in Chrome. '+url);
 }finally{
- socket?.close();chrome.kill('SIGTERM');await delay(250);await rm(profile,{recursive:true,force:true});
+ socket?.close();chrome.kill('SIGTERM');await chromeClosed;await rm(profile,{recursive:true,force:true,maxRetries:3,retryDelay:100});
 }
