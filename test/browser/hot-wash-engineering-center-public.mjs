@@ -30,15 +30,27 @@ const files=[
 const A0=JSON.parse(html.match(/<script type="application\/json" id="line-document-data">(.*?)<\/script>/s)[1]).find(doc=>doc.id==='moyka-plenki-dimensions');
 assert.equal(A0.format,'A0');assert.equal(A0.pages,1);assert.equal(A0.bytes,7428220);
 assert.equal(A0.sha256,'b83934c4ec61b92192056a2f16ef48eae353d1506820f7e8516abf98f38dc2c7');
+async function fetchPublishedAsset(file){
+ const retryDelays=[1000,2500,5000];
+ for(const pause of [...retryDelays,null]){
+  const response=await fetch(base+'/'+file,{signal:AbortSignal.timeout(25000)});
+  if(pause===null||![429,502,503,504].includes(response.status))return response;
+  await response.body?.cancel();
+  await delay(pause);
+ }
+}
 async function verifyFile({file,bytes,sha256},mime){
- const response=await fetch(base+'/'+file,{cache:'no-store',signal:AbortSignal.timeout(25000)});
+ const response=await fetchPublishedAsset(file);
  assert.equal(response.status,200,file);
  assert.equal(response.headers.get('content-type')?.split(';')[0],mime,file);
  const buffer=Buffer.from(await response.arrayBuffer());
  assert.equal(buffer.length,bytes,file);
  assert.equal(createHash('sha256').update(buffer).digest('hex'),sha256,file);
 }
-for(let start=0;start<files.length;start+=6)await Promise.all(files.slice(start,start+6).map(v=>verifyFile(v,'image/webp')));
+const concurrentDownloads=3;
+for(let start=0;start<files.length;start+=concurrentDownloads){
+ await Promise.all(files.slice(start,start+concurrentDownloads).map(v=>verifyFile(v,'image/webp')));
+}
 await verifyFile({...A0,file:'documents/'+A0.file},'application/pdf');
 const documentation=html.match(/<section[^>]* id="documents">([\s\S]*?)<\/section>/)[1];
 const library=await fetch(base+'/documents/drawings/?objectType=line&product=moyka-plenki',{cache:'no-store'});
