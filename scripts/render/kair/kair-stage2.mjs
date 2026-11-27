@@ -166,7 +166,7 @@ function functionOrbit(){
 function functionRow(item){
  const f=sourceFunctions.get(item.id);
  return `<article class="ka-function-row" data-kair-function data-function-id="${f.id}" data-scope="${f.scope}" data-group="${f.group}" data-source-codes="${f.codes.join(' ')}">
-  ${kairIcon(groupIcons[f.group])}<div><h4>${escape(item.title)}</h4><p class="ka-function-summary">${escape(item.summary)}</p></div>
+  ${kairIcon('check')}<div><h4>${escape(item.title)}</h4><p class="ka-function-summary">${escape(item.summary)}</p></div>
  </article>`;
 }
 function functions(){

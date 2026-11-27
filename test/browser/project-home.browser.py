@@ -268,7 +268,12 @@ with sync_playwright() as playwright:
         page.wait_for_url(lambda url: '/technology' in str(url) and str(url).endswith('#' + anchor))
 
     load(page)
-    page.locator('.resource-video-details summary').click()
+    videos = page.locator('.resource-video-block')
+    assert videos.get_by_role('heading', name='Видео проекта и работа оборудования').is_visible()
+    assert videos.locator('summary').count() == 0
+    assert videos.locator('video:visible').count() == 2
+    assert videos.locator('video').evaluate_all('items => items.every(video => video.paused && video.preload === "none")')
+    assert not requested_videos, requested_videos
     for item in video_manifest['inputs']:
         if item['format'] == 'MP4':
             source = page.locator(f'[data-video-slot={item["slot"]}] source').first

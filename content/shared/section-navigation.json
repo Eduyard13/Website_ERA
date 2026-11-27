@@ -176,7 +176,6 @@
           "label": "Ваш проект",
           "target": "economics-project",
           "activeSections": [
-            "economic-conditions",
             "economics-project"
           ]
         }

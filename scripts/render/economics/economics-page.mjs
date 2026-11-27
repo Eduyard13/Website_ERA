@@ -20,8 +20,11 @@ const band=(mark,text,{art=false}={})=>`<div class="ec-band ec-indigo${art?' ec-
  ${art?photoGranules(''):''}${icon(mark)}<div>${text}</div>${ribbon()}
 </div>`;
 const request=(r,scope,secondary=false)=>`<a href="${requestHref(r)}" class="button${secondary?' secondary':''}" data-project-request data-economics-request="${scope}">Оставить заявку ${arrow}</a>`;
-const details=(id,label,body)=>`<details id="${id}" class="ec-details" data-keep-open><summary>${label}</summary><div class="ec-detail-body">${body}</div></details>`;
-const hint=(id,text)=>`<a href="#${id}" class="ec-link" data-econ-disclose="${id}">${text} ${arrow}</a>`;
+const referenceLink=(id,text)=>`<a href="#${id}" class="ec-link" data-econ-reference-link aria-haspopup="dialog">${text} ${arrow}</a>`;
+const referenceDialog=(id,title,body)=>`<dialog id="${id}" class="ec-reference-dialog" data-econ-reference aria-labelledby="${id}-title">
+ <div class="ec-reference-heading"><h2 id="${id}-title">${title}</h2><form method="dialog"><button type="submit" aria-label="Закрыть справку">×</button></form></div>
+ <div class="ec-reference-body">${body}</div>
+</dialog>`;
 
 function hero(snapshot,v){
  return `<section class="ec-hero ec-edge" id="economic-case" data-page-progress-label="Инвестиционный потенциал" aria-labelledby="economic-case-title">
@@ -33,7 +36,7 @@ function hero(snapshot,v){
    <p class="ec-hero-lead">От невостребованного сырья до готового полимерного продукта. Оцените финансовый потенциал предприятия полного цикла переработки.</p>
    <dl class="ec-hero-numbers">
     <div><dt>${v('monthLabel','span')}</dt><dd>${v('heroMonthNet')}${v('heroMonthUsd','small')}</dd></div>
-    <div><dt>${v('yearLabel','span')}</dt><dd>${v('heroYearNet')}${v('heroYearUsd','small')}<a class="ec-hero-year-note" href="#calculation-conditions" data-econ-disclose="calculation-conditions">${v('heroYearNote','span')}</a></dd></div>
+    <div><dt>${v('yearLabel','span')}</dt><dd>${v('heroYearNet')}${v('heroYearUsd','small')}</dd></div>
     <div class="ec-hero-payback"><dt>Расчётный срок возврата вложений в оборудование</dt><dd>${v('payback')}</dd></div>
    </dl>
    <div class="ec-actions"><a class="button" href="#production-constructor">Рассчитать своё производство ${arrow}</a>${request(snapshot.result,'complex',true)}</div>
@@ -50,8 +53,7 @@ function raw({baseline,config}){
    <figure class="ec-photo-card ec-value-input"><img src="${feed}.webp" srcset="${feed}-480.webp 480w, ${feed}-880.webp 880w, ${feed}-1280.webp 1280w" sizes="(max-width:700px) 94vw, 40vw" width="1688" height="3000" loading="lazy" decoding="async" alt="Загрязнённая плёнка, поступающая на переработку">
     <figcaption><strong>${priceText(purchase)}</strong><span>Входящее сырьё<br><small>Закупка смеси</small></span></figcaption></figure>
    <div class="ec-value-stream" aria-label="Технология ЭРА">
-    <svg class="ec-stream-lines" viewBox="0 0 440 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0 32C98 38 109 61 232 60S351 63 416 60M0 86C107 91 130 52 240 57S360 53 418 60M0 58H427" fill="none" stroke="currentColor" stroke-width="2"/><path d="m416 43 22 17-22 17Z" fill="currentColor"/></svg>
-    ${eraMedallion()}
+    <span class="ec-stream-arrow" aria-hidden="true"></span>${eraMedallion()}<span class="ec-stream-arrow" aria-hidden="true"></span>
    </div>
    <figure class="ec-photo-card ec-value-output">${photoGranules()}<figcaption><strong>${priceText(baseline.grossPrice)}</strong><span>Готовая продукция<br><small>Базовая цена с НДС</small></span></figcaption></figure>
   </div>
@@ -78,7 +80,7 @@ function material({baseline:r,config},v){
     ${product>0?'<path d="m665 43 25 18-25 18Z" fill="#e2b857"/>':''}${remaining>0?'<path d="m665 162 25 18-25 18Z" fill="#bfb5a5"/>':''}
    </svg>
    <article class="ec-flow-in ec-indigo"><span>${icon('layers')} Входящее сырьё</span>${v('balanceInput')}<small>${percent(input>0?1:null)}</small></article>
-   <div class="ec-flow-medal">${eraMedallion('Полный цикл')}</div>
+   <div class="ec-flow-medal">${eraMedallion()}</div>
    <div class="ec-flow-out">
     <svg class="ec-balance-mobile" viewBox="0 0 100 200" preserveAspectRatio="none" aria-hidden="true">
      <path d="M50 0V29" stroke="#d9b675" stroke-width="12"/>
@@ -115,7 +117,7 @@ function product(){
    </div>
    <p class="ec-quality-tuning">ПТР гранулы можно настраивать под требования будущей продукции. Технологический режим подбирается под сырьё и согласованную спецификацию. Параметры партии подтверждаются испытаниями.</p>
    <ul class="ec-quality-benefits">${benefits.map(([mark,text])=>`<li>${icon(mark)}<span>${text}</span></li>`).join('')}</ul>
-  </div><figure class="ec-quality-photo">${photoGranules()}<figcaption>Образец из технического описания линии ЭРА</figcaption></figure></div>
+  </div><figure class="ec-quality-photo">${photoGranules()}</figure></div>
   <div class="ec-uses"><div class="ec-uses-head ec-indigo">Области применения<small>При соответствии марки и спецификации</small></div>
    ${uses.map(([mark,label])=>`<div>${icon(mark)}${label}</div>`).join('')}
   </div>
@@ -136,6 +138,24 @@ function market({baseline},offers){
   {price:top.price,label:'Верхний ценовой сегмент',icon:'diamond',amount:offerPrice(top),copy:`${supplier(top)} · ${escape(top.title)}`},
  ].sort((a,b)=>a.price-b.price);
  const eu=marketSources.find(source=>source.id==='myceppi');
+ return `<section class="ec-section ec-market" id="market" data-page-progress-label="Рыночные ориентиры" aria-labelledby="market-title"><div class="ec-shell">
+  ${heading('РЫНОЧНЫЕ ОРИЕНТИРЫ','market-title','Рынок вторичной гранулы. <span>Обоснованная цена реализации.</span>','В основе модели ЭРА — рыночные предложения и отраслевые ориентиры.')}
+  <div class="ec-ladder ec-indigo">${steps.map((s,i)=>`<article data-basis="${Boolean(s.base)}" style="--step:${i}"><div class="ec-ladder-price"><strong>${s.amount}</strong></div><div class="ec-ladder-copy">${icon(s.icon)}<h3>${s.label}</h3><p>${s.copy}</p></div></article>`).join('')}${ribbon()}</div>
+  <div class="ec-market-sources-heading"><h3 class="ec-rule-title">Примеры рыночных источников</h3>${referenceLink('market-offers','Все источники рынка')}</div>
+  <div class="ec-market-offers">${selected.map((s,i)=>`<article data-offer="${s.id}">${icon(i===1?'pipes':'layers')}<div>${supplier(s)}<strong>${offerPrice(s)}</strong><p>${escape(s.title)}</p><small>${escape(s.vat==='Не указан'?'НДС не указан':s.vat)} · ${s.priceDate==='Не указана'?'Проверено '+day(s.checkedAt):'Прайс '+escape(s.priceDate)}</small></div></article>`).join('')}</div>
+  <h3 class="ec-rule-title">Международный ориентир</h3>
+  <div class="ec-international-card ec-indigo">
+   <div class="ec-international">${icon('globe')}
+    <div><span>Вторичный rLDPE Film</span><strong>${decimal(eu.value)} ${eu.unit}</strong></div>
+    <div><span>Первичный LDPE Film</span><strong>${decimal(eu.primaryValue)} ${eu.unit}</strong></div>
+    <p><a href="${eu.href}" target="_blank" rel="noopener noreferrer">${eu.title} ${arrow}</a><br>${eu.period} · проверено ${day(eu.checkedAt)}</p>
+   </div>
+   ${band('growth','<p>Стабильное качество открывает возможность перехода <strong>к верхнему ценовому диапазону.</strong></p>',{art:true})}
+  </div>
+ </div></section>`;
+}
+
+function marketReferences(offers){
  const rows=[['ldpe','ПВД / LDPE'],['hdpe','ПНД / HDPE']].map(([kind,label])=>`<h3>Гранула ${label}</h3><div class="ec-table-scroll" role="region" aria-label="Предложения гранулы ${label}" tabindex="0">
   <table><thead><tr><th scope="col">Источник и материал</th><th scope="col">Предложение</th><th scope="col">Условия и проверка</th></tr></thead>
   <tbody>${offers.filter(o=>o.category===kind).map(o=>`<tr><th scope="row">${supplier(o)}<small>${escape(o.title)} · ${escape(o.polymer)}</small></th>
@@ -143,20 +163,7 @@ function market({baseline},offers){
   </table></div>`).join('');
  const refs=`<ul class="ec-reference-list">${marketSources.filter(s=>s.id!=='spimex').map(s=>`<li data-market-source="${s.id}"><a href="${escape(s.href)}" target="_blank" rel="noopener noreferrer">${escape(s.title)} ${arrow}</a><p>${escape(s.kind)} · ${escape(s.period)}. ${escape(s.note)} Проверено ${day(s.checkedAt)}.</p></li>`).join('')}
  ${additionalMarketSources.map(([label,href,note])=>`<li><a href="${href}" target="_blank" rel="noopener noreferrer">${escape(label)} ${arrow}</a><p>${escape(note)}</p></li>`).join('')}</ul>`;
- return `<section class="ec-section ec-market" id="market" data-page-progress-label="Рыночные ориентиры" aria-labelledby="market-title"><div class="ec-shell">
-  ${heading('РЫНОЧНЫЕ ОРИЕНТИРЫ','market-title','Рынок вторичной гранулы. <span>Обоснованная цена реализации.</span>','В основе модели ЭРА — рыночные предложения и отраслевые ориентиры.')}
-  <div class="ec-ladder ec-indigo">${steps.map((s,i)=>`<article data-basis="${Boolean(s.base)}" style="--step:${i}"><div class="ec-ladder-price"><strong>${s.amount}</strong></div><div class="ec-ladder-copy">${icon(s.icon)}<h3>${s.label}</h3><p>${s.copy}</p></div></article>`).join('')}${ribbon()}</div>
-  <h3 class="ec-rule-title">Примеры рыночных источников</h3>
-  <div class="ec-market-offers">${selected.map((s,i)=>`<article data-offer="${s.id}">${icon(i===1?'pipes':'layers')}<div>${supplier(s)}<strong>${offerPrice(s)}</strong><p>${escape(s.title)}</p><small>${escape(s.vat==='Не указан'?'НДС не указан':s.vat)} · ${s.priceDate==='Не указана'?'Проверено '+day(s.checkedAt):'Прайс '+escape(s.priceDate)}</small></div></article>`).join('')}</div>
-  <h3 class="ec-rule-title">Международный ориентир</h3>
-  <div class="ec-international ec-indigo">${icon('globe')}
-   <div><span>Вторичный rLDPE Film</span><strong>${decimal(eu.value)} ${eu.unit}</strong></div>
-   <div><span>Первичный LDPE Film</span><strong>${decimal(eu.primaryValue)} ${eu.unit}</strong></div>
-   <p><a href="${eu.href}" target="_blank" rel="noopener noreferrer">${eu.title} ${arrow}</a><br>${eu.period} · проверено ${day(eu.checkedAt)}</p>
-  </div>
-  ${details('market-offers','Источники и предложения рынка',rows+refs+'<p>Цены относятся к разным маркам и условиям поставки. Объявления продавцов служат ориентиром для переговоров. Международные значения приводятся в исходной валюте.</p>')}
-  ${band('growth','<p>Стабильное качество открывает возможность перехода <strong>к верхнему ценовому диапазону.</strong></p>',{art:true})}
- </div></section>`;
+ return referenceDialog('market-offers','Источники и предложения рынка',rows+refs+'<p>Цены относятся к разным маркам и условиям поставки. Объявления продавцов служат ориентиром для переговоров. Международные значения приводятся в исходной валюте.</p>');
 }
 
 const expenseIcons={feedstock:'layers',payroll:'people',electricity:'power',water:'water',reagents:'lab',transport:'truck',ppe:'shield',
@@ -207,7 +214,7 @@ function calculator(snapshot,v){
   <h3 class="ec-rule-title">Ключевые параметры проекта</h3>
   <dl class="ec-project-params">${parameters.map(([mark,title,value])=>`<div>${icon(mark)}<dt>${title}</dt><dd>${value}</dd></div>`).join('')}</dl>
   ${band('growth',baseline.net>0?'<p>Прибыль уже в базовом сценарии. <strong>Потенциал роста — вместе с вашим бизнесом.</strong></p>':'<p>Оцените финансовый результат <strong>при разных ценах реализации.</strong></p>',{art:true})}
-  <p class="ec-subnote">Расчёт при номинальной загрузке одного комплекса и реализации всего выпуска. Выбранная цена включает НДС. ${hint('calculation-conditions','Условия расчёта')}</p>
+  <p class="ec-subnote">Расчёт при номинальной загрузке одного комплекса и реализации всего выпуска. Выбранная цена включает НДС. ${referenceLink('calculation-conditions','Условия расчёта')}</p>
  </div></section>`;
 }
 
@@ -266,9 +273,8 @@ function growth(snapshot,v){
  </div></section>`;
 }
 
-function conditions({config,baseline:r}){
- return `<section class="ec-section ec-conditions" id="economic-conditions" data-page-progress-label="Условия расчёта"><div class="ec-shell">
-  ${details('calculation-conditions','Условия расчёта и источники',`<h3>Производственная база</h3>
+function conditionsReference({config,baseline:r}){
+ return referenceDialog('calculation-conditions','Условия расчёта и источники',`<h3 id="economic-conditions">Производственная база</h3>
    <p>Нормативный месяц — ${config.monthDays} день и ${decimal(r.mode.monthHours)} ч. Стабильный год — ${config.yearDays} дней и ${decimal(r.mode.yearHours)} ч. Расчёт относится к полной загрузке и реализации всего выпуска. Предусмотрен готовый цех заказчика. Годовой ориентир на первом экране равен ${config.monthsPerYear} округлённым месячным суммам. Подробный годовой результат рассчитан за ${config.yearDays} дней.</p>
    <h3>Цены, НДС и расходы</h3>
    <p>Закупка — ${priceText(config.feedstockPrice)} за кг входящей смеси без доставки и входящего НДС. Реализация — с НДС ${percent(config.vatRate)} за кг готового продукта. У этих цен разные массы и база НДС. Выручка в расчёте — без НДС, полная себестоимость включает амортизацию. Налог на прибыль — ${percent(config.taxRate)} положительной прибыли до налога.</p>
@@ -277,8 +283,7 @@ function conditions({config,baseline:r}){
    <p>Подтверждение стоимости оборудования для пересчитанного сценария требуется для оценки срока возврата. При наличии согласованной стоимости метод учитывает операционный поток как чистую прибыль за год плюс амортизацию. Запуск, оборотный капитал и дополнительные капитальные затраты оцениваются отдельно. Расчёт не гарантирует фактическую доходность.</p>
    <h3>Финансовые и рыночные источники</h3>
    <p>Производственная смета от ${day(r.mode.estimate.asOf)} · ${escape(r.mode.estimate.region)}. Исходная модель — ${config.sources.filter(s=>s.mode==='full').map(s=>`${escape(s.title)} · ${escape(s.sheets)}`).join('<br>')}. Проверка опубликованных рыночных ориентиров — ${day(config.marketAsOf)}.</p>
-   <p>${escape(config.priceDisclosure)} ${hint('market-offers','Источники рынка')} <a class="ec-link" href="/technology#raw-material" data-technology-page>Технология переработки ${arrow}</a></p>`)}
- </div></section>`;
+   <p>${escape(config.priceDisclosure)} ${referenceLink('market-offers','Источники рынка')} <a class="ec-link" href="/technology#raw-material" data-technology-page>Технология переработки ${arrow}</a></p>`);
 }
 
 function discuss({network},v){
@@ -300,7 +305,8 @@ export function economicsPage({config=economicsConfig,rates,offers=marketOffers}
  return `<div class="story commercial-page economics-page" data-commercial-home data-economics-page data-econ-mode="full" data-econ-locked-mode="full" data-econ-state="${snapshot.result.net<0?'loss':'profit'}" data-econ-scenario="base">
   ${snapshot.fx?`<script type="application/json" data-econ-fx-seed>${JSON.stringify(snapshot.fx)}</script>`:''}
   ${hero(snapshot,v)}${raw(snapshot)}${material(snapshot,v)}${product()}${market(snapshot,offers)}${unit(snapshot,v)}${calculator(snapshot,v)}
-  ${resilience(snapshot)}${growth(snapshot,v)}${conditions(snapshot)}${discuss(snapshot,v)}
+  ${resilience(snapshot)}${growth(snapshot,v)}${discuss(snapshot,v)}
+  ${conditionsReference(snapshot)}${marketReferences(offers)}
   <p class="visually-hidden" data-economics-status role="status" aria-live="polite" aria-atomic="true"></p>
  </div>`;
 }

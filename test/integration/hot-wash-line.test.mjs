@@ -31,7 +31,7 @@ test('Горячая мойка сохраняет показатели посл
  assert.ok(hotFilmWashing.cardMetrics.every(m=>m.note));
  const card=revisedPage('/catalog/lines').match(/<a class="line-card[^>]*data-line-id="moyka-plenki"[\s\S]*?<\/a>/)[0];
  assert.ok(card.includes('ГОРЯЧАЯ МОЙКА / ГОТОВАЯ ЛИНИЯ'));
- assert.ok(card.includes('catalog-cover-detailed.webp')&&card.includes('catalog-cover-detailed-768.webp 768w'));
+ assert.ok(card.includes('catalogue/lines/hot-wash.webp?v=')&&card.includes('catalogue/lines/hot-wash-800.webp?v='));
  assert.equal((card.match(/<dt>/g)||[]).length,6);assert.ok(!card.includes('В разработке'));
 });
 test('Все 44 WebP, размеры, исходный PDF и единственная обложка сохраняют происхождение',async()=>{

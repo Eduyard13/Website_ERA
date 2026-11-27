@@ -76,6 +76,7 @@ jobs:
         with:
           sparse-checkout: |
             content/shared/browser-assets.json
+            content/equipment/line-catalogue-covers.json
             test/browser/line-diagram-public.mjs
             test/browser/pro-engineering-center-public.mjs
             test/browser/premium-engineering-center-public.mjs
@@ -113,6 +114,7 @@ jobs:
           from urllib.parse import urljoin, urlsplit
           revisions = json.loads(os.environ['ERA_ASSET_REVISIONS'])
           asset_paths = json.loads(Path('content/shared/browser-assets.json').read_text())['paths']
+          catalogue_covers = json.loads(Path('content/equipment/line-catalogue-covers.json').read_text())
 
           base = os.environ['ERA_SITE_URL'].rstrip('/') + '/'
 
@@ -267,13 +269,10 @@ jobs:
                       if content_type != 'image/webp' or image[:4] != b'RIFF' or image[8:12] != b'WEBP':
                           raise RuntimeError('Catalogue equipment image is unavailable: ' + slug)
                   _, lines_catalogue = fetch('catalog/lines/')
-                  blue_cover = 'assets/lines/separatsiya-01/catalog-cover.webp'
-                  if blue_cover not in lines_catalogue:
-                      raise RuntimeError('The approved blue line catalogue cover is missing')
-                  for image_path in ('assets/lines/separatsiya-01/hero-titanium.webp', 'assets/lines/separatsiya-01/hero-titanium-768.webp', 'assets/lines/separatsiya-02/era-separatsiya-02-layout.webp', blue_cover):
+                  for image_path in ('assets/lines/separatsiya-01/hero-titanium.webp', 'assets/lines/separatsiya-01/hero-titanium-768.webp', 'assets/lines/separatsiya-02/era-separatsiya-02-layout.webp'):
                       content_type, image = fetch(image_path, binary=True)
                       if content_type != 'image/webp' or image[:4] != b'RIFF' or image[8:12] != b'WEBP':
-                          raise RuntimeError('Titanium, construction or approved catalogue WebP is missing: ' + image_path)
+                          raise RuntimeError('Titanium or construction WebP is missing: ' + image_path)
                   print('::notice title=Titanium Gallery verified::Titanium hero and responsive WebP, light 01-27 construction display, five linked equipment cards and five unchanged catalogue images are published. Line and both catalogue routes return HTTP 200.')
                   line_checks = {
                       'separatsiya-01': (('separatsiya-01-brochure', 'separatsiya-01-mini-technical', 'separatsiya-01-dimensions'), ('225', '157,5'), 'A4', 2),
@@ -282,6 +281,12 @@ jobs:
                       'moyka-plenki': (('moyka-plenki-brochure', 'moyka-plenki-technical', 'moyka-plenki-dimensions'), ('1 271,70', '890,19'), 'A0', 4),
                   }
                   checked_pdfs = ['ballisticheskiy-separator-brochure']
+                  line_hero_covers = {
+                      'separatsiya-01': 'separatsiya-01-mini/catalog-cover-navy.webp',
+                      'separatsiya-02': 'separatsiya-01/catalog-cover.webp',
+                      'separatsiya-03': 'separatsiya-03/catalog-cover.webp',
+                      'moyka-plenki': 'moyka-plenki/catalog-cover-detailed.webp',
+                  }
                   for slug, (expected_docs, power, drawing_format, tabs) in line_checks.items():
                       line_page = full_line if slug == 'separatsiya-02' else fetch('catalog/lines/' + slug + '/')[1]
                       line_documents = json.loads(re.search(r'<script type="application/json" id="line-document-data">(.*?)</script>', line_page, re.S).group(1))
@@ -309,8 +314,17 @@ jobs:
                           raise RuntimeError('The clean A4 projections are missing')
                       card = re.search(fr'<a class="line-card[^>]*data-line-id="{slug}"[^>]*>.*?</a>', lines_catalogue, re.S).group(0)
                       hero = re.search(r'<figure[^>]*data-line-catalog-cover[^>]*>.*?</figure>', line_page, re.S).group(0)
-                      if re.search(r'<img src="([^"]+)"', card).group(1) != re.search(r'<img src="([^"]+)"', hero).group(1):
-                          raise RuntimeError('Line cover differs from its catalogue image: ' + slug)
+                      if not re.search(r'<img src="([^"]+)"', hero).group(1).endswith('/assets/lines/' + line_hero_covers[slug]):
+                          raise RuntimeError('Original line hero cover changed: ' + slug)
+                      cover = catalogue_covers[slug]
+                      for file_key, sha_key in (('file', 'sha256'), ('smallFile', 'smallSha256')):
+                          image_path = 'assets/' + cover[file_key] + '?v=' + cover[sha_key][:12]
+                          if image_path not in card:
+                              raise RuntimeError('Approved catalogue cover missing from ' + slug + ': ' + image_path)
+                          content_type, image = fetch(image_path, binary=True)
+                          if content_type != 'image/webp' or hashlib.sha256(image).hexdigest() != cover[sha_key]:
+                              raise RuntimeError('Published catalogue cover bytes differ from the checked build: ' + image_path)
+                  print('::notice title=Line covers verified::Eight approved WebP files and four unchanged hero covers verified on GitHub Pages.')
                   drawing = by_id['separatsiya-02-dimensions-a0']
                   if drawing['objectSlug'] != 'separatsiya-02' or drawing['category'] != 'drawings' or drawing.get('format') != 'A0' or drawing['pages'] != 1 or drawing['sha256'] != '8557bce36e8963146ec9fd33d11295c4483e2e4d4106f19ae41e7c50c39f98d0':
                       raise RuntimeError('Original A0 record is incorrect')

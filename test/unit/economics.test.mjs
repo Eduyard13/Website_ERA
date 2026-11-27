@@ -377,7 +377,6 @@ test('Единый официальный курс конвертирует зн
  assert.equal(base.monthUsd,'≈ 119,41 тыс. $');assert.equal(base.tonneUsd,'≈ 213,99 $/т');
  assert.equal(base.heroMonthNet,'≈ 10 млн ₽');assert.equal(base.heroYearNet,'≈ 120 млн ₽');
  assert.equal(base.heroMonthUsd,'≈ 120 тыс. $');assert.equal(base.heroYearUsd,'≈ 1,5 млн $');
- assert.equal(base.heroYearNote,'Расчёт за 365 дней — 112,93 млн ₽');
  assert.match(base.rate,/26\.11\.2026/);
  store.dispatch({type:'network',value:5});
  assert.equal(financialValues(store.get()).networkMonthUsd,'≈ 597,04 тыс. $');
@@ -395,6 +394,5 @@ test('Единый официальный курс конвертирует зн
  store.dispatch({type:'price',value:'premium'});
  const selected=financialValues(store.get());
  assert.equal(selected.heroYearNet,selected.yearNet);assert.equal(selected.heroMonthUsd,selected.monthUsd);
- assert.equal(selected.heroYearNote,'');
  assert.match(economicsPage(),/data-econ-value="rate">Курс ЦБ РФ недоступен/);
 });

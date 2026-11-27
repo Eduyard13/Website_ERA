@@ -56,26 +56,32 @@ export function initializeEconomicsPage(root){
  store.subscribe(render);
  render(store.get());
  bar?.addEventListener('era:fx-snapshot',event=>store.dispatch({type:'fx',value:event.detail}));
+ const openReference=id=>{
+  const dialog=document.getElementById(id)?.closest('dialog[data-econ-reference]');
+  if(!dialog||!root.contains(dialog))return false;
+  if(!dialog.open){
+   root.querySelector('dialog[data-econ-reference][open]')?.close();
+   dialog.showModal();
+  }
+  return true;
+ };
  root.addEventListener('click',event=>{
-  const control=event.target.closest('[data-econ-price],[data-econ-network],[data-econ-period],[data-econ-disclose]');
+  const reference=event.target.closest('[data-econ-reference-link]');
+  if(reference&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&!event.altKey&&openReference(reference.hash.slice(1)))event.preventDefault();
+  const control=event.target.closest('[data-econ-price],[data-econ-network],[data-econ-period]');
   if(!control)return;
-  const {econPrice,econNetwork,econPeriod,econDisclose}=control.dataset;
+  const {econPrice,econNetwork,econPeriod}=control.dataset;
   if(econPrice)store.dispatch({type:'price',value:econPrice});
   else if(econNetwork)store.dispatch({type:'network',value:Number(econNetwork)});
   else if(econPeriod)store.dispatch({type:'period',value:econPeriod});
-  else if(econDisclose)root.querySelector(`#${econDisclose}`).open=true;
  });
  networkPrice.addEventListener('change',()=>store.dispatch({type:'price',value:networkPrice.value}));
- const openLinkedDetails=()=>{
+ const openLinkedReference=()=>{
   let id;
   try{id=decodeURIComponent(location.hash.slice(1));}catch{return;}
-  const target=document.getElementById(id);
-  if(!target||!root.contains(target))return;
-  const disclosure=target.closest('details');
-  if(disclosure)disclosure.open=true;
+  openReference(id);
  };
- window.addEventListener('hashchange',openLinkedDetails);
- window.addEventListener('pageshow',openLinkedDetails);
- openLinkedDetails();
+ window.addEventListener('hashchange',openLinkedReference);
+ openLinkedReference();
  root.dataset.economicsReady='true';
 }

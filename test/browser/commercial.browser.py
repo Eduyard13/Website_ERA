@@ -17,7 +17,7 @@ url = base + '/economics/'
 widths = [(1920, 1080), (1440, 900), (1280, 800), (768, 1024), (390, 844), (360, 800)]
 prices = {'conservative': 80000, 'base': 90000, 'development': 100000, 'premium': 110000}
 sections = ['economic-case', 'raw-material', 'material-balance', 'product-quality', 'market', 'economics',
-            'production-constructor', 'project-resilience', 'production-growth', 'economic-conditions', 'economics-project']
+            'production-constructor', 'project-resilience', 'production-growth', 'economics-project']
 anchors = ['monthly-result', 'market-offers', 'calculation-conditions', 'econ-per-tonne-price',
            'econ-monthly-price', 'business-quality-title', 'econ-tonne-title', 'econ-curve-title', 'econ-volume']
 today = datetime.now(ZoneInfo('Europe/Moscow')).date()
@@ -125,7 +125,7 @@ with sync_playwright() as p:
     assert value(page, 'monthUsd') == '≈ 119,41 тыс. $'
     assert value(page, 'heroMonthUsd') == '≈ 120 тыс. $'
     assert value(page, 'heroYearUsd') == '≈ 1,5 млн $'
-    assert value(page, 'heroYearNote') == 'Расчёт за 365 дней — 112,93 млн ₽'
+    assert page.locator('#economic-case [data-econ-value=heroYearNote]').count() == 0
     assert page.locator('[data-econ-chart] .ec-bar-column').count() == 4
     assert page.locator('[data-economics-page] > section').evaluate_all('items => items.map(e=>e.id)') == sections
     start = page.locator('#production-growth [data-growth-mode=separation]')
@@ -140,7 +140,7 @@ with sync_playwright() as p:
         assert page.locator('[data-econ-network-price]').input_value() == scenario
         assert value(page, 'heroMonthNet') == ('≈ 10 млн ₽' if scenario == 'base' else money(net))
         assert value(page, 'heroYearNet') == ('≈ 120 млн ₽' if scenario == 'base' else money(year))
-        assert page.locator('.ec-hero-year-note').is_visible() == (scenario == 'base')
+        assert page.locator('.ec-hero-year-note').count() == 0
         assert value(page, 'monthNet', '.ec-unit-result') == money(net)
         assert value(page, 'yearNet') == money(year)
         assert page.locator('[data-econ-chart] .ec-bar-column[data-active=true]').count() == 1
@@ -181,11 +181,15 @@ with sync_playwright() as p:
         assert value(page, 'balanceOutput') == output == value(page, 'balanceOther')
     for anchor in anchors:
         assert page.locator('#' + anchor).count() == 1, anchor
-    page.locator('.ec-hero-year-note').click()
-    assert page.locator('#calculation-conditions').get_attribute('open') is not None
+    method_link = page.locator('#production-constructor a[href="#calculation-conditions"]')
+    method_link.press('Enter')
+    assert page.locator('#calculation-conditions').evaluate('dialog => dialog.matches(":modal")')
+    page.keyboard.press('Escape')
+    assert method_link.evaluate('link => link === document.activeElement')
     for anchor in ('calculation-conditions', 'market-offers'):
         page.evaluate('(id) => location.hash = id', anchor)
         page.wait_for_function('(id) => document.getElementById(id).open', arg=anchor)
+        page.keyboard.press('Escape')
     assert page.locator('.ec-international').get_by_text('950 €/т').is_visible()
     assert page.locator('.ec-international').get_by_text(f'1{nb}368 €/т').is_visible()
     assert not errors and not console_errors and not broken, (errors, console_errors, broken)
@@ -208,10 +212,10 @@ with sync_playwright() as p:
         assert responsive.locator('[data-section-navigation] a').count() == 7
         check_fit(responsive, width)
         assert responsive.locator('#market-offers').get_attribute('open') is None
-        responsive.locator('#market-offers summary').focus()
-        responsive.keyboard.press('Enter')
+        responsive.locator('#market a[href="#market-offers"]').press('Enter')
         assert responsive.locator('#market-offers').get_attribute('open') is not None
         check_fit(responsive, width)
+        responsive.keyboard.press('Escape')
         responsive.locator('[data-econ-price=premium]').click()
         responsive.locator('[data-econ-network="5"]').click()
         check_fit(responsive, width)
@@ -231,8 +235,9 @@ with sync_playwright() as p:
     assert html_only.locator('#production-growth [data-growth-mode=separation] dd').all_text_contents() == ['50 ₽/кг', '558 т', '4,45 млн ₽', '19,5%']
     assert value(html_only, 'balanceInput') == f'1{nb}500 кг/ч'
     assert html_only.locator('.ec-scenario-picker').is_hidden()
-    assert html_only.locator('#market-offers summary').is_visible()
     assert html_only.locator('#economics-project [data-economics-request]').is_visible()
+    html_only.locator('#market a[href="#market-offers"]').press('Enter')
+    assert html_only.locator('#market-offers .ec-table-scroll').first.is_visible()
     plain.close()
 
     for cached in (None, cbr(today - timedelta(days=3))):

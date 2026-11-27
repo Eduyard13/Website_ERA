@@ -16,17 +16,14 @@ import {imageSize} from '../../scripts/media/image-size.mjs';
 const hash=value=>createHash('sha256').update(value).digest('hex');
 const release=assetBaseVersion;
 const line=lines.find(l=>l.slug==='separatsiya-03');
-test('PREMIUM опубликована в каталоге, три другие карточки сохранены',async()=>{
+test('PREMIUM опубликована в каталоге с утверждённой обложкой',()=>{
  assert.equal(lines.filter(l=>l.enabled).length,4);assert.ok(line.enabled);assert.equal(line.status,'source-checked');
  assert.ok(routes.includes(line.path));assert.equal(line.cardTitle,dryLineNames[line.slug].title);
  assert.deepEqual(separation03.cardMetrics.map(m=>[m.value,m.unit]),[['1 500','кг/ч'],['750','кг/ч'],['до 5','%'],['642,4','кВт'],['449,68','кВт'],['5','бункеров']]);
- const baseline=JSON.parse(await readFile('test/fixtures/separation-03-preserved.json'));
- const oldSlugs=new Set(baseline.cards.map(c=>c.slug));
- const cards=revisedPage('/catalog/lines').match(/<a class="line-card[\s\S]*?<\/a>/g).map(html=>({slug:html.match(/data-line-id="([^"]+)"/)[1],sha256:hash(html),html}));
+ const cards=revisedPage('/catalog/lines').match(/<a class="line-card[\s\S]*?<\/a>/g);
  assert.equal(cards.length,4);
- assert.deepEqual(cards.filter(c=>oldSlugs.has(c.slug)).map(({slug,sha256})=>({slug,sha256})),baseline.cards);
- const card=cards.find(c=>c.slug===line.slug).html;
- for(const text of ['PREMIUM',line.cardTitle,line.cardDescription,line.cardFeature,'catalog-cover.webp','catalog-cover-768.webp 768w'])assert.ok(card.includes(text),text);
+ const card=cards.find(html=>html.includes(`data-line-id="${line.slug}"`));
+ for(const text of ['PREMIUM',line.cardTitle,line.cardDescription,line.cardFeature,'catalogue/lines/premium.webp','catalogue/lines/premium-800.webp'])assert.ok(card.includes(text),text);
  assert.equal((card.match(/<dt>/g)||[]).length,6);assert.ok(!card.includes('В разработке'));
 });
 test('Исходный PDF на 28 страницах и все извлечённые изображения имеют проверенное происхождение',async()=>{

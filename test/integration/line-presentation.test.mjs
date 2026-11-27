@@ -70,7 +70,7 @@ test('Titanium Gallery использует полное изображение 
   const bytes=await readFile('dist/assets/'+asset.file);assert.equal(bytes.length,asset.bytes);assert.equal(createHash('sha256').update(bytes).digest('hex'),asset.sha256);
   assert.equal(bytes.subarray(0,4).toString(),'RIFF');assert.equal(bytes.subarray(8,12).toString(),'WEBP');
  }
- const catalogue=render('/catalog/lines');assert.ok(catalogue.includes(`src="${basePath}/assets/lines/separatsiya-01/catalog-cover.webp"`));assert.ok(!catalogue.includes(assets.hero.file));
+ const catalogue=render('/catalog/lines');assert.ok(catalogue.includes(`src="${basePath}/assets/catalogue/lines/pro.webp?v=`));assert.ok(!catalogue.includes(assets.hero.file));
  for(const path of ['/catalog/equipment',...nodes.map(n=>n.path)])assert.ok(!render(path).includes('data-hero-finish="titanium-gallery"'),path);
 });
 

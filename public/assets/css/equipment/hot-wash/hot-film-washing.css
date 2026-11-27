@@ -120,7 +120,6 @@
 .film-line--hot-wash .hw-quality-closing{text-align:center;border-top:1px solid #61563f;padding-top:20px}
 .film-line--hot-wash .hw-quality-closing h4{font-size:clamp(20px,1.9vw,26px);line-height:1.2;margin:0}
 .film-line--hot-wash .hw-quality-closing p{max-width:none;color:#cbd1de;margin:5px 0 0}
-.film-line--hot-wash .hw-quality-closing .hw-quality-application{font-size:13px;margin-top:8px}
 
 .film-line--hot-wash .hw-expansion{padding:clamp(18px,3vw,40px);background:#f7f0df}
 .film-line--hot-wash .hw-expansion-lead{max-width:none;margin:10px 0 0;color:var(--muted)}

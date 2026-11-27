@@ -165,6 +165,11 @@ try{
   await wait(`document.readyState==='complete' && document.querySelector('[data-market-map][data-market-ready="true"]') && document.querySelector('[data-feedstock-ready="true"]') && document.querySelector('.page-progress-rail a')`);
   assert.deepEqual(await evaluate(`Array.from(document.querySelectorAll('[data-home-block]'),e=>e.dataset.homeBlock)`),homeSections);
   assert.equal(await evaluate(`document.querySelectorAll('.page-progress-rail a').length`),homeSections.length);
+  assert.ok(await evaluate(`(()=>{
+   const block=document.querySelector('.resource-video-block'),videos=[...block.querySelectorAll('video')];
+   return block.firstElementChild.matches('h3')&&!block.querySelector('summary')&&videos.length===2&&
+    videos.every(video=>video.getClientRects().length&&video.paused&&video.controls&&!video.autoplay&&video.preload==='none'&&video.getAttribute('loading')==='lazy');
+  })()`),`Two visible, deferred homepage videos at ${width}px`);
   assert.deepEqual(await evaluate(`[document.querySelectorAll('[data-market-districts] path.market-district-area').length,document.querySelectorAll('[data-market-regions] .market-pin').length]`),[8,10]);
   const national={name:'Вся Россия',volume:'≈ 5 млн т/год',active:null};
   assert.deepEqual(await mapSelection(),national);
@@ -335,13 +340,27 @@ try{
  }
  for(const width of [390,1440]){
   await command('Emulation.setDeviceMetricsOverride',{width,height:900,deviceScaleFactor:1,mobile:width<768});
-  await command('Page.navigate',{url:base+'/automation/#kair-functions-water'});
+  await command('Page.navigate',{url:base+'/automation/?viewport='+width+'#kair-functions-water'});
   await wait(`document.querySelector('[data-kair-system][data-ready=true]')&&
    document.querySelector('#ka-function-tab-water[aria-selected=true]')&&
    document.querySelector('[data-kair-section-nav] [aria-current=location]')?.hash==='#kair-functions'`);
   const counts=await evaluate(`['[data-kair-scenario]','[data-kair-function]','[data-kair-compact] [data-kair-slide]',
    '[data-kair-section-nav] a','[data-kair-hardware]'].map(sel=>document.querySelectorAll(sel).length)`);
   assert.deepEqual(counts,[24,29,7,8,8]);
+  for(const direction of ['protection','visibility','process','washing','water','local']){
+   await click('#ka-function-tab-'+direction);
+   const configured=await evaluate(`(()=>{
+    const panel=document.querySelector('[data-kair-function-group="${direction}"]');
+    const heading=panel.querySelectorAll('.ka-function-direction > svg path');
+    const rows=[...panel.querySelectorAll('.ka-function-row')];
+    return !panel.hidden&&heading.length===1&&heading[0].getAttribute('d')!=='m5 12 4 4L19 6'&&rows.length>0&&rows.every(row=>{
+     const paths=row.querySelectorAll(':scope>svg path');
+     return paths.length===1&&paths[0].getAttribute('d')==='m5 12 4 4L19 6'&&paths[0].closest('svg').getAttribute('aria-hidden')==='true'&&
+      getComputedStyle(paths[0]).stroke==='rgb(235, 198, 124)';
+    });
+   })()`);
+   assert.ok(configured,`KAIR icons for ${direction} at ${width}px`);
+  }
   const [scrollWidth,clientWidth]=await evaluate('[document.documentElement.scrollWidth,document.documentElement.clientWidth]');
   assert.ok(scrollWidth<=clientWidth+1,`KAIR overflow at ${width}px: ${scrollWidth} > ${clientWidth}`);
   await click('#ka-logic-tab-protection');

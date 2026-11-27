@@ -221,7 +221,7 @@ function equipment(){
     <article><a class="resource-equipment-image" href="${washLine.path}" aria-label="Линия горячей мойки">${image(washHero)}</a><div><p class="resource-equipment-kicker">02 / ГЛУБОКАЯ ОЧИСТКА</p><h3>Линия горячей мойки</h3><p>Удаление стойких загрязнений, обезвоживание и подготовка плёнки к дальнейшей переработке.</p>${link('Изучить линию',washLine.path)}</div></article>
     <article><a class="resource-equipment-image" href="/catalog/equipment" aria-label="Отдельные узлы">${image(modules)}</a><div><p class="resource-equipment-kicker">03 / ТЕХНОЛОГИЧЕСКИЕ УЗЛЫ</p><h3>Отдельные узлы</h3><p>Оборудование для измельчения, разделения, распушения, мойки и обезвоживания.</p>${link('Смотреть оборудование','/catalog/equipment')}</div></article>
    </div>
-   <details class="resource-video-details" data-keep-open><summary>Видео проекта и работа оборудования</summary><div class="resource-video-grid">${resourceVideo('promo')}${resourceVideo('cleaningDemo')}</div></details>
+   <section class="resource-video-block" aria-labelledby="resource-video-title"><h3 id="resource-video-title">Видео проекта и работа оборудования</h3><div class="resource-video-grid">${resourceVideo('promo')}${resourceVideo('cleaningDemo')}</div></section>
   </div>
  </section>`;
 }

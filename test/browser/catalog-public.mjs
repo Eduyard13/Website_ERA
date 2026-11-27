@@ -85,6 +85,15 @@ try{
     assert.equal(await count(path.includes('equipment')?'node':'line'),path.includes('equipment')?12:4);
     assert.equal(await evaluate(`document.querySelectorAll('.catalog-branch-nav [aria-current="page"]').length`),1);
     if(path.includes('lines')){
+     const covers=await evaluate(`Promise.all([...document.querySelectorAll('.line-card-cover img')].map(async img=>{
+      img.loading='eager';await img.decode();
+      const image=img.getBoundingClientRect(),frame=img.parentElement.getBoundingClientRect();
+      return {file:new URL(img.currentSrc).pathname.split('/').pop().replace('-800',''),height:frame.height,
+       fits:getComputedStyle(img).objectFit==='contain'&&Math.abs(image.width/image.height-img.naturalWidth/img.naturalHeight)<.01&&
+        Math.abs(frame.width-image.width)<1&&image.top>=frame.top-.1&&image.bottom<=frame.bottom+.1};
+     }))`);
+     assert.deepEqual(covers.map(cover=>cover.file),['base.webp','pro.webp','premium.webp','hot-wash.webp']);
+     assert.ok(covers.every(cover=>cover.fits&&Math.abs(cover.height-covers[0].height)<1),`All four complete covers align at ${width}px`);
      assert.equal(await evaluate(`document.querySelector('.catalog-comparison').open`),false);
      await evaluate(`document.querySelector('.catalog-comparison summary').click()`);
      assert.equal(await evaluate('document.documentElement.scrollWidth>innerWidth'),false);

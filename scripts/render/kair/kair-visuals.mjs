@@ -1,4 +1,5 @@
 const paths={
+ check:'m5 12 4 4L19 6',
  flow:'M4 7h5v5H4zM15 12h5v5h-5zM9 9h9m0 0-3-3m3 3-3 3M6 12v6h9',shield:'m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Zm-4 9 3 3 5-6',screen:'M3 4h18v13H3zM8 21h8m-4-4v4M6 12l3-3 3 3 5-5',cycle:'M4 10a8 8 0 0 1 14-5l2 2m0-5v5h-5M20 14a8 8 0 0 1-14 5l-2-2m0 5v-5h5',water:'M12 2C9 7 5 10 5 15a7 7 0 0 0 14 0c0-5-4-8-7-13ZM9 16c0 2 1 3 3 3',nodes:'M9 9h6v6H9zM2 2h4v4H2zM18 2h4v4h-4zM2 18h4v4H2zM18 18h4v4h-4zM6 6l3 3m6 0 3-3M6 18l3-3m6 0 3 3',
  database:'M4 6c0-2 3.6-3 8-3s8 1 8 3-3.6 3-8 3-8-1-8-3Zm0 0v12c0 2 3.6 3 8 3s8-1 8-3V6M4 12c0 2 3.6 3 8 3s8-1 8-3',
  sensor:'M3 12h4l3-7 4 14 3-7h4M4 5h2m12 14h2',

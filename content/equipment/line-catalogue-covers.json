@@ -1,0 +1,46 @@
+{
+  "separatsiya-01": {
+    "sourceSha256": "1e839d23d46c5d82f277778cd7ea1094d30ee70d77e98f2c989e845dd7ee11ec",
+    "file": "catalogue/lines/base.webp",
+    "width": 1280,
+    "height": 960,
+    "sha256": "9f0e235db157f221328645307d0ec849256d189c1d521f4ebcd5d92a93c5b1b5",
+    "smallFile": "catalogue/lines/base-800.webp",
+    "smallWidth": 800,
+    "smallHeight": 600,
+    "smallSha256": "96436a9bc1e01bac1744103cbb191241657014d0390770dd74b367f32aa36e42"
+  },
+  "separatsiya-02": {
+    "sourceSha256": "9791f7b03da8a465cf64b99faeaef24897cc9dd5b4de6df822221cd42e2cdaef",
+    "file": "catalogue/lines/pro.webp",
+    "width": 1280,
+    "height": 720,
+    "sha256": "a69e49f408e86d373f66ee0f66a23184e005b25cd8738a2fd4bc9d7b9ebbbb8b",
+    "smallFile": "catalogue/lines/pro-800.webp",
+    "smallWidth": 800,
+    "smallHeight": 450,
+    "smallSha256": "a9247ca536dd6a76b1974c816a15f05f70b6e7567a32dc7116b39c7d982f317d"
+  },
+  "separatsiya-03": {
+    "sourceSha256": "b3561ff5dd6814976d002d156d403e577f130bb517432417bd3d5d1c2e681a2e",
+    "file": "catalogue/lines/premium.webp",
+    "width": 1280,
+    "height": 720,
+    "sha256": "c76acee550efbe5cdaa802f079b5fae3144a4e3c38688a7b4171774eabfc29c0",
+    "smallFile": "catalogue/lines/premium-800.webp",
+    "smallWidth": 800,
+    "smallHeight": 450,
+    "smallSha256": "e716973af9962325cc16ee4d9f0c44f0368b3a23a2bf8c23b35ff2d04c02b24c"
+  },
+  "moyka-plenki": {
+    "sourceSha256": "8e471ec019a07900780c7087050247be44a9cfa87e09bf1024bed68fa72c1c15",
+    "file": "catalogue/lines/hot-wash.webp",
+    "width": 1280,
+    "height": 960,
+    "sha256": "8413475ef54bcd5c7fd96d11693c4d7f83fda827acd30fcdb1615a29440d94a7",
+    "smallFile": "catalogue/lines/hot-wash-800.webp",
+    "smallWidth": 800,
+    "smallHeight": 600,
+    "smallSha256": "39ee2eef96271efa9e8a4b35133964c7761cffc1fcf26bd5821635a6f5ae08b0"
+  }
+}

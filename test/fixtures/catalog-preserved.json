@@ -51,14 +51,22 @@
       "sha256": "59b98acde48f105066805dcd1c532197ab4c0a8c71fac1e0b651938b90528a12"
     }
   ],
-  "readyCards": [
+  "lineCardsWithoutCovers": [
     {
       "slug": "separatsiya-01",
-      "sha256": "e90dd93a68b322d38d180fd71c8c062c53e27f342f4aa53765946b86e30f21e6"
+      "sha256": "5a19f2f646b4ba42108585fbc8a0d39faec36542212595078e85d923dfca6a26"
     },
     {
       "slug": "separatsiya-02",
-      "sha256": "0da4399f02aace0c209324e00430e5e7bfa4c803fa61fb024ce5aaece8b53962"
+      "sha256": "94f584471df778439bc911f39a7309dd00a3090a65da83398f403e11fa0c08e8"
+    },
+    {
+      "slug": "separatsiya-03",
+      "sha256": "a29714aa44d5e3c1167d4760236ae56f3c5ebe32ebb93b30376451809aec3460"
+    },
+    {
+      "slug": "moyka-plenki",
+      "sha256": "393bc99b5fadf0f5a06315c6f68a5c73e803dd4867e416c79a4662229edf0f6f"
     }
   ],
   "details": {

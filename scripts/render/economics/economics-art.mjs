@@ -30,8 +30,8 @@ export function icon(name){
  const drawing=paths[name]??paths.layers;
  return `<svg class="ec-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${drawing.startsWith('<')?drawing:`<path d="${drawing}"/>`}</svg>`;
 }
-export function eraMedallion(caption=''){
- return `<div class="ec-medallion"><img src="/assets/favicon.svg" width="52" height="52" alt=""><b>ЭРА</b>${caption?`<small>${caption}</small>`:''}</div>`;
+export function eraMedallion(){
+ return `<div class="ec-medallion"><img src="/assets/favicon.svg" width="52" height="52" alt=""><b>ЭРА</b></div>`;
 }
 export function ribbon(){
  const lines=Array.from({length:17},(_,i)=>`<path d="M-12 ${53+i*4} C 180 ${136+i*3}, 295 ${17+i*3}, 452 ${60+i*3} S 650 ${141+i*4}, 812 ${53+i*3} S 1068 ${-16+i*6}, 1212 ${9+i*4}" opacity="${(1-i*.052).toFixed(2)}"/>`);

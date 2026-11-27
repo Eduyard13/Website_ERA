@@ -16,7 +16,7 @@ assert.ok(html.includes('Экономика вашего производств�
 assert.match(html,/data-econ-mode="full" data-econ-locked-mode="full"/);
 assert.match(html,/data-econ-value="heroMonthNet">≈ 10 млн ₽/);
 assert.match(html,/data-econ-value="heroYearNet">≈ 120 млн ₽/);
-assert.match(html,/data-econ-value="heroYearNote">Расчёт за 365 дней — 112,93 млн ₽/);
+assert.doesNotMatch(html,/data-econ-value="heroYearNote"|Расчёт за 365 дней/);
 assert.match(html,/data-econ-value="monthNet">9,81 млн ₽/);
 assert.match(html,/data-econ-value="yearNet">112,93 млн ₽/);
 const startCard=html.match(/<article[^>]*data-growth-mode="separation"[^>]*>[\s\S]*?<\/article>/)?.[0];
@@ -43,8 +43,14 @@ try{
   await delay(100);
  }
  assert.ok(port,'Chrome debugging endpoint');
- const pages=await(await fetch(`http://127.0.0.1:${port}/json/list`)).json();
- socket=new WebSocket(pages.find(p=>p.type==='page').webSocketDebuggerUrl);
+ let page;
+ for(let i=0;i<50&&!page;i++){
+  const targets=await(await fetch(`http://127.0.0.1:${port}/json/list`)).json();
+  page=targets.find(target=>target.type==='page');
+  if(!page)await delay(100);
+ }
+ assert.ok(page,'Chrome page target');
+ socket=new WebSocket(page.webSocketDebuggerUrl);
  await new Promise((resolve,reject)=>{socket.addEventListener('open',resolve,{once:true});socket.addEventListener('error',reject,{once:true});});
  let id=0;const pending=new Map(),errors=[];
  socket.addEventListener('message',event=>{
@@ -72,7 +78,15 @@ try{
  await command('Page.navigate',{url});
  await wait(ready);
  let s=await snapshot();
- assert.equal(s.mode,'full');assert.equal(s.scenario,'base');assert.equal(s.sections,11);
+ assert.equal(s.mode,'full');assert.equal(s.scenario,'base');assert.equal(s.sections,10);
+ const references=await evaluate(`document.querySelectorAll('details#market-offers,details#calculation-conditions').length`);
+ assert.equal(references,0);
+ for(const [link,id] of [['#market [href="#market-offers"]','market-offers'],['#production-constructor [href="#calculation-conditions"]','calculation-conditions']]){
+  await click(link);
+  assert.ok(await evaluate(`document.getElementById('${id}').matches(':modal')`),id);
+  await click('#'+id+' form button');
+  assert.equal(await evaluate(`document.getElementById('${id}').open`),false,id);
+ }
  assert.deepEqual(s.presets,[80000,90000,100000,110000]);assert.deepEqual(s.setSizes,[1,2,3,5]);
  assert.equal(s.values.balanceInput,'1\u00a0500 кг/ч');assert.equal(s.values.balanceOutput,'750 кг/ч');assert.equal(s.values.balanceOther,'750 кг/ч');
  const controls=[['conservative','6,38','72,54','31,88','362,71'],['base','9,81','112,93','49,03','564,66'],
@@ -113,7 +127,7 @@ try{
   await command('Page.navigate',{url:url+'#production-constructor'});
   await wait(ready);
   s=await snapshot();assert.ok(!s.overflow,'Published responsive layout '+width);
-  assert.equal(s.sections,11);
+  assert.equal(s.sections,10);
  }
  assert.deepEqual(errors,[],'Published browser exceptions');
  console.log('::notice title=Published economics verified::Live full-cycle SSR, all prices, scenario figures, five-complex network, three balance periods, proportional allocation, request context and six viewport widths passed in Chrome. '+url);

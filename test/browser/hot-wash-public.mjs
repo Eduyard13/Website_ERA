@@ -176,6 +176,7 @@ try{
     operations:all('.hw-operations-grid li').length,
     accented:all('.hw-operation-accent').map(node=>node.dataset.hotwashOperation),
     quality:all('.hw-quality-value').map(node=>node.textContent),
+    hasRetiredQualityNote:find('#quality').textContent.includes('Пригодность гранулы для конкретного изделия подтверждается испытаниями'),
     connectors:all('.hw-expansion-connector').filter(visible).length,
     granulators:all('.hw-expansion-rate').map(node=>node.textContent),
     remainingDetails:all('#specs details').length,
@@ -185,7 +186,7 @@ try{
   assert.deepEqual(revised,{
    panels:4,fits:true,cycle:['Сухая сепарация','Горячая мойка','Грануляция'],current:'Горячая мойка',
    operationColumns:width<=650?1:width<=1024?2:3,operations:9,accented:['04','09'],
-   quality:['30–70ppm','1–2%','0,8–1,2г/10 мин'],connectors:2,granulators:['750 кг/ч','750 кг/ч'],
+   quality:['30–70ppm','1–2%','0,8–1,2г/10 мин'],hasRetiredQualityNote:false,connectors:2,granulators:['750 кг/ч','750 кг/ч'],
    remainingDetails:1,album:album.map(item=>item.file)
   },String(width));
   if(width===390||width===1440)await capturePresentation(width);

@@ -283,15 +283,16 @@
 .resource-page .resource-district-card .resource-link:focus-visible {outline-color:var(--home-gold)}
 .resource-page .resource-finance-note {font-size:16px;color:#414c64;margin-top:22px}
 .resource-integration .resource-link {margin-top:16px}
-.resource-video-details,.market-method-details {border-top:1px solid var(--home-border);margin-top:24px}
-.resource-video-details summary,.market-method-details summary {
+.resource-video-block,.market-method-details {border-top:1px solid var(--home-border);margin-top:24px}
+.resource-video-block h3 {display:flex;align-items:center;min-height:49px;margin:0;font-size:inherit;font-weight:600;line-height:1.4}
+.market-method-details summary {
  display:flex;align-items:center;justify-content:space-between;gap:14px;
  min-height:49px;cursor:pointer;font-weight:600;line-height:1.4;
 }
-.resource-video-details summary::-webkit-details-marker,.market-method-details summary::-webkit-details-marker {display:none}
-.resource-video-details summary::after,.market-method-details summary::after {content:'+';font-size:23px;font-weight:400;color:var(--era-gold-dark)}
-.resource-video-details[open] summary::after,.market-method-details[open] summary::after {content:'−'}
-.resource-video-details>div,.market-method-details>div {
+.market-method-details summary::-webkit-details-marker {display:none}
+.market-method-details summary::after {content:'+';font-size:23px;font-weight:400;color:var(--era-gold-dark)}
+.market-method-details[open] summary::after {content:'−'}
+.market-method-details>div {
  position:static;
  min-width:0;
  background:transparent;

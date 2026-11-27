@@ -45,7 +45,6 @@ export function financialValues({config,state,result:r,network:n,balance,fx}){
   heroYearNet:roundedHeadline?`≈ ${decimal(yearMillions,0)} млн ₽`:compact(r.yearNet),
   heroMonthUsd:roundedHeadline?roundedDollars(monthMillions*1e6,fx,10000,1000,'тыс.'):dollars(r.net,fx),
   heroYearUsd:roundedHeadline?roundedDollars(yearMillions*1e6,fx,100000,1e6,'млн'):dollars(r.yearNet,fx),
-  heroYearNote:roundedHeadline?`Расчёт за ${config.yearDays} дней — ${compact(r.yearNet)}`:'',
   monthNet:compact(r.net),yearNet:compact(r.yearNet),monthUsd:dollars(r.net,fx),yearUsd:dollars(r.yearNet,fx),
   price:priceText(r.grossPrice),payback:paybackLabel(r),rate:fxLabel(fx),
   unitPrice:priceText(r.netPrice,2),unitCost:priceText(r.perProduct?.totalCosts,2),unitTax:priceText(r.perProduct?.tax,2),

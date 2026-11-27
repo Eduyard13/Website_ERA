@@ -22,7 +22,7 @@ anchors = {
     '/': {'resource-business-title': 'russia-market', 'feedstock-methodology': 'raw-material'},
     '/economics/': {'material-balance': 'raw-material', 'product-quality': 'raw-material', 'market': 'raw-material',
                     'monthly-result': 'production-constructor',
-                    'econ-curve-title': 'project-resilience', 'calculation-conditions': 'economics-project'},
+                    'econ-curve-title': 'project-resilience'},
 }
 is_aligned = """id => {
     const item = document.getElementById(id).getBoundingClientRect();
@@ -94,7 +94,7 @@ with sync_playwright() as p:
             assert links.evaluate_all('as => as.map(a => a.hash.slice(1))') == [g['target'] for g in groups]
             assert page.locator(nav + ' + main').count() == 1
             assert page.locator('.tf-outline,.ec-toc').count() == 0
-            assert page.locator(rail + ' a').count() == (11 if route == '/economics/' else 12)
+            assert page.locator(rail + ' a').count() == (10 if route == '/economics/' else 12)
             check_sticky(page)
             check_group(page, 'economic-case' if route == '/economics/' else None)
             if page.locator('[data-cookie-choice="deny"]').is_visible():
@@ -143,7 +143,7 @@ with sync_playwright() as p:
                 for fragment, target in anchors[route].items():
                     await_page(page, route + '#' + fragment)
                     check_group(page, target)
-                    if fragment in ['feedstock-methodology', 'calculation-conditions']:
+                    if fragment == 'feedstock-methodology':
                         assert page.locator(f'#{fragment}').get_attribute('open') is not None
                 page.evaluate('window.scrollTo(0,document.documentElement.scrollHeight)')
                 check_group(page, groups[-1]['target'] if route != '/' else None)
@@ -171,10 +171,12 @@ with sync_playwright() as p:
     page.evaluate('location.hash = "economics"')
     page.wait_for_url(lambda url: urlsplit(url).path.rstrip('/').endswith('/economics') and urlsplit(url).fragment == 'economics')
     check_group(page, 'economics')
-    page.locator('#economic-case').get_by_role('link', name='Условия расчёта', exact=True).click()
-    check_target(page, 'calculation-conditions', 550)
-    check_group(page, 'economics-project')
-    assert page.locator('#calculation-conditions').get_attribute('open') is not None
+    method_link = page.locator('#production-constructor a[href="#calculation-conditions"]')
+    method_link.press('Enter')
+    assert page.locator('#calculation-conditions:modal').is_visible()
+    assert urlsplit(page.url).fragment == 'economics'
+    page.keyboard.press('Escape')
+    assert method_link.evaluate('link => link === document.activeElement')
     page.close()
 
     plain = browser.new_page(viewport={'width': 390, 'height': 844}, reduced_motion='reduce', java_script_enabled=False)

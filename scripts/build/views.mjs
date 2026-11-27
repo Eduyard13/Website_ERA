@@ -7,20 +7,25 @@ import {renderEquipment,renderDocuments} from '../render/equipment/equipment.mjs
 import {renderFilmSeparation} from '../render/lines/line.mjs';
 import {renderHotFilmWashing} from '../render/lines/hot-film-washing.mjs';
 import {renderSeparationDrying} from '../render/lines/separation-drying.mjs';
-import {lineCoverFiles} from '../render/lines/line-page-media.mjs';
 import {renderMiniFilmSeparation} from '../render/lines/mini-line.mjs';
 import {presentationTechnology,presentationAutomation} from '../render/pages/home.mjs';
 import {documentCategories} from '../../content/documents/document-manifest.mjs';
 import {nodes,lines} from '../../content/equipment/catalog.mjs';
+import lineCatalogueCovers from '../../content/equipment/line-catalogue-covers.json' with {type:'json'};
 import {stages} from '../../content/shared/site.mjs';
 const link=(t,h,secondary=false)=>`<a class="button ${secondary?'secondary':''}" href="${h}">${t}<span aria-hidden="true">↗</span></a>`;
 const intro=(label,title,text)=>`<section class="section page-intro"><p class="eyebrow">${label}</p><h1>${title}</h1><p class="lead">${text}</p></section>`;
 const placeholder=(n,label='Изображение готовится')=>`<div class="asset-placeholder"><span class="placeholder-number" aria-hidden="true">${String(n).padStart(2,'0')}</span><span>${label}</span></div>`;
 export {nodeCard};
-const lineCard=l=>{
- const {file:cardFile,smallFile:cardSmallFile}=lineCoverFiles(l);
+const lineCard=(l,index)=>{
  const attributes=`data-line data-line-id="${l.slug}" data-group="${l.group}" aria-labelledby="line-${l.slug}-title"`;
- if(l.enabled&&l.status==='source-checked')return `<a class="line-card line-card--complete${l.slug==='separatsiya-01'?' line-card--mini':''}" ${attributes} href="${l.path}"><span class="line-card-cover"><img src="/assets/${cardFile}" srcset="/assets/${cardSmallFile} 768w, /assets/${cardFile} 1536w" sizes="(min-width:1344px) 628px, (min-width:768px) calc((100vw - 88px) / 2), calc(100vw - 40px)" width="1536" height="1024" alt="${l.cardImageAlt||l.title}" fetchpriority="high" decoding="async"></span><div class="line-card-content"><span class="eyebrow">${l.slug==='moyka-plenki'?'ГОРЯЧАЯ МОЙКА':l.tier} / ГОТОВАЯ ЛИНИЯ</span><h3 id="line-${l.slug}-title">${l.cardTitle}</h3><p class="line-card-subtitle">${l.cardDescription}</p><span class="line-card-feature">${l.cardFeature}</span><dl class="line-card-metrics">${l.cardMetrics.map(m=>`<div${m.text?' class="line-card-metric--text"':''}><dt>${m.label}</dt><dd>${m.value}<small>${m.unit}</small></dd>${m.note?`<p>${m.note}</p>`:''}</div>`).join('')}</dl><span class="card-action">Подробнее о линии <span aria-hidden="true">↗</span></span></div></a>`;
+ if(l.enabled&&l.status==='source-checked'){
+  const {file,smallFile,width,height,smallWidth,sha256,smallSha256}=lineCatalogueCovers[l.slug];
+  const cover=`/assets/${file}?v=${sha256.slice(0,12)}`;
+  const smallCover=`/assets/${smallFile}?v=${smallSha256.slice(0,12)}`;
+  const imageShare=height/width*4/3;
+  return `<a class="line-card line-card--complete${l.slug==='separatsiya-01'?' line-card--mini':''}" ${attributes} href="${l.path}"><span class="line-card-cover" style="--line-cover-image-share:${imageShare}"><img src="${cover}" srcset="${smallCover} ${smallWidth}w, ${cover} ${width}w" sizes="(min-width:1344px) 628px, (min-width:768px) calc((100vw - 88px) / 2), calc(100vw - 40px)" width="${width}" height="${height}" alt="${l.cardImageAlt||l.title}" ${index===0?'fetchpriority="high"':'loading="lazy"'} decoding="async"></span><div class="line-card-content"><span class="eyebrow">${l.slug==='moyka-plenki'?'ГОРЯЧАЯ МОЙКА':l.tier} / ГОТОВАЯ ЛИНИЯ</span><h3 id="line-${l.slug}-title">${l.cardTitle}</h3><p class="line-card-subtitle">${l.cardDescription}</p><span class="line-card-feature">${l.cardFeature}</span><dl class="line-card-metrics">${l.cardMetrics.map(m=>`<div${m.text?' class="line-card-metric--text"':''}><dt>${m.label}</dt><dd>${m.value}<small>${m.unit}</small></dd>${m.note?`<p>${m.note}</p>`:''}</div>`).join('')}</dl><span class="card-action">Подробнее о линии <span aria-hidden="true">↗</span></span></div></a>`;
+ }
  const reserved=l.number==='01';
  return `<article class="line-card line-card--draft${reserved?' line-card--reserved':''}" ${attributes}>${reserved?'<div class="line-card-placeholder" aria-hidden="true"><span>01</span></div>':''}<div class="line-card-draft-content"><span class="eyebrow">${l.number?l.tier:'ГОРЯЧАЯ МОЙКА'}</span><h3 id="line-${l.slug}-title">${l.title}</h3>${l.cardDescription?`<p class="line-card-subtitle">${l.cardDescription}</p>`:''}<span class="status">В разработке</span></div></article>`;
 };

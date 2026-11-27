@@ -45,7 +45,7 @@ export function renderHotWashQuality(){
   <div class="hw-quality-grid">${qualityMetrics.map(([image,value,unit,title,copy,detail])=>`<div class="hw-quality-metric">
    ${icon(image)}<p class="hw-quality-value">${value}<small>${unit}</small></p><h4>${title}</h4><p>${copy}</p><p class="hw-quality-detail">${detail}</p>
   </div>`).join('')}</div>
-  <div class="hw-quality-closing"><h4>Из плёнки — снова в плёнку.</h4><p>Возвращаем полимер в производственный цикл.</p><p class="hw-quality-application">Пригодность гранулы для конкретного изделия подтверждается испытаниями.</p></div>
+  <div class="hw-quality-closing"><h4>Из плёнки — снова в плёнку.</h4><p>Возвращаем полимер в производственный цикл.</p></div>
  </article>`;
 }
 

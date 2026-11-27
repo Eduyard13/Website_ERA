@@ -7,6 +7,9 @@ import {formatLineNumber,linePowerData,linePowerTotals} from '../../content/line
 import {linePlacement} from '../../content/lines/shared/line-placement.mjs';
 import {publicLibraryDocuments} from '../../content/documents/document-library.mjs';
 import {imageSize} from '../../scripts/media/image-size.mjs';
+import {lines} from '../../content/equipment/catalog.mjs';
+import {lineCoverFiles} from '../../scripts/render/lines/line-page-media.mjs';
+import catalogueCovers from '../../content/equipment/line-catalogue-covers.json' with {type:'json'};
 
 const expected={
  'separatsiya-01':{power:[225,157.5],belts:6,tabs:2,dimensions:['17,75','11,75','208,56'],format:'A4'},
@@ -96,8 +99,10 @@ test('У каждой линии три документа и полные пр�
    assert.doesNotMatch(placement,/кВт|500–700|placement\.webp|dimensions-a0\.pdf/);
   }
   const card=catalogue.match(new RegExp(`<a class="line-card[^>]*data-line-id="${slug}"[\\s\\S]*?</a>`))[0];
-  const cover=card.match(/<img src="([^"]+)"/)[1];
-  assert.ok(html.match(/<figure[^>]+data-line-catalog-cover[\s\S]*?<\/figure>/)[0].includes(`src="${cover}"`),slug);
+  const {file,sha256}=catalogueCovers[slug];
+  assert.ok(card.includes(`src="${basePath}/assets/${file}?v=${sha256.slice(0,12)}"`),slug);
+  const hero=lineCoverFiles(lines.find(line=>line.slug===slug)).file;
+  assert.ok(html.match(/<figure[^>]+data-line-catalog-cover[\s\S]*?<\/figure>/)[0].includes(`src="${basePath}/assets/${hero}"`),slug);
  }
  const separation=render('/catalog/lines/separatsiya-03');
  assert.match(section(separation,'specs'),/1 · Оператор[\s\S]*?2 · Водителя погрузчика/);

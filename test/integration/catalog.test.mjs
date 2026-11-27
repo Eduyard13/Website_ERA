@@ -8,6 +8,8 @@ import {nodeCard} from '../../scripts/render/equipment/equipment-card.mjs';
 import {catalogBranchNav,equipmentFilters,lineFilters,lineComparison} from '../../scripts/render/equipment/catalog-branches.mjs';
 import {readFilterState,filterUrl,matchesEquipment} from '../../public/assets/js/catalog/catalog-filter-model.js';
 import {basePath,render} from '../../scripts/build/build.mjs';
+import covers from '../../content/equipment/line-catalogue-covers.json' with {type:'json'};
+import {imageSize} from '../../scripts/media/image-size.mjs';
 
 const digest=value=>createHash('sha256').update(value).digest('hex');
 test('Каталог сохраняет реестр, все 12 полных карточек, готовые карточки и страницы всех узлов',async()=>{
@@ -17,8 +19,25 @@ test('Каталог сохраняет реестр, все 12 полных к�
  const legacyLines=lines.map(line=>line.slug==='moyka-plenki'?originalDraft:line.slug==='separatsiya-03'?separationDraft:line);
  assert.equal(digest(JSON.stringify({nodes,lines:legacyLines})),original.registry);
  assert.deepEqual(nodes.map(node=>({slug:node.slug,sha256:digest(nodeCard(node))})),original.nodeCards);
- const ready=revisedPage('/catalog/lines').match(/<a class="line-card[\s\S]*?<\/a>/g).filter(html=>!html.includes('data-line-id="moyka-plenki"')&&!html.includes('data-line-id="separatsiya-03"'));
- assert.deepEqual(ready.map(html=>({slug:html.match(/data-line-id="([^"]+)"/)[1],sha256:digest(html)})),original.readyCards);
+ const ready=revisedPage('/catalog/lines').match(/<a class="line-card[\s\S]*?<\/a>/g);
+ assert.deepEqual(ready.map(html=>({
+  slug:html.match(/data-line-id="([^"]+)"/)[1],
+  sha256:digest(html.replace(/<span class="line-card-cover"[^>]*><img [^>]+><\/span>/,'')),
+ })),original.lineCardsWithoutCovers);
+ for(const [index,html] of ready.entries()){
+  const {slug,cardImageAlt,title}=lines[index];
+  const cover=covers[slug];
+  const url=(file,sha)=>`/assets/${file}?v=${sha.slice(0,12)}`;
+  assert.ok(html.includes(`src="${url(cover.file,cover.sha256)}"`),slug);
+  assert.ok(html.includes(`srcset="${url(cover.smallFile,cover.smallSha256)} ${cover.smallWidth}w, ${url(cover.file,cover.sha256)} ${cover.width}w"`),slug);
+  assert.ok(html.includes(`width="${cover.width}" height="${cover.height}" alt="${cardImageAlt||title}"`),slug);
+  assert.match(html,index===0?/fetchpriority="high"/:/loading="lazy"/,slug);
+  for(const [file,width,height,sha] of [[cover.file,cover.width,cover.height,cover.sha256],[cover.smallFile,cover.smallWidth,cover.smallHeight,cover.smallSha256]]){
+   const path='public/assets/'+file;
+   assert.equal(digest(await readFile(path)),sha,file);
+   assert.deepEqual(imageSize(path),{width,height},file);
+  }
+ }
  for(const [path,sha] of Object.entries(original.details).filter(([path])=>path.startsWith('/catalog/equipment/')))assert.equal(digest(revisedPage(path)),sha,path);
  for(const [path,sha] of Object.entries(original.assets))assert.equal(digest(await readFile('public/'+path)),sha,path);
  const interactions=await readFile('public/assets/js/core/interactions.js','utf8');

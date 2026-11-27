@@ -25,7 +25,7 @@ with sync_playwright() as p:
   if width>=768:assert boxes[0]['x']<boxes[1]['x'] and abs(boxes[0]['y']-boxes[1]['y'])<1
   else:assert boxes[0]['y']<boxes[1]['y']
   mini=cards.nth(0);assert mini.locator('dt').count()==6
-  assert mini.locator('img').get_attribute('src').endswith('catalog-cover-navy.webp')
+  assert '/catalogue/lines/base.webp?v=' in mini.locator('img').get_attribute('src')
   assert mini.locator('img').evaluate('(e)=>getComputedStyle(e).objectFit')=='contain'
   mini.locator('h3').click();page.wait_for_url('**/catalog/lines/separatsiya-01*')
   page.wait_for_selector('#line01-construction[data-monitor-ready=true]')

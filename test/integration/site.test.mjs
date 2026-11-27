@@ -11,7 +11,7 @@ test('Общее меню сохраняет семь смысловых гру�
  const order={
   '/':['resource','raw-material','feedstocks','process','engineering','products','russia-market','economics','solution','manufacturing','kair','discuss'],
   '/technology':['technology-intro','raw-material','contaminants','solution','dry-separation','hot-washing','granulation','products','granule-quality','applications','control-story','technology-next'],
-  '/economics':['economic-case','raw-material','material-balance','product-quality','market','economics','production-constructor','project-resilience','production-growth','economic-conditions','economics-project'],
+  '/economics':['economic-case','raw-material','material-balance','product-quality','market','economics','production-constructor','project-resilience','production-growth','economics-project'],
  };
  const pages=new Map(navigation.pages.map(page=>[page.route.replace(/\/$/,'')||'/',page]));
  assert.deepEqual(new Set(pages.keys()),new Set(Object.keys(order)));
@@ -334,7 +334,7 @@ test('Схемы линий сохраняют номера ТО, описани
  const card=html.match(/<a[^>]+data-line-id="separatsiya-01"[\s\S]*?<\/a>/)[0];
  for(const text of ['Цветной плёночный микс','Сортировка по видам','Доп. опция','По согласованию'])assert.ok(card.includes(text));
  assert.ok(!card.includes('13 позиций'));assert.ok(!card.includes('Базовая комплектация'));
- assert.match(card,/catalog-cover-navy/);
+ assert.match(card,/catalogue\/lines\/base\.webp\?v=/);
 });
 test('Фото распределены по 11 узлам, а каталог использует готовые иллюстрации владельца',async()=>{
  const {nodes,media}=await import('../../content/equipment/catalog.mjs');
@@ -779,7 +779,12 @@ test('Экономика с первого HTML публикует базовы�
  assert.match(html,/id="production-growth"[\s\S]*?data-growth-mode="separation"[\s\S]*?<dd>50 ₽\/кг<\/dd>[\s\S]*?<dd>4,45 млн ₽<\/dd>[\s\S]*?<dd>19,5%<\/dd>/);
  assert.equal((html.match(/4,45 млн ₽/g)||[]).length,1);
  assert.doesNotMatch(html,/ЛСП · финансовая модель/);
- assert.match(html,/id="calculation-conditions" class="ec-details"/);
+ assert.doesNotMatch(html,/Расчёт за 365 дней|ec-hero-year-note|class="ec-details"|class="ec-conditions"/);
+ assert.match(html,/<dialog id="calculation-conditions" class="ec-reference-dialog"/);
+ assert.match(html,/<dialog id="market-offers" class="ec-reference-dialog"/);
+ assert.equal((html.match(/class="ec-stream-arrow"/g)||[]).length,2);
+ assert.doesNotMatch(html,/ec-flow-medal[^\n]*Полный цикл|Образец из технического описания линии ЭРА/);
+ assert.match(html,/ec-international-card ec-indigo[\s\S]*?myCEPPI \/ PlasticPortal[\s\S]*?Стабильное качество открывает возможность перехода/);
  assert.match(html,/Производственная смета от 27\.11\.2026 · Ярославская область/);
  assert.match(html,/Проверка опубликованных рыночных ориентиров — 17\.11\.2026/);
  assert.match(html,/950 €\/т/);assert.match(html,/1 368 €\/т/);
