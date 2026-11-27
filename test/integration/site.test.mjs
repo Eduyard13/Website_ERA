@@ -772,6 +772,7 @@ test('Экономика с первого HTML публикует базовы�
  assert.deepEqual([...html.matchAll(/data-econ-network="(\d+)"/g)].map(([,size])=>Number(size)),[1,2,3,5]);
  const fields={heroMonthNet:'≈ 10 млн ₽',heroYearNet:'≈ 120 млн ₽',monthNet:'9,81 млн ₽',yearNet:'112,93 млн ₽',payback:'Индивидуальная оценка',unitCost:'50,34 ₽/кг',unitProfit:'17,57 ₽/кг',yearOutput:'6 570 т',output:'558 т'};
  for(const [key,value] of Object.entries(fields))assert.ok(html.includes('data-econ-value="'+key+'">'+value),key);
+ assert.match(html,/<div class="ec-hero-payback">[^\n]*data-econ-value="heroPayback">≈ 1 год<\/strong>/);
  assert.match(html,/data-econ-value="balanceInput">1 500 кг\/ч/);
  assert.match(html,/data-econ-value="balanceOutput">750 кг\/ч/);
  assert.match(html,/6 ₽\/кг<\/strong>[\s\S]*?90 ₽\/кг<\/strong>[\s\S]*?×15/);

@@ -28,6 +28,7 @@ assert.ok(html.includes('Экономика вашего производств�
 assert.match(html,/data-econ-mode="full" data-econ-locked-mode="full"/);
 assert.match(html,/data-econ-value="heroMonthNet">≈ 10 млн ₽/);
 assert.match(html,/data-econ-value="heroYearNet">≈ 120 млн ₽/);
+assert.match(html,/<div class="ec-hero-payback">[^\n]*data-econ-value="heroPayback">≈ 1 год<\/strong>/);
 assert.doesNotMatch(html,/data-econ-value="heroYearNote"|Расчёт за 365 дней/);
 assert.match(html,/data-econ-value="monthNet">9,81 млн ₽/);
 assert.match(html,/data-econ-value="yearNet">112,93 млн ₽/);
@@ -117,6 +118,7 @@ try{
   assert.equal(s.scenario,price);assert.equal(s.values.monthNet,month+' млн ₽');assert.equal(s.values.yearNet,year+' млн ₽');
   assert.equal(s.values.heroMonthNet,price==='base'?'≈ 10 млн ₽':s.values.monthNet);
   assert.equal(s.values.heroYearNet,price==='base'?'≈ 120 млн ₽':s.values.yearNet);
+  assert.equal(s.values.heroPayback,price==='base'?'≈ 1 год':s.values.payback);
   assert.equal(s.values.payback,'Индивидуальная оценка');assert.equal(s.values.output,'558 т');assert.equal(s.values.yearOutput,'6\u00a0570 т');
   assert.deepEqual(s.hook,['6 ₽/кг','90 ₽/кг']);assert.equal(s.chart,4);assert.equal(s.parts.length,3);
   assert.ok(Math.abs(s.parts.reduce((a,b)=>a+b,0)-100)<.001);
@@ -147,6 +149,7 @@ try{
   await wait(ready);
   s=await snapshot();assert.ok(!s.overflow,'Published responsive layout '+width);
   assert.equal(s.sections,10);
+  assert.equal(s.values.heroPayback,'≈ 1 год');
  }
  assert.deepEqual(errors,[],'Published browser exceptions');
  console.log('::notice title=Published economics verified::Live full-cycle SSR, all prices, scenario figures, five-complex network, three balance periods, proportional allocation, request context and six viewport widths passed in Chrome. '+url);

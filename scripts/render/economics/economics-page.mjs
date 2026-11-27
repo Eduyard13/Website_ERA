@@ -37,7 +37,7 @@ function hero(snapshot,v){
    <dl class="ec-hero-numbers">
     <div><dt>${v('monthLabel','span')}</dt><dd>${v('heroMonthNet')}${v('heroMonthUsd','small')}</dd></div>
     <div><dt>${v('yearLabel','span')}</dt><dd>${v('heroYearNet')}${v('heroYearUsd','small')}</dd></div>
-    <div class="ec-hero-payback"><dt>Расчётный срок возврата вложений в оборудование</dt><dd>${v('payback')}</dd></div>
+    <div class="ec-hero-payback"><dt>Расчётный срок возврата вложений в оборудование</dt><dd>${v('heroPayback')}</dd></div>
    </dl>
    <div class="ec-actions"><a class="button" href="#production-constructor">Рассчитать своё производство ${arrow}</a>${request(snapshot.result,'complex',true)}</div>
   </div>

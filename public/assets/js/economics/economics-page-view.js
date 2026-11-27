@@ -39,14 +39,16 @@ export function financialValues({config,state,result:r,network:n,balance,fx}){
  const monthMillions=state.scenario==='base'&&r.yearNet>0?Math.round(r.net/1e6):0;
  const roundedHeadline=monthMillions>0;
  const yearMillions=monthMillions*config.monthsPerYear;
+ const payback=paybackLabel(r);
  return {
   monthLabel:monthLabel(r),yearLabel:annualLabel(r),
   heroMonthNet:roundedHeadline?`≈ ${decimal(monthMillions,0)} млн ₽`:compact(r.net),
   heroYearNet:roundedHeadline?`≈ ${decimal(yearMillions,0)} млн ₽`:compact(r.yearNet),
   heroMonthUsd:roundedHeadline?roundedDollars(monthMillions*1e6,fx,10000,1000,'тыс.'):dollars(r.net,fx),
   heroYearUsd:roundedHeadline?roundedDollars(yearMillions*1e6,fx,100000,1e6,'млн'):dollars(r.yearNet,fx),
+  heroPayback:state.scenario==='base'&&r.payback.status==='individual'?'≈ 1 год':payback,
   monthNet:compact(r.net),yearNet:compact(r.yearNet),monthUsd:dollars(r.net,fx),yearUsd:dollars(r.yearNet,fx),
-  price:priceText(r.grossPrice),payback:paybackLabel(r),rate:fxLabel(fx),
+  price:priceText(r.grossPrice),payback,rate:fxLabel(fx),
   unitPrice:priceText(r.netPrice,2),unitCost:priceText(r.perProduct?.totalCosts,2),unitTax:priceText(r.perProduct?.tax,2),
   unitProfit:priceText(netPerTonne,2),tonneNet:rublesPerTonne(netPerTonne),
   tonneUsd:fx&&netPerTonne!=null?'≈ '+decimal(netPerTonne/fx.rateRubPerUsd,2)+' $/т':unavailableUsd,
