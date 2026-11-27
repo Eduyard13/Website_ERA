@@ -28,7 +28,7 @@ jobs:
         with:
           node-version: '24'
       - name: Verify CBR parsing and date handling
-        run: node --input-type=module -e "await import('./test/cbr-rates.test.mjs')"
+        run: node --test test/unit/cbr-rates.test.mjs
       - name: Fetch official rates for today in Moscow
         run: node scripts/maintenance/update-rates.mjs "$RUNNER_TEMP/cbr.json"
       - name: Publish the small rates feed

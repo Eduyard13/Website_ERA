@@ -2,7 +2,7 @@ name: ERA Reg.ru Prepare and approved deploy
 
 on:
   push:
-    branches: [deploy/regru, regru/incremental-privacy, architecture/era-2-0]
+    branches: [deploy/regru, regru/incremental-privacy]
     tags: ['regru-prepare-*', 'regru-deploy-*', 'regru-rollback-*']
   workflow_dispatch:
 
@@ -14,7 +14,7 @@ jobs:
     if: >-
       github.repository == 'Eduyard13/Website_ERA' &&
       (github.ref == 'refs/heads/deploy/regru' || github.ref == 'refs/heads/regru/incremental-privacy' ||
-       github.ref == 'refs/heads/architecture/era-2-0' ||
+       (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
        (github.actor == 'Eduyard13' && startsWith(github.ref, 'refs/tags/regru-prepare-')))
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -79,17 +79,17 @@ jobs:
           retention-days: 14
           compression-level: 0
           if-no-files-found: error
-      - name: Package the public build for architecture review
-        if: github.ref == 'refs/heads/architecture/era-2-0'
+      - name: Package the public build for review
+        if: github.ref == 'refs/heads/main'
         run: |
           output="$RUNNER_TEMP/era-architecture"
           python scripts/deploy/package-regru.py --public-only --output "$output"
           cd "$output"
           sha256sum ERA_SITE_PUBLIC.zip RELEASE_MANIFEST.json > SHA256SUMS
       - uses: actions/upload-artifact@v4
-        if: github.ref == 'refs/heads/architecture/era-2-0'
+        if: github.ref == 'refs/heads/main'
         with:
-          name: era-architecture-reviewed-public
+          name: era-regru-reviewed-public
           path: ${{ runner.temp }}/era-architecture
           compression-level: 0
           if-no-files-found: error
@@ -139,7 +139,7 @@ jobs:
             python - "$patch" "$approved_sha" <<'PY'
           from sys import argv, path
           from zipfile import ZipFile
-          path.insert(0, 'scripts')
+          path.insert(0, 'scripts/deploy')
           from regru_release import read_patch
           with ZipFile(argv[1]) as package:
               _, target, plan = read_patch(package)
