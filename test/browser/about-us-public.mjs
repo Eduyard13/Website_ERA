@@ -14,7 +14,7 @@ const response=await fetch(url,{cache:'no-store'});
 assert.equal(response.status,200,'Published company page HTTP status');
 const html=await response.text();
 assert.ok(html.includes('От практики переработки — к промышленным технологиям.'),'New company heading');
-assert.match(html,/about-us\.css\?v=\d+\.\d+\.\d+/,'Published company release');
+assert.match(html,/about-us\.css\?v=[a-f0-9]{12}/,'Published company release');
 const hero=html.match(/<section[^>]*id="about-us-intro"[\s\S]*?<\/section>/)[0];
 assert.doesNotMatch(hero,/BEIER|1998|150\+|500\+|55 000/);
 assert.ok(html.includes('Венрай (Venray)')&&html.includes('Челябинск'));

@@ -98,8 +98,8 @@ test('Действия с оригинальным А0 находятся в д�
 });
 
 test('PREMIUM использует точный контроллер PRO и общий фон, ресурсы подключены на своём маршруте',async()=>{
- const [css,js,proJs,hall]=await Promise.all(['premium-engineering-center.css','premium-engineering-center.js','pro-engineering-center.js','assets/lines/separatsiya-02/engineering-center/industrial-hall.webp'].map(path=>readFile('public/'+browserAssetPath(path))));
- assert.equal(js.toString(),proJs.toString().replace('[data-pro-engineering-center]','[data-premium-engineering-center]'));
+ const [css,js,hall]=await Promise.all(['premium-engineering-center.css','engineering-center.js','assets/lines/separatsiya-02/engineering-center/industrial-hall.webp'].map(path=>readFile('public/'+browserAssetPath(path))));
+ for(const scope of ['base','pro','premium','hot-wash'])assert.ok(js.toString().includes('[data-'+scope+'-engineering-center]'),scope);
  assert.equal(createHash('sha256').update(hall).digest('hex'),'ec6c3f15b61ac8306584421bad36de3db84b04f55a93dd939df0daf1f23de7c3');
  assert.match(css.toString(),/url\("\.\.\/\.\.\/\.\.\/lines\/separatsiya-02\/engineering-center\/industrial-hall\.webp"\)/);
  assert.doesNotMatch(css.toString(),/industrial-light\.svg|pec-document/);
@@ -107,7 +107,7 @@ test('PREMIUM использует точный контроллер PRO и об
  assert.match(css.toString(),/\.pec-image\{[^}]*mix-blend-mode:multiply/);
  assert.match(css.toString(),/\.pec-dialog \.pec-image\{mix-blend-mode:normal\}/);
  assert.match(page,/premium-engineering-center\.css\?v=[0-9a-f]+/);
- assert.match(page,/premium-engineering-center\.js\?v=[0-9a-f]+/);
+ assert.match(page,/assets\/js\/equipment\/shared\/engineering-center\.js\?v=[0-9a-f]+/);
  for(const other of new Set(routes)){
   if(other===route)continue;
   assert.doesNotMatch(render(other),/data-premium-engineering-center|premium-engineering-center\.(css|js)/,other);

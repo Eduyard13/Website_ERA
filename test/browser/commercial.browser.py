@@ -257,7 +257,7 @@ with sync_playwright() as p:
 
     # Intercept a test copy of the compiled config and substitute matching SSR HTML.
     # No production inputs or repository files are written.
-    alternate = """import {economicsPage} from './scripts/economics-page.mjs';
+    alternate = """import {economicsPage} from './scripts/render/economics/economics-page.mjs';
 import {economicsConfig} from './public/assets/js/economics/economics-config.js';
 const config = structuredClone(economicsConfig);
 config.feedstockPrice = 7000; config.modes.full.defaultGrossPrice = 50000;

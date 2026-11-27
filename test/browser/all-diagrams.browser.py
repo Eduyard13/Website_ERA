@@ -5,7 +5,7 @@ import json,os,subprocess
 
 base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3009/Website_ERA').rstrip('/')
 out=Path(os.environ.get('ERA_SCREENSHOT_DIR','/tmp/era-all-diagrams'));out.mkdir(parents=True,exist_ok=True)
-nodes=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {nodes} from './content/catalog.mjs';console.log(JSON.stringify(nodes.map(n=>({slug:n.slug,title:n.title,diagram:n.diagram}))))"],text=True))
+nodes=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {nodes} from './content/equipment/catalog.mjs';console.log(JSON.stringify(nodes.map(n=>({slug:n.slug,title:n.title,diagram:n.diagram}))))"],text=True))
 with sync_playwright() as p:
  proxy=os.environ.get('HTTPS_PROXY') or os.environ.get('HTTP_PROXY')
  browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'],proxy={'server':proxy,'bypass':'127.0.0.1,localhost'} if proxy else None)

@@ -8,7 +8,7 @@ import json, os, time, subprocess
 from playwright.sync_api import sync_playwright
 base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3047/Website_ERA').rstrip('/')
 out=Path(os.environ.get('ERA_DOCUMENT_REPORT_DIR','/tmp/era-document-library-0360/browser'));out.mkdir(parents=True,exist_ok=True)
-documents=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {publicLibraryDocuments} from './content/document-library.mjs';console.log(JSON.stringify(publicLibraryDocuments))"],text=True))
+documents=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {publicLibraryDocuments} from './content/documents/document-library.mjs';console.log(JSON.stringify(publicLibraryDocuments))"],text=True))
 total_docs=len(documents)
 category_counts={c:sum(d['category']==c for d in documents) for c in ['brochures','technical','layouts','drawings','investments']}
 full_count=sum(d['objectType']=='line' and d['objectSlug']=='separatsiya-02' for d in documents)

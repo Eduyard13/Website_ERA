@@ -16,7 +16,13 @@ for(const [path,marker] of [['/catalog/','От отдельного узла д�
  const html=await r.text();assert.ok(html.includes(marker),path);
  const release=html.match(/interactions\.js\?v=([^"&]+)/)?.[1];assert.ok(release);
  version??=release;assert.equal(release,version);
- if(path!=='/catalog/')assert.ok(html.includes('/assets/js/catalog/catalog-branches.js?v='+version)&&html.includes('/assets/css/pages/catalog/catalog-branches.css?v='+version));
+ if(path!=='/catalog/'){
+  for(const file of ['assets/js/catalog/catalog-branches.js','assets/css/pages/catalog/catalog-branches.css']){
+   const ref=[...html.matchAll(/(?:href|src)="([^"]+)"/g)].map(m=>m[1]).find(url=>url.includes('/'+file+'?'));
+   assert.match(ref??'',/\?v=[a-f0-9]{12}$/,file);
+   assert.equal((await fetch(new URL(ref,base),{cache:'no-store'})).status,200,ref);
+  }
+ }
 }
 for(const file of ['assets/css/pages/catalog/catalog.css','assets/css/pages/catalog/catalog-branches.css','assets/js/catalog/catalog-branches.js','assets/js/catalog/catalog-filter-model.js','assets/js/core/interactions.js']){
  const r=await fetch(`${base}/${file}?v=${version}`,{cache:'no-store'});assert.equal(r.status,200,file);

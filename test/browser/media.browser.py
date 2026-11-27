@@ -9,7 +9,7 @@ base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3034/Website_ERA').rstri
 prefix=urlparse(base).path
 out=Path(os.environ.get('ERA_SCREENSHOT_DIR','/tmp/era-gallery-034/browser'));out.mkdir(parents=True,exist_ok=True)
 widths=[int(v) for v in os.environ.get('ERA_TEST_WIDTHS','320,390,768,1024,1280,1440,1920').split(',')]
-data=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {buildGalleryData} from './scripts/gallery-data.mjs';console.log(JSON.stringify(buildGalleryData()))"],cwd=repo,text=True))
+data=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {buildGalleryData} from './scripts/render/pages/gallery-data.mjs';console.log(JSON.stringify(buildGalleryData()))"],cwd=repo,text=True))
 byid={m['id']:m for m in data['items']};albums={a['id']:a for a in data['albums']}
 errors=[];failures=[];video_requests=[];expected_failures=set();results=[];screens=[]
 with sync_playwright() as p:

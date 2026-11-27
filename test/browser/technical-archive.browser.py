@@ -5,7 +5,7 @@ import json,os,subprocess
 from playwright.sync_api import sync_playwright
 base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3049/Website_ERA').rstrip('/')
 out=Path(os.environ.get('ERA_ARCHIVE_REPORT_DIR','/tmp/era-technical-archive-0361/browser'));out.mkdir(parents=True,exist_ok=True)
-documents=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {publicLibraryDocuments} from './content/document-library.mjs';console.log(JSON.stringify(publicLibraryDocuments))"],text=True))
+documents=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {publicLibraryDocuments} from './content/documents/document-library.mjs';console.log(JSON.stringify(publicLibraryDocuments))"],text=True))
 category_counts={c:sum(d['category']==c for d in documents) for c in ['technical','layouts','drawings']}
 errors=[];report={'widths':[],'history':[],'screenshots':False}
 

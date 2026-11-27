@@ -6,7 +6,7 @@ from playwright.sync_api import sync_playwright
 
 base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3052').rstrip('/')
 out=Path(os.environ.get('ERA_LINE_REPORT_DIR','/tmp/era-separation-02-0362/browser'));out.mkdir(parents=True,exist_ok=True)
-data=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {fullLineDiagram} from './content/line-diagrams.mjs';console.log(JSON.stringify(fullLineDiagram))"],text=True))
+data=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {fullLineDiagram} from './content/lines/shared/line-diagrams.mjs';console.log(JSON.stringify(fullLineDiagram))"],text=True))
 errors=[];failures=[];report={'widths':[],'screenshots':False}
 from line_tooltip_checks import assert_tooltip_clearance
 

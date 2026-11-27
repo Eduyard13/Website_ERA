@@ -41,7 +41,7 @@ jobs:
           python scripts/deploy/package-regru.py --vendor-only
           php test/deployment/regru-cbr.php
           python test/deployment/regru-server.py
-          python -m unittest discover -s test -p 'test_regru_incremental.py'
+          python -m unittest discover -s test/deployment -p 'test_*.py'
       - name: Build and verify the two manual installation archives
         run: |
           output="$RUNNER_TEMP/era-0481"

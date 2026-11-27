@@ -7,7 +7,7 @@ repo=Path(__file__).resolve().parents[2]
 base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3010/Website_ERA').rstrip('/')
 out=Path(os.environ.get('ERA_SCREENSHOT_DIR','/workspace/era-review/refinements-v0.12'));out.mkdir(parents=True,exist_ok=True)
 fixture=subprocess.check_output(['node','--input-type=module','-e',"""
- import {kairMonitor} from './scripts/kair.mjs';
+ import {kairMonitor} from './scripts/render/kair/kair.mjs';
  // Existing files are test images here, not additional production KAIR screens.
  const slides=[
   {id:'one',file:'presentation/kair.webp',width:616,height:361,alt:'Тестовый экран 1',caption:'Тестовый экран 1'},
@@ -16,7 +16,7 @@ fixture=subprocess.check_output(['node','--input-type=module','-e',"""
  ];
  console.log(kairMonitor(slides,{autoplay:true,intervalMs:1000,transitionMs:50}));
 """],cwd=repo,text=True)
-slides=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {kairSlides} from './content/kair.mjs'; console.log(JSON.stringify(kairSlides))"],cwd=repo,text=True))
+slides=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {kairSlides} from './content/kair/kair.mjs'; console.log(JSON.stringify(kairSlides))"],cwd=repo,text=True))
 
 with sync_playwright() as p:
  proxy=os.environ.get('HTTPS_PROXY') or os.environ.get('HTTP_PROXY')

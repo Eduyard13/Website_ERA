@@ -9,7 +9,7 @@ import json,os,subprocess
 base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3060').rstrip('/')
 prefix=urlparse(base).path
 out=Path(os.environ.get('ERA_LINE_REPORT_DIR','/tmp/era-mini-alignment-20261116/browser-mini'));out.mkdir(parents=True,exist_ok=True)
-model=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {miniLineDiagram} from './content/line-diagrams.mjs';console.log(JSON.stringify(miniLineDiagram))"],text=True))
+model=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {miniLineDiagram} from './content/lines/shared/line-diagrams.mjs';console.log(JSON.stringify(miniLineDiagram))"],text=True))
 results=[];errors=[];failed=[]
 sections=['purpose','raw-materials','composition','process','quality','kair','specs','placement','photos','documents','request','equipment']
 with sync_playwright() as p:

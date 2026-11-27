@@ -55,7 +55,7 @@ function heading(id,title,{kicker='',lead=''}={}){
 export function resourceVideo(id,registry=media){
  const m=registry[id],poster=registry[m.posterSlot];
  return `<div class="resource-video${m.file?'':' resource-video--poster'}" data-video-slot="${id}">
-  ${m.file?`<video controls playsinline preload="none" poster="${posterAsset(poster)}" aria-label="${esc(m.label)}"><source src="${asset(m.file)}" type="video/mp4">${m.webm?`<source src="${asset(m.webm)}" type="video/webm">`:''}${m.captions?`<track kind="captions" src="${asset(m.captions)}" srclang="ru" label="Русские субтитры">`:''}Ваш браузер не поддерживает видео. ${link('Открыть видео',asset(m.file))}</video>
+  ${m.file?`<video controls playsinline preload="none" loading="lazy" poster="${posterAsset(poster)}" aria-label="${esc(m.label)}"><source src="${asset(m.file)}" type="video/mp4">${m.webm?`<source src="${asset(m.webm)}" type="video/webm">`:''}${m.captions?`<track kind="captions" src="${asset(m.captions)}" srclang="ru" label="Русские субтитры">`:''}Ваш браузер не поддерживает видео. ${link('Открыть видео',asset(m.file))}</video>
    ${id==='promo'?'<button class="resource-video-play" type="button" data-resource-play aria-label="Воспроизвести видео о технологии ЭРА" hidden><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M14 9 32 20 14 31Z" fill="currentColor"/></svg></button>':''}`:
    image(poster,{slot:m.posterSlot})}
   <p class="resource-video-operation">${esc(m.label)}</p>

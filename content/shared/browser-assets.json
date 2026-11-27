@@ -5,7 +5,6 @@
     "app.js": "assets/js/core/app.js",
     "automation-redirect.js": "assets/js/components/automation-redirect.js",
     "base-engineering-center.css": "assets/css/equipment/base/base-engineering-center.css",
-    "base-engineering-center.js": "assets/js/equipment/base/base-engineering-center.js",
     "base-process.css": "assets/css/equipment/base/base-process.css",
     "catalog-branches.css": "assets/css/pages/catalog/catalog-branches.css",
     "catalog-branches.js": "assets/js/catalog/catalog-branches.js",
@@ -37,6 +36,7 @@
     "economics-page.css": "assets/css/pages/economics/economics-page.css",
     "economics-payback.js": "assets/js/economics/economics-payback.js",
     "economics-view.js": "assets/js/economics/economics-view.js",
+    "engineering-center.js": "assets/js/equipment/shared/engineering-center.js",
     "equipment.css": "assets/css/equipment/shared/equipment.css",
     "footer.css": "assets/css/components/footer.css",
     "fx-core.js": "assets/js/core/fx-core.js",
@@ -49,7 +49,6 @@
     "hot-film-washing.css": "assets/css/equipment/hot-wash/hot-film-washing.css",
     "hot-film-washing.js": "assets/js/equipment/hot-wash/hot-film-washing.js",
     "hot-wash-engineering-center.css": "assets/css/equipment/hot-wash/hot-wash-engineering-center.css",
-    "hot-wash-engineering-center.js": "assets/js/equipment/hot-wash/hot-wash-engineering-center.js",
     "hot-wash-process.css": "assets/css/equipment/hot-wash/hot-wash-process.css",
     "interactions.js": "assets/js/core/interactions.js",
     "kair-stage2.css": "assets/css/pages/kair/kair-stage2.css",
@@ -77,12 +76,10 @@
     "pdf-viewer.css": "assets/css/components/pdf-viewer.css",
     "pdf-viewer.js": "assets/js/components/pdf-viewer.js",
     "premium-engineering-center.css": "assets/css/equipment/premium/premium-engineering-center.css",
-    "premium-engineering-center.js": "assets/js/equipment/premium/premium-engineering-center.js",
     "presentation-web.css": "assets/css/components/presentation-web.css",
     "presentation-web.js": "assets/js/components/presentation-web.js",
     "presentation.css": "assets/css/components/presentation.css",
     "pro-engineering-center.css": "assets/css/equipment/pro/pro-engineering-center.css",
-    "pro-engineering-center.js": "assets/js/equipment/pro/pro-engineering-center.js",
     "pro-process-layout.js": "assets/js/equipment/pro/pro-process-layout.js",
     "pro-process.css": "assets/css/equipment/pro/pro-process.css",
     "project-home.css": "assets/css/pages/home/project-home.css",
@@ -141,5 +138,16 @@
       "vendor/pdfjs/pdf.mjs",
       "vendor/pdfjs/pdf.worker.mjs"
     ]
-  }
+  },
+  "legacyDependencies": [
+    "context-history.js",
+    "fx-core.js",
+    "media-counts.js"
+  ],
+  "retired": [
+    "base-engineering-center.js",
+    "pro-engineering-center.js",
+    "premium-engineering-center.js",
+    "hot-wash-engineering-center.js"
+  ]
 }

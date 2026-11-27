@@ -27,7 +27,7 @@ test('HOT-WASH: exact three groups, 31 views, one viewer, correct dimensions',()
  assert.doesNotMatch(p,/<a\b|\s(?:href|target|download|data-pdf-open)=|pec-document|PDF ·/i);
  assert.match(docs,/data-pdf-open="moyka-plenki-dimensions"/);assert.match(docs,/era-moyka-plenki-dimensions-a0\.pdf" download=/);
  const ids=[...page.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);assert.equal(ids.length,new Set(ids).size);
- assert.match(page,/hot-wash-engineering-center\.css\?v=/);assert.match(page,/hot-wash-engineering-center\.js\?v=/);
+ assert.match(page,/hot-wash-engineering-center\.css\?v=/);assert.match(page,/assets\/js\/equipment\/shared\/engineering-center\.js\?v=/);
  for(const other of new Set(routes)){if(other!==route)assert.doesNotMatch(render(other),/data-hot-wash-engineering-center|hot-wash-engineering-center\.(css|js)/,other);}
 });
 test('81 source views, four original projections and four drawing thumbnails match hashes and dimensions',async()=>{
@@ -36,9 +36,8 @@ test('81 source views, four original projections and four drawing thumbnails mat
  assert.deepEqual(registry.drawingThumbnails.map(v=>v.id),drawings);
  for(const v of [...linePlacement['moyka-plenki'].views,...registry.drawingThumbnails])await verify(v);
  for(const v of linePlacement['moyka-plenki'].views)assert.ok(p.includes(`data-engineering-src="${basePath}/assets/${v.file}"`));
- const [css,js,premiumCss,premiumJs]=await Promise.all(['hot-wash-engineering-center.css','hot-wash-engineering-center.js','premium-engineering-center.css','premium-engineering-center.js'].map(f=>readFile('public/'+browserAssetPath(f),'utf8')));
+ const [css,premiumCss]=await Promise.all(['hot-wash-engineering-center.css','premium-engineering-center.css'].map(f=>readFile('public/'+browserAssetPath(f),'utf8')));
  assert.equal(css,premiumCss.replaceAll('premium-engineering-center','hot-wash-engineering-center'));
- assert.equal(js,premiumJs.replaceAll('premium-engineering-center','hot-wash-engineering-center'));
 });
 test('HOT-WASH: технические названия согласованы у всех 31 миниатюры и ракурса',()=>{
  const labels=[...registry.views,...linePlacement['moyka-plenki'].views.map((view,index)=>({

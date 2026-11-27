@@ -2,7 +2,7 @@ name: ERA Reg.ru Prepare and approved deploy
 
 on:
   push:
-    branches: [deploy/regru, regru/incremental-privacy]
+    branches: [deploy/regru, regru/incremental-privacy, architecture/era-2-0]
     tags: ['regru-prepare-*', 'regru-deploy-*', 'regru-rollback-*']
   workflow_dispatch:
 
@@ -14,6 +14,7 @@ jobs:
     if: >-
       github.repository == 'Eduyard13/Website_ERA' &&
       (github.ref == 'refs/heads/deploy/regru' || github.ref == 'refs/heads/regru/incremental-privacy' ||
+       github.ref == 'refs/heads/architecture/era-2-0' ||
        (github.actor == 'Eduyard13' && startsWith(github.ref, 'refs/tags/regru-prepare-')))
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -43,10 +44,11 @@ jobs:
           npm ci --omit=optional
           npm test
           npm run build
+          npm run validate:structure -- --dist dist
           python scripts/deploy/package-regru.py --vendor-only
           php test/deployment/regru-cbr.php
           python test/deployment/regru-server.py
-          python -m unittest discover -s test -p 'test_regru_incremental.py'
+          python -m unittest discover -s test/deployment -p 'test_*.py'
       - name: Prepare the reviewed patch without connecting to Reg.ru
         id: prepare-patch
         run: |
@@ -75,6 +77,20 @@ jobs:
           name: era-regru-patch
           path: ${{ steps.prepare-patch.outputs.patch }}
           retention-days: 14
+          compression-level: 0
+          if-no-files-found: error
+      - name: Package the public build for architecture review
+        if: github.ref == 'refs/heads/architecture/era-2-0'
+        run: |
+          output="$RUNNER_TEMP/era-architecture"
+          python scripts/deploy/package-regru.py --public-only --output "$output"
+          cd "$output"
+          sha256sum ERA_SITE_PUBLIC.zip RELEASE_MANIFEST.json > SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        if: github.ref == 'refs/heads/architecture/era-2-0'
+        with:
+          name: era-architecture-reviewed-public
+          path: ${{ runner.temp }}/era-architecture
           compression-level: 0
           if-no-files-found: error
 

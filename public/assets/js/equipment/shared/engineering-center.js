@@ -1,4 +1,4 @@
-const center=document.querySelector('[data-base-engineering-center]');
+const center=document.querySelector('[data-pro-engineering-center],[data-premium-engineering-center],[data-base-engineering-center],[data-hot-wash-engineering-center]');
 if(center)initialize(center);
 
 function initialize(root){

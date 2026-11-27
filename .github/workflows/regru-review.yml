@@ -60,8 +60,8 @@ jobs:
             make install
           )
           export LD_LIBRARY_PATH="$RUNNER_TEMP/era-zlib/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
-          python scripts/deploy/package-regru.py --output "$RUNNER_TEMP/era-downloads"
-          cp docs/deployment/ERA_REG_RU_DEPLOY_STEPS.md docs/deployment/REG_RU_HTACCESS_RECOMMENDED.md docs/instructions/ERA_PERSONAL_DATA_TEMPLATE.md docs/deployment/ERA_REG_RU_RELEASE_MANIFEST.md "$RUNNER_TEMP/era-downloads/"
+          python scripts/package-regru.py --output "$RUNNER_TEMP/era-downloads"
+          cp docs/ERA_REG_RU_DEPLOY_STEPS.md docs/REG_RU_HTACCESS_RECOMMENDED.md docs/ERA_PERSONAL_DATA_TEMPLATE.md docs/ERA_REG_RU_RELEASE_MANIFEST.md "$RUNNER_TEMP/era-downloads/"
           cd "$RUNNER_TEMP/era-downloads"
           cat > SHA256SUMS <<'SUMS'
           df40a87116f9e17791bb66876e1d7ec19dba932b0f36d0de08f954043e701e27  ERA_SITE_PUBLIC.zip

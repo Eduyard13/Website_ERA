@@ -6,7 +6,7 @@ from playwright.sync_api import sync_playwright
 repo=Path(__file__).resolve().parents[2]
 base=os.environ.get('ERA_PREVIEW_URL','http://127.0.0.1:3010/Website_ERA').rstrip('/')
 out=Path(os.environ.get('ERA_SCREENSHOT_DIR','/tmp/kair-slides-review'));out.mkdir(parents=True,exist_ok=True)
-slides=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {kairSlides} from './content/kair.mjs'; console.log(JSON.stringify(kairSlides))"],cwd=repo,text=True))
+slides=json.loads(subprocess.check_output(['node','--input-type=module','-e',"import {kairSlides} from './content/kair/kair.mjs'; console.log(JSON.stringify(kairSlides))"],cwd=repo,text=True))
 with sync_playwright() as p:
  browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'])
  errors=[];failures=[];results=[]

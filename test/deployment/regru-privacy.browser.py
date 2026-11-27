@@ -13,8 +13,8 @@ visual = Path(os.environ.get('ERA_PRIVACY_SCREENSHOTS', '/tmp/era-0482-visual'))
 visual.mkdir(parents=True, exist_ok=True)
 root = Path(__file__).resolve().parents[2]
 fixtures = subprocess.check_output(['node', '--input-type=module', '-e', """
-    import {productionSite} from './content/contact.mjs';
-    import {productionMap} from './scripts/contact-maps.mjs';
+    import {productionSite} from './content/pages/contacts/contact.mjs';
+    import {productionMap} from './scripts/render/pages/contact-maps.mjs';
     process.stdout.write(productionMap({...productionSite, operatorApprovedMapEmbeds:['google','yandex']}));
 """], cwd=root, text=True)
 versions = {'/privacy/':'ERA-PRIVACY-1.3', '/privacy/consent/':'ERA-PD-1.3', '/privacy/cookies/':'ERA-COOKIES-1.3'}

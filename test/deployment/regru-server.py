@@ -178,9 +178,20 @@ class ServiceTest(unittest.TestCase):
             'smtp': {'host': 'localhost', 'port': cls.mail.server_address[1], 'password': cls.mail.password},
         }
         cls.log = cls.stack.enter_context((work / 'php.log').open('w+'))
+        router = work / 'router.php'
+        router.write_text("""<?php
+$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$file = $_SERVER['DOCUMENT_ROOT'] . rawurldecode($path);
+if (is_file($file) || (is_dir($file) && is_file($file . '/index.html'))) {
+    return false;
+}
+http_response_code(404);
+readfile($_SERVER['DOCUMENT_ROOT'] . '/404.html');
+""", encoding='utf-8')
         cls.php = subprocess.Popen([PHP, '-d', f'openssl.cafile={cls.cert}', '-d', 'post_max_size=6M',
                                     '-d', 'upload_max_filesize=5M', '-d', 'max_file_uploads=21',
-                                    '-S', f'127.0.0.1:{cls.http_port}', '-t', str(cls.web)], stdout=cls.log, stderr=cls.log)
+                                    '-S', f'127.0.0.1:{cls.http_port}', '-t', str(cls.web), str(router)],
+                                   stdout=cls.log, stderr=cls.log)
         cls.stack.callback(cls.stop_php)
         for _ in range(60):
             try:
@@ -274,7 +285,7 @@ class ServiceTest(unittest.TestCase):
         self.assertEqual(mail['From'].addresses[0].addr_spec, 'noreply@era-cycle.ru')
         self.assertEqual(mail['To'].addresses[0].addr_spec, 'info@era-cycle.ru')
         self.assertEqual(mail['Reply-To'].addresses[0].addr_spec, 'fixture@example.test')
-        self.assertEqual(mail['Subject'], 'Заявка с сайта ЭРА')
+        self.assertEqual(mail['Subject'], 'Заявка с сайта ЭРА — Сухая сепарация · BASE')
         text = mail.get_body(preferencelist=('plain',)).get_content()
         for value in ['Иван <Клиент>', 'Задача ЭРА & эскиз', 'https://example.test/video', 'https://era-cycle.ru/catalog/lines/separatsiya-01']:
             self.assertIn(value, text)

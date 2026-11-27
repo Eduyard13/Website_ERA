@@ -7,7 +7,7 @@ import subprocess
 
 from sys import path
 ROOT = Path(__file__).resolve().parents[2]
-path.insert(0, str(ROOT / 'scripts'))
+path.insert(0, str(ROOT / 'scripts' / 'deploy'))
 from regru_legal_0481 import PDFS
 
 dist = ROOT / 'dist'

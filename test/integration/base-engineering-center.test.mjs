@@ -46,13 +46,12 @@ test('BASE projections and crops match the reviewed PDF source and published ass
   assert.ok(asset.width>=1600);
   assert.ok(placement.includes(`data-engineering-src="${basePath}/assets/${asset.file}"`));
  }
- for(const suffix of ['css','js']){
-  const [premium,base]=await Promise.all(['premium','base'].map(scope=>readFile("public/"+browserAssetPath(`${scope}-engineering-center.${suffix}`),'utf8')));
-  const scoped=premium.replaceAll('premium-engineering-center','base-engineering-center');
-  assert.equal(base,suffix==='css'?scoped.replace('minmax(0,1.6fr)','minmax(0,1.25fr)'):scoped);
- }
+ const [premium,base]=await Promise.all(['premium','base'].map(scope=>readFile("public/"+browserAssetPath(scope+'-engineering-center.css'),'utf8')));
+ assert.equal(base,premium.replaceAll('premium-engineering-center','base-engineering-center').replace('minmax(0,1.6fr)','minmax(0,1.25fr)'));
  for(const other of new Set(routes)){
   if(other!==route)assert.doesNotMatch(render(other),/data-base-engineering-center|base-engineering-center\.(?:css|js)/,other);
+  assert.equal((render(other).match(/assets\/js\/equipment\/shared\/engineering-center\.js\?v=/g)||[]).length,
+   /^\/catalog\/lines\/(separatsiya-0[123]|moyka-plenki)$/.test(other)?1:0,other);
   if(!/^\/catalog\/lines\/(separatsiya-0[123]|moyka-plenki)$/.test(other))assert.doesNotMatch(render(other),/data-line-section-nav|line-section-nav\.(?:css|js)/,other);
  }
 });

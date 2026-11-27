@@ -10,6 +10,7 @@ import tarfile
 import urllib.request
 import zipfile
 from pathlib import Path, PurePosixPath
+from regru_release import build_manifest, protected, verified_payload
 
 REPO = Path(__file__).resolve().parents[2]
 SERVER = REPO / 'server' / 'regru'
@@ -75,14 +76,13 @@ def write_zip(output, files):
     print(f'{output.name} {output.stat().st_size} bytes · SHA-256 {digest(output)}')
 
 
-def package(output, archive):
+def package(output, archive, public_only=False):
     home = (PUBLIC / 'index.html').read_text()
     if 'rel="canonical" href="https://era-cycle.ru/"' not in home or 'data-request-preview' in home:
         raise SystemExit('Build DEPLOY_TARGET=regru before packaging')
     for name in ('api/request.php', 'data/cbr.json', 'robots.txt', 'sitemap.xml', 'privacy/index.html', '404.html'):
         if not (PUBLIC / name).is_file():
             raise SystemExit(f'Production file missing: {name}')
-    mailer = install_mailer(archive)
     output.mkdir(parents=True, exist_ok=True)
     public_files = [(file.relative_to(PUBLIC).as_posix(), file) for file in PUBLIC.rglob('*') if file.is_file()]
     for name, _ in public_files:
@@ -90,6 +90,22 @@ def package(output, archive):
         if (any(part.startswith('.') or part in ('node_modules', 'state') for part in path.parts)
             or path.suffix.lower() in ('.zip', '.log', '.ini') or (path.suffix.lower() == '.php' and name != 'api/request.php')):
             raise SystemExit(f'Non-public file in dist: {name}')
+    if public_only:
+        from subprocess import check_output
+        release = json.loads((REPO / 'package.json').read_text())['version']
+        commit = check_output(['git','rev-parse','HEAD'], cwd=REPO, text=True).strip()
+        manifest = build_manifest(PUBLIC, release, commit)
+        managed = [(name, file) for name, file in public_files if not protected(name)]
+        if {name for name, _ in managed} != set(manifest['files']):
+            raise SystemExit('Public ZIP and release manifest disagree')
+        for name, file in managed:
+            with file.open('rb') as stream:
+                if verified_payload(stream, name) != manifest['files'][name]['sha256']:
+                    raise ValueError(f'Public file changed while packaging: {name}')
+        write_zip(output / 'ERA_SITE_PUBLIC.zip', managed)
+        (output / 'RELEASE_MANIFEST.json').write_text(json.dumps(manifest, ensure_ascii=False, sort_keys=True, indent=2)+'\n')
+        return
+    mailer = install_mailer(archive)
     components = [
         'attachment-types.json', 'cbr.php', 'config.example.json', 'cron/update_cbr.php',
         'request-handler.php', 'runtime.php', 'uploads.php',
@@ -112,11 +128,14 @@ if __name__ == '__main__':
     action = parser.add_mutually_exclusive_group(required=True)
     action.add_argument('--vendor-only', action='store_true')
     action.add_argument('--output', type=Path, help='Directory for the two ZIP files, outside dist')
+    parser.add_argument('--public-only', action='store_true', help='Package managed public files for an existing host')
     args = parser.parse_args()
+    if args.public_only and not args.output:
+        parser.error('--public-only requires --output')
     if args.vendor_only:
         print(install_mailer(args.phpmailer_archive))
     else:
         output = args.output.resolve()
         if output.is_relative_to(PUBLIC):
             parser.error('ZIP files must be written outside dist')
-        package(output, args.phpmailer_archive)
+        package(output, args.phpmailer_archive, args.public_only)

@@ -2,6 +2,7 @@ import {createHash} from 'node:crypto';
 import {readFile,writeFile} from 'node:fs/promises';
 import {posix} from 'node:path';
 import {init,parse} from 'es-module-lexer';
+import CleanCSS from 'clean-css';
 import registry from '../../content/shared/browser-assets.json' with {type:'json'};
 
 export const assetBaseVersion='0.47.0';
@@ -30,15 +31,23 @@ function relativeCss(source,fn){
 
 await init;
 const sources=new Map(await Promise.all([...keys.keys()].map(async path=>[path,await readFile(new URL(path,publicRoot),'utf8')])));
+const styles=new Map();
+const cssCompiler=new CleanCSS({level:0,rebase:false});
 const dependencies=new Map();
 const checksums=new Map();
 const importRecords=new Map();
 for(const [path,source] of sources){
- checksums.set(path,hash(source));
- const imports=path.endsWith('.css')?[]:parse(source,path)[0].filter(record=>record.n?.startsWith('.'));
+ const style=path.endsWith('.css');
+ if(style){
+  const output=cssCompiler.minify(source);
+  if(output.errors.length||output.warnings.length)throw new Error(path+': '+[...output.errors,...output.warnings].join('; '));
+  styles.set(path,output.styles);
+ }
+ checksums.set(path,hash(style?styles.get(path):source));
+ const imports=style?[]:parse(source,path)[0].filter(record=>record.n?.startsWith('.'));
  importRecords.set(path,imports);
  const linked=new Set(imports.map(record=>relativeFile(path,record.n)));
- if(path.endsWith('.css'))relativeCss(source,url=>{linked.add(relativeFile(path,url));return url;});
+ if(style)relativeCss(source,url=>{linked.add(relativeFile(path,url));return url;});
  for(const dependency of registry.dynamic[keys.get(path)]??[])linked.add(paths.get(dependency)??dependency);
  dependencies.set(path,linked);
 }
@@ -87,7 +96,7 @@ export function publicMarkup(html,basePath,legacy){
 function versionedSource(sourcePath,outputPath){
  const source=sources.get(sourcePath);
  if(sourcePath.endsWith('.css')){
-  if(sourcePath===outputPath)return source;
+  if(sourcePath===outputPath)return styles.get(sourcePath);
   return relativeCss(source,url=>relativeUrl(outputPath,relativeFile(sourcePath,url)) + (url.match(/[?#].*$/)?.[0]??''));
  }
  let result=source;
@@ -107,7 +116,8 @@ export async function writeBrowserAssets(dist){
   if(content!==sources.get(path))await writeFile(dist+'/'+path,content);
  }
  // These entries serve the immutable legal HTML. They have no separate source copy.
- for(const key of Object.keys(registry.legacyLegal)){
-  await writeFile(dist+'/'+key,versionedSource(browserAssetPath(key),key));
+ for(const key of [...Object.keys(registry.legacyLegal),...registry.legacyDependencies]){
+  const content=versionedSource(browserAssetPath(key),key);
+  await writeFile(dist+'/'+key,key==='context-history.js'?content.replace("new URL('../../../',import.meta.url)","new URL('.',import.meta.url)"):content);
  }
 }

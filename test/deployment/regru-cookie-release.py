@@ -11,7 +11,7 @@ from zipfile import ZipFile
 
 from sys import path
 ROOT = Path(__file__).resolve().parents[2]
-path.insert(0, str(ROOT / 'scripts'))
+path.insert(0, str(ROOT / 'scripts' / 'deploy'))
 from regru_cookie_0482 import ASSETS, BASE, BASE_COMMIT
 from regru_release import digest_file, read_patch
 
