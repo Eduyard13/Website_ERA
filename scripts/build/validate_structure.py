@@ -11,6 +11,13 @@ from urllib.parse import unquote, urljoin, urlsplit
 
 SOURCE = Path(__file__).resolve().parents[2]
 CODE = {'.css', '.js', '.mjs'}
+# Browser code copied verbatim by the build from the locked npm dependencies.
+VENDOR_CODE = {
+    'vendor/fflate.js', 'vendor/pdfjs/pdf.mjs', 'vendor/pdfjs/pdf.worker.mjs',
+    'vendor/pdfjs/wasm/jbig2_nowasm_fallback.js',
+    'vendor/pdfjs/wasm/openjpeg_nowasm_fallback.js',
+    'vendor/pdfjs/wasm/quickjs-eval.js',
+}
 URL_ATTR = {'href','src','poster','data-product','data-image','data-video','data-poster',
             'data-engineering-src','data-engineering-full','data-gallery-base','data-assembly-pdf'}
 INTERNAL = {'docs','content','scripts','test','node_modules','server','era-private','era-deploy','era-staging'}
@@ -65,13 +72,15 @@ def verify_tree(root, registry, *, source):
                 or file.suffix.lower() in FORBIDDEN
                 or (file.suffix == '.php' and name != 'api/request.php')):
             raise ValueError(f'Forbidden public file: {name}')
-        if file.suffix in CODE:
-            if len(parts) == 1 and (source or name not in legacy):
-                raise ValueError(f'Unapproved root browser resource: {name}')
+        if file.suffix.lower() in CODE:
             if len(parts) == 1:
+                if source or name not in legacy:
+                    raise ValueError(f'Unapproved root browser resource: {name}')
                 root_scripts.add(name)
-            if name.startswith(('assets/css/','assets/js/')):
+            elif name.startswith(('assets/css/','assets/js/')):
                 browser_paths.add(name)
+            elif source or name not in VENDOR_CODE:
+                raise ValueError(f'Browser resource outside its thematic directory: {name}')
     expected = set(registry['paths'].values())
     if len(expected) != len(registry['paths']) or browser_paths != expected:
         raise ValueError(f'Browser asset registry mismatch: {sorted(expected ^ browser_paths)}')

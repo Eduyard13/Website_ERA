@@ -36,7 +36,11 @@ class Architecture(unittest.TestCase):
         for path in self.registry['paths'].values():
             self.put(path, '')
         verify_tree(self.web, self.registry, source=True)
-        for path, error in [('extra.js','Unapproved root'), ('example.tmp','Forbidden public file')]:
+        for path, error in [
+            ('extra.js','Unapproved root'),
+            ('assets/media/example.JS','outside its thematic directory'),
+            ('example.tmp','Forbidden public file'),
+        ]:
             file = self.put(path, '')
             with self.assertRaisesRegex(ValueError, error):
                 verify_tree(self.web, self.registry, source=True)
