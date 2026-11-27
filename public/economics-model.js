@@ -10,11 +10,24 @@ export function productionBasis(modeId,config=economicsConfig){
  const monthHours=config.monthDays*config.hoursPerDay,yearHours=config.yearDays*config.hoursPerDay;
  if(!Number.isFinite(profile.inputRate)||!Number.isFinite(profile.outputRate)||
     profile.outputRate<0||profile.inputRate<profile.outputRate)throw new RangeError('Invalid production rates');
- const costs=config.costs.filter(cost=>cost.id!=='feedstock').map(cost=>({...cost,value:cost[modeId]*(cost.rateMultiplier??1)}));
- const nominalOverhead=costs.reduce((total,cost)=>total+cost.value,0);
- const identifiableFixed=costs.filter(cost=>cost.fixed).reduce((total,cost)=>total+cost.value,0);
- const fixedCashOpex=Math.min(nominalOverhead,profile.otherFixedCashOpex+identifiableFixed);
- const runningCashPerHour=(nominalOverhead-fixedCashOpex)/config.referenceMonthHours;
+ const overhead=config.costs.filter(cost=>cost.id!=='feedstock');
+ let costs,fixedCashOpex,runningCashPerHour;
+ if(modeId==='full'){
+  const residueRate=profile.inputRate-profile.outputRate;
+  costs=overhead.map(cost=>{
+   const {monthly=0,hourly=0,perOutputTonne=0,perResidueTonne=0,description=cost.description}=cost.full;
+   const operatingRate=hourly+perOutputTonne*profile.outputRate+perResidueTonne*residueRate;
+   return {...cost,description,monthly,operatingRate,value:monthly+operatingRate*config.referenceMonthHours};
+  });
+  fixedCashOpex=costs.reduce((total,cost)=>total+cost.monthly,0);
+  runningCashPerHour=costs.reduce((total,cost)=>total+cost.operatingRate,0);
+ }else{
+  costs=overhead.map(cost=>({...cost,value:cost.separation*(cost.rateMultiplier??1)}));
+  const nominalOverhead=costs.reduce((total,cost)=>total+cost.value,0);
+  const identifiableFixed=costs.filter(cost=>cost.fixed).reduce((total,cost)=>total+cost.value,0);
+  fixedCashOpex=Math.min(nominalOverhead,profile.otherFixedCashOpex+identifiableFixed);
+  runningCashPerHour=(nominalOverhead-fixedCashOpex)/config.referenceMonthHours;
+ }
  return {...profile,monthHours,yearHours,referenceInput:profile.inputRate*monthHours,referenceOutput:profile.outputRate*monthHours,
   totalYield:ratio(profile.outputRate,profile.inputRate)??0,fixedCashOpex,runningCashPerHour,costs};
 }
@@ -47,7 +60,7 @@ function monthlyCosts(state,basis,hours,feedCost,runningCosts,config){
  if(Math.abs(hours-config.referenceMonthHours)<1e-8){
   return [raw,...basis.costs.map(cost=>({...cost,value:cost.value*state.lines})),depreciation];
  }
- // The original books support aggregate fixed and running splits away from the reference hours.
+ // Keep the aggregate fixed and running rows away from the reference hours.
  return [
   {id:'fixed-cash',label:'Постоянные денежные расходы',description:'Ежемесячные расходы на каждый комплекс.',value:state.lines*basis.fixedCashOpex,color:'#414663'},
   {id:'variable-cash',label:'Переменные денежные расходы',description:'Закупка сырья и операционные расходы по часам работы.',value:runningCosts+feedCost,color:'#8a96a2'},
@@ -87,7 +100,8 @@ export function calculateEconomics(value={},config=economicsConfig){
  const fullYearCosts=config.monthsPerYear*(basis.fixedCashOpex+basis.depreciation)+fullHourCosts*basis.yearHours;
  const monthFloor=ratio(fullMonthCosts*(1+config.vatRate),basis.referenceOutput);
  const yearFloor=ratio(fullYearCosts*(1+config.vatRate),basis.yearHours*basis.outputRate);
- const minimumGrossPrice=monthFloor==null||yearFloor==null?null:Math.ceil(Math.max(monthFloor,yearFloor)/10)*10;
+ const minimumPriceStep=basis.minimumPriceStep??10;
+ const minimumGrossPrice=monthFloor==null||yearFloor==null?null:Math.ceil(Math.max(monthFloor,yearFloor)/minimumPriceStep)*minimumPriceStep;
  const mode={...basis,priceStages:scenarioPrices(basis).map(stage=>({...stage,label:new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(stage.price/1000)+' ₽/кг'}))};
  const equipmentInvestment=Number.isFinite(basis.equipmentCost)&&basis.equipmentCost>0?basis.equipmentCost*lines:null;
 

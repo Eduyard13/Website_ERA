@@ -1,10 +1,15 @@
-// LSP v1 and KPP v20 working-column extracts, 05.11.2026. Cash expenses exclude recoverable VAT.
-// Prices are RUB/t, rates are tonnes per operating hour, budgets are RUB per reference month.
-// Other fixed cash is the approved fixed split less the identified fixed rows. No new category coefficients are assumed.
+// Prices are RUB/t. Costs exclude recoverable VAT. Full-cycle costs combine monthly charges
+// and operating rates per hour or per tonne. Separation retains the LSP v1 budget split.
+const referenceMonthHours=744;
+const vatRate=0.22;
+const transportBudget=989145.85295-(84-78.23)*4064.41/(1+vatRate);
+const transportMonthlyShare=0.7;
+const mealCost=390*1.308;
+
 export const economicsConfig = {
  asOf:'2026-11-05', marketAsOf:'2026-11-17',
- monthDays:31, yearDays:365, hoursPerDay:24, monthsPerYear:12, referenceMonthHours:744,
- vatRate:0.22, taxRate:0.25, feedstockPrice:6000, activeSorters:4, networkSizes:[1,2,3,5],
+ monthDays:31, yearDays:365, hoursPerDay:24, monthsPerYear:12, referenceMonthHours,
+ vatRate, taxRate:0.25, feedstockPrice:6000, activeSorters:4, networkSizes:[1,2,3,5],
  materialGuides:{contamination:[30,40], polymerLoss:[5,7]},
  modes:{
   separation:{
@@ -18,7 +23,8 @@ export const economicsConfig = {
    ],
   },
   full:{
-   inputRate:1.5, outputRate:.75, defaultGrossPrice:90000, otherFixedCashOpex:4624677.4492135085,
+   inputRate:1.5, outputRate:.75, defaultGrossPrice:90000, minimumPriceStep:10000,
+   estimate:{asOf:'2026-11-27',region:'Ярославская область'},
    depreciation:1961047.8954266747, equipmentCost:null, label:'Полный цикл',
    product:'Высококачественная вторичная ПЭ-гранула', unitProduct:'Полиэтиленовая гранула', staff:54,
    priceStages:[
@@ -29,19 +35,28 @@ export const economicsConfig = {
    ],
   },
  },
- // The disposal rows retain the reconciliation of rounded working-column expenses.
  costs:[
   {id:'feedstock',label:'Входящее сырьё',description:'Закупка входящей смеси без доставки и входящего НДС.',color:'#242844'},
-  {id:'payroll',label:'Производственный штат и взносы',description:'Фонд оплаты труда и страховые взносы.',fixed:true,separation:4914922.76,full:7024238,color:'#414663'},
-  {id:'electricity',label:'Электроэнергия',description:'Рабочий столбец финансовой модели. Поправка тарифа применяется к исходной сумме.',rateMultiplier:1,separation:1614771.13,full:7675847.26,color:'#5a607d'},
-  {id:'water',label:'Вода и водоотведение',description:'В самостоятельной сухой сепарации эта статья равна нулю.',separation:0,full:21854.26,color:'#737b8f'},
-  {id:'reagents',label:'Моющие реагенты',description:'Реагенты полного цикла. В самостоятельную ЛСП мойка не включена.',separation:0,full:507780,color:'#8a96a2'},
-  {id:'transport',label:'Транспорт',description:'Приобретённый транспорт, как в базовых версиях финансовых моделей.',separation:966737.17,full:950440.15,color:'#6c7879'},
-  {id:'ppe',label:'СИЗ и питание',description:'Средства индивидуальной защиты и питание производственного персонала.',separation:596504.99,full:829195.75,color:'#92968a'},
-  {id:'supplies',label:'Расходники и ЗИП',description:'Расходные материалы и запасные части оборудования.',separation:157496.34,full:686325.42,color:'#a9aa99'},
-  {id:'office',label:'Офис и внешняя лаборатория',description:'Офисные расходы и услуги внешней лаборатории.',separation:64000,full:114000,color:'#b8ae98'},
-  {id:'disposal',label:'Отсев, осадок и упаковка',description:'Обращение с отсевом и осадком, упаковка, доставка реагентов.',separation:1277820.0023021586,full:1297716.6886615425,color:'#aa9b83'},
-  {id:'building',label:'Новая аренда и содержание здания',description:'Существующий цех с готовой инфраструктурой. Новая аренда и строительство в базу не включены.',fixed:true,separation:0,full:0,color:'#d2ccbf'},
+  {id:'payroll',label:'Производственный штат и взносы',description:'Фонд оплаты труда и страховые взносы.',fixed:true,separation:4914922.76,color:'#414663',
+   full:{monthly:6185218.929006086,description:'Производственный штат, сменные доплаты и страховые взносы.'}},
+  {id:'electricity',label:'Электроэнергия',description:'Рабочий столбец финансовой модели. Поправка тарифа применяется к исходной сумме.',rateMultiplier:1,separation:1614771.13,color:'#5a607d',
+   full:{monthly:1400*1215+1400*2380,hourly:1339.87*3.47,description:'Часовой расход активной энергии, месячная оплата мощности и содержания сети.'}},
+  {id:'water',label:'Вода и водоотведение',description:'В самостоятельной сухой сепарации эта статья равна нулю.',separation:0,color:'#737b8f',
+   full:{hourly:39.68/24,perOutputTonne:0.6*(39.68+30),description:'Технологическая вода и стоки, бытовая вода в сменах.'}},
+  {id:'reagents',label:'Моющие реагенты',description:'Реагенты полного цикла. В самостоятельную ЛСП мойка не включена.',separation:0,color:'#8a96a2',
+   full:{hourly:100000/referenceMonthHours,perOutputTonne:900,description:'Реагенты для мойки и резерв на очистку стоков.'}},
+  {id:'transport',label:'Транспорт',description:'Приобретённый транспорт, как в базовых версиях финансовых моделей.',separation:966737.17,color:'#6c7879',
+   full:{monthly:transportBudget*transportMonthlyShare,hourly:transportBudget*(1-transportMonthlyShare)/referenceMonthHours,description:'Собственный парк. 70% бюджета начисляется ежемесячно, 30% по часам.'}},
+  {id:'ppe',label:'СИЗ и питание',description:'Средства индивидуальной защиты и питание производственного персонала.',separation:596504.99,color:'#92968a',
+   full:{monthly:256631.83333333334+88*mealCost,hourly:930*mealCost/referenceMonthHours,description:'Средства защиты, дневное питание и питание по сменам.'}},
+  {id:'supplies',label:'Расходники и ЗИП',description:'Расходные материалы и запасные части оборудования.',separation:157496.34,color:'#a9aa99',
+   full:{monthly:686325.4220146013,description:'Месячный бюджет готовности оборудования.'}},
+  {id:'office',label:'Офис и внешняя лаборатория',description:'Офисные расходы и услуги внешней лаборатории.',separation:64000,color:'#b8ae98',
+   full:{monthly:114000,description:'Текущие расходы и услуги внешней лаборатории.'}},
+  {id:'disposal',label:'Отсев, осадок и упаковка',description:'Обращение с отсевом и осадком, упаковка, доставка реагентов.',separation:1277820.0023021586,color:'#aa9b83',
+   full:{hourly:50000/referenceMonthHours,perOutputTonne:650,perResidueTonne:0.6*(0.9*3400+0.1*4300),description:'Вывоз и обработка расчётной доли отсева, упаковка гранулы и доставка реагентов.'}},
+  {id:'building',label:'Новая аренда и содержание здания',description:'Существующий цех с готовой инфраструктурой. Новая аренда и строительство в базу не включены.',fixed:true,separation:0,color:'#d2ccbf',
+   full:{monthly:0}},
  ],
  sources:[
   {mode:'separation',title:'ЛСП · финансовая модель v1',file:'ERA_LSP_Dry_Separation_Finmodel.xlsx',sheets:'00_Итоги, 01_Вводные, 02_Производство, 05_Затраты и НДС'},

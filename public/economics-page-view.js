@@ -28,18 +28,29 @@ export const requestHref=r=>'/contacts?topic='+encodeURIComponent(scenarioTopic(
 export const fxLabel=fx=>fx?
  `Курс ЦБ РФ · 1 USD = ${decimal(fx.rateRubPerUsd,4,2)} ₽ · действует с ${day(fx.effectiveDate)}${fx.status==='live'?'':fx.status==='stale'?' · последний доступный курс':' · сохранённый курс'}`:
  'Курс ЦБ РФ недоступен';
-const dollars=(n,fx)=>fx&&n!=null?'≈ '+compact(n/fx.rateRubPerUsd,'$'):'USD недоступен';
+const unavailableUsd='USD недоступен';
+const dollars=(n,fx)=>fx&&n!=null?'≈ '+compact(n/fx.rateRubPerUsd,'$'):unavailableUsd;
+const roundedDollars=(amount,fx,step,unit,label)=>fx?
+ `≈ ${decimal(Math.round(amount/fx.rateRubPerUsd/step)*step/unit,1)} ${label} $`:unavailableUsd;
 
-export function financialValues({state,result:r,network:n,balance,fx}){
+export function financialValues({config,state,result:r,network:n,balance,fx}){
  const {period}=state;
  const netPerTonne=r.perProduct?.net??null;
+ const monthMillions=state.scenario==='base'&&r.yearNet>0?Math.round(r.net/1e6):0;
+ const roundedHeadline=monthMillions>0;
+ const yearMillions=monthMillions*config.monthsPerYear;
  return {
   monthLabel:monthLabel(r),yearLabel:annualLabel(r),
+  heroMonthNet:roundedHeadline?`≈ ${decimal(monthMillions,0)} млн ₽`:compact(r.net),
+  heroYearNet:roundedHeadline?`≈ ${decimal(yearMillions,0)} млн ₽`:compact(r.yearNet),
+  heroMonthUsd:roundedHeadline?roundedDollars(monthMillions*1e6,fx,10000,1000,'тыс.'):dollars(r.net,fx),
+  heroYearUsd:roundedHeadline?roundedDollars(yearMillions*1e6,fx,100000,1e6,'млн'):dollars(r.yearNet,fx),
+  heroYearNote:roundedHeadline?`Расчёт за ${config.yearDays} дней — ${compact(r.yearNet)}`:'',
   monthNet:compact(r.net),yearNet:compact(r.yearNet),monthUsd:dollars(r.net,fx),yearUsd:dollars(r.yearNet,fx),
   price:priceText(r.grossPrice),payback:paybackLabel(r),rate:fxLabel(fx),
   unitPrice:priceText(r.netPrice,2),unitCost:priceText(r.perProduct?.totalCosts,2),unitTax:priceText(r.perProduct?.tax,2),
   unitProfit:priceText(netPerTonne,2),tonneNet:rublesPerTonne(netPerTonne),
-  tonneUsd:fx&&netPerTonne!=null?'≈ '+decimal(netPerTonne/fx.rateRubPerUsd,2)+' $/т':'USD недоступен',
+  tonneUsd:fx&&netPerTonne!=null?'≈ '+decimal(netPerTonne/fx.rateRubPerUsd,2)+' $/т':unavailableUsd,
   margin:percent(r.margin),revenue:compact(r.revenue),expenses:compact(r.totalCosts),
   output:tonnes(r.output),yearOutput:tonnes(r.yearOutput),load:percent(r.load),
   balanceInput:massText(balance.input,period),balanceOutput:massText(balance.output,period),

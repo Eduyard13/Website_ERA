@@ -61,7 +61,8 @@ export function createInvestmentStore({config=economicsConfig,fx=null}={}){
  const scenarios=calculateScenarios(config);
  const baseline=scenarios.find(stage=>stage.id==='base').result;
  const conservative=scenarios.find(stage=>stage.id==='conservative').result;
- const separation=calculateEconomics({mode:'separation'},config);
+ // LSP v1, sheet 00_Итоги, scenario «База 50». This price belongs to the Start card.
+ const separation=calculateEconomics({mode:'separation',grossPrice:50000},config);
  const resilience=calculateResilience(baseline,conservative);
  const periods={hour:{input:baseline.mode.inputRate,output:baseline.mode.outputRate},
   month:{input:baseline.state.input,output:baseline.output},year:{input:baseline.yearInput,output:baseline.yearOutput}};

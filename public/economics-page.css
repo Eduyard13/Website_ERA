@@ -79,6 +79,9 @@
 .ec-hero-numbers dt{font-size:clamp(14px,1.06vw,17px);line-height:1.4;color:#ece5d9;min-height:2.7em}
 .ec-hero-numbers dd{margin-top:4px;color:var(--ec-gold);font-size:clamp(25px,2.85vw,44px);font-weight:550;line-height:1.15;letter-spacing:-.035em}
 .ec-hero-numbers strong{font-weight:inherit;overflow-wrap:anywhere}
+.ec-hero-numbers small{display:block;margin-top:4px;color:#fff4df;font-size:.75em;line-height:1.2;letter-spacing:normal;overflow-wrap:anywhere}
+.ec-hero-year-note{display:block;margin-top:5px;color:#ece5d9;font-size:14px;line-height:1.4;letter-spacing:normal;text-decoration:underline;text-underline-offset:3px}
+.ec-hero-year-note:has(span:empty){display:none}
 .ec-hero-numbers .ec-hero-payback{grid-column:1/-1}
 .ec-hero-payback dt{min-height:0}
 .ec-hero-payback dd{font-size:clamp(19px,1.79vw,27px);letter-spacing:-.02em}
@@ -327,7 +330,8 @@
 .ec-finance-primary strong,.ec-network-profits dd strong{
  display:block;color:var(--ec-gold);font-weight:600;font-size:clamp(23px,2.6vw,40px);line-height:1.14;letter-spacing:-.045em;overflow-wrap:anywhere;
 }
-.ec-finance-primary small,.ec-network-profits small{display:block;font-size:14px;color:#fff4df;margin-top:4px}
+.ec-finance-primary small,.ec-network-profits small{display:block;font-size:clamp(14px,1.25vw,18px);color:#fff4df;margin-top:4px}
+.ec-unit-result [data-econ-value$="Usd"]{font-size:clamp(14px,1.15vw,17px)}
 .ec-finance>[data-econ-value=rate],.ec-network>[data-econ-value=rate]{padding:7px 9px;background:#ffffff09;margin:5px 0;border-radius:5px}
 .ec-finance-facts dd strong{font-size:clamp(17px,1.68vw,25px);color:var(--ec-gold);font-weight:550;overflow-wrap:anywhere}
 .ec-comparison,.ec-allocation{border-top:1px solid #ceb68352;margin-top:10px;padding-top:11px}

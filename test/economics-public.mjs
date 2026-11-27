@@ -14,8 +14,14 @@ assert.equal(response.status,200,'Published economics HTTP status');
 const html=await response.text();
 assert.ok(html.includes('Экономика вашего производства.'),'Published economics heading');
 assert.match(html,/data-econ-mode="full" data-econ-locked-mode="full"/);
-assert.match(html,/data-econ-value="monthNet">10,05 млн ₽/);
-assert.match(html,/data-econ-value="yearNet">116,02 млн ₽/);
+assert.match(html,/data-econ-value="heroMonthNet">≈ 10 млн ₽/);
+assert.match(html,/data-econ-value="heroYearNet">≈ 120 млн ₽/);
+assert.match(html,/data-econ-value="heroYearNote">Расчёт за 365 дней — 112,93 млн ₽/);
+assert.match(html,/data-econ-value="monthNet">9,81 млн ₽/);
+assert.match(html,/data-econ-value="yearNet">112,93 млн ₽/);
+const startCard=html.match(/<article[^>]*data-growth-mode="separation"[^>]*>[\s\S]*?<\/article>/)?.[0];
+assert.match(startCard,/Чистая прибыль в месяц<\/dt><dd>4,45 млн ₽/);
+assert.equal((html.match(/4,45 млн ₽/g)||[]).length,1);
 assert.match(html,/data-econ-value="payback">Индивидуальная оценка/);
 assert.match(html,/data-econ-price="base" data-price-rub="90000" aria-pressed="true"/);
 assert.doesNotMatch(html,/<button[^>]*data-econ-mode|data-econ-range|data-econ-number|data-market-source="spimex"/);
@@ -69,13 +75,15 @@ try{
  assert.equal(s.mode,'full');assert.equal(s.scenario,'base');assert.equal(s.sections,11);
  assert.deepEqual(s.presets,[80000,90000,100000,110000]);assert.deepEqual(s.setSizes,[1,2,3,5]);
  assert.equal(s.values.balanceInput,'1\u00a0500 кг/ч');assert.equal(s.values.balanceOutput,'750 кг/ч');assert.equal(s.values.balanceOther,'750 кг/ч');
- const controls=[['conservative','6,62','75,63','33,10','378,16'],['base','10,05','116,02','50,25','580,11'],
-  ['development','13,48','156,41','67,40','782,05'],['premium','16,91','196,80','84,55','984,00']];
+ const controls=[['conservative','6,38','72,54','31,88','362,71'],['base','9,81','112,93','49,03','564,66'],
+  ['development','13,24','153,32','66,18','766,60'],['premium','16,67','193,71','83,34','968,55']];
  for(const [price,month,year,networkMonth,networkYear] of controls){
   await click('[data-econ-price="'+price+'"]');
   await click('[data-econ-network="1"]');
   s=await snapshot();
   assert.equal(s.scenario,price);assert.equal(s.values.monthNet,month+' млн ₽');assert.equal(s.values.yearNet,year+' млн ₽');
+  assert.equal(s.values.heroMonthNet,price==='base'?'≈ 10 млн ₽':s.values.monthNet);
+  assert.equal(s.values.heroYearNet,price==='base'?'≈ 120 млн ₽':s.values.yearNet);
   assert.equal(s.values.payback,'Индивидуальная оценка');assert.equal(s.values.output,'558 т');assert.equal(s.values.yearOutput,'6\u00a0570 т');
   assert.deepEqual(s.hook,['6 ₽/кг','90 ₽/кг']);assert.equal(s.chart,4);assert.equal(s.parts.length,3);
   assert.ok(Math.abs(s.parts.reduce((a,b)=>a+b,0)-100)<.001);
@@ -85,6 +93,7 @@ try{
   assert.equal(s.values.networkMonth,networkMonth+' млн ₽');assert.equal(s.values.networkYear,networkYear+' млн ₽');
   assert.equal(s.values.networkOutput,'2\u00a0790 т');assert.equal(s.values.networkYearOutput,'32\u00a0850 т');
   assert.equal(s.values.networkMargin,s.values.margin);
+  assert.match(await evaluate("document.querySelector('[data-growth-mode=separation]').textContent"),/50 ₽\/кг.*4,45 млн ₽.*19,5%/s);
  }
  await evaluate("(()=>{const e=document.querySelector('[data-econ-network-price]');e.value='base';e.dispatchEvent(new Event('change',{bubbles:true}));})()");
  await wait("document.querySelector('[data-econ-price=base]').getAttribute('aria-pressed')==='true'");
@@ -94,7 +103,7 @@ try{
  }
  const topic=new URL(s.networkTopic).searchParams.get('topic');
  assert.ok(topic.includes('Полный цикл · 5 комплексов · 90 ₽/кг с НДС · загрузка 100% · выход 50%'));
- assert.ok(topic.includes('580,11 млн ₽/год')&&topic.length<=200);
+ assert.ok(topic.includes('564,66 млн ₽/год')&&topic.length<=200);
  await click('[data-economics-request=network]');
  await wait("document.querySelector('#project-request').open");
  assert.equal(await evaluate("document.querySelector('#project-request [data-request-topic]').value"),topic);

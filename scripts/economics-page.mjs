@@ -32,8 +32,8 @@ function hero(snapshot,v){
    <h1 id="economic-case-title">Переработка плёнки в гранулу. <span>Экономика вашего производства.</span></h1>
    <p class="ec-hero-lead">От невостребованного сырья до готового полимерного продукта. Оцените финансовый потенциал предприятия полного цикла переработки.</p>
    <dl class="ec-hero-numbers">
-    <div><dt>${v('monthLabel','span')}</dt><dd>${v('monthNet')}</dd></div>
-    <div><dt>${v('yearLabel','span')}</dt><dd>${v('yearNet')}</dd></div>
+    <div><dt>${v('monthLabel','span')}</dt><dd>${v('heroMonthNet')}${v('heroMonthUsd','small')}</dd></div>
+    <div><dt>${v('yearLabel','span')}</dt><dd>${v('heroYearNet')}${v('heroYearUsd','small')}<a class="ec-hero-year-note" href="#calculation-conditions" data-econ-disclose="calculation-conditions">${v('heroYearNote','span')}</a></dd></div>
     <div class="ec-hero-payback"><dt>Расчётный срок возврата вложений в оборудование</dt><dd>${v('payback')}</dd></div>
    </dl>
    <div class="ec-actions"><a class="button" href="#production-constructor">Рассчитать своё производство ${arrow}</a>${request(snapshot.result,'complex',true)}</div>
@@ -269,14 +269,14 @@ function growth(snapshot,v){
 function conditions({config,baseline:r}){
  return `<section class="ec-section ec-conditions" id="economic-conditions" data-page-progress-label="Условия расчёта"><div class="ec-shell">
   ${details('calculation-conditions','Условия расчёта и источники',`<h3>Производственная база</h3>
-   <p>Нормативный месяц — ${config.monthDays} день и ${decimal(r.mode.monthHours)} ч. Стабильный год — ${config.yearDays} дней и ${decimal(r.mode.yearHours)} ч. Расчёт относится к полной загрузке и реализации всего выпуска. Предусмотрен готовый цех заказчика.</p>
+   <p>Нормативный месяц — ${config.monthDays} день и ${decimal(r.mode.monthHours)} ч. Стабильный год — ${config.yearDays} дней и ${decimal(r.mode.yearHours)} ч. Расчёт относится к полной загрузке и реализации всего выпуска. Предусмотрен готовый цех заказчика. Годовой ориентир на первом экране равен ${config.monthsPerYear} округлённым месячным суммам. Подробный годовой результат рассчитан за ${config.yearDays} дней.</p>
    <h3>Цены, НДС и расходы</h3>
    <p>Закупка — ${priceText(config.feedstockPrice)} за кг входящей смеси без доставки и входящего НДС. Реализация — с НДС ${percent(config.vatRate)} за кг готового продукта. У этих цен разные массы и база НДС. Выручка в расчёте — без НДС, полная себестоимость включает амортизацию. Налог на прибыль — ${percent(config.taxRate)} положительной прибыли до налога.</p>
-   <p>При номинальных часах используются статьи рабочего столбца. Годовые переменные расходы учитывают годовой объём и часы. Постоянные расходы и амортизация учитываются за ${config.monthsPerYear} месяцев. Энергия, ФОТ и бюджеты действующих статей основаны на исходных моделях.</p>
+   <p>Годовые переменные расходы учитывают объём и рабочие часы. Постоянные расходы и амортизация учитываются за ${config.monthsPerYear} месяцев. В смете полный платёж за мощность и содержание сети начисляется ежемесячно. Сетевая категория, тарифы и оплачиваемая мощность уточняются для конкретной площадки.</p>
    <h3>Оценка вложений</h3>
    <p>Подтверждение стоимости оборудования для пересчитанного сценария требуется для оценки срока возврата. При наличии согласованной стоимости метод учитывает операционный поток как чистую прибыль за год плюс амортизацию. Запуск, оборотный капитал и дополнительные капитальные затраты оцениваются отдельно. Расчёт не гарантирует фактическую доходность.</p>
    <h3>Финансовые и рыночные источники</h3>
-   <p>${config.sources.map(s=>`${escape(s.title)} · ${escape(s.sheets)}`).join('<br>')}. База расходов — ${day(config.asOf)}. Проверка опубликованных рыночных ориентиров — ${day(config.marketAsOf)}.</p>
+   <p>Производственная смета от ${day(r.mode.estimate.asOf)} · ${escape(r.mode.estimate.region)}. Исходная модель — ${config.sources.filter(s=>s.mode==='full').map(s=>`${escape(s.title)} · ${escape(s.sheets)}`).join('<br>')}. Проверка опубликованных рыночных ориентиров — ${day(config.marketAsOf)}.</p>
    <p>${escape(config.priceDisclosure)} ${hint('market-offers','Источники рынка')} <a class="ec-link" href="/technology#raw-material" data-technology-page>Технология переработки ${arrow}</a></p>`)}
  </div></section>`;
 }
