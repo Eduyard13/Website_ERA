@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 env:
-  ERA_PAGES_SOURCE_SHA: 4711e29ed4c64a03953a6a32be5c1652df6aab89
+  ERA_PAGES_SOURCE_SHA: defabeef5e546c2c737e466ea7518c67f7256adb
 concurrency:
   group: pages
   cancel-in-progress: true
