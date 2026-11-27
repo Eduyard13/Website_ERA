@@ -5,20 +5,31 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+env:
+  ERA_PAGES_SOURCE_SHA: 4711e29ed4c64a03953a6a32be5c1652df6aab89
 concurrency:
   group: pages
   cancel-in-progress: true
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      asset-revisions: ${{ steps.revisions.outputs.json }}
     env:
       DEPLOY_TARGET: preview
       PREVIEW_MODE: '1'
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.ERA_PAGES_SOURCE_SHA }}
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Verify Architecture 2.0 preview source
+        run: |
+          test "$(git rev-parse HEAD)" = "$ERA_PAGES_SOURCE_SHA"
+          test "$(node -p "require('./package.json').version")" = "0.50.0"
+          echo "Architecture 2.0 · version 0.50.0 · source architecture/era-2-0 @ $ERA_PAGES_SOURCE_SHA"
       - name: Install local viewer and archive dependencies
         run: npm ci --omit=optional
       - name: Test root deployment
@@ -37,11 +48,21 @@ jobs:
           SITE_URL: https://era-cycle.ru
       - name: Configure Pages
         uses: actions/configure-pages@v5
-      - name: Build preview
-        run: npm run build
+      - name: Build and validate preview
+        run: |
+          npm run build
+          npm run validate:structure -- --dist dist
         env:
           BASE_PATH: /Website_ERA
           SITE_URL: https://eduyard13.github.io/Website_ERA
+      - name: Record checked asset revisions
+        id: revisions
+        run: |
+          node --input-type=module >> "$GITHUB_OUTPUT" <<'JS'
+          import {browserAssetPath,assetRevision} from './scripts/build/browser-assets.mjs';
+          const files=['kair-system.css','kair-system.js','page-progress.js','gallery-showroom.js','document-library.js','line-monitor.js','line-documents.js'];
+          console.log('json='+JSON.stringify(Object.fromEntries(files.map(name=>[name,{path:browserAssetPath(name),revision:assetRevision(name)}]))));
+          JS
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
@@ -59,14 +80,49 @@ jobs:
       - name: Deploy preview
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Read the public browser checks
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.ERA_PAGES_SOURCE_SHA }}
+          sparse-checkout: |
+            content/shared/browser-assets.json
+            test/browser/line-diagram-public.mjs
+            test/browser/pro-engineering-center-public.mjs
+            test/browser/premium-engineering-center-public.mjs
+            test/browser/hot-wash-engineering-center-public.mjs
+            test/browser/base-engineering-center-public.mjs
+            content/lines/pro/pro-engineering-views.json
+            content/lines/pro/separatsiya-02-dimensions-assets.json
+            content/lines/premium/premium-engineering-views.json
+            content/lines/hot-wash/hot-wash-engineering-views.json
+            content/lines/hot-wash/hot-wash-raw-assets.json
+            content/lines/hot-wash/hot-wash-album.json
+            content/lines/base/base-engineering-views.json
+            content/lines/shared/line-dimensions-assets.json
+            test/browser/economics-public.mjs
+            test/browser/about-us-public.mjs
+            test/browser/technology-final-public.mjs
+            test/browser/contacts-public.mjs
+            test/browser/catalog-public.mjs
+            test/browser/hot-wash-public.mjs
+            test/browser/separation-03-public.mjs
+            test/browser/native-diagram-audit.mjs
+            docs/audits/separation-03-assets.json
+            docs/audits/moyka-plenki-assets.json
+            test/fixtures/catalog-preserved.json
+          sparse-checkout-cone-mode: false
       - name: Verify public site
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
+          ERA_ASSET_REVISIONS: ${{ needs.build.outputs.asset-revisions }}
         run: |
           python - <<'PY'
           import os, re, time, json, hashlib, urllib.request
           import urllib.error
+          from pathlib import Path
           from urllib.parse import urljoin, urlsplit
+          revisions = json.loads(os.environ['ERA_ASSET_REVISIONS'])
+          asset_paths = json.loads(Path('content/shared/browser-assets.json').read_text())['paths']
 
           base = os.environ['ERA_SITE_URL'].rstrip('/') + '/'
 
@@ -80,6 +136,27 @@ jobs:
                       raise RuntimeError(f'{url}: restrictive X-Robots-Tag')
                   data = response.read(32_000_000 if binary else 4_000_000)
                   return response.headers.get_content_type(), data if binary else data.decode('utf-8')
+
+          def check_asset(page, name):
+              item = revisions[name]
+              expected = item['path'] + '?v=' + item['revision']
+              url = re.search(r'(?:href|src)="([^"]*/' + re.escape(expected) + ')"', page)
+              if not url:
+                  raise RuntimeError('Published asset revision is missing: ' + name)
+              content_type, data = fetch(url[1], binary=True)
+              if not data or 'text/html' in content_type:
+                  raise RuntimeError('Published asset is unavailable: ' + name)
+              if name in ('kair-system.css', 'kair-system.js', 'page-progress.js'):
+                  closure = {item['path']: hashlib.sha256(data).hexdigest()}
+                  if name.endswith('.css'):
+                      for link in re.findall(rb"url\(\s*[\"']?([^\"')]+)[\"']?\s*\)", data):
+                          dependency = urljoin(item['path'], link.decode())
+                          _, body = fetch(dependency, binary=True)
+                          closure[dependency] = hashlib.sha256(body).hexdigest()
+                  signature = '\n'.join(f'{path}:{sha}' for path, sha in sorted(closure.items()))
+                  if hashlib.sha256(signature.encode()).hexdigest()[:12] != item['revision']:
+                      raise RuntimeError('Published resource does not match its content revision: ' + name)
+              return url[1]
 
           for attempt in range(6):
               try:
@@ -109,11 +186,8 @@ jobs:
                       if path == 'media/':
                           if 'data-gallery-showroom' not in page or 'id="gallery-data"' not in page:
                               raise RuntimeError('The gallery update is missing')
-                          release = re.search(r'gallery-showroom\.js\?v=([^"&]+)', page)
-                          if not release:
-                              raise RuntimeError('The gallery script is missing')
-                          version = release.group(1)
-                  commit = os.environ['GITHUB_SHA']
+                          check_asset(page, 'gallery-showroom.js')
+                  commit = os.environ['ERA_PAGES_SOURCE_SHA']
                   _, kair = fetch('automation/?v=' + commit)
                   kair_order = ['value', 'logic', 'scenarios', 'process', 'screens', 'functions', 'hardware', 'project', 'contact']
                   kair_nav = re.search(r'<nav class="ka-outline" data-kair-section-nav[^>]*>(.*?)</nav>', kair, re.S)
@@ -124,20 +198,12 @@ jobs:
                           or 'Управлять бизнесом, а не каждым механизмом.' not in kair):
                       raise RuntimeError('The approved KAIR navigation, benefits or section order is missing')
                   for asset in ('kair-system.css', 'kair-system.js', 'page-progress.js'):
-                      link = re.search(r'(?:href|src)="([^"]*/' + re.escape(asset) + r'\?v=([0-9a-f]{12}))"', kair)
-                      if not link:
-                          raise RuntimeError('Missing KAIR resource: ' + asset)
-                      _, data = fetch(link[1], binary=True)
-                      versioned = (asset + ':' + hashlib.sha256(data).hexdigest()).encode()
-                      if hashlib.sha256(versioned).hexdigest()[:12] != link[2]:
-                          raise RuntimeError('Published resource does not match the KAIR asset revision: ' + asset)
+                      check_asset(kair, asset)
                   print('::notice title=KAIR verified::Published /automation/ has the approved 8 links, 6 cards, 10 sections and matching CSS and JS asset revisions at ' + commit)
                   _, library = fetch('documents/')
                   if '<h1>Инженерная библиотека ЭРА.</h1>' not in library or 'data-document-library' not in library:
                       raise RuntimeError('The engineering library is missing')
-                  release = re.search(r'document-library\.js\?v=([^"&]+)', library)
-                  if not release or release.group(1) != version:
-                      raise RuntimeError('Library and gallery releases do not match')
+                  check_asset(library, 'document-library.js')
                   data = json.loads(re.search(r'<script type="application/json" id="document-library-data">(.*?)</script>', library, re.S).group(1))
                   documents = [d for d in data['documents'] if d['access'] == 'public' and d['status'] == 'published']
                   if len(documents) < 27 or len({d['file'] for d in documents}) != len(documents):
@@ -172,10 +238,9 @@ jobs:
                   indices = [full_line.index('id="' + section_id + '"') for section_id in section_ids]
                   if indices != sorted(indices) or full_line.count('data-diagram-mode="fit"') != 1 or 'data-line-source-diagram' in full_line or 'id="line02-workshop"' in full_line:
                       raise RuntimeError('Separation 02 section order or single fit monitor is missing')
-                  monitor_asset = re.search(r'src="([^"]*/line-monitor\.js\?v=[^"]+)"', full_line)
-                  if not monitor_asset or f'/line-documents.js?v={version}' not in full_line:
-                      raise RuntimeError('Separation 02 viewer assets are stale')
-                  monitor_type, monitor_source = fetch(monitor_asset.group(1))
+                  monitor_asset = check_asset(full_line, 'line-monitor.js')
+                  check_asset(full_line, 'line-documents.js')
+                  monitor_type, monitor_source = fetch(monitor_asset)
                   if 'javascript' not in monitor_type or 'data-architecture-part' not in monitor_source:
                       raise RuntimeError('Published numbered navigation controller is unavailable')
                   svg_type, svg = fetch('assets/lines/shared/engineering-grid-02.svg')
@@ -281,7 +346,7 @@ jobs:
                   print('::notice title=Separation 02 A0 verified::Updated line, drawings category, engineering library and original A0 return HTTP 200. A0 Content-Type, PDF header, 2239107 bytes and SHA-256 8557bce36e8963146ec9fd33d11295c4483e2e4d4106f19ae41e7c50c39f98d0 verified. Four projection images are published.')
                   assets = ('gallery-showroom.js', 'gallery-viewer.js', 'gallery-model.js', 'gallery-showroom.css', 'quick-contact.js', 'quick-contact.css', 'about-us.css', 'contact-premium.css', 'assets/brands/telegram.svg', 'assets/brands/max.svg', 'assets/brands/whatsapp.svg', 'video-channels.css', 'navigation.css', 'navigation.js', 'footer.css', 'document-library.js', 'document-library-model.js', 'document-library.css', 'pdf-viewer.js', 'pdf-viewer.css', 'vendor/pdfjs/pdf.mjs', 'vendor/pdfjs/pdf.worker.mjs', 'vendor/fflate.js', 'context-navigation.css', 'context-navigation.js', 'context-history.js', 'interactions.js', 'line-monitor.js', 'line-documents.js', 'line-monitor.css', 'diagram.js')
                   for file in assets:
-                      content_type, source = fetch(f'{file}?v={version}')
+                      content_type, source = fetch(asset_paths.get(file, file))
                       if not source.strip() or 'text/html' in content_type:
                           raise RuntimeError(f'{file}: expected a published asset')
                       if file.endswith(('.js', '.mjs')) and 'javascript' not in content_type:
@@ -333,48 +398,19 @@ jobs:
                       raise
                   time.sleep(10)
           PY
-      - name: Read the public browser checks
-        uses: actions/checkout@v4
-        with:
-          sparse-checkout: |
-            test/line-diagram-public.mjs
-            test/pro-engineering-center-public.mjs
-            test/premium-engineering-center-public.mjs
-            test/hot-wash-engineering-center-public.mjs
-            test/base-engineering-center-public.mjs
-            content/pro-engineering-views.json
-            content/separatsiya-02-dimensions-assets.json
-            content/premium-engineering-views.json
-            content/hot-wash-engineering-views.json
-            content/hot-wash-raw-assets.json
-            content/hot-wash-album.json
-            content/base-engineering-views.json
-            content/line-dimensions-assets.json
-            test/economics-public.mjs
-            test/about-us-public.mjs
-            test/technology-final-public.mjs
-            test/contacts-public.mjs
-            test/catalog-public.mjs
-            test/hot-wash-public.mjs
-            test/separation-03-public.mjs
-            test/native-diagram-audit.mjs
-            docs/separation-03-assets.json
-            docs/moyka-plenki-assets.json
-            test/fixtures/catalog-preserved.json
-          sparse-checkout-cone-mode: false
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
       - name: Verify both public line diagrams in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
-        run: node test/line-diagram-public.mjs
+        run: node test/browser/line-diagram-public.mjs
       - name: Verify the published PRO engineering center
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
-          ERA_BUILD_COMMIT: ${{ github.sha }}
+          ERA_BUILD_COMMIT: ${{ env.ERA_PAGES_SOURCE_SHA }}
           ERA_PRO_ENGINEERING_SCREENSHOTS: tmp/pro-engineering
-        run: node test/pro-engineering-center-public.mjs
+        run: node test/browser/pro-engineering-center-public.mjs
       - name: Upload PRO engineering center screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -385,9 +421,9 @@ jobs:
       - name: Verify the published PREMIUM engineering center
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
-          ERA_BUILD_COMMIT: ${{ github.sha }}
+          ERA_BUILD_COMMIT: ${{ env.ERA_PAGES_SOURCE_SHA }}
           ERA_PREMIUM_ENGINEERING_SCREENSHOTS: tmp/premium-engineering
-        run: node test/premium-engineering-center-public.mjs
+        run: node test/browser/premium-engineering-center-public.mjs
       - name: Upload PREMIUM engineering center screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -398,9 +434,9 @@ jobs:
       - name: Verify the published hot-wash engineering center
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
-          ERA_BUILD_COMMIT: ${{ github.sha }}
+          ERA_BUILD_COMMIT: ${{ env.ERA_PAGES_SOURCE_SHA }}
           ERA_HOT_WASH_ENGINEERING_SCREENSHOTS: tmp/hot-wash-engineering
-        run: node test/hot-wash-engineering-center-public.mjs
+        run: node test/browser/hot-wash-engineering-center-public.mjs
       - name: Upload hot-wash engineering center screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -411,9 +447,9 @@ jobs:
       - name: Verify the published BASE center and sticky line navigation
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
-          ERA_BUILD_COMMIT: ${{ github.sha }}
+          ERA_BUILD_COMMIT: ${{ env.ERA_PAGES_SOURCE_SHA }}
           ERA_BASE_ENGINEERING_SCREENSHOTS: tmp/base-engineering
-        run: node test/base-engineering-center-public.mjs
+        run: node test/browser/base-engineering-center-public.mjs
       - name: Upload BASE center and line navigation screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -424,27 +460,27 @@ jobs:
       - name: Verify published economics in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
-        run: node test/economics-public.mjs
+        run: node test/browser/economics-public.mjs
       - name: Verify published technology and homepage in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
-        run: node test/technology-final-public.mjs
+        run: node test/browser/technology-final-public.mjs
       - name: Verify published contacts in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
           ERA_VERIFY_MAP_PROVIDERS: '1'
-        run: node test/contacts-public.mjs
+        run: node test/browser/contacts-public.mjs
       - name: Verify published catalogue in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
-        run: node test/catalog-public.mjs
+        run: node test/browser/catalog-public.mjs
       - name: Verify published hot-wash line in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
-          ERA_BUILD_COMMIT: ${{ github.sha }}
+          ERA_BUILD_COMMIT: ${{ env.ERA_PAGES_SOURCE_SHA }}
           ERA_HOT_WASH_SCREENSHOT: tmp/era-hot-wash-native-check.png
           ERA_HOT_WASH_PRESENTATION_SCREENSHOTS: tmp/hot-wash-presentation
-        run: node test/hot-wash-public.mjs
+        run: node test/browser/hot-wash-public.mjs
       - name: Upload hot-wash presentation screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -455,9 +491,9 @@ jobs:
       - name: Verify published Separation 03 in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
-          ERA_BUILD_COMMIT: ${{ github.sha }}
+          ERA_BUILD_COMMIT: ${{ env.ERA_PAGES_SOURCE_SHA }}
           ERA_PREMIUM_SCREENSHOT: tmp/era-premium-native-check.png
-        run: node test/separation-03-public.mjs
+        run: node test/browser/separation-03-public.mjs
       - name: Upload native diagram screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -469,4 +505,4 @@ jobs:
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
           ERA_VERIFY_FACTORY_TOUR: '1'
-        run: node test/about-us-public.mjs
+        run: node test/browser/about-us-public.mjs
