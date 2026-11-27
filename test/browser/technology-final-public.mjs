@@ -319,7 +319,7 @@ try{
  assert.ok(style,'Published KAIR stage two stylesheet');
  const styleResponse=await fetch(new URL(style[1],base),{cache:'no-store'});
  assert.equal(styleResponse.status,200);
- assert.equal(digest('kair-stage2.css:'+digest(Buffer.from(await styleResponse.arrayBuffer()))).slice(0,12),style[2]);
+ assert.equal(digest('assets/css/pages/kair/kair-stage2.css:'+digest(Buffer.from(await styleResponse.arrayBuffer()))).slice(0,12),style[2]);
  const approvedArt={
   'operator-workplace.webp':'51d127acd744a472130f51e5b712c7215d20b952a8c4657a50d1e6253b7bf354',
   'operator-workplace-960.webp':'534bef2da9787e0ceecaccdc5d80f7735d685f35f07d802c53c0e1195ecce8bd',

@@ -63,7 +63,7 @@ try{
   if(message.error)request.reject(new Error(message.error.message));else request.resolve(message.result);
  });
  const command=(method,params={})=>new Promise((resolve,reject)=>{
-  const key=++id,timer=setTimeout(()=>{pending.delete(key);reject(new Error('CDP timeout: '+method));},30000);
+  const key=++id,timer=setTimeout(()=>{pending.delete(key);reject(new Error('CDP timeout: '+method));},60000);
   pending.set(key,{resolve,reject,timer});socket.send(JSON.stringify({id:key,method,params}));
  });
  const evaluate=async expression=>{
