@@ -337,29 +337,29 @@ jobs:
         uses: actions/checkout@v4
         with:
           sparse-checkout: |
-            test/line-diagram-public.mjs
-            test/pro-engineering-center-public.mjs
-            test/premium-engineering-center-public.mjs
-            test/hot-wash-engineering-center-public.mjs
-            test/base-engineering-center-public.mjs
-            content/pro-engineering-views.json
-            content/separatsiya-02-dimensions-assets.json
-            content/premium-engineering-views.json
-            content/hot-wash-engineering-views.json
-            content/hot-wash-raw-assets.json
-            content/hot-wash-album.json
-            content/base-engineering-views.json
-            content/line-dimensions-assets.json
-            test/economics-public.mjs
-            test/about-us-public.mjs
-            test/technology-final-public.mjs
-            test/contacts-public.mjs
-            test/catalog-public.mjs
-            test/hot-wash-public.mjs
-            test/separation-03-public.mjs
-            test/native-diagram-audit.mjs
-            docs/separation-03-assets.json
-            docs/moyka-plenki-assets.json
+            test/browser/line-diagram-public.mjs
+            test/browser/pro-engineering-center-public.mjs
+            test/browser/premium-engineering-center-public.mjs
+            test/browser/hot-wash-engineering-center-public.mjs
+            test/browser/base-engineering-center-public.mjs
+            content/lines/pro/pro-engineering-views.json
+            content/lines/pro/separatsiya-02-dimensions-assets.json
+            content/lines/premium/premium-engineering-views.json
+            content/lines/hot-wash/hot-wash-engineering-views.json
+            content/lines/hot-wash/hot-wash-raw-assets.json
+            content/lines/hot-wash/hot-wash-album.json
+            content/lines/base/base-engineering-views.json
+            content/lines/shared/line-dimensions-assets.json
+            test/browser/economics-public.mjs
+            test/browser/about-us-public.mjs
+            test/browser/technology-final-public.mjs
+            test/browser/contacts-public.mjs
+            test/browser/catalog-public.mjs
+            test/browser/hot-wash-public.mjs
+            test/browser/separation-03-public.mjs
+            test/browser/native-diagram-audit.mjs
+            docs/audits/separation-03-assets.json
+            docs/audits/moyka-plenki-assets.json
             test/fixtures/catalog-preserved.json
           sparse-checkout-cone-mode: false
       - uses: actions/setup-node@v4
@@ -368,13 +368,13 @@ jobs:
       - name: Verify both public line diagrams in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
-        run: node test/line-diagram-public.mjs
+        run: node test/browser/line-diagram-public.mjs
       - name: Verify the published PRO engineering center
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
           ERA_BUILD_COMMIT: ${{ github.sha }}
           ERA_PRO_ENGINEERING_SCREENSHOTS: tmp/pro-engineering
-        run: node test/pro-engineering-center-public.mjs
+        run: node test/browser/pro-engineering-center-public.mjs
       - name: Upload PRO engineering center screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -387,7 +387,7 @@ jobs:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
           ERA_BUILD_COMMIT: ${{ github.sha }}
           ERA_PREMIUM_ENGINEERING_SCREENSHOTS: tmp/premium-engineering
-        run: node test/premium-engineering-center-public.mjs
+        run: node test/browser/premium-engineering-center-public.mjs
       - name: Upload PREMIUM engineering center screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -400,7 +400,7 @@ jobs:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
           ERA_BUILD_COMMIT: ${{ github.sha }}
           ERA_HOT_WASH_ENGINEERING_SCREENSHOTS: tmp/hot-wash-engineering
-        run: node test/hot-wash-engineering-center-public.mjs
+        run: node test/browser/hot-wash-engineering-center-public.mjs
       - name: Upload hot-wash engineering center screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -413,7 +413,7 @@ jobs:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
           ERA_BUILD_COMMIT: ${{ github.sha }}
           ERA_BASE_ENGINEERING_SCREENSHOTS: tmp/base-engineering
-        run: node test/base-engineering-center-public.mjs
+        run: node test/browser/base-engineering-center-public.mjs
       - name: Upload BASE center and line navigation screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -424,27 +424,27 @@ jobs:
       - name: Verify published economics in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
-        run: node test/economics-public.mjs
+        run: node test/browser/economics-public.mjs
       - name: Verify published technology and homepage in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
-        run: node test/technology-final-public.mjs
+        run: node test/browser/technology-final-public.mjs
       - name: Verify published contacts in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
           ERA_VERIFY_MAP_PROVIDERS: '1'
-        run: node test/contacts-public.mjs
+        run: node test/browser/contacts-public.mjs
       - name: Verify published catalogue in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
-        run: node test/catalog-public.mjs
+        run: node test/browser/catalog-public.mjs
       - name: Verify published hot-wash line in Chrome
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
           ERA_BUILD_COMMIT: ${{ github.sha }}
           ERA_HOT_WASH_SCREENSHOT: tmp/era-hot-wash-native-check.png
           ERA_HOT_WASH_PRESENTATION_SCREENSHOTS: tmp/hot-wash-presentation
-        run: node test/hot-wash-public.mjs
+        run: node test/browser/hot-wash-public.mjs
       - name: Upload hot-wash presentation screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -457,7 +457,7 @@ jobs:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
           ERA_BUILD_COMMIT: ${{ github.sha }}
           ERA_PREMIUM_SCREENSHOT: tmp/era-premium-native-check.png
-        run: node test/separation-03-public.mjs
+        run: node test/browser/separation-03-public.mjs
       - name: Upload native diagram screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -469,4 +469,4 @@ jobs:
         env:
           ERA_SITE_URL: ${{ steps.deployment.outputs.page_url }}
           ERA_VERIFY_FACTORY_TOUR: '1'
-        run: node test/about-us-public.mjs
+        run: node test/browser/about-us-public.mjs

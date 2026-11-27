@@ -1,0 +1,1100 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile,stat,readdir} from 'node:fs/promises';
+import {resolve} from 'node:path';
+import {routes,product,assetBaseVersion,assetRevision,basePath,previewMode,siteUrl} from '../../scripts/build/build.mjs';
+import {canonicalOrigin} from '../../scripts/build/deploy-target.mjs';
+import {dryLineNames} from '../../content/lines/shared/line-names.mjs';
+import navigation from '../../content/shared/section-navigation.json' with {type:'json'};
+
+test('Общее меню сохраняет семь смысловых групп и порядок физических разделов на трёх страницах',async()=>{
+ const order={
+  '/':['resource','raw-material','feedstocks','process','engineering','products','russia-market','economics','solution','manufacturing','kair','discuss'],
+  '/technology':['technology-intro','raw-material','contaminants','solution','dry-separation','hot-washing','granulation','products','granule-quality','applications','control-story','technology-next'],
+  '/economics':['economic-case','raw-material','material-balance','product-quality','market','economics','production-constructor','project-resilience','production-growth','economic-conditions','economics-project'],
+ };
+ const pages=new Map(navigation.pages.map(page=>[page.route.replace(/\/$/,'')||'/',page]));
+ assert.deepEqual(new Set(pages.keys()),new Set(Object.keys(order)));
+ for(const path of new Set(routes)){
+  const html=await readFile(resolve('dist','.'+path,'index.html'),'utf8');
+  const page=pages.get(path);
+  if(!page){assert.doesNotMatch(html,/data-section-navigation|section-navigation\.css\?v=/,path);continue;}
+  const nav=html.match(/<nav class="section-navigation" data-section-navigation [^>]*>([\s\S]*?)<\/nav><main id="main">/);
+  assert.ok(nav&&nav.index>html.indexOf('</header>'),path);
+  assert.match(html,/\/section-navigation\.css\?v=/);
+  assert.equal((html.match(/data-section-navigation\b/g)||[]).length,1,path);
+  assert.doesNotMatch(html,/class="(?:ec-toc|tf-outline)\b/,path);
+  const links=[...nav[1].matchAll(/<a href="#([^"]+)" data-section-group="([^"]+)">([^<]+)<\/a>/g)]
+   .map(([,target,groups,label])=>({label,target,activeSections:groups.split(' ')}));
+  assert.equal(links.length,7,path);
+  assert.deepEqual(links,page.groups,path);
+  assert.equal(new Set(links.map(link=>link.target)).size,7,path);
+  const main=html.slice(nav.index+nav[0].length,html.indexOf('</main>'));
+  const ids=[...main.matchAll(/\sid="([^"]+)"/g)].map(match=>match[1]);
+  for(const id of [...page.noActiveSections,...links.flatMap(link=>[link.target,...link.activeSections])]){
+   assert.equal(ids.filter(value=>value===id).length,1,path+'#'+id);
+  }
+  let depth=0;const blocks=[];
+  for(const [tag] of main.matchAll(/<\/?section\b[^>]*>/g)){
+   if(tag.startsWith('</'))depth--;
+   else if(depth++===0)blocks.push(tag.match(/\sid="([^"]+)"/)?.[1]);
+  }
+  assert.deepEqual(blocks,order[path],path);
+  const grouped=links.flatMap(link=>link.activeSections);
+  assert.equal(new Set(grouped).size,grouped.length,path);
+  assert.deepEqual(new Set([...grouped.filter(id=>id!=='resource-business-title'),...page.noActiveSections]),new Set(blocks),path);
+  if(path==='/')assert.equal(links[3].target,'russia-market');
+  if(path==='/technology')assert.match(main,/<section[^>]+id="technology-next"[\s\S]*?id="standalone-equipment"/);
+ }
+});
+
+test('На главной четыре фотокарточки сырья, пять секторов и пять карточек экономики',async()=>{
+ const html=await readFile('dist/index.html','utf8');
+ assert.deepEqual([...html.matchAll(/data-process-step="([^"]+)"/g)].map(match=>match[1]),['01','02','03']);
+ assert.deepEqual([...html.matchAll(/data-home-economics="([^"]+)"/g)].map(match=>match[1]),['profit','network','feedstocks','central','volga']);
+ assert.equal((html.match(/data-home-feedstock=/g)||[]).length,4);
+ assert.deepEqual([...html.matchAll(/data-feedstock-sector="([^"]+)"/g)].map(match=>match[1]),['household','packaging','agro','construction','bigbags']);
+ assert.equal((html.match(/data-home-product=/g)||[]).length,5);
+ assert.equal((html.match(/class="resource-launch-grid"/g)||[]).length,1);
+ assert.match(html,new RegExp(`href="${basePath}/economics" data-economics-page`));
+ assert.match(html,/data-resource-play aria-label="Воспроизвести видео о технологии ЭРА" hidden/);
+});
+test('Карта, кольцевая диаграмма и экономика используют один сценарий восьми округов',async()=>{
+ const html=await readFile('dist/index.html','utf8');
+ const {marketTotals,marketDistricts,marketRegions,marketFeedstocks,marketModel}=await import('../../content/pages/home/home-market.mjs');
+ const normalized=value=>value.replace(/\s/g,' ');
+ assert.deepEqual(marketTotals,{population:146_313_081,tonnes:4_947_874,complexes:330,monthly:4_950_000_000,annual:59_400_000_000});
+ assert.equal(marketModel.targetMonthlyProfit,15_000_000);
+ assert.equal(marketModel.monthsPerYear,12);
+ const territories=[
+  ['central',1350720,90],['northwest',426272,28],['south',628390,42],['caucasus',341678,23],
+  ['volga',999250,67],['ural',392840,26],['siberia',564480,38],['far-east',244244,16],
+  ['moscow-oblast',302796,20],['krasnodar',236820,16],['tatarstan',145775,10],['rostov',156965,10],
+  ['bashkortostan',141330,9],['samara',105370,7],['sverdlovsk',140090,9],['novosibirsk',92314,6],
+  ['saint-petersburg',180417,12],['moscow',441833,29],
+ ];
+ for(const [id,tonnes,complexes] of territories){
+  const row=[...marketDistricts,...marketRegions].find(item=>item.id===id);
+  assert.deepEqual([row.tonnes,row.complexes,row.monthly,row.annual],[tonnes,complexes,complexes*15_000_000,complexes*180_000_000],id);
+ }
+ assert.deepEqual(marketFeedstocks.map(row=>row.share),[40,30,15,10,5]);
+ assert.equal(marketFeedstocks.reduce((sum,row)=>sum+row.share,0),100);
+ assert.deepEqual(marketFeedstocks.map(row=>row.tonnes),[1_979_149.6,1_484_362.2,742_181.1,494_787.4,247_393.7]);
+ assert.ok(Math.abs(marketFeedstocks.reduce((sum,row)=>sum+row.tonnes,0)-marketTotals.tonnes)<1e-8);
+ assert.match(html,/<svg[^>]+role="group" aria-labelledby="market-graphic-title"/);
+ assert.equal((html.match(/data-market-feature="[^" ]+" data-market-group="districts"/g)||[]).length,8);
+ assert.equal((html.match(/data-market-feature="[^" ]+" data-market-group="regions"/g)||[]).length,10);
+ assert.equal((html.match(/data-market-record=/g)||[]).length,19);
+ // All eight federal districts and ten priority regions use compact rounded display units.
+ for(const row of [...marketDistricts,...marketRegions]){
+  const expected=row.tonnes>=1_000_000
+   ? [new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(row.tonnes/1_000_000),'млн т/год']
+   : [new Intl.NumberFormat('ru-RU',{maximumFractionDigits:1}).format(row.tonnes/1000),'тыс. т/год'];
+  const record=html.split(`data-market-record="${row.id}"`)[1]?.split('</article>')[0];
+  assert.ok(record&&record.includes(`<span class="market-metric-number">${expected[0]}</span> <small class="market-metric-unit">${expected[1]}</small>`),'Rounded metric: '+row.name);
+ }
+
+ assert.match(html,/data-market-record="national">/);
+ assert.equal((html.match(/data-market-select=/g)||[]).length,2);
+ assert.equal((html.match(/class="resource-district-contour"/g)||[]).length,2);
+ assert.match(normalized(html),/15 000 т\/год с округлением до целого/);
+ assert.match(html,/Приоритетные регионы входят в итоги своих округов/);
+ assert.doesNotMatch(html,/Как оценена сырьевая база/);
+ const visibleText=normalized(html.replace(/<[^>]*>/g,''));
+ for(const value of ['≈ 2 млн т/год','≈ 1,5 млн т/год','≈ 750 тыс. т/год','≈ 500 тыс. т/год','≈ 250 тыс. т/год','4,95 млрд ₽','59,4 млрд ₽'])assert.ok(normalized(html).includes(value)||visibleText.includes(value),value);
+ assert.doesNotMatch(normalized(html),/10,7 млн ₽|3,53 млрд ₽|40,83 млрд ₽/);
+});
+test('Все 12 материалов владельца подключены, размеры и контрольные суммы веб-файлов совпадают',async()=>{
+ const {createHash}=await import('node:crypto');
+ const {imageSize}=await import('../../scripts/media/image-size.mjs');
+ const {projectMedia}=await import('../../scripts/render/pages/project-media.mjs');
+ const manifest=JSON.parse(await readFile('docs/audits/homepage-media-assets-0.31.json','utf8'));
+ const revision=JSON.parse(await readFile('docs/audits/homepage-media-assets-0.32.json','utf8'));
+ const assets=[...new Map([...manifest.assets,...revision.assets].map(asset=>[asset.file,asset])).values()];
+ assert.equal(manifest.inputs.length,12);assert.equal(new Set(manifest.inputs.map(item=>item.slot)).size,12);
+ for(const input of manifest.inputs){assert.equal(projectMedia[input.slot].file,input.file);assert.equal(projectMedia[input.slot].custom,true);}
+ for(const asset of assets){
+  const file='public/assets/'+asset.file,data=await readFile(file);
+  assert.equal(data.length,asset.bytes);assert.equal(createHash('sha256').update(data).digest('hex'),asset.sha256,asset.file);
+  if(asset.file.endsWith('.webp'))assert.deepEqual(imageSize(file),{width:asset.width,height:asset.height});
+  else if(asset.file.endsWith('.svg')){assert.ok(data.toString().includes('<svg'));assert.ok(!data.toString().includes('<script'));}
+  else{
+   assert.ok(data.length<90_000_000);assert.equal(asset.codec,'h264');assert.equal(asset.pixelFormat,'yuv420p');assert.equal(asset.audio,'aac');assert.equal(asset.audioUnchanged,true);
+   const atoms=[];for(let at=0;at+8<=data.length;){const length=data.readUInt32BE(at);atoms.push(data.toString('ascii',at+4,at+8));if(length<8)break;at+=length;}
+   assert.ok(atoms.indexOf('moov')>=0&&atoms.indexOf('moov')<atoms.indexOf('mdat'),'Faststart: '+asset.file);
+  }
+ }
+ for(const poster of manifest.posters)assert.deepEqual(imageSize('public/assets/'+poster.file),{width:1280,height:720});
+ assert.equal(projectMedia.pellets.custom,false);assert.equal(projectMedia.pelletProduct.custom,false);assert.equal(projectMedia.kairScreen.custom,false);
+ assert.equal(projectMedia.lineWide.mediaType,'photo');assert.ok(!projectMedia.lineWide.caption.includes('3D'));
+});
+test('Индикатор разделов подключён на содержательных страницах, главная возвращена к обычной прокрутке',async()=>{
+ const home=await readFile('dist/index.html','utf8');
+ assert.ok(!home.includes('home-slides'));assert.ok(!home.includes('dataset.homeView='));
+ assert.equal([...home.matchAll(/data-home-block="/g)].length,12);
+ for(const route of new Set(routes.filter(route=>!['/about','/ai','/company-details'].includes(route)))){
+  const html=await readFile('dist'+(route==='/'?'':route)+'/index.html','utf8');
+  assert.ok(html.includes(`${basePath}/${route.startsWith("/privacy")?"page-progress.css":"assets/css/components/page-progress.css"}?v=`),route);assert.ok(html.includes(`${basePath}/${route.startsWith("/privacy")?"page-progress.js":"assets/js/components/page-progress.js"}?v=`),route);
+  assert.ok(!html.includes('home-slides')&&!html.includes('dataset.homeView='),route);
+ }
+});
+test('Медиа главной автоматически подхватывает новые файлы, сохраняя исходники и безопасный fallback',async()=>{
+ const {mkdtemp,mkdir,writeFile,rm}=await import('node:fs/promises');
+ const {tmpdir}=await import('node:os');const {pathToFileURL}=await import('node:url');
+ const {resolveProjectMedia}=await import('../../scripts/render/pages/project-media.mjs');
+ const {projectMediaSlots}=await import('../../content/pages/presentation/project-media.mjs');
+ const dir=await mkdtemp(resolve(tmpdir(),'era-media-'));
+ try{
+  const root=pathToFileURL(dir+'/');
+  const initial=resolveProjectMedia(projectMediaSlots,root);assert.equal(initial.promo.file,null);assert.ok(initial.heroFeedstock.file);assert.equal(initial.heroFeedstock.custom,false);
+  await mkdir(resolve(dir,'project-home/hero'),{recursive:true});await mkdir(resolve(dir,'project-home/video'),{recursive:true});
+  const original=Buffer.from('Original media fixture, no transformations');
+  await writeFile(resolve(dir,'project-home/hero/feedstock_hero.jpg'),original);
+  await writeFile(resolve(dir,'project-home/hero/feedstock_hero-480.webp'),original);
+  await writeFile(resolve(dir,'project-home/video/era_promo_full.mp4'),original);
+  await writeFile(resolve(dir,'project-home/video/captions.vtt'),'WEBVTT\n');
+  const loaded=resolveProjectMedia(projectMediaSlots,root);
+  assert.equal(loaded.heroFeedstock.file,'project-home/hero/feedstock_hero.jpg');assert.equal(loaded.heroFeedstock.custom,true);
+  assert.deepEqual(loaded.heroFeedstock.variants,[{file:'project-home/hero/feedstock_hero-480.webp',width:480}]);
+  assert.equal(loaded.promo.file,'project-home/video/era_promo_full.mp4');assert.equal(loaded.promo.captions,'project-home/video/captions.vtt');
+  assert.deepEqual(await readFile(resolve(dir,'project-home/hero/feedstock_hero.jpg')),original);
+ }finally{await rm(dir,{recursive:true,force:true});}
+});
+test('Проморолик использует настоящий player и поддерживает субтитры без autoplay',async()=>{
+ const {resourceVideo}=await import('../../scripts/render/pages/project-home.mjs');const {projectMedia}=await import('../../scripts/render/pages/project-media.mjs');
+ assert.ok(resourceVideo('promo').includes('<video controls'));assert.ok(!resourceVideo('promo').includes('autoplay'));
+ const ready=resourceVideo('promo',{...projectMedia,promo:{...projectMedia.promo,file:'project-home/video/era_promo_full.mp4',captions:'project-home/video/captions.vtt'}});
+ assert.ok(ready.includes('<video controls playsinline preload="none"'));assert.ok(ready.includes('kind="captions"'));assert.ok(ready.includes('type="video/mp4"'));
+ assert.ok(!ready.includes('autoplay'));assert.ok(!ready.includes(' loop'));
+});
+test('Учебный баланс сохраняет массу, нулевые значения и отдельный смысл полимера до потерь',async()=>{
+ const {calculateMaterialBalance,materialBalancePoints}=await import('../../public/assets/js/technology/material-balance-model.js');
+ assert.deepEqual(calculateMaterialBalance(0),{input:1500,contamination:0,polymer:1500,inclusions:0});
+ assert.deepEqual(calculateMaterialBalance(50),{input:1500,contamination:50,polymer:750,inclusions:750});
+ assert.equal(calculateMaterialBalance(20).polymer,1200);
+ assert.equal(calculateMaterialBalance(35).inclusions,525);
+ for(const point of materialBalancePoints){assert.equal(point.polymer+point.inclusions,1500);assert.ok(point.polymer>=750&&point.polymer<=1500);}
+ const html=await readFile('dist/technology/index.html','utf8');
+ assert.equal([...html.matchAll(/id="material-balance"/g)].length,1);
+ assert.deepEqual([...html.matchAll(/data-tf-scenario="(\d+)" aria-pressed="(true|false)" disabled/g)].map(([,value,pressed])=>[value,pressed]),[['30','false'],['40','false'],['50','true']]);
+ assert.match(html,/data-tf-polymer>750<\/strong>/);
+ assert.match(html,/data-tf-inclusions>750<\/strong>/);
+ assert.match(html,/class="tf-baseline[^>]*>\s*<strong>750 <small>кг\/ч<\/small><\/strong>/);
+ assert.doesNotMatch(html,/data-balance-range|web-balance-table/);
+ assert.ok(html.includes(`${basePath}/assets/js/components/presentation-web.js?v=`));
+ assert.ok(!(await readFile('dist/index.html','utf8')).includes('/presentation-web.js'));
+});
+test('Главная следует согласованной структуре и ведёт к экономике, технологии, оборудованию и КАИР',async()=>{
+ const home=await readFile('dist/index.html','utf8'),tech=await readFile('dist/technology/index.html','utf8'),econ=await readFile('dist/economics/index.html','utf8');
+ const hero=home.match(/<section class="resource-hero[\s\S]+?<\/section>/)[0];
+ const title=hero.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)[1].replace(/<[^>]+>/g,'').replace(/\s+/g,' ');
+ assert.equal(title,'От нефти к полимерам. От полимеров — снова к нефти.');
+ assert.ok(hero.includes('Отходы одного цикла — сырьё для следующего.'));
+ assert.match(hero,/polymers-cycle\.webp[\s\S]*fetchpriority="high"[^>]*data-media-slot="heroHook"/);
+ assert.doesNotMatch(hero,/<figure\b|<figcaption\b|catalog-cover\.webp/);
+ assert.deepEqual([...home.matchAll(/data-home-block="([^"]+)"/g)].map(m=>m[1]),['hero','problem','feedstocks','process','strengths','products','market','business','integration','equipment','kair','contact']);
+ assert.equal([...home.matchAll(/<h1[\s>]/g)].length,1);
+ assert.equal([...home.matchAll(/data-widget-switch="/g)].length,0);assert.equal([...econ.matchAll(/data-economics-page/g)].length,1);
+ assert.ok(!home.includes('/commercial.js'));assert.ok(econ.includes('/commercial.js'));
+ assert.ok(home.includes('до 80%'));assert.ok(home.includes('засорённость сырья'));
+ assert.ok(home.includes('<span class="resource-contact-title-line resource-contact-title-line--fixed">Следующий шаг —</span>'));
+ assert.ok(home.includes('<span class="resource-contact-title-line">ваше производство.</span>'));
+ assert.ok(home.includes('resource-kair-benefits') && home.includes('kair-integrated-approved.webp'));
+ assert.ok(home.indexOf('data-home-block="equipment"')<home.indexOf('data-video-slot="promo"'));
+ assert.equal([...home.matchAll(/<video controls playsinline preload="none"/g)].length,2);assert.ok(!home.includes('autoplay'));assert.ok(!home.includes(' loop'));
+ for(const path of ['/economics','/technology','/catalog','/automation','/catalog/lines/separatsiya-01','/catalog/lines/separatsiya-02','/catalog/lines/separatsiya-03','/catalog/lines/moyka-plenki']){
+  assert.ok(home.includes(`href="${basePath}${path}"`),path);
+ }
+ assert.ok(!home.includes('quality-sequence.svg'));
+ for(const text of ['Ручная очистка — экономический тупик.','33 сек.','40 г','4–5 кг/ч','65 000 ₽/т','260 ₽/ч','Сбор стоков','Возврат воды'])assert.ok(tech.includes(text),text);
+ assert.ok(home.includes('Добавьте гранулирование и расширьте ассортимент.'));
+});
+test('Все внутренние ссылки, изображения и якоря ведут к существующим ресурсам',async()=>{
+ for(const route of new Set(routes)){
+  const file=resolve('dist','.'+route,'index.html');const html=await readFile(file,'utf8');
+  for(const [,link] of html.matchAll(/(?:href|src)="([^"]+)"/g)){
+   if(/^(mailto:|tel:|https?:)/.test(link))continue;
+   const parsed=new URL(link,'https://test.invalid'+route);let pathname=link.startsWith('#')?'':parsed.pathname;const hash=parsed.hash.slice(1);
+   if(pathname && basePath){assert.ok(pathname.startsWith(basePath+'/'),`Missing base path: ${link}`);pathname=pathname.slice(basePath.length);}
+   const target=pathname?resolve('dist','.'+pathname):file;
+   const info=await stat(target);const destination=info.isDirectory()?target+'/index.html':target;
+   assert.ok((await stat(destination)).isFile(),`${route}: ${link}`);
+   if(hash)assert.ok((await readFile(destination,'utf8')).includes(`id="${hash}"`),`${route}: ${link}`);
+  }
+ }
+});
+test('Данные карточки различают сырьё и расчётные характеристики',async()=>{
+ const html=await readFile('dist'+product+'/index.html','utf8');
+ assert.match(html,/Плёнки, пакеты и биг-бэги<\/th><td>1 500–3 000 кг\/ч/);
+ assert.match(html,/Другие полимерные отходы<\/th><td>3 000–7 000 кг\/ч/);
+ assert.match(html,/Расчётная потребляемая мощность/);
+ assert.match(html,/70% от установленной/);
+ assert.match(html,/Ширина указана при открытой боковой щеке/);
+});
+test('Реестр содержит 12 уникальных узлов, линии расширяются через данные, медиа имеют реальные файлы',async()=>{
+ const {nodes,lines,media}=await import('../../content/equipment/catalog.mjs');
+ assert.equal(nodes.length,12);assert.equal(new Set(nodes.map(n=>n.path)).size,12);
+ assert.equal(lines.filter(l=>l.enabled).length,4);
+ assert.equal(lines.filter(l=>l.group==='Сепарация').length,3);
+ assert.equal(lines.filter(l=>l.group==='Мойка').length,1);
+ assert.equal(nodes.filter(n=>n.status==='source-checked').length,12);
+ for(const m of media){assert.ok(routes.includes(m.product.split('#')[0]));await stat('dist/assets/'+m.file);if(m.type==='video')await stat('dist/assets/'+m.poster);}
+ const html=await readFile('dist/media/index.html','utf8');
+ assert.ok(html.includes('data-gallery-item="predvaritelnyy-izmelchitel-photo-02"'));
+ assert.ok(html.includes(`value="${basePath}${product}"`));
+});
+test('В каталоге четыре линии по порядку; открываются три сепарации и горячая мойка',async()=>{
+ const {lines}=await import('../../content/equipment/catalog.mjs');
+ const {filmSeparationMedia}=await import('../../content/lines/base/film-separation.mjs');
+ const html=await readFile('dist/catalog/lines/index.html','utf8');
+ const cards=[...html.matchAll(/<(a|article)\b([^>]*\bdata-line\b[^>]*)>([\s\S]*?)<\/\1>/g)];
+ assert.deepEqual(cards.map(([,tag])=>tag),['a','a','a','a']);
+ assert.deepEqual(cards.map(([,tag,attrs])=>/data-line-id="([^"]+)"/.exec(attrs)[1]),['separatsiya-01','separatsiya-02','separatsiya-03','moyka-plenki']);
+ assert.ok(!html.includes('name="optional"'));
+ assert.ok(!html.includes('data-optional='));
+ assert.match(cards[1][2],new RegExp(`href="${basePath}/catalog/lines/separatsiya-02"`));
+ for(const [i,slug] of ['separatsiya-01','separatsiya-02','separatsiya-03'].entries()){
+  const {title,tier}=dryLineNames[slug];
+  assert.ok(cards[i][3].includes(title)&&cards[i][3].includes(tier));
+ }
+ assert.equal([...cards[1][3].matchAll(/<dt>/g)].length,6);
+ assert.ok(cards[2][3].includes('Расширенная комплектация с роторной сушкой, второй баллистикой и раздельным накоплением'));
+ assert.ok(cards[3][3].includes('Линия горячей мойки плёнок и пакетов'));
+ assert.match(cards[2][2],new RegExp(`href="${basePath}/catalog/lines/separatsiya-03"`));
+ assert.equal([...cards[2][3].matchAll(/<dt>/g)].length,6);
+ assert.ok(!cards[2][3].includes('В разработке'));
+ const ready=lines.find(l=>l.slug==='separatsiya-02');
+ assert.equal(ready.slug,'separatsiya-02');assert.equal(ready.status,'source-checked');
+ const page=await readFile('dist'+ready.path+'/index.html','utf8');
+ assert.ok(page.includes(`<title>${dryLineNames[ready.slug].title} — ЭРА</title>`));
+ assert.ok(page.includes('ЭРА / ПРОМЫШЛЕННАЯ ЛИНИЯ / PRO'));
+ assert.ok(page.includes(`href="${basePath}/documents/${ready.documents[0].file}"`));
+ assert.ok(page.includes(`data-product="${basePath}${ready.path}"`));
+ for(const m of Object.values(filmSeparationMedia)){
+  assert.equal(m.product,ready.path);assert.equal(m.productTitle,ready.title);
+  await stat('dist/assets/'+m.file);
+ }
+ for(const line of lines.filter(l=>!l.enabled)){
+  assert.ok(!routes.includes(line.path));
+  await assert.rejects(stat('dist'+line.path+'/index.html'),{code:'ENOENT'});
+ }
+});
+test('Мини-линия 01 использует своё ТО, показатели базовой комплектации и раздельные выходные потоки',async()=>{
+ const {lines}=await import('../../content/equipment/catalog.mjs');
+ const {miniFilmSeparationMedia,miniSpecification}=await import('../../content/lines/shared/mini-film-separation.mjs');
+ const {createHash}=await import('node:crypto');
+ const line=lines.find(l=>l.slug==='separatsiya-01'),page=await readFile('dist'+line.path+'/index.html','utf8');
+ assert.equal(line.status,'source-checked');assert.ok(line.enabled);assert.ok(routes.includes(line.path));
+ assert.equal(miniSpecification.length,13);
+ assert.ok(page.includes('id="line01-construction" data-diagram data-diagram-mode="fit"'));
+ assert.equal([...page.matchAll(/data-line-leader="/g)].length,11);
+ assert.ok(page.indexOf('id="specs"')>page.indexOf('id="quality"'));
+ assert.ok(page.indexOf('id="documents"')<page.indexOf('id="request"')&&page.indexOf('id="request"')<page.indexOf('id="equipment"'));
+ const parse=value=>value==='—'?0:Number(value.replace(',','.'));
+ assert.ok(Math.abs(miniSpecification.reduce((sum,row)=>sum+parse(row[3]),0)-225)<1e-9);
+ assert.ok(Math.abs(miniSpecification.reduce((sum,row)=>sum+parse(row[4]),0)-157.5)<1e-9);
+ assert.ok(page.includes('ЭРА / ПРОМЫШЛЕННАЯ ЛИНИЯ / BASE'));
+ for(const text of ['157,5 <small>кВт</small>','225 <small>кВт</small>','17,75 × 11,75 м','70% установленной мощности','конвейерами 07–10','человека в смену'])assert.ok(page.includes(text),text);
+ assert.ok(page.includes('Отдельная сортировка по видам плёнки в базовую поставку не входит'));
+ assert.ok(page.includes('Сортировочный бокс, мойка и пресс не входят'));
+ assert.ok(page.includes('Рама-наполнитель 11 обеспечивает выгрузку в биг-бэг'));
+ assert.ok(!page.includes('402,67'));assert.ok(!page.includes('281,87'));
+ const card=(await readFile('dist/catalog/lines/index.html','utf8')).match(/<a[^>]+data-line-id="separatsiya-01"[\s\S]*?<\/a>/)[0];
+ assert.ok(card.includes(`href="${basePath}${line.path}"`));assert.equal([...card.matchAll(/<dt>/g)].length,6);
+ assert.ok(card.includes(dryLineNames[line.slug].title));assert.ok(card.includes('Расчёт при засоре около 50%'));
+ for(const m of Object.values(miniFilmSeparationMedia)){
+  assert.equal(m.product,line.path);await stat('dist/assets/'+m.file);await stat('dist/assets/'+m.thumbnail);
+ }
+ const doc=line.documents[0],pdf=await readFile('dist/documents/'+doc.file);
+ assert.equal(pdf.length,doc.bytes);assert.equal(createHash('sha256').update(pdf).digest('hex'),doc.sha256);
+ assert.equal(doc.pages,14);assert.ok(page.includes(`href="${basePath}/documents/${doc.file}"`));
+ const full=lines.find(l=>l.slug==='separatsiya-02');assert.notEqual(line.cardFile,full.cardFile);assert.notEqual(doc.file,full.documents[0].file);
+});
+test('Схемы линий сохраняют номера ТО, описания объектов и отдельные подсветки, включая оба погрузчика',async()=>{
+ const {lineDiagrams,miniLineDiagram,fullLineDiagram,fullLinePlacementDiagram}=await import('../../content/lines/shared/line-diagrams.mjs');
+ const {linePositions}=await import('../../content/lines/base/film-separation.mjs');
+ const {miniSpecification}=await import('../../content/lines/shared/mini-film-separation.mjs');
+ assert.deepEqual(fullLineDiagram.parts.map(p=>[p.number,p.label]),linePositions);
+ assert.deepEqual(miniLineDiagram.parts.map(p=>[p.number,p.label]),miniSpecification.slice(0,11).map(([n,title])=>[Number(n),title]));
+ assert.deepEqual(fullLinePlacementDiagram.parts.map(p=>p.number),[28,29]);
+ const trucks=fullLineDiagram.parts.find(p=>p.number===27);assert.equal(trucks.pins.length,2);assert.equal(trucks.regions.length,2);
+ assert.equal(fullLineDiagram.parts.find(p=>p.number===20).regions.length,5);
+ for(const d of lineDiagrams){
+  const page=await readFile(`dist/catalog/lines/${d.slug}/index.html`,'utf8');await stat('dist/assets/'+d.file);
+  for(const id of [d.id,...(d.slug==='separatsiya-01'?[d.id+'-tooltip']:[]),d.id+'-details'])assert.equal([...page.matchAll(new RegExp(`id="${id}"`,'g'))].length,1,id);
+  assert.ok(page.includes(`data-line-diagram="${d.slug}"`));assert.ok(page.includes(`href="${basePath}/assets/${d.displayFile||d.file}"`));
+  for(const part of d.parts){
+   assert.ok(part.description.length>50,`${d.slug} ${part.number}`);
+   assert.ok(part.regions.length>0);assert.ok(part.targets.length>0);
+   for(const [x,y] of [...part.pins,...part.targets,...part.regions.flat()])assert.ok(x>=0&&x<=1000&&y>=0&&y<=d.height/d.width*1000,`${d.slug} ${part.number}: ${x}, ${y}`);
+   assert.ok(page.includes(`data-part-guide="${part.number}"`));assert.ok(page.includes(`data-description="${part.description}"`));
+  }
+ }
+ const html=await readFile('dist/catalog/lines/index.html','utf8');
+ const card=html.match(/<a[^>]+data-line-id="separatsiya-01"[\s\S]*?<\/a>/)[0];
+ for(const text of ['Цветной плёночный микс','Сортировка по видам','Доп. опция','По согласованию'])assert.ok(card.includes(text));
+ assert.ok(!card.includes('13 позиций'));assert.ok(!card.includes('Базовая комплектация'));
+ assert.match(card,/catalog-cover-navy/);
+});
+test('Фото распределены по 11 узлам, а каталог использует готовые иллюстрации владельца',async()=>{
+ const {nodes,media}=await import('../../content/equipment/catalog.mjs');
+ const {customerPhotos}=await import('../../content/pages/contacts/customer-photos.mjs');
+ const {equipmentCardImages}=await import('../../content/equipment/equipment-card-images.mjs');
+ assert.equal(customerPhotos.length,65);
+ assert.equal(new Set(customerPhotos.map(m=>m.slug)).size,11);
+ assert.equal(new Set(customerPhotos.map(m=>m.id)).size,65);
+ const catalogue=await readFile('dist/catalog/equipment/index.html','utf8');
+ for(const n of nodes){
+  assert.ok(catalogue.includes(`${basePath}/assets/${equipmentCardImages[n.slug].file}`),n.slug);
+  assert.ok(!n.cardImage.startsWith('photos/'),n.slug);
+  const pictures=media.filter(m=>m.product===n.path&&m.type==='photo');
+  const html=await readFile('dist'+n.path+'/index.html','utf8');
+  if(n.slug==='ochistka-stokov'){
+   assert.equal(pictures.length,0);
+   assert.ok(!html.includes('id="photos"'));assert.ok(html.includes('data-diagram data-view='));
+  }else{
+   assert.equal(pictures.filter(m=>m.primary).length,1,n.slug);
+   assert.ok(pictures.every(m=>m.processed&&m.slug===n.slug),n.slug);
+   const primary=pictures.find(m=>m.primary);
+   assert.ok(html.includes(`<img src="${basePath}/assets/${primary.file}"`),n.slug);
+  }
+ }
+ for(const m of customerPhotos){
+  assert.equal(m.processed,true);assert.match(m.sourceSha256,/^[a-f0-9]{64}$/);
+  assert.ok(m.width<=1920&&m.height<=1920);
+  assert.ok((await stat('dist/assets/'+m.thumbnail)).size>0);
+ }
+ const gallery=await readFile('dist/media/index.html','utf8');
+ assert.ok(gallery.includes('data-default-type="all"'));
+ assert.equal([...gallery.matchAll(/data-gallery-album-card="/g)].length,16);
+ assert.ok(gallery.includes(`src="${basePath}/assets/photos/predvaritelnyy-izmelchitel/02-thumb.webp"`));
+});
+test('Краткие параметры содержат мощность, а схемы имеют свои легенды',async()=>{
+ const {nodes}=await import('../../content/equipment/catalog.mjs');
+ const missing=nodes.filter(n=>n.quickSpecs.some(s=>s.missing)).map(n=>n.slug).sort();
+ assert.deepEqual(missing,[]);
+ for(const n of nodes){
+  assert.equal(n.quickSpecs.length,6,n.slug);
+  assert.ok(n.quickSpecs.some(s=>s.power&&!s.missing),n.slug);
+  for(const s of n.quickSpecs.filter(s=>!s.missing))assert.ok(n.specs.some(([label,value])=>label===s.label&&value===s.value),n.slug);
+  const html=await readFile('dist'+n.path+'/index.html','utf8');
+  assert.ok(html.includes('class="quick-spec-panel"'),n.slug);
+  assert.ok(html.includes(n.diagram?'data-diagram data-view=':'class="scheme-reading"'),n.slug);
+  assert.ok(n.reading.parts.length>=3,n.slug);
+  assert.equal(new Set(n.reading.parts.map(p=>p[0])).size,n.reading.parts.length,n.slug);
+  assert.equal(html.includes('href="#photos"'),n.slug!=='ochistka-stokov');
+  if(n.slug!=='ochistka-stokov')assert.ok(html.includes(`data-photo-gallery data-product="${basePath}${n.path}"`));
+ }
+ const rotor=nodes.find(n=>n.slug==='rotornyy-raspushitel');
+ assert.equal(rotor.reading.functional,true);
+ assert.equal(rotor.scheme,'equipment/rotornyy-raspushitel/working-principle.svg');
+ const svg=await readFile('dist/assets/'+rotor.scheme,'utf8');
+ assert.match(svg,/>1<\/text>/);assert.match(svg,/>2<\/text>/);assert.match(svg,/>3<\/text>/);
+});
+test('Новые карточки используют все 12 иллюстраций и сохраняют единицы подачи',async()=>{
+ const {nodes}=await import('../../content/equipment/catalog.mjs');
+ const {equipmentCardData}=await import('../../content/equipment/equipment-cards.mjs');
+ const {createHash}=await import('node:crypto');
+ const manifest=JSON.parse(await readFile('docs/audits/equipment-card-assets.json','utf8'));
+ assert.equal(manifest.images.length,12);
+ assert.deepEqual(new Set(manifest.images.map(i=>i.slug)),new Set(nodes.map(n=>n.slug)));
+ for(const node of nodes){
+  const card=equipmentCardData(node),asset=manifest.images.find(i=>i.slug===node.slug);
+  assert.equal(card.metrics.length,4,node.slug);
+  assert.equal(card.image.file,asset.image.file,node.slug);
+  assert.equal(card.image.width/card.image.height,4/3);
+  for(const image of [asset.image,asset.small])assert.equal(createHash('sha256').update(await readFile('dist/assets/'+image.file)).digest('hex'),image.sha256);
+  assert.equal(card.metrics[2].value,node.power.installed,node.slug);
+  assert.equal(card.metrics[3].value,node.power.value,node.slug);
+ }
+ const get=slug=>equipmentCardData(nodes.find(n=>n.slug===slug));
+ assert.equal(get('ballisticheskiy-separator').metrics[0].value,'до 60 м³/ч');
+ assert.equal(get('bunker-nakopitel').metrics[0].label,'Ёмкость накопления');
+ assert.equal(get('bunker-nakopitel').metrics[0].value,'4,7 м³');
+ assert.equal(get('ochistka-stokov').metrics[0].value,'25 м³/ч');
+ assert.equal(get('rama-napolnitel').metrics[0].value,'до 20 мешков/ч');
+});
+test('Адаптивные изображения и презентационные переходы учитывают путь публикации',async()=>{
+ const html=await readFile('dist/index.html','utf8');
+ const technology=await readFile('dist/technology/index.html','utf8');
+ for(const [,candidates] of html.matchAll(/srcset="([^"]+)"/g)){
+  for(const candidate of candidates.split(',')){
+   const url=candidate.trim().split(/\s+/)[0];
+   assert.ok(url.startsWith(basePath+'/assets/'),`Missing base in srcset: ${url}`);
+   await stat('dist'+url.slice(basePath.length));
+  }
+ }
+ assert.match(technology,/Полный цикл переработки плёнки:/);
+ assert.match(technology,/очистить, переработать, использовать снова/);
+ assert.ok(html.includes(`href="${basePath}/technology"`));
+ assert.ok(html.includes(`href="${basePath}/contacts#project-form"`));
+ assert.ok(html.includes('mailto:info@era-cycle.ru'));
+ assert.ok(!html.includes('eduard@ros-um.ru'));
+ assert.ok(!html.includes('data-node'));
+ assert.ok(!html.includes('Материалы готовятся'));
+});
+test('Все 12 карточек содержат свои параметры и действительные исходные PDF',async()=>{
+ const {nodes}=await import('../../content/equipment/catalog.mjs');const {createHash}=await import('node:crypto');
+ for(const n of nodes){
+  const html=await readFile('dist'+n.path+'/index.html','utf8');
+  assert.ok(!html.includes('КАРТОЧКА В ПОДГОТОВКЕ'),n.slug);
+  assert.ok(n.specs.length>=10,n.slug);assert.ok(n.highlights.length>=2,n.slug);
+  assert.equal(n.documents.length,2);
+  for(const d of n.documents){
+  assert.ok(html.includes(`${basePath}/documents/${d.file}`));
+  const pdf=await readFile('dist/documents/'+d.file);
+  assert.equal(pdf.subarray(0,4).toString(),'%PDF');assert.equal(pdf.length,d.bytes);
+  assert.equal(createHash('sha256').update(pdf).digest('hex'),d.sha256);
+  }
+  await stat('dist/assets/'+n.cardFile);await stat('dist/assets/'+n.scheme);
+ }
+});
+test('Единицы, мощность и условия разных узлов не смешиваются',async()=>{
+ const {nodes}=await import('../../content/equipment/catalog.mjs');
+ const get=slug=>nodes.find(n=>n.slug===slug);
+ const value=(slug,label)=>get(slug).specs.find(([k])=>k===label)?.[1];
+ assert.equal(value('ballisticheskiy-separator','Производительность по объёму подачи'),'до 60 м³/ч');
+ assert.equal(value('bunker-nakopitel','Ёмкость бункера'),'4,7 м³');
+ assert.equal(value('rotornaya-tsentrifuga','Производительность по плёнке'),'1 000 кг/ч');
+ assert.equal(value('rotornaya-tsentrifuga','Производительность по жёсткому пластику'),'3 000 кг/ч');
+ assert.equal(value('vintovoy-press','Установленная мощность основного привода'),'75 кВт');
+ assert.equal(value('kapsulyator','Установленная мощность'),'190 кВт');
+ assert.ok(get('kapsulyator').description.includes('отжимной пресс'));
+ assert.ok(get('rotornaya-tsentrifuga').notes.some(n=>n.includes('37,62 кВт')));
+ assert.ok(get('vertikalno-rotornyy-izmelchitel').notes.some(n=>n.includes('Не включает внешний нагрев')));
+ assert.equal(value('predvaritelnyy-raspushitel','Расчётная потребляемая мощность'),'25,9 кВт');
+ assert.equal(get('rama-napolnitel').documents[0].type,'Паспорт и техническое описание');
+});
+test('Навигация различает точную страницу, раздел и полное меню',async()=>{
+ const {navigation,navigationState,siteHeader,siteMenu,normalizeNavigationPath}=await import('../../scripts/render/shared/navigation.mjs');
+ assert.match(navigation('/'),/href="\/"[^>]*aria-current="page"[^>]*data-current-section="true"/);
+ for(const path of [product,'/catalog/equipment','/catalog/lines/separatsiya-02','/catalog/lines']){
+  const state=navigationState(path);assert.equal(state.section,'equipment');
+  assert.match(navigation(path),/href="\/catalog"[^>]*data-current-section="true"/);
+  assert.ok(!navigation(path).includes('aria-current="location"'));
+ }
+ assert.equal(navigationState('/technology/#hot-washing').section,'technology');
+ for(const [path,section] of [['/automation','control'],['/economics','economics']]){
+  assert.equal(navigationState(path).section,section);
+  assert.match(navigation(path),new RegExp('href="'+path+'"[^>]*aria-current="page"[^>]*data-current-section="true"'));
+  assert.ok(!siteHeader(path).includes('aria-controls="site-menu" data-current-section="true"'));
+ }
+ for(const path of ['/documents','/news','/blog','/contacts','/about-us','/media']){
+  assert.equal(navigationState(path).section,'all');
+  assert.match(siteHeader(path),/aria-controls="site-menu" data-current-section="true"/);
+  if(['/news','/blog'].includes(path))assert.ok(!siteMenu(path).includes('href="'+path+'"'));
+  else assert.match(siteMenu(path),new RegExp('href="'+path+'" aria-current="page"'));
+ }
+ assert.match(siteMenu(product),/href="\/catalog\/equipment" data-current-branch="true"/);
+ assert.match(siteMenu('/catalog/lines/separatsiya-02'),/href="\/catalog\/lines" data-current-branch="true"/);
+ assert.equal(normalizeNavigationPath('/Website_ERA/catalog/equipment/?q=x#specs','/Website_ERA/'),'/catalog/equipment');
+ assert.equal(navigationState('/Website_ERA/?q=x#discuss',{basePath:'/Website_ERA'}).section,'project');
+ assert.equal(navigationState('/Website_ERA/catalog/equipment/?q=x#specs',{basePath:'/Website_ERA'}).section,'equipment');
+ for(const path of ['/catalogue','/404','/unknown','/technology-else'])assert.equal(navigationState(path).section,null);
+ assert.ok(!siteHeader('/404').includes('data-current-section="true"'));
+});
+test('Видеоблок появляется у своего узла, а ролик загружается после выбора пользователя',async()=>{
+ const {media,nodes}=await import('../../content/equipment/catalog.mjs');
+ const {equipmentVideos}=await import('../../content/equipment/equipment-videos.mjs');
+ const {render}=await import('../../scripts/build/build.mjs');
+ const {equipmentCinema}=await import('../../scripts/render/shared/video.mjs');
+ assert.equal(equipmentCinema([]),'');
+ for(const pending of equipmentVideos.filter(v=>!v.ready))assert.ok(!media.some(m=>m.id===pending.id));
+ const node=nodes.find(n=>n.slug==='predvaritelnyy-izmelchitel');
+ const fixture={...equipmentVideos[0],id:'player-test',title:'Проверка: "видео" & ERA',file:'videos/__player-test.mp4',product:node.path,productTitle:node.title,ready:true};
+ media.push(fixture);
+ try{
+  const html=render(node.path);
+  assert.match(html,/id="video"/);
+  assert.ok(html.includes(`data-video="${basePath}/assets/videos/__player-test.mp4"`));
+  assert.ok(html.includes(`data-poster="${basePath}/assets/${fixture.poster}"`));
+  assert.ok(html.includes('href="#video"'));
+  assert.ok(html.indexOf('id="video"')<html.indexOf('id="purpose"'));
+  assert.ok(!/<video[^>]*\s(?:src|autoplay)=?/.test(html));
+  assert.ok(html.includes('playsinline preload="none"'));
+  assert.ok(html.includes('data-title="Проверка: &quot;видео&quot; &amp; ERA"'));
+  const other=render(nodes.find(n=>n.slug==='vintovoy-press').path);
+  assert.ok(!other.includes('href="#video"'));assert.ok(!other.includes('id="video"'));
+  const gallery=render('/media');
+  assert.ok(!gallery.includes('__player-test.mp4')); // The showroom excludes missing files.
+  assert.ok(!gallery.includes(`src="${basePath}/assets/videos/__player-test.mp4"`));
+ }finally{media.pop();}
+});
+test('Полные ролики проверены по контрольным суммам и готовы к последовательному воспроизведению',async()=>{
+ const {equipmentVideos}=await import('../../content/equipment/equipment-videos.mjs');
+ const {createHash}=await import('node:crypto');
+ const films=equipmentVideos.filter(v=>v.ready);
+ assert.ok(films.some(v=>v.slug==='predvaritelnyy-izmelchitel'));
+ for(const film of films){
+  const data=await readFile('dist/assets/'+film.file);
+  assert.equal(data.length,film.bytes);
+  assert.equal(createHash('sha256').update(data).digest('hex'),film.sha256);
+  if(film.webOptimized){
+   assert.match(film.sourceSha256,/^[a-f0-9]{64}$/);
+   assert.ok(film.sourceBytes>film.bytes);
+   assert.equal(film.frames,film.sourceFrames);
+   assert.ok(Math.abs(film.durationSeconds-film.sourceDurationSeconds)<0.05);
+  }else assert.equal(film.sha256,film.sourceSha256);
+  assert.equal(data.toString('ascii',4,8),'ftyp');
+  const atoms=[];
+  for(let offset=0;offset+8<=data.length;){
+   let size=data.readUInt32BE(offset);const type=data.toString('ascii',offset+4,offset+8);
+   if(size===1)size=Number(data.readBigUInt64BE(offset+8));
+   else if(size===0)size=data.length-offset;
+   assert.ok(size>=8&&offset+size<=data.length);
+   atoms.push(type);offset+=size;
+  }
+  assert.ok(atoms.includes('moov')&&atoms.includes('mdat'));
+  assert.ok(atoms.indexOf('moov')<atoms.indexOf('mdat'),'MP4 metadata must precede video data');
+  assert.ok(film.durationSeconds>0&&film.width>0&&film.height>0);
+  await stat('dist/assets/'+film.poster);await stat('dist/assets/'+film.thumbnail);
+  const html=await readFile('dist/catalog/equipment/'+film.slug+'/index.html','utf8');
+  assert.ok(html.includes(`data-video="${basePath}/assets/${film.file}"`));
+  assert.ok(html.includes(`data-poster="${basePath}/assets/${film.poster}"`));
+ }
+});
+
+test('Панель ЦБ РФ доступна на всех страницах и не содержит выдуманных курсов',async()=>{
+ for(const route of new Set(routes)){
+  if(['/about','/ai','/company-details'].includes(route))continue; // Legacy redirects render the destination header.
+  const html=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
+  const version=route.startsWith('/privacy')?assetBaseVersion:assetRevision('fx.js');
+  assert.equal([...html.matchAll(/data-fx-bar /g)].length,1,route);
+  assert.ok(html.includes('https://www.cbr.ru/currency_base/daily/'));
+  assert.ok(html.includes(previewMode?'refs/heads/data/cbr-rates/cbr.json':'data-fx-feed="/data/cbr.json"'));
+  for(const code of ['USD','EUR','CNY'])assert.ok(html.includes(`data-fx-value="${code}">—</dd>`));
+  assert.ok(html.includes(`src="${basePath}/${route.startsWith("/privacy")?"fx.js":"assets/js/core/fx.js"}?v=${version}"`));
+ }
+});
+
+test('Все узлы рассчитывают 70% мощности с десятичным округлением до одного знака',async()=>{
+ const {nodes}=await import('../../content/equipment/catalog.mjs');
+ const {calculatedPower}=await import('../../content/lines/shared/power.mjs');
+ const expected=['33,0','25,9','17,4','86,7','17,9','54,3','135,1','26,3','52,5','133,0','8,2','0,3'];
+ for(const [i,n] of nodes.entries()){
+  const rows=n.specs.filter(([k])=>k==='Расчётная потребляемая мощность');
+  assert.equal(rows.length,1,n.slug);assert.equal(rows[0][1],expected[i]+' кВт',n.slug);
+  assert.ok(n.quickSpecs.some(s=>s.label===rows[0][0]&&s.value===rows[0][1]),n.slug);
+  assert.equal(n.power.factor,0.7);
+ }
+ // Exact decimal half-up rounding, including the 17.85 and 54.25 boundaries.
+ assert.equal(calculatedPower('25,5 кВт'),'17,9 кВт');
+ assert.equal(calculatedPower('77,5 кВт'),'54,3 кВт');
+ assert.equal(calculatedPower('0,37 кВт'),'0,3 кВт');
+ assert.equal(calculatedPower('1 000 кВт'),'700,0 кВт');
+});
+
+test('Интерактивная схема сохраняет 12 обозначений КП и два прозрачных вида',async()=>{
+ const {equipmentDiagrams}=await import('../../content/equipment/equipment-diagrams.mjs');
+ const {schemeReading}=await import('../../content/equipment/equipment-reading.mjs');
+ const d=equipmentDiagrams['predvaritelnyy-izmelchitel'];
+ assert.equal(d.views.length,2);assert.equal(d.parts.length,12);
+ assert.deepEqual(d.parts.map(p=>[p.number,p.label]),schemeReading['predvaritelnyy-izmelchitel'].parts);
+ for(const p of d.parts){
+  assert.ok(d.views.some(v=>v.id===p.view));assert.ok(p.description);
+  for(const [x,y] of [p.pin,...p.targets])assert.ok(x>0&&x<1000&&y>0&&y<1000);
+ }
+ for(const v of d.views){
+  const bytes=await readFile('dist/assets/'+v.file);
+  assert.equal(bytes.toString('ascii',0,4),'RIFF');assert.equal(bytes.toString('ascii',8,12),'WEBP');
+  assert.ok(bytes.includes(Buffer.from('VP8L')),'Transparent image must retain its lossless export');
+ }
+ const html=await readFile('dist'+product+'/index.html','utf8');
+ assert.equal([...html.matchAll(/class="diagram-pin" /g)].length,12);
+ assert.ok(html.includes('href="#construction"'));
+ assert.ok(!html.includes('class="equipment-scheme"'));
+ for(const v of d.views)assert.ok(html.includes(`href="${basePath}/assets/${v.file}"`));
+});
+
+test('Все 12 интерактивных схем сохраняют исходные обозначения и правильные файлы видов',async()=>{
+ const {nodes}=await import('../../content/equipment/catalog.mjs');
+ let count=0;
+ for(const n of nodes){
+  const d=n.diagram;assert.ok(d,n.slug);count+=d.parts.length;
+  assert.deepEqual(d.parts.map(p=>[p.number,p.label]),n.reading.parts,n.slug);
+  assert.ok(d.views.some(v=>v.id===d.parts.find(p=>p.number===d.defaultPart)?.view),n.slug);
+  for(const v of d.views){
+   await stat('dist/assets/'+v.file);assert.ok(d.parts.some(p=>p.view===v.id),n.slug+' '+v.id);
+   const h=v.canvasHeight||1000;
+   for(const p of d.parts.filter(p=>p.view===v.id)){
+    assert.ok(p.description,n.slug+' '+p.number);
+    for(const [x,y] of [p.pin,...p.targets])assert.ok(x>0&&x<1000&&y>0&&y<h,`${n.slug} ${p.number}: ${x},${y}`);
+   }
+  }
+  const html=await readFile('dist'+n.path+'/index.html','utf8');
+  assert.equal([...html.matchAll(/class="diagram-pin" /g)].length,d.parts.length);
+  assert.ok(!html.includes('class="equipment-scheme"'));
+  const c=n.catalogueIllustration;
+  assert.equal(c.type,'technical-illustration');assert.equal(c.sourceDocumentId,n.slug+'-technical');
+  assert.ok(c.width>300&&c.height>250);await stat('dist/assets/'+c.file);
+ }
+ assert.equal(count,130);
+});
+
+test('24 документа узлов сохраняют исходные PDF и согласованные ссылки в новой библиотеке',async()=>{
+ const {nodes}=await import('../../content/equipment/catalog.mjs');
+ const {documentManifest,documentCategories}=await import('../../content/documents/document-manifest.mjs');
+ assert.equal(documentManifest.length,24);assert.equal(documentCategories.length,5);
+ assert.equal(new Set(documentManifest.map(d=>d.id)).size,24);
+ assert.equal(new Set(documentManifest.map(d=>d.file)).size,24);
+ const library=await readFile('dist/documents/index.html','utf8');
+ for(const category of documentCategories){
+  assert.equal(documentManifest.filter(d=>d.category===category.id).length,['brochures','technical'].includes(category.id)?12:0);
+  assert.ok(library.includes(`href="${basePath}/documents/${category.id}/"`));
+ }
+ for(const n of nodes){
+  assert.equal(n.documents.filter(d=>d.category==='brochures').length,1);
+  assert.equal(n.documents.filter(d=>d.category==='technical').length,1);
+  const html=await readFile('dist'+n.path+'/index.html','utf8');
+  assert.ok(n.marketing.slogan&&n.marketing.lead&&n.marketing.benefits.length===3);
+  assert.ok(html.includes(n.marketing.slogan));assert.ok(html.includes('class="equipment-benefits"'));
+  for(const d of n.documents){
+   assert.ok(d.file.startsWith(d.category==='brochures'?'brochures/':'technical/'));
+   assert.ok(!d.downloadName.includes('Визитка')&&!d.downloadName.includes('КП_'));
+   assert.ok(d.downloadName.endsWith('.pdf'));
+   for(const page of [html,library]){
+    assert.ok(page.includes(`href="${basePath}/documents/${d.file}"`));
+    assert.ok(page.includes(`download="${d.downloadName}"`));
+    if(d.legacyFile)assert.ok(!page.includes(`href="${basePath}/documents/${d.legacyFile}"`));
+   }
+  }
+ }
+});
+
+test('Общий каталог предлагает две ветки, а старое О проекте перенесено на главную',async()=>{
+ const {nodes,lines}=await import('../../content/equipment/catalog.mjs');
+ const hub=await readFile('dist/catalog/index.html','utf8');
+ assert.equal([...hub.matchAll(/class="catalog-door catalog-exhibit /g)].length,2);
+ assert.ok(hub.indexOf('id="catalog-lines-title"')<hub.indexOf('id="catalog-nodes-title"'));
+ assert.equal([...hub.matchAll(/class="catalog-exhibit-scene"/g)].length,2);
+ assert.ok(!hub.includes('catalog-door-stats'));
+ assert.ok(!hub.includes('id="catalog-filters"'));
+ const equipment=await readFile('dist/catalog/equipment/index.html','utf8');
+ assert.ok(equipment.includes('id="catalog-filters"'));
+ assert.equal([...equipment.matchAll(/data-node data-title=/g)].length,nodes.length);
+ assert.equal(lines.filter(l=>l.enabled&&l.group==='Сепарация').length,3);
+ assert.equal(lines.filter(l=>l.enabled&&l.group==='Мойка').length,1);
+ const home=await readFile('dist/index.html','utf8');
+ assert.ok(home.includes('id="about-era"'));assert.ok(home.includes('Начните с малого. Масштабируйтесь до полного цикла.'));
+ const about=await readFile('dist/about/index.html','utf8');
+ assert.ok(about.includes(`content="0; url=${basePath}/"`));
+ assert.equal(about.match(/<link rel="canonical" href="([^"]+)">/)?.[1],`${canonicalOrigin}/`);
+ for(const route of routes.filter(r=>r!=='/about')){
+  const html=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
+  assert.ok(!html.includes(`href="${basePath}/about"`));
+ }
+});
+
+test('Счётчики различают типы и не дублируют файлы, миниатюры и ссылки на PDF',async()=>{
+ const {countMedia,mediaCountLabels}=await import('../../public/assets/js/components/media-counts.js');
+ const counts=countMedia([
+  {type:'photo',file:'photo.webp',thumbnail:'photo-small.webp'},
+  {type:'photo',file:'photo.webp?v=2'},
+  {type:'video',file:'film.mp4'},{type:'video',file:'film.mp4#t=10'},
+  {type:'scheme',file:'drawing.svg'},{type:'visualization',file:'view.webp'},
+  {type:'frame',file:'frame.webp'},
+ ],[{file:'description.pdf'},{file:'description.pdf#page=2'}]);
+ assert.deepEqual(counts,{photos:1,videos:1,schemes:2,visualizations:true,frames:1,documents:1});
+ assert.equal(mediaCountLabels(counts).find(c=>c.key==='schemes').label,'Схемы и визуализации');
+ assert.deepEqual(mediaCountLabels(countMedia([],[])),[]);
+});
+test('Клиентский режим: единый кириллический бренд, групповой подвал и один валютный блок',async()=>{
+ const {navigationGroups}=await import('../../content/shared/navigation.mjs');
+ for(const route of new Set(routes.filter(r=>!['/about','/ai','/company-details'].includes(r)))){
+  const html=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
+  const header=html.match(/<header[\s\S]*?<\/header>/)[0];
+  const footer=html.match(/<footer[\s\S]*?<\/footer>/)[0];
+  assert.ok(!header.includes('data-fx-bar'),route);
+  assert.equal([...html.matchAll(/data-fx-bar /g)].length,1,route);
+  assert.ok(footer.includes('data-fx-bar'),route);
+  for(const group of navigationGroups){assert.ok(footer.includes(group.label));for(const link of group.links)assert.ok(footer.includes(`href="${basePath}${link.href}"`));}
+  const visible=html.replace(/<script[\s\S]*?<\/script>/g,'').replace(/<[^>]+>/g,' ');
+  const labels=[...html.matchAll(/(?:aria-label|alt|title|data-source|data-title|content)="([^"]*)"/g)].map(m=>m[1]).join(' ');
+  // Owner-approved public citations: the economics experiment and the BEIER corporate profile.
+  const copy=(visible+' '+labels).replaceAll('era-cycle.ru','').replaceAll('Опыт, приведённый в презентации ЭРА.','').replaceAll(route==='/economics'?'Источник: ':route==='/about-us'?'Источник: корпоративный профиль BEIER Machinery':'\u0000','');
+  const clientCopy=route.startsWith('/privacy')?copy.replace(/\b(?:ERA-(?:PRIVACY|PD|COOKIES)-1\.3|era-cbr-rates-v1|era-map-consent-v1|era-contact-map-provider)\b/g,''):copy;
+  assert.doesNotMatch(clientCopy,/\bERA\b|прототип|для согласования|из презентации|в презентации|предоставленному КП|источник:|слайд №|сайт объединяет/iu,route);
+ }
+ const notFound=await readFile('dist/404.html','utf8');assert.equal([...notFound.matchAll(/data-fx-bar /g)].length,1);
+});
+test('Индексация, canonical и sitemap согласованы для всех публичных страниц',async()=>{
+ const excluded=new Set(['/about','/ai','/company-details','/contacts/sent','/news','/blog','/privacy','/privacy/consent','/privacy/cookies']);
+ const titles=new Set(),descriptions=new Set(),expected=[];
+ for(const route of new Set(routes)){
+  const html=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
+  assert.match(html,/<html lang="ru">/,route);
+  assert.equal((html.match(/<h1[\s>]/g)||[]).length,1,route);
+  assert.equal(/<meta name="robots" content="noindex,nofollow">/.test(html),previewMode||excluded.has(route),route);
+  if(excluded.has(route))continue;
+  const canonical=html.match(/<link rel="canonical" href="([^"]+)">/)?.[1];
+  const url=`${canonicalOrigin}${route.replace(/\/$/,'')}/`;
+  assert.equal(canonical,url,route);
+  expected.push(url);
+  const title=html.match(/<title>([^<]+)<\/title>/)?.[1];
+  const description=html.match(/<meta name="description" content="([^"]+)">/)?.[1];
+  assert.ok(title&&!titles.has(title),route);titles.add(title);
+  assert.ok(description&&!descriptions.has(description),route);descriptions.add(description);
+ }
+ const robots=await readFile('dist/robots.txt','utf8');
+ assert.match(robots,/^User-agent: \*\nAllow: \/\n/);
+ assert.doesNotMatch(robots,/^Disallow:/m);
+ assert.match(await readFile('dist/404.html','utf8'),/<meta name="robots" content="noindex,nofollow">/);
+ if(!previewMode){
+  assert.ok(robots.includes(`Sitemap: ${siteUrl}/sitemap.xml\n`));
+  const sitemap=await readFile('dist/sitemap.xml','utf8');
+  assert.deepEqual([...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match=>match[1]).sort(),expected.sort());
+ }else await assert.rejects(stat('dist/sitemap.xml'),{code:'ENOENT'});
+});
+test('Контакты сохранены, КАИР перенесён в технологию с реальными фотографиями и автосменой',async()=>{
+ const {kairSlides,kairPresentation}=await import('../../content/kair/kair.mjs');
+ const {kairMonitor}=await import('../../scripts/render/kair/kair.mjs');
+ assert.equal(kairSlides.length,23);assert.equal(kairPresentation.autoplay,true);
+ assert.ok(kairPresentation.intervalMs>=6000&&kairPresentation.intervalMs<=12000);
+ const component=kairMonitor();assert.ok(component.includes('data-kair-next'));assert.ok(component.includes('data-kair-pause'));assert.ok(component.includes('1 из 23'));
+ assert.ok(component.includes('data-kair-viewer'));assert.ok(component.includes('Настоящие экраны. Реальное управление.'));
+ const home=await readFile('dist/index.html','utf8');
+ assert.ok(home.includes('id="discuss"'));assert.ok(!home.includes('data-kair-inspect'));
+ const html=await readFile('dist/technology/index.html','utf8');
+ assert.match(html,/<div[^>]*id="discuss">[\s\S]*?Подобрать решение под ваше сырьё/);
+ assert.ok(html.includes('data-kair-inspect'));assert.ok(html.includes('Изучить возможности КАИР'));
+ assert.ok(html.includes(`data-image="${basePath}/assets/${kairSlides[0].original}"`));
+ assert.ok(!kairMonitor([]));
+ const single=kairMonitor([kairSlides[0]],{...kairPresentation,autoplay:false});
+ assert.ok(!single.includes('data-kair-next'));assert.ok(!single.includes('data-kair-pause'));
+});
+test('Экономика с первого HTML публикует базовый полный цикл, нативные схемы и действующие источники',async()=>{
+ const {marketOffers}=await import('../../public/assets/js/economics/economics-config.js');
+ const html=await readFile('dist/economics/index.html','utf8');
+ assert.match(html,/Экономика вашего производства\./);
+ assert.match(html,/data-econ-mode="full" data-econ-locked-mode="full" data-econ-state="profit" data-econ-scenario="base"/);
+ assert.doesNotMatch(html,/<button[^>]*data-econ-mode|data-econ-range|data-econ-number|data-market-source="spimex"|econ-ring/);
+ assert.deepEqual([...html.matchAll(/data-price-rub="(\d+)"/g)].map(([,price])=>Number(price)),[80000,90000,100000,110000]);
+ assert.deepEqual([...html.matchAll(/data-econ-network="(\d+)"/g)].map(([,size])=>Number(size)),[1,2,3,5]);
+ const fields={heroMonthNet:'≈ 10 млн ₽',heroYearNet:'≈ 120 млн ₽',monthNet:'9,81 млн ₽',yearNet:'112,93 млн ₽',payback:'Индивидуальная оценка',unitCost:'50,34 ₽/кг',unitProfit:'17,57 ₽/кг',yearOutput:'6 570 т',output:'558 т'};
+ for(const [key,value] of Object.entries(fields))assert.ok(html.includes('data-econ-value="'+key+'">'+value),key);
+ assert.match(html,/data-econ-value="balanceInput">1 500 кг\/ч/);
+ assert.match(html,/data-econ-value="balanceOutput">750 кг\/ч/);
+ assert.match(html,/6 ₽\/кг<\/strong>[\s\S]*?90 ₽\/кг<\/strong>[\s\S]*?×15/);
+ assert.match(html,/id="production-constructor"[\s\S]*?<div class="ec-allocation" id="monthly-result"/);
+ assert.match(html,/id="production-growth"[\s\S]*?data-growth-mode="separation"[\s\S]*?<dd>50 ₽\/кг<\/dd>[\s\S]*?<dd>4,45 млн ₽<\/dd>[\s\S]*?<dd>19,5%<\/dd>/);
+ assert.equal((html.match(/4,45 млн ₽/g)||[]).length,1);
+ assert.doesNotMatch(html,/ЛСП · финансовая модель/);
+ assert.match(html,/id="calculation-conditions" class="ec-details"/);
+ assert.match(html,/Производственная смета от 27\.11\.2026 · Ярославская область/);
+ assert.match(html,/Проверка опубликованных рыночных ориентиров — 17\.11\.2026/);
+ assert.match(html,/950 €\/т/);assert.match(html,/1 368 €\/т/);
+ assert.match(html,/Пластинфо · ППИ-вСТ/);assert.match(html,/myCEPPI \/ PlasticPortal/);
+ assert.equal((html.match(/data-economics-page/g)||[]).length,1);
+ for(const offer of marketOffers){
+  if(offer.category!=='film')assert.ok(html.includes(`href="${offer.href}"`));
+  assert.ok(offer.minimum);assert.ok(offer.vat);assert.ok(offer.delivery);
+ }
+ assert.ok(html.includes(`src="${basePath}/assets/js/economics/commercial.js?v=`));
+ const deployed=await readFile('dist/assets/js/economics/economics-page-state.js','utf8');
+ assert.match(deployed,/from '\.\/economics-model\.js\?v=/);
+});
+test('Технология сохраняет сырьё, последовательность, качество, КАИР и прежние якоря',async()=>{
+ const {technologyContent}=await import('../../content/pages/technology/technology-final.mjs');
+ const html=await readFile('dist/technology/index.html','utf8');
+ const ordered=['technology-intro','raw-material','contaminants','solution','dry-separation','hot-washing','granulation','products','granule-quality','applications','control-story','technology-next'];
+ const legacy=['raw-title','raw-cleaning-title','solution-title','tech-line-02-title','tech-hot-wash-title','material-balance','material-contamination','control-title','output-title','standalone-equipment','about-era','launch-title','detail-title','discuss','discuss-title'];
+ for(const id of [...ordered,...legacy])assert.equal([...html.matchAll(new RegExp(`id="${id}"`,'g'))].length,1,id);
+ const position=id=>html.indexOf(`id="${id}"`);
+ assert.ok(ordered.every((id,index)=>!index||position(id)>position(ordered[index-1])));
+ const allIds=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);assert.equal(new Set(allIds).size,allIds.length);
+ for(const item of technologyContent.feedstocks)assert.ok(html.includes(item.title),item.title);
+ assert.equal((html.match(/data-feedstock-type=/g)||[]).length,5);
+ assert.equal((html.match(/data-contaminant-row=/g)||[]).length,9);assert.ok(!html.includes('data-contaminant-controls'));
+ for(const row of technologyContent.cleaning){
+  const card=html.match(new RegExp(`<article[^>]*id="contaminant-${row.id}"[\\s\\S]*?</article>`))[0];
+  assert.ok(card.includes(row.title)&&card.includes(row.operation)&&card.includes(`href="#${row.target}"`),row.id);
+  assert.ok(!card.includes('<table'));
+ }
+ const granulation=html.match(/<section[^>]*id="granulation"[\s\S]*?<\/section>/)[0];
+ assert.ok(granulation.includes('Финальный этап: из очищённой плёнки — в готовую гранулу.'));
+ assert.ok(granulation.includes('granulation-transformation.webp')&&granulation.includes('tf-scale-grid'));
+ assert.doesNotMatch(html.slice(position('hot-washing'),position('granulation')),/tf-scale-grid/);
+ assert.equal((html.match(/data-technology-output=/g)||[]).length,3);
+ assert.equal((html.match(/data-kair-slide(?=[\s>])/g)||[]).length,23);
+ assert.ok(html.includes(`href="${basePath}/catalog/equipment"`)&&html.includes(`href="${basePath}/automation"`));
+ for(const slug of ['rotornyy-raspushitel','plenochnyy-flotator'])assert.ok(html.includes(`href="${basePath}/catalog/equipment/${slug}"`));
+ assert.match(html,/<a[^>]+href="[^"]*\/contacts\?topic=[^"]+#project-form"[^>]*>Подобрать решение под ваше сырьё/);
+ const next=html.slice(position('technology-next'),html.indexOf('</main>'));
+ for(const path of ['/catalog/lines','/catalog/equipment','/economics'])assert.ok(next.includes(`href="${basePath}${path}"`),path);
+ assert.ok(next.includes('investment-growth.webp')&&next.includes('Пока рынок формируется'));
+ assert.doesNotMatch(html,/Методики и источники|Что понадобится для подбора|Альтернативные направления для подходящих фракций/);
+ assert.ok(html.includes('190 °C / 2,16 кг')&&html.includes('30–70 г/т')&&html.includes('0,003–0,007%'));
+ assert.ok(html.includes('Остаточные включения после сухой сепарации и горячей мойки'));
+ assert.ok(html.includes('Допустимые потери плёнки за полный цикл')&&html.includes('От массы полезного полимера')&&html.includes('3–5%'));
+ const eco=await readFile('dist/economics/index.html','utf8');assert.ok(eco.includes(`${technologyContent.quality.mfr} ${technologyContent.quality.mfrUnit}`));assert.ok(eco.includes(`${technologyContent.quality.inclusions} ${technologyContent.quality.inclusionsUnit}`));
+ assert.equal((html.match(/<h1[\s>]/g)||[]).length,1);
+ assert.ok(html.includes(`${basePath}/assets/css/pages/technology/technology-final.css?v=`)&&html.includes(`${basePath}/assets/js/technology/technology-final.js?v=`));
+});
+test('Пять иллюстраций применений предоставлены владельцем и имеют проверенные веб-копии',async()=>{
+ const {createHash}=await import('node:crypto');const {imageSize}=await import('../../scripts/media/image-size.mjs');
+ const manifest=JSON.parse(await readFile('docs/audits/technology-applications-assets.json','utf8'));
+ const html=await readFile('dist/technology/index.html','utf8');assert.equal(manifest.images.length,5);
+ assert.equal((html.match(/data-technology-application=/g)||[]).length,5);
+ for(const item of manifest.images){
+  assert.ok(item.sourceFile&&item.sourceSha256&&item.author&&item.permission&&item.alt);
+  for(const asset of [item.image,item.small]){
+   const bytes=await readFile('public/assets/'+asset.file);assert.equal(createHash('sha256').update(bytes).digest('hex'),asset.sha256);
+   assert.ok(bytes.length>15000&&bytes.length<250000);assert.deepEqual(imageSize('public/assets/'+asset.file),{width:asset.width,height:asset.height});assert.ok(html.includes(basePath+'/assets/'+asset.file));
+  }
+  assert.ok(html.includes(item.alt));
+ }
+ assert.match(html,/Очистить\. Переработать\. <span>Использовать снова\.<\/span>/);
+ assert.doesNotMatch(html.match(/<section[^>]*id="applications"[\s\S]*?<\/section>/)[0],/<details/);
+ assert.ok(!html.includes('/catalog/lines/pyrolysis')&&!html.includes('/catalog/lines/energy'));
+ for(const path of ['index.html','about-us/index.html','economics/index.html','contacts/index.html'])assert.ok(!(await readFile('dist/'+path,'utf8')).includes('/technology-final.css'));
+});
+test('Все фотографии КАИР из архива имеют действительные оригиналы и адаптивные копии',async()=>{
+ const {createHash}=await import('node:crypto');
+ const {kairSlides}=await import('../../content/kair/kair.mjs');
+ const manifest=JSON.parse(await readFile('docs/audits/kair-slides-assets.json','utf8'));
+ assert.equal(manifest.images.length,23);
+ assert.deepEqual(new Set(kairSlides.map(s=>s.original)),new Set(manifest.images.map(s=>s.sourceFile)));
+ for(const slide of kairSlides){
+  const source=manifest.images.find(s=>s.sourceFile===slide.original);
+  for(const [file,sha] of [[slide.original,source.sourceSha256],[slide.file,source.image.sha256],[slide.smallFile,source.small.sha256]]){
+   const bytes=await readFile('dist/assets/'+file);
+   assert.equal(createHash('sha256').update(bytes).digest('hex'),sha,file);
+  }
+ }
+});
+test('Страница КАИР охватывает реестр владельца, различая назначение и исполнение функций',async()=>{
+ const {kairGroups,kairFunctions,kairLogicModes,kairHardware}=await import('../../content/kair/kair-system.mjs');
+ const source=JSON.parse(await readFile('docs/audits/kair-function-source-index.json','utf8'));
+ const reference=new Set(source.functions.map(f=>f.code));
+ assert.equal(reference.size,50);
+ assert.deepEqual(new Set(kairFunctions.flatMap(f=>f.codes)),reference);
+ assert.equal(kairGroups.length,6);assert.equal(new Set(kairFunctions.map(f=>f.id)).size,kairFunctions.length);
+ for(const f of kairFunctions){assert.ok(kairGroups.some(g=>g.id===f.group));assert.ok(f.text&&f.title&&f.detail);}
+ const fn=id=>kairFunctions.find(f=>f.id===id);
+ for(const id of ['recipes','events','bunkers','reverse'])assert.equal(fn(id).scope,'separation');
+ for(const id of ['powder','alkali','makeup','rinse','water-treatment'])assert.equal(fn(id).scope,'washing');
+ for(const id of ['temperature','service','contamination'])assert.equal(fn(id).level,'project');
+ for(const id of ['packaging','friction','granulator']){assert.equal(fn(id).level,'local');assert.equal(fn(id).scope,'equipment');}
+ assert.ok(fn('remote').detail.includes('права пользователей'));assert.ok(fn('recipes').detail.includes('персонал'));
+ assert.ok(fn('cabinet').detail.includes('относится к шкафу управления'));
+ assert.ok(fn('water-treatment').text.includes('основную мойку'));assert.ok(fn('rinse').text.includes('Чистая вода'));
+ assert.ok(fn('makeup').detail.includes('разные величины'));assert.ok(fn('rinse').detail.includes('потери'));
+ assert.equal(kairLogicModes.length,4);assert.equal(kairHardware.length,8);
+});
+test('Все 24 сценария КАИР распределены по темам и сохраняют действия и условия',async()=>{
+ const {kairScenarios}=await import('../../content/kair/kair-scenarios.mjs');
+ const {default:approved}=await import('../../content/kair/kair-stage2.json',{with:{type:'json'}});
+ assert.deepEqual(kairScenarios.map(s=>s.number),Array.from({length:24},(_,i)=>i+1));
+ assert.equal(kairScenarios.filter(s=>s.featured).length,8);
+ for(const s of kairScenarios)assert.ok(s.title&&s.situation&&s.action&&s.benefit);
+ assert.ok(kairScenarios.find(s=>s.number===1).note.includes('на площадке остаётся персонал'));
+ assert.ok(kairScenarios.find(s=>s.number===13).note.includes('порядок переключения'));
+ const html=await readFile('dist/automation/index.html','utf8');
+ assert.deepEqual(approved.scenarioGroups.map(([id])=>approved.scenarios.filter(s=>s.group===id).map(s=>s.number)),
+  [[1,2,3,12],[6,7,8,9,10,24],[4,5,22,23],[11,13,17,18],[14,15,16],[19,20,21]]);
+ assert.deepEqual([...html.matchAll(/data-kair-scenario="(\d+)"/g)].map(m=>Number(m[1])).sort((a,b)=>a-b),kairScenarios.map(s=>s.number));
+ for(const scenario of kairScenarios){
+  const start=html.indexOf(`data-kair-scenario="${scenario.number}"`);
+  const markup=html.slice(start,html.indexOf('</div></div>',start));
+  for(const text of [scenario.situation,scenario.action,scenario.benefit,scenario.note])if(text)assert.ok(markup.includes(text),scenario.number);
+ }
+ assert.ok(html.includes('Одна ситуация. Два подхода.'));
+ assert.doesNotMatch(html,/Ещё 16 практических ситуаций|class="ka-more-scenarios"|КАИР рассчитывает прибыль/);
+});
+test('Вторая редакция КАИР сохраняет условия внедрения, четыре схемы, два маршрута, 29 функций и семь оригиналов в витрине',async()=>{
+ const html=await readFile('dist/automation/index.html','utf8');
+ const technology=await readFile('dist/technology/index.html','utf8');
+ const {kairSlides}=await import('../../content/kair/kair.mjs');
+ const {kairFunctions}=await import('../../content/kair/kair-system.mjs');
+ const {kairShowcaseIds}=await import('../../scripts/render/kair/kair-stage2.mjs');
+ const {default:approved}=await import('../../content/kair/kair-stage2.json',{with:{type:'json'}});
+ assert.equal([...html.matchAll(/<h1[\s>]/g)].length,1);
+ assert.match(html,/data-kair data-kair-compact data-autoplay="false"/);
+ assert.deepEqual([...html.matchAll(/data-kair-slide[^>]+data-image="([^"]+)"/g)].map(m=>m[1]),
+  kairShowcaseIds.map(id=>`${basePath}/assets/${kairSlides.find(slide=>slide.id===id).original}`));
+ assert.equal(kairShowcaseIds.length,7);
+ assert.equal((technology.match(/data-kair-slide(?=[\s>])/g)||[]).length,23);
+ assert.doesNotMatch(technology,/data-kair-compact|kair-stage2\.css|kair-system\.css/);
+ assert.doesNotMatch(technology,/data-ka-station-plane|operator-workplace/);
+ assert.match(html,/data-ka-station-plane[\s\S]*?ka-station-display[\s\S]*?class="media-open"/);
+ assert.match(html,/operator-workplace-960\.webp/);
+ assert.doesNotMatch(html,/data-kair-(?:function-search|function-form|group-link|scope|pause|inspect|play-note)\b/);
+ const rows=[...html.matchAll(/data-kair-function data-function-id="([^"]+)" data-scope="([^"]+)" data-group="([^"]+)" data-source-codes="([^"]*)"/g)].map(m=>m.slice(1));
+ assert.deepEqual(rows,kairFunctions.map(f=>[f.id,f.scope,f.group,f.codes.join(' ')]));
+ assert.equal((html.match(/data-kair-hardware(?=[\s>])/g)||[]).length,8);
+ assert.match(html,/data-ka-graph role="img" aria-label="Схематичная иллюстрация экономического потенциала"/);
+ assert.doesNotMatch(html,/<figcaption>Схематичная иллюстрация|ka-hardware-note|Условные схемы типов приборов/);
+ assert.match(html,/Производство работает\. Вы развиваете бизнес\./);
+ for(const id of ['value','screens','logic','functions','process','scenarios','hardware','project'])assert.equal([...html.matchAll(new RegExp(`id="kair-${id}"`,'g'))].length,1,id);
+ for(const [,id] of html.matchAll(/aria-controls="((?:ka|kair)-(?:logic|process|case|scenario|functions)-[^"]+)"/g))assert.ok(html.includes(`id="${id}"`),id);
+ for(const slot of ['kair-overview','kair-logic-protection','kair-logic-memory','kair-process-separation','kair-process-washing','kair-water-circuits'])assert.ok(html.includes(`data-artwork-slot="${slot}"`));
+ assert.ok(html.includes('Стоки → очистка → бак возврата'));assert.ok(html.includes('Чистая вода из резервуара'));
+ const route=html.slice(html.indexOf('id="kair-process"'),html.indexOf('id="kair-screens"'));
+ assert.doesNotMatch(route,/<a\b/);
+ for(const map of approved.process)assert.ok(!route.includes(map.note));
+ for(const group of approved.functions){
+  assert.equal(html.split(`id="kair-functions-${group.id}"`).length,2,group.id);
+  assert.ok(html.includes(`<h4>Результат для предприятия</h4><p>${group.result}</p>`));
+ }
+ const functionCopy=[...html.matchAll(/<article class="ka-function-row"[^>]*>([\s\S]*?)<\/article>/g)].map(([,row])=>{
+  assert.equal((row.match(/<p\b/g)||[]).length,1);
+  return row.match(/<p class="ka-function-summary">([^<]+)<\/p>/)?.[1];
+ });
+ assert.deepEqual(functionCopy,approved.functions.flatMap(group=>group.items.map(item=>item.summary)));
+ assert.ok(html.includes(`${basePath}/assets/js/kair/kair-system.js?v=`));assert.ok(html.includes(`${basePath}/assets/css/pages/kair/kair-system.css?v=`));
+});
+test('Порядок разделов КАИР совпадает с меню, а преимущества представлены статичными карточками',async()=>{
+ const html=await readFile('dist/automation/index.html','utf8');
+ const {default:benefits}=await import('../../content/kair/kair-benefits.json',{with:{type:'json'}});
+ const expected=[
+  ['kair-value','Польза'],['kair-logic','Принцип работы'],['kair-scenarios','Сценарии'],
+  ['kair-process','Оборудование'],['kair-screens','Интерфейс'],['kair-functions','Функции'],
+  ['kair-hardware','Оснащение'],['kair-project','Эффективность'],
+ ];
+ const nav=html.match(/<nav class="ka-outline" data-kair-section-nav aria-label="Разделы страницы КАИР">([\s\S]*?)<\/nav>/);
+ assert.ok(nav);assert.equal((html.match(/data-kair-section-nav/g)||[]).length,1);
+ assert.ok(nav.index<html.indexOf('<section class="ka-hero '));
+ assert.deepEqual([...nav[1].matchAll(/<a href="#([^"]+)">([^<]+)<\/a>/g)].map(m=>m.slice(1)),expected);
+ const sections=[...html.matchAll(/<section class="ka-section\b[^"]*" id="([^"]+)" data-page-progress-label="([^"]+)">/g)];
+ assert.deepEqual(sections.map(m=>m.slice(1)),[...expected,['kair-contact','Обсуждение проекта']]);
+ const value=html.slice(sections[0].index,sections[1].index);
+ assert.ok(value.includes(`<h2>${benefits.title.replace('. ','.<br>')}</h2>`));
+ const cards=[...value.matchAll(/<article class="ka-value-card([^"]*)"><svg\b[^>]*>(.*?)<\/svg><h3>([^<]+)<\/h3><p>([^<]+)<\/p><\/article>/g)];
+ assert.deepEqual(cards.map(([,classes,,title,text])=>({title,text,accent:classes===' ka-value-accent'})),
+  benefits.cards.map(({title,text,accent})=>({title,text,accent})));
+ assert.doesNotMatch(value,/<a\b|<button\b|tabindex=|Посмотреть функции|(?:0[1-6]|↗)\s*<\//);
+ assert.ok(value.includes(`<div class="ka-value-hook"><h3>${benefits.hook}</h3><p>${benefits.hookText}</p></div>`));
+ const contact=html.slice(sections.at(-1).index,html.indexOf('</main>'));
+ assert.equal((contact.match(/data-project-request\b/g)||[]).length,1);
+ assert.match(contact,/>Оставить заявку</);
+ assert.match(contact,/class="ka-contact-screen-label">Демонстрационные данные</);
+ assert.match(contact,/Технологии работают на вашу прибыль\. Производство под контролем\./);
+ assert.doesNotMatch(contact,/<figcaption|ka-contact-meta|Концептуальная визуализация/);
+ assert.match(contact,/href="tel:\+\d+"/);
+ assert.match(contact,/href="mailto:info@era-cycle\.ru"/);
+ assert.doesNotMatch(contact.replace(/<[^>]*>/g,''),/Экономика проекта|98%|\+27%|[-−]32%/);
+ const ids=[...html.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);
+ assert.equal(new Set(ids).size,ids.length);
+ for(const [,id] of html.matchAll(/href="#(kair-[^"]+)"/g))assert.ok(ids.includes(id),id);
+ for(const route of ['technology','catalog/lines/separatsiya-01','catalog/lines/separatsiya-02','catalog/lines/separatsiya-03','catalog/lines/moyka-plenki']){
+  assert.doesNotMatch(await readFile(`dist/${route}/index.html`,'utf8'),/data-kair-section-nav|kair-system\.(css|js)\?v=/);
+ }
+});
+test('Отдельная страница ИИ удалена из меню и разделов, старые ссылки направляют к КАИР',async()=>{
+ const {sections}=await import('../../content/shared/site.mjs');
+ assert.ok(!sections.some(([path])=>path==='/ai'));
+ for(const route of new Set(routes)){
+  const html=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
+  assert.ok(!html.includes(`href="${basePath}/ai"`),route);
+  assert.ok(!html.includes('Искусственный интеллект'),route);
+ }
+ const legacy=await readFile('dist/ai/index.html','utf8');
+ assert.ok(legacy.includes(`http-equiv="refresh" content="0; url=${basePath}/automation"`));
+ assert.equal(legacy.match(/<link rel="canonical" href="([^"]+)">/)?.[1],`${canonicalOrigin}/automation/`);
+ assert.ok(legacy.includes(`${basePath}/assets/js/components/automation-redirect.js?v=`));
+ assert.ok(!legacy.includes('site-header'));
+});
+test('Пять основных направлений ведут к прежним страницам и сохраняют активный раздел',async()=>{
+ const {primaryLinks}=await import('../../content/shared/navigation.mjs');
+ assert.deepEqual(primaryLinks.map(link=>[link.label,link.href]),[['О проекте','/'],['Технология','/technology'],['Оборудование','/catalog'],['Экономика','/economics'],['КАИР','/automation']]);
+ const {navigationState}=await import('../../scripts/render/shared/navigation.mjs');
+ assert.equal(navigationState('/automation/?v=latest').section,'control');
+ assert.equal(navigationState('/media/?type=video').section,'all');
+ assert.equal(navigationState('/catalog/equipment/plenochnyy-flotator').section,'equipment');
+ assert.equal(navigationState('/contacts/sent').panelPath,'/contacts');
+});
+test('Заявки используют локальный POST на Рег.ру и безопасный предпросмотр на GitHub Pages',async()=>{
+ const {projectRequest,siteContacts}=await import('../../content/pages/contacts/contact.mjs');
+ assert.equal(siteContacts.email,'info@era-cycle.ru');
+ assert.equal(projectRequest.endpoint,'/api/request.php');
+ const html=await readFile('dist/contacts/index.html','utf8');
+ assert.ok(html.includes('method="post" enctype="multipart/form-data"'));
+ for(const field of ['Имя','email','Телефон','Компания','Интересует','Задача','Ссылки','Страница обращения','attachment[]','_honey'])assert.ok(html.includes(`name="${field}"`),field);
+ assert.match(html,/type="file" name="attachment\[\]"[^>]+multiple data-request-files/);
+ assert.doesNotMatch(html,/name="_(?:captcha|subject|next|template)"/);
+ const thankYou=await readFile('dist/contacts/sent/index.html','utf8');
+ if(previewMode){
+  assert.ok(html.includes('data-request-submit disabled')&&html.includes('data-request-preview'));
+  assert.ok(html.includes('href="https://era-cycle.ru/contacts/"')&&!html.includes('action="/api/request.php"'));
+  assert.ok(thankYou.includes('Предпросмотр заявки.'));
+  await assert.rejects(stat('dist/api/request.php'),{code:'ENOENT'});
+ }else{
+  assert.ok(html.includes('action="/api/request.php"')&&html.includes('name="Согласие" type="checkbox" value="1" required'));
+  assert.ok(html.includes('href="/privacy/"')&&!html.includes('data-request-preview'));
+  assert.ok(thankYou.includes('Почтовый сервер принял заявку к отправке.'));
+  assert.ok((await stat('dist/api/request.php')).isFile());
+  assert.ok((await stat('dist/data/cbr.json')).isFile());
+ }
+ for(const route of new Set(routes.filter(path=>!['/about','/ai','/company-details'].includes(path)))){
+  const page=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
+  assert.equal([...page.matchAll(/data-request-form(?=[\s>])/g)].length,1,route);
+  assert.ok(page.includes(`href="${basePath}/contacts#project-form"`),route);
+  assert.ok(!page.includes('mailto:info@era-cycle.ru?subject='),route);
+ }
+});
+test('Публичная сборка использует корпоративную почту и транспорт курсов по целевой среде',async()=>{
+ const legalRoutes=['dist/privacy/index.html','dist/privacy/consent/index.html','dist/privacy/cookies/index.html'].map(path=>resolve(path));
+ for(const entry of await readdir('dist',{recursive:true,withFileTypes:true})){
+  if(!entry.isFile()||!/[.](?:html|css|m?js|json|xml|txt)$/i.test(entry.name))continue;
+  const path=resolve(entry.parentPath,entry.name),data=await readFile(path,'utf8');
+  assert.doesNotMatch(data,/formsubmit\.co/iu,entry.name);
+  if(!legalRoutes.includes(path))assert.doesNotMatch(data,/edkom\.office(?:@|%40)mail\.ru/iu,entry.name);
+  if(!previewMode)assert.doesNotMatch(data,/eduyard13\.github\.io|\/Website_ERA\/|raw\.githubusercontent\.com\/Eduyard13/iu,entry.name);
+ }
+ const home=await readFile('dist/index.html','utf8');
+ assert.ok(home.includes(previewMode?'data-fx-feed="https://raw.githubusercontent.com/':'data-fx-feed="/data/cbr.json"'));
+ assert.ok(home.includes('mailto:info@era-cycle.ru'));
+});
+test('Контекст запросов переносится в форму без потери текста и без внедрения разметки',async()=>{
+ const {enhanceProjectRequests}=await import('../../scripts/render/pages/contact.mjs');
+ const topic='Линия № 02: "плёнка" & <сырьё> + детали';
+ const source=`<a class="button" href="mailto:info@era-cycle.ru?subject=${encodeURIComponent(topic)}">Обсудить</a><a href="mailto:info@era-cycle.ru">Почта</a>`;
+ const html=enhanceProjectRequests(source);
+ const link=new URL(html.match(/href="([^"]+)"/)[1],'https://site.test');
+ assert.equal(link.searchParams.get('topic'),topic);assert.equal(link.hash,'#project-form');
+ assert.ok(html.includes('data-project-request'));assert.ok(!html.includes('<сырьё>'));
+ assert.ok(html.includes('href="mailto:info@era-cycle.ru"'));
+ assert.ok(enhanceProjectRequests('<a href="#discuss">Обсудить</a>').includes('/contacts#project-form'));
+});
+test('Сухая стадия использует один рендер, три ссылки на линии и исходную визитку 02',async()=>{
+ const {drySeparationOverview:overview}=await import('../../content/pages/technology/technology-lines.mjs');
+ const {lines}=await import('../../content/equipment/catalog.mjs');
+ const {createHash}=await import('node:crypto');
+ const target=lines.find(line=>line.path===overview.linePath);
+ assert.equal(target.slug,'separatsiya-02');assert.ok(target.enabled);assert.equal(overview.document.pages,3);
+ const pdf=await readFile('dist/documents/'+overview.document.file);
+ assert.equal(pdf.subarray(0,4).toString(),'%PDF');assert.equal(pdf.length,4022808);
+ assert.equal(createHash('sha256').update(pdf).digest('hex'),'80876c22af16480aafa298b7a0630b26c2a88a9341d577867300a49e7b58a068');
+ const manifest=JSON.parse(await readFile('docs/audits/technology-line-card-assets.json','utf8'));
+ assert.equal(manifest.sourceSha256,overview.document.sha256);assert.equal(manifest.linePath,overview.linePath);
+ for(const item of manifest.images){const bytes=await readFile('dist/assets/'+item.file);assert.equal(createHash('sha256').update(bytes).digest('hex'),item.sha256,item.file);}
+ const html=await readFile('dist/technology/index.html','utf8');
+ for(const slug of ['separatsiya-01','separatsiya-02','separatsiya-03','moyka-plenki']){
+  assert.ok(html.includes(`href="${basePath}/catalog/lines/${slug}" data-technology-line="${slug}"`),slug);
+ }
+ assert.equal([...html.matchAll(/data-technology-line="/g)].length,4);
+ assert.equal([...html.matchAll(/class="tf-line-render"/g)].length,2);
+ assert.ok(html.includes('/assets/lines/separatsiya-01/catalog-cover.webp'));
+ assert.ok(html.includes('/assets/lines/moyka-plenki/catalog-cover-detailed.webp'));
+ assert.ok(html.includes('Результат сухой сепарации'));
+ assert.ok(!html.includes('281,87 кВт')&&!html.includes('catalog-comparison'));
+ assert.ok(html.includes('Исходное загрязнённое сырьё'));assert.ok(html.includes('Очищенный плёночный материал'));
+ assert.ok(html.includes(`href="${basePath}/documents/${overview.document.file}" download=`));
+});
+test('Гранулирование остаётся третьей стадией, а гранулятор входит в моечную комплектацию',async()=>{
+ const {washingConfigurations}=await import('../../content/pages/technology/technology-lines.mjs');
+ const {lines}=await import('../../content/equipment/catalog.mjs');
+ const html=await readFile('dist/technology/index.html','utf8');
+ const dry=html.indexOf('id="dry-separation"'),wash=html.indexOf('id="hot-washing"'),granulation=html.indexOf('id="granulation"');
+ assert.ok(dry>=0&&wash>dry&&granulation>wash);
+ assert.equal(washingConfigurations.length,2);
+ const scale=html.slice(granulation,html.indexOf('id="products"'));
+ for(const option of washingConfigurations)assert.ok(scale.includes(`data-washing-configuration="${option.id}"`));
+ assert.ok(scale.includes('1 гранулятор')&&scale.includes('2 гранулятора'));
+ assert.ok(scale.includes(washingConfigurations.find(option=>option.id==='existing-granulator').text));
+ assert.doesNotMatch(html,/Гранулятор в составе линии мойки/);
+ assert.ok(!lines.some(line=>/гранул/iu.test(line.title)));
+ assert.ok(!/href="[^"]*\/catalog\/lines\/[^\"]*granul/.test(html));
+ assert.ok(html.includes(`href="${basePath}/catalog/lines/moyka-plenki"`));
+ const home=await readFile('dist/index.html','utf8');assert.ok(!home.includes('technology-lines.css'));assert.ok(!home.includes('data-technology-line'));
+});

@@ -43,15 +43,15 @@ jobs:
           npm ci --omit=optional
           npm test
           npm run build
-          python scripts/package-regru.py --vendor-only
-          php test/regru-cbr.php
-          python test/regru-server.py
+          python scripts/deploy/package-regru.py --vendor-only
+          php test/deployment/regru-cbr.php
+          python test/deployment/regru-server.py
           python -m unittest discover -s test -p 'test_regru_incremental.py'
       - name: Prepare the reviewed patch without connecting to Reg.ru
         id: prepare-patch
         run: |
           set -euo pipefail
-          baseline=docs/regru/archive-0.47.0.json
+          baseline=docs/deployment/regru/archive-0.47.0.json
           flags=()
           state_ref=refs/heads/regru/live-state
           if [ -n "$(git ls-remote --heads origin "$state_ref")" ]; then
@@ -62,12 +62,12 @@ jobs:
           fi
           version=$(node -p "require('./package.json').version")
           output="$RUNNER_TEMP/era-regru-patch"
-          python scripts/regru_release.py prepare --base "$baseline" --output "$output" \
+          python scripts/deploy/regru_release.py prepare --base "$baseline" --output "$output" \
             --release "$version" --commit "$(git rev-parse HEAD)" "${flags[@]}"
-          cp scripts/regru_verify.php "$output/"
-          cp docs/regru/archive-0.47.0.json "$output/"
-          cp docs/ERA_REGRU_UPDATES.md docs/ERA_REGRU_CONNECT.md docs/ERA_PRIVACY_LAUNCH_CHECKLIST.md "$output/"
-          cp docs/ERA_PERSONAL_DATA_TEMPLATE.md docs/ERA_CONSENT_DRAFT.md "$output/"
+          cp scripts/deploy/regru_verify.php "$output/"
+          cp docs/deployment/regru/archive-0.47.0.json "$output/"
+          cp docs/deployment/ERA_REGRU_UPDATES.md docs/deployment/ERA_REGRU_CONNECT.md docs/instructions/ERA_PRIVACY_LAUNCH_CHECKLIST.md "$output/"
+          cp docs/instructions/ERA_PERSONAL_DATA_TEMPLATE.md docs/archive/ERA_CONSENT_DRAFT.md "$output/"
           printf 'patch=%s\n' "$output" >> "$GITHUB_OUTPUT"
           cat "$output/PATCH_MANIFEST.md" >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
@@ -149,8 +149,8 @@ jobs:
           SFTP_KEY: ${{ secrets.SFTP_KEY }}
           SFTP_KNOWN_HOSTS: ${{ secrets.SFTP_KNOWN_HOSTS }}
           REGRU_WEB_ROOT: ${{ secrets.REGRU_WEB_ROOT }}
-        run: python scripts/regru_sync.py "$OPERATION" "$APPROVED_INPUT" --receipt "$RUNNER_TEMP/era-live-manifest.json"
+        run: python scripts/deploy/regru_sync.py "$OPERATION" "$APPROVED_INPUT" --receipt "$RUNNER_TEMP/era-live-manifest.json"
       - name: Record the verified release for the next dry-run
         env:
           GH_TOKEN: ${{ github.token }}
-        run: bash scripts/regru_record_state.sh "$RUNNER_TEMP/era-live-manifest.json"
+        run: bash scripts/deploy/regru_record_state.sh "$RUNNER_TEMP/era-live-manifest.json"
