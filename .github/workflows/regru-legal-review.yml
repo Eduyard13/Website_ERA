@@ -37,16 +37,16 @@ jobs:
           command -v pdftotext >/dev/null || { sudo apt-get update && sudo apt-get install -y poppler-utils; }
           npm ci --omit=optional
           npm test
-          python test/regru-legal-content.py
-          python scripts/package-regru.py --vendor-only
-          php test/regru-cbr.php
-          python test/regru-server.py
-          python -m unittest discover -s test -p 'test_regru_incremental.py'
+          python test/deployment/regru-legal-content.py
+          python scripts/deploy/package-regru.py --vendor-only
+          php test/deployment/regru-cbr.php
+          python test/deployment/regru-server.py
+          python -m unittest discover -s test/deployment -p 'test_*.py'
       - name: Build and verify the two manual installation archives
         run: |
           output="$RUNNER_TEMP/era-0481"
-          python scripts/regru_legal_0481.py --output "$output" --commit "$GITHUB_SHA"
-          cp docs/ERA_0481_TEST_REPORT.md "$output/"
+          python scripts/deploy/regru_legal_0481.py --output "$output" --commit "$GITHUB_SHA"
+          cp docs/deployment/ERA_0481_TEST_REPORT.md "$output/"
           (
             cd "$output"
             sha256sum ERA_0481_TEST_REPORT.md >> SHA256SUMS

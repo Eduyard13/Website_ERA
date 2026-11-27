@@ -2,7 +2,7 @@ name: ERA Reg.ru Prepare and approved deploy
 
 on:
   push:
-    branches: [deploy/regru, regru/incremental-privacy]
+    branches: [deploy/regru, regru/incremental-privacy, architecture/era-2-0]
     tags: ['regru-prepare-*', 'regru-deploy-*', 'regru-rollback-*']
   workflow_dispatch:
 
@@ -14,6 +14,7 @@ jobs:
     if: >-
       github.repository == 'Eduyard13/Website_ERA' &&
       (github.ref == 'refs/heads/deploy/regru' || github.ref == 'refs/heads/regru/incremental-privacy' ||
+       github.ref == 'refs/heads/architecture/era-2-0' ||
        (github.actor == 'Eduyard13' && startsWith(github.ref, 'refs/tags/regru-prepare-')))
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -43,15 +44,16 @@ jobs:
           npm ci --omit=optional
           npm test
           npm run build
-          python scripts/package-regru.py --vendor-only
-          php test/regru-cbr.php
-          python test/regru-server.py
-          python -m unittest discover -s test -p 'test_regru_incremental.py'
+          npm run validate:structure -- --dist dist
+          python scripts/deploy/package-regru.py --vendor-only
+          php test/deployment/regru-cbr.php
+          python test/deployment/regru-server.py
+          python -m unittest discover -s test/deployment -p 'test_*.py'
       - name: Prepare the reviewed patch without connecting to Reg.ru
         id: prepare-patch
         run: |
           set -euo pipefail
-          baseline=docs/regru/archive-0.47.0.json
+          baseline=docs/deployment/regru/archive-0.47.0.json
           flags=()
           state_ref=refs/heads/regru/live-state
           if [ -n "$(git ls-remote --heads origin "$state_ref")" ]; then
@@ -62,12 +64,12 @@ jobs:
           fi
           version=$(node -p "require('./package.json').version")
           output="$RUNNER_TEMP/era-regru-patch"
-          python scripts/regru_release.py prepare --base "$baseline" --output "$output" \
+          python scripts/deploy/regru_release.py prepare --base "$baseline" --output "$output" \
             --release "$version" --commit "$(git rev-parse HEAD)" "${flags[@]}"
-          cp scripts/regru_verify.php "$output/"
-          cp docs/regru/archive-0.47.0.json "$output/"
-          cp docs/ERA_REGRU_UPDATES.md docs/ERA_REGRU_CONNECT.md docs/ERA_PRIVACY_LAUNCH_CHECKLIST.md "$output/"
-          cp docs/ERA_PERSONAL_DATA_TEMPLATE.md docs/ERA_CONSENT_DRAFT.md "$output/"
+          cp scripts/deploy/regru_verify.php "$output/"
+          cp docs/deployment/regru/archive-0.47.0.json "$output/"
+          cp docs/deployment/ERA_REGRU_UPDATES.md docs/deployment/ERA_REGRU_CONNECT.md docs/instructions/ERA_PRIVACY_LAUNCH_CHECKLIST.md "$output/"
+          cp docs/instructions/ERA_PERSONAL_DATA_TEMPLATE.md docs/archive/ERA_CONSENT_DRAFT.md "$output/"
           printf 'patch=%s\n' "$output" >> "$GITHUB_OUTPUT"
           cat "$output/PATCH_MANIFEST.md" >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
@@ -75,6 +77,20 @@ jobs:
           name: era-regru-patch
           path: ${{ steps.prepare-patch.outputs.patch }}
           retention-days: 14
+          compression-level: 0
+          if-no-files-found: error
+      - name: Package the public build for architecture review
+        if: github.ref == 'refs/heads/architecture/era-2-0'
+        run: |
+          output="$RUNNER_TEMP/era-architecture"
+          python scripts/deploy/package-regru.py --public-only --output "$output"
+          cd "$output"
+          sha256sum ERA_SITE_PUBLIC.zip RELEASE_MANIFEST.json > SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        if: github.ref == 'refs/heads/architecture/era-2-0'
+        with:
+          name: era-architecture-reviewed-public
+          path: ${{ runner.temp }}/era-architecture
           compression-level: 0
           if-no-files-found: error
 
@@ -149,8 +165,8 @@ jobs:
           SFTP_KEY: ${{ secrets.SFTP_KEY }}
           SFTP_KNOWN_HOSTS: ${{ secrets.SFTP_KNOWN_HOSTS }}
           REGRU_WEB_ROOT: ${{ secrets.REGRU_WEB_ROOT }}
-        run: python scripts/regru_sync.py "$OPERATION" "$APPROVED_INPUT" --receipt "$RUNNER_TEMP/era-live-manifest.json"
+        run: python scripts/deploy/regru_sync.py "$OPERATION" "$APPROVED_INPUT" --receipt "$RUNNER_TEMP/era-live-manifest.json"
       - name: Record the verified release for the next dry-run
         env:
           GH_TOKEN: ${{ github.token }}
-        run: bash scripts/regru_record_state.sh "$RUNNER_TEMP/era-live-manifest.json"
+        run: bash scripts/deploy/regru_record_state.sh "$RUNNER_TEMP/era-live-manifest.json"

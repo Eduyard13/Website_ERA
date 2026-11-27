@@ -1,0 +1,66 @@
+import {quickParameters,schemeReading} from './equipment-reading.mjs';
+import {withCalculatedPower} from '../lines/shared/power.mjs';
+import {equipmentDiagrams} from './equipment-diagrams.mjs';
+import {catalogueIllustrations} from './catalogue-illustrations.mjs';
+import {equipmentMarketing} from './equipment-marketing.mjs';
+import {equipmentDetails} from './equipment-details.mjs';
+import {documentManifest} from '../documents/document-manifest.mjs';
+import {equipmentAssets} from './equipment-media.mjs';
+import {presentationMedia} from '../pages/presentation/presentation.mjs';
+import {customerPhotos} from '../pages/contacts/customer-photos.mjs';
+import {equipmentVideos} from './equipment-videos.mjs';
+import {filmSeparation} from '../lines/base/film-separation.mjs';
+import {miniFilmSeparation} from '../lines/shared/mini-film-separation.mjs';
+import {hotFilmWashing} from '../lines/hot-wash/hot-film-washing.mjs';
+import {separation03} from '../lines/premium/separation-03.mjs';
+import {dryLineNames} from '../lines/shared/line-names.mjs';
+export const categories=['Подготовка и подача','Сухая сепарация и очистка','Измельчение и мойка','Обезвоживание','Очистка рабочей жидкости','Фасовка'];
+const rows=[
+ ['predvaritelnyy-izmelchitel','Предварительный измельчитель',0,'Растюковка, разрыв и крупное измельчение перед дальнейшей переработкой.'],
+ ['predvaritelnyy-raspushitel','Предварительный распушитель',0,'Раскрытие уплотнённых фрагментов перед сепарацией.'],
+ ['ballisticheskiy-separator','Баллистический сепаратор',1,'Разделение подготовленного потока на фракции.'],
+ ['rotornyy-raspushitel','Роторный распушитель',1,'Раскрытие плёнки и сухая очистка.'],
+ ['bunker-nakopitel','Бункер-накопитель',0,'Запас материала и согласование подачи.'],
+ ['vertikalno-rotornyy-izmelchitel','Вертикально-роторный измельчитель',2,'Измельчение с промывкой в рабочей жидкости.'],
+ ['plenochnyy-flotator','Плёночный флотатор',2,'Мойка и разделение плёнки с тонущими загрязнениями.'],
+ ['rotornaya-tsentrifuga','Роторная центрифуга',3,'Очистка и механическое обезвоживание.'],
+ ['vintovoy-press','Винтовой отжимной пресс',3,'Механический отжим подготовленной влажной плёнки.'],
+ ['kapsulyator','Капсулятор',3,'Механическое обезвоживание вымытой полиэтиленовой плёнки.'],
+ ['ochistka-stokov','Комплекс очистки стоков',4,'Вспомогательный комплекс очистки рабочей жидкости.'],
+ ['rama-napolnitel','Рама-наполнитель для биг-бэгов',5,'Организация наполнения и смены тары.']
+];
+export const nodes=rows.map(([slug,title,category])=>{
+ const details=withCalculatedPower(slug,equipmentDetails[slug]);
+ const doc=documentManifest.find(d=>d.slug===slug&&d.category==='technical');
+ if(!details||!doc)throw new Error('Missing equipment data: '+slug);
+ const hero=equipmentAssets.find(m=>m.slug===slug&&m.id===slug+'-hero');
+ return {slug,title,category:categories[category],...details,status:'source-checked',quickSpecs:quickParameters(slug,details.specs),reading:schemeReading[slug],
+  image:details.image||'equipment/'+slug+'/hero',
+  cardImage:details.cardImage||'equipment/'+slug+'/card',
+  catalogueIllustration:catalogueIllustrations[slug],cardFile:catalogueIllustrations[slug].file,
+  imageType:details.imageType||hero?.type,
+  imageAlt:hero?.title||'Визуализация предварительного измельчителя',
+  documents:documentManifest.filter(d=>d.slug===slug),diagram:equipmentDiagrams[slug]?{...equipmentDiagrams[slug],title}:undefined,marketing:equipmentMarketing[slug],
+  media:[],
+  scheme:schemeReading[slug].functional?'equipment/'+slug+'/working-principle.svg':details.scheme||'equipment/'+slug+'/scheme.webp',
+  schemeCaption:details.schemeCaption||equipmentAssets.find(m=>m.id===slug+'-scheme')?.title,
+  path:'/catalog/equipment/'+slug};
+});
+export const lines=[
+ {slug:'separatsiya-01',number:'01',group:'Сепарация',enabled:true},
+ {slug:'separatsiya-02',number:'02',group:'Сепарация',enabled:true},
+ {slug:'separatsiya-03',number:'03',group:'Сепарация',enabled:true},
+ {slug:'moyka-plenki',title:'Линия горячей мойки плёнок и пакетов',group:'Мойка',enabled:true}
+].map(l=>({...l,path:'/catalog/lines/'+l.slug,status:'draft',equipment:[],optionalEquipment:[],documents:[],...(l.slug==='separatsiya-02'?filmSeparation:l.slug==='separatsiya-01'?miniFilmSeparation:l.slug==='moyka-plenki'?hotFilmWashing:l.slug==='separatsiya-03'?separation03:{}),...dryLineNames[l.slug]}));
+const equipmentMedia=[
+ {id:'assembly',title:'Сборка узла со стороны привода',type:'photo',topic:'Сборка',file:'assembly.webp'},
+ {id:'mechanism',title:'Сборка механизма подвижной щеки',type:'photo',topic:'Сборка',file:'mechanism.webp'},
+ {id:'delivery',title:'Готовый узел на транспортной платформе',type:'photo',topic:'Сборка',file:'delivery.webp'},
+ {id:'scheme',title:'Конструктивная схема измельчителя',type:'scheme',topic:'Схемы и визуализации',file:'scheme.webp'},
+ {id:'shredder',title:'Визуализация базового узла',type:'visualization',topic:'Схемы и визуализации',file:'shredder.webp'}
+].map(m=>({...m,product:nodes[0].path,productTitle:nodes[0].title,source:'Техническое описание предварительного измельчителя'}));
+const photographedSlugs=new Set(customerPhotos.map(m=>m.slug));
+const sourceMedia=[...equipmentMedia,...presentationMedia,...equipmentAssets.map(m=>({...m,product:nodes.find(n=>n.slug===m.slug).path,productTitle:nodes.find(n=>n.slug===m.slug).title,source:documentManifest.find(d=>d.slug===m.slug&&d.category==='technical').title}))];
+export const media=[...customerPhotos.map(m=>({...m,product:nodes.find(n=>n.slug===m.slug).path,productTitle:nodes.find(n=>n.slug===m.slug).title})),...equipmentVideos.filter(m=>m.ready).map(m=>({...m,product:nodes.find(n=>n.slug===m.slug).path,productTitle:nodes.find(n=>n.slug===m.slug).title})),...sourceMedia.filter(m=>m.type!=='photo'||!nodes.some(n=>n.path===m.product&&photographedSlugs.has(n.slug)))];
+for(const n of nodes)n.media=media.filter(m=>m.product===n.path).map(m=>m.id);
+export const mediaType={frame:'Кадр из видео',photo:'Фотография',video:'Видео',scheme:'Схема',visualization:'Визуализация'};
