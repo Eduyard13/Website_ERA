@@ -58,6 +58,13 @@ export function contactPage({basePath=''}={}){
 }
 
 export function requestSentPage(){
- const status=previewMode?`<h1>Предпросмотр заявки.</h1><p class="lead">Контакты ЭРА доступны на <a href="${productionOrigin}/contacts/">era-cycle.ru</a>.</p>`:'<h1>Спасибо за обращение.</h1><p class="lead">Почтовый сервер принял заявку к отправке. Мы свяжемся с вами по указанным контактам, чтобы обсудить задачу.</p>';
- return `<section class="section request-sent"><p class="eyebrow">СВЯЗЬ С ЭРА</p>${status}<p>Если хотите дополнить материалы, напишите на <a href="mailto:${siteContacts.email}">${siteContacts.email}</a>.</p><div class="actions"><a class="button" href="/">Вернуться к проекту ${arrow}</a><a class="button secondary" href="/catalog">Каталог оборудования ${arrow}</a></div></section>`;
+ const status=previewMode?'ПРЕДПРОСМОТР ЗАЯВКИ':'ЗАЯВКА УСПЕШНО ОТПРАВЛЕНА';
+ const title=previewMode?'Предпросмотр заявки.':'Спасибо за доверие к ЭРА.';
+ const description=previewMode?`Контакты ЭРА доступны на <a href="${productionOrigin}/contacts/">era-cycle.ru</a>.`:'Наши специалисты ознакомятся с вашим запросом и свяжутся с вами для обсуждения деталей проекта.';
+ return `<section class="section request-sent" aria-labelledby="request-sent-title">
+  <svg class="request-sent-mark" viewBox="0 0 100 100" width="96" height="96" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="50" cy="50" r="48" opacity=".4"/><circle cx="50" cy="50" r="39" stroke-width="1.6"/><path d="m33 50 13 13 25-27" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <p class="eyebrow">${status}</p><h1 id="request-sent-title">${title}</h1><p class="lead">${description}</p>
+  <p class="request-sent-contact">Дополнительные материалы можно направить на<a href="mailto:${siteContacts.email}">${siteContacts.email}</a></p>
+  <div class="actions"><a class="button" href="/">На главную ${arrow}</a><a class="button secondary" href="/catalog">Каталог оборудования ${arrow}</a></div>
+ </section>`;
 }

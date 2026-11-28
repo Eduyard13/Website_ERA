@@ -4,8 +4,9 @@ import {posix} from 'node:path';
 import {init,parse} from 'es-module-lexer';
 import CleanCSS from 'clean-css';
 import registry from '../../content/shared/browser-assets.json' with {type:'json'};
+import project from '../../package.json' with {type:'json'};
 
-export const assetBaseVersion='0.47.0';
+export const assetBaseVersion=project.version;
 const publicRoot=new URL('../../public/',import.meta.url);
 const projectRoot=new URL('../../',import.meta.url);
 const paths=new Map(Object.entries(registry.paths));

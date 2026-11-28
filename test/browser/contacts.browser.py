@@ -27,8 +27,8 @@ with sync_playwright() as p:
    page.locator('[data-cookie-choice=allow]').click()
   assert page.locator('.cp-map iframe').count()==0
   assert page.locator('[data-map-external]').count()==2
-  assert page.locator('a.cp-video-channel').count()==1
-  assert page.locator('div.cp-video-channel.is-pending').count()==1
+  assert page.locator('a.cp-video-channel[target=_blank][rel="noopener noreferrer"]').count()==2
+  assert page.locator('.cp-video-channel.is-pending').count()==0
   assert page.locator('.cp-channel-badge img').get_attribute('src').endswith('/assets/brands/vk-video.svg')
   assert page.locator('.footer-video-channel img').get_attribute('src').endswith('/assets/brands/vk-video.svg')
   assert page.locator('[name="email"]').evaluate('i=>parseFloat(getComputedStyle(i).fontSize)>=16')

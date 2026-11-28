@@ -18,6 +18,7 @@ with sync_playwright() as p:
   page.goto(base+path);page.wait_for_selector('#quick-contact:not([hidden])')
  def full_images():
   page.locator('img').evaluate_all("images=>Promise.all(images.map(image=>{image.loading='eager';return image.decode().catch(()=>{});} ))")
+ video_urls=[('youtube','https://www.youtube.com/channel/UCIPobqUb8oTZkSb1Y9ubtww'),('vkVideo','https://vkvideo.ru/@club243794064')]
  for width in widths:
   page.set_viewport_size({'width':width,'height':960 if width>=768 else 844})
   for path,count in [('/about-us/',8),('/contacts/',5)]:
@@ -29,8 +30,7 @@ with sync_playwright() as p:
    assert page.locator('main img').evaluate_all('images=>images.every(image=>image.complete&&image.naturalWidth>0&&(image.alt.length>0||image.getAttribute("aria-hidden")==="true"))')
    assert page.locator('main .au-team-card,main .cp-form-card,main .cp-map,main .cp-video-channel').evaluate_all('items=>items.every(item=>item.scrollWidth<=item.clientWidth+1)'),(width,path)
    assert page.locator('.footer-video-channel').count()==2
-   assert page.locator('a.footer-video-channel').count()==1
-   assert page.locator('a.footer-video-channel').get_attribute('href')=='https://www.youtube.com/@RASVET-LLC'
+   assert page.locator('a.footer-video-channel').evaluate_all('links=>links.map(a=>a.href)')==[url for _,url in video_urls]
    assert not page.locator('#site-footer').inner_text().find('Реквизиты')>=0
    if path=='/about-us/':
     assert page.locator('[data-team-member]').count()==3
@@ -104,12 +104,13 @@ with sync_playwright() as p:
 
  # External navigation is intercepted; no messages or requests to the accounts.
  messenger_urls=[('telegram','https://t.me/Eduyard13'),('max','https://max.ru/u/f9LHodD0cOLJG4FZs3gHL3lpPmwQ0qEBZoRlKgEs72lHGd9FC0S8W-9NfpA'),('whatsapp','https://wa.me/79032813535')]
- for url in ['https://www.youtube.com/@RASVET-LLC',*[url for _,url in messenger_urls]]:
+ for _,url in video_urls+messenger_urls:
   page.context.route(url,lambda route:route.fulfill(status=200,content_type='text/html',body='<title>Navigation target verified</title>'))
  for width in [390,1440]:
   page.set_viewport_size({'width':width,'height':960})
   load('/contacts/')
-  targets=[('a.cp-video-channel','https://www.youtube.com/@RASVET-LLC'),*[(f'.cp-messengers a[data-channel={channel}]',url) for channel,url in messenger_urls],('a.footer-video-channel','https://www.youtube.com/@RASVET-LLC')]
+  targets=[(f'{scope} a[data-video-channel={channel}]',url) for scope in ('#official-videos','footer') for channel,url in video_urls]
+  targets.extend((f'.cp-messengers a[data-channel={channel}]',url) for channel,url in messenger_urls)
   for selector,url in targets:
    with page.expect_popup() as event:page.locator(selector).click()
    popup=event.value;popup.wait_for_load_state('domcontentloaded');assert popup.url==url;popup.close()
@@ -118,7 +119,7 @@ with sync_playwright() as p:
    with page.expect_popup() as event:page.locator(f'#quick-contact-panel a[data-channel={channel}]').click()
    popup=event.value;popup.wait_for_load_state('domcontentloaded');assert popup.url==url;popup.close()
    assert page.locator('#quick-contact-panel').is_hidden()
-  print(f'YouTube, Telegram, MAX and WhatsApp navigation from contacts, footer and quick contact: {width} OK',flush=True)
+  print(f'YouTube, VK Video, Telegram, MAX and WhatsApp navigation from contacts, footer and quick contact: {width} OK',flush=True)
 
  page.set_viewport_size({'width':1440,'height':1000})
  for route in ['/','/technology/','/automation/','/economics/','/catalog/','/catalog/equipment/','/catalog/lines/','/media/','/documents/','/about-us/','/contacts/']:

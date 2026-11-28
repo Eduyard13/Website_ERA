@@ -1,22 +1,68 @@
-import {categories,lines,nodes} from '../../../content/equipment/catalog.mjs';
+import {categories,lines} from '../../../content/equipment/catalog.mjs';
 import {lineMetrics} from '../../../content/lines/base/film-separation.mjs';
 import {separation03Specification,separation03Staff} from '../../../content/lines/premium/separation-03.mjs';
 import {dryFilmOutputLabels,formatLineNumber,lineMetric,linePowerTotals} from '../../../content/lines/shared/line-engineering.mjs';
 import {linePlacement} from '../../../content/lines/shared/line-placement.mjs';
 
+import lineCatalogueCovers from '../../../content/equipment/line-catalogue-covers.json' with {type:'json'};
+
+const lineCardCopy={
+ 'separatsiya-01':{features:['Один плёночный поток']},
+ 'separatsiya-02':{
+  title:'Линия сухой сепарации плёнок с сортировкой и затюковкой',
+  features:['Закрытый сортировочный бокс','Автоматизированный пресс'],
+ },
+ 'separatsiya-03':{
+  description:'Расширенная комплектация с роторной сушильной установкой',
+  features:['Роторная сушка плёнки','Закрытый сортировочный бокс'],
+ },
+ 'moyka-plenki':{
+  title:'Линия горячей мойки и грануляции плёнок и пакетов',
+  features:['Три вида готовой продукции','Грануляция включена'],
+ },
+};
+
+function premiumCardMetrics(line){
+ return [
+  lineMetric(line,['Входной поток'],'кг/ч'),
+  lineMetric(line,['Выход очищенной плёнки'],'кг/ч'),
+  lineMetric(line,['Установленная мощность'],'кВт'),
+  {...lineMetric(line,['Расчётная потребляемая мощность'],'кВт'),label:'Потребляемая мощность',note:'Расчётная, 70% от установленной'},
+  {label:'Рабочий персонал',value:separation03Staff.primary,unit:'чел./смена'},
+  lineMetric(line,['Остаточная влажность после сушки'],'%'),
+ ];
+}
+
+export const lineCard=(l,index)=>{
+ const attributes=`data-line data-line-id="${l.slug}" data-group="${l.group}" aria-labelledby="line-${l.slug}-title"`;
+ if(l.enabled&&l.status==='source-checked'){
+  const {file,smallFile,width,height,smallWidth,sha256,smallSha256}=lineCatalogueCovers[l.slug];
+  const cover=`/assets/${file}?v=${sha256.slice(0,12)}`;
+  const smallCover=`/assets/${smallFile}?v=${smallSha256.slice(0,12)}`;
+  const {
+   title=l.cardTitle,description=l.cardDescription,features=[l.cardFeature],
+  }=lineCardCopy[l.slug]||{};
+  const metrics=l.slug==='separatsiya-03'?premiumCardMetrics(l):l.cardMetrics;
+  return `<a class="line-card line-card--complete${l.slug==='separatsiya-01'?' line-card--mini':''}" ${attributes} href="${l.path}"><span class="line-card-cover"><img src="${cover}" srcset="${smallCover} ${smallWidth}w, ${cover} ${width}w" sizes="(min-width:1344px) 628px, (min-width:768px) calc((100vw - 88px) / 2), calc(100vw - 40px)" width="${width}" height="${height}" alt="${l.cardImageAlt||l.title}" ${index===0?'fetchpriority="high"':'loading="lazy"'} decoding="async"></span><div class="line-card-content"><span class="eyebrow">${l.slug==='moyka-plenki'?'ГОРЯЧАЯ МОЙКА':l.tier} / ГОТОВАЯ ЛИНИЯ</span><h3 id="line-${l.slug}-title">${title}</h3><p class="line-card-subtitle">${description}</p><div class="line-card-features">${features.map(feature=>`<span class="line-card-feature">${feature}</span>`).join('')}</div><dl class="line-card-metrics">${metrics.map(m=>`<div${m.text?' class="line-card-metric--text"':''}><dt>${m.label}</dt><dd>${m.value}<small>${m.unit}</small></dd>${m.note?`<p>${m.note}</p>`:''}</div>`).join('')}</dl><span class="card-action">Подробнее о линии <span aria-hidden="true">↗</span></span></div></a>`;
+ }
+ const reserved=l.number==='01';
+ return `<article class="line-card line-card--draft${reserved?' line-card--reserved':''}" ${attributes}>${reserved?'<div class="line-card-placeholder" aria-hidden="true"><span>01</span></div>':''}<div class="line-card-draft-content"><span class="eyebrow">${l.number?l.tier:'ГОРЯЧАЯ МОЙКА'}</span><h3 id="line-${l.slug}-title">${l.title}</h3>${l.cardDescription?`<p class="line-card-subtitle">${l.cardDescription}</p>`:''}<span class="status">В разработке</span></div></article>`;
+};
+
 const escape=value=>String(value).replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;').replaceAll('>','&gt;');
 const branches=[['lines','Линии и комплексы','/catalog/lines'],['equipment','Отдельные узлы','/catalog/equipment']];
-export function catalogBranchNav(active){
- return `<nav class="catalog-branch-nav catalog-branch-nav--${active}" aria-label="Разделы каталога"><a class="catalog-branch-back" href="/catalog/">← Весь каталог</a><div class="catalog-branch-links">${branches.map(([id,label,href])=>id===active?`<span aria-current="page">${label}</span>`:`<a href="${href}/">${label}</a>`).join('')}</div></nav>`;
-}
 const categoryLabels={'Сухая сепарация и очистка':'Сухая сепарация','Очистка рабочей жидкости':'Очистка стоков'};
-const quickFilters=(name,label,all,values,labels={})=>`<div class="catalog-quick-filters" role="group" aria-label="${label}" data-quick-filter="${name}" hidden>${['',...values].map(value=>`<button type="button" data-filter-value="${escape(value)}" aria-pressed="${!value}">${escape(value?labels[value]||value:all)}</button>`).join('')}</div>`;
-export function equipmentFilters(){
- return `<form class="filters catalog-branch-filters" id="catalog-filters" role="search"><div class="catalog-search-row"><label class="catalog-search">Найти оборудование<input type="search" name="q" placeholder="Название или назначение" disabled></label><label class="catalog-material">Сырьё<select name="material" disabled><option value="">Все виды сырья</option>${[...new Set(nodes.flatMap(n=>n.materials))].map(value=>`<option>${escape(value)}</option>`).join('')}</select></label><button type="reset" disabled>Сбросить</button></div><label data-native-filter="category">Операция<select name="category" disabled><option value="">Все узлы</option>${categories.map(value=>`<option>${escape(value)}</option>`).join('')}</select></label>${quickFilters('category','Производственная задача','Все узлы',categories,categoryLabels)}</form>`;
-}
-export function lineFilters(){
- const groups=[...new Set(lines.map(line=>line.group))];
- return `<form class="filters catalog-branch-filters catalog-branch-filters--lines" id="line-filters"><label data-native-filter="group">Направление<select name="group" disabled><option value="">Все линии</option>${groups.map(value=>`<option>${escape(value)}</option>`).join('')}</select></label>${quickFilters('group','Направление линии','Все линии',groups)}<button type="button" data-line-reset disabled>Сбросить</button></form>`;
+const groupLabels={'Сепарация':'Сухая сепарация','Мойка':'Горячая мойка'};
+export function catalogBranchNav(active){
+ const equipment=active==='equipment';
+ const key=equipment?'category':'group';
+ const values=equipment?categories:[...new Set(lines.map(line=>line.group))];
+ const labels=equipment?categoryLabels:groupLabels;
+ const all=equipment?'Все узлы':'Все линии';
+ return `<nav class="catalog-branch-nav catalog-branch-nav--${active}" id="${equipment?'catalog-filters':'line-filters'}" aria-label="Навигация каталога">
+  <div class="catalog-branch-nav-main"><a class="catalog-branch-back" href="/catalog/">← Весь каталог</a><div class="catalog-branch-links">${branches.map(([id,label,href])=>`<a href="${href}/"${id===active?' aria-current="page"':''}>${label}</a>`).join('')}</div></div>
+  <div class="catalog-quick-filters" role="group" aria-label="${equipment?'Категории узлов':'Категории линий'}" data-quick-filter="${key}">${['',...values].map(value=>`<button type="button" data-filter-value="${escape(value)}" aria-pressed="${!value}" disabled>${escape(value?labels[value]||value:all)}</button>`).join('')}</div>
+ </nav>`;
 }
 
 const comparisonLines=[

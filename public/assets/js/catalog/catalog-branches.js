@@ -1,60 +1,45 @@
-import {readFilterState,filterUrl,matchesEquipment} from './catalog-filter-model.js';
+import {readFilterState,filterUrl} from './catalog-filter-model.js';
 
-const form=document.querySelector('#catalog-filters, #line-filters');
-if(form){
- const equipment=form.id==='catalog-filters';
- const keys=equipment?['q','category','material']:['group'];
- const controls=Object.fromEntries(keys.map(key=>[key,form.elements.namedItem(key)]));
+const nav=document.querySelector('.catalog-branch-nav');
+if(nav){
+ const filter=nav.querySelector('[data-quick-filter]');
+ const key=filter.dataset.quickFilter;
+ const equipment=key==='category';
  const cards=[...document.querySelectorAll(equipment?'[data-node]':'[data-line]')];
  const result=document.getElementById(equipment?'catalog-result':'line-result');
  const empty=document.getElementById('catalog-empty');
  const comparison=document.querySelector('[data-line-comparison]');
- if(keys.every(key=>controls[key])&&cards.length&&result&&(!equipment||empty)){
-  const allowed=Object.fromEntries(keys.map(key=>[key,key==='q'?null:[...controls[key].options].map(option=>option.value)]));
-  const enhanced=[];
-  for(const key of equipment?['category']:['group']){
-   const group=form.querySelector(`[data-quick-filter="${key}"]`);
-   const label=form.querySelector(`[data-native-filter="${key}"]`);
-   const buttons=group?[...group.querySelectorAll('button[data-filter-value]')]:[];
-   // A missing or stale button group leaves the working native select visible.
-   if(group&&label&&buttons.length===allowed[key].length&&new Set(buttons.map(button=>button.dataset.filterValue)).size===buttons.length&&buttons.every(button=>allowed[key].includes(button.dataset.filterValue))){
-    enhanced.push({key,group,label,buttons});
-   }
+ const buttons=[...filter.querySelectorAll('[data-filter-value]')];
+ const allowed=buttons.map(button=>button.dataset.filterValue);
+ const apply=value=>{
+  let count=0;
+  for(const card of cards){
+   card.hidden=Boolean(value)&&card.dataset[key]!==value;
+   if(!card.hidden)count++;
   }
-  const apply=()=>{
-   const state=Object.fromEntries(keys.map(key=>[key,controls[key].value.trim()]));
-   let count=0;
-   for(const card of cards){
-    card.hidden=equipment?!matchesEquipment(card.dataset,state):!!state.group&&card.dataset.group!==state.group;
-    if(!card.hidden)count++;
-   }
-   for(const {key,buttons} of enhanced)for(const button of buttons)button.setAttribute('aria-pressed',String(button.dataset.filterValue===state[key]));
-   result.textContent=equipment?`Найдено: ${count} из ${cards.length} узлов`:`Комплектаций: ${count}`;
-   if(empty)empty.hidden=count>0;
-   if(comparison)comparison.hidden=!!state.group&&state.group!=='Сепарация';
-   const next=filterUrl(location.href,equipment?state:{...state,optional:''});
-   if(next.href!==location.href)history.replaceState(history.state,'',next);
-  };
-  const restore=()=>{
-   const state=readFilterState(new URL(location.href),allowed);
-   for(const key of keys)controls[key].value=state[key];
-   apply();
-  };
-  form.addEventListener('submit',event=>event.preventDefault());
-  form.addEventListener('input',apply);
-  form.addEventListener('change',apply);
-  form.addEventListener('reset',event=>{
-   event.preventDefault();
-   for(const key of keys)controls[key].value='';
-   apply();
-  });
-  form.querySelector('[data-line-reset]')?.addEventListener('click',()=>{controls.group.value='';apply();});
-  for(const {key,buttons} of enhanced)for(const button of buttons)button.addEventListener('click',()=>{controls[key].value=button.dataset.filterValue;apply();});
-  restore();
-  for(const control of form.querySelectorAll('[disabled]'))control.disabled=false;
-  for(const {group,label} of enhanced){label.hidden=true;group.hidden=false;}
-  form.dataset.catalogReady='true';
-  window.addEventListener('pageshow',restore);
-  window.addEventListener('popstate',restore);
+  for(const button of buttons)button.setAttribute('aria-pressed',String(button.dataset.filterValue===value));
+  const active=buttons.find(button=>button.dataset.filterValue===value);
+  if(active&&filter.scrollWidth>filter.clientWidth){
+   const bounds=filter.getBoundingClientRect(),selected=active.getBoundingClientRect();
+   if(selected.left<bounds.left+4)filter.scrollLeft+=selected.left-bounds.left-4;
+   else if(selected.right>bounds.right-4)filter.scrollLeft+=selected.right-bounds.right+4;
+  }
+  result.textContent=equipment?`Найдено: ${count} из ${cards.length} узлов`:`Комплектаций: ${count}`;
+  if(empty)empty.hidden=count>0;
+  if(comparison)comparison.hidden=Boolean(value)&&value!=='Сепарация';
+  const next=filterUrl(location.href,key,value);
+  if(next.href!==location.href)history.replaceState(history.state,'',next);
+ };
+ const restore=()=>apply(readFilterState(new URL(location.href),key,allowed));
+ for(const button of buttons){
+  button.disabled=false;
+  button.addEventListener('click',()=>apply(button.dataset.filterValue));
  }
+ const measure=()=>document.documentElement.style.setProperty('--catalog-branch-space',nav.getBoundingClientRect().height+'px');
+ measure();
+ new ResizeObserver(measure).observe(nav);
+ restore();
+ nav.dataset.catalogReady='true';
+ window.addEventListener('pageshow',restore);
+ window.addEventListener('popstate',restore);
 }

@@ -54,19 +54,19 @@
   "lineCardsWithoutCovers": [
     {
       "slug": "separatsiya-01",
-      "sha256": "5a19f2f646b4ba42108585fbc8a0d39faec36542212595078e85d923dfca6a26"
+      "sha256": "fb77bcc9689ea4c7e47c1bf775a6d13e56a49177e801c5d1b97d14f5416e35d8"
     },
     {
       "slug": "separatsiya-02",
-      "sha256": "94f584471df778439bc911f39a7309dd00a3090a65da83398f403e11fa0c08e8"
+      "sha256": "e8c7b33a5c2328cc4e3946f1d721b5c50a5c6ad58a4b6d30033cf8546693736e"
     },
     {
       "slug": "separatsiya-03",
-      "sha256": "a29714aa44d5e3c1167d4760236ae56f3c5ebe32ebb93b30376451809aec3460"
+      "sha256": "50d6b8f919b33aec569b25beb979cd779dc6ba8c73ba8a4f817ee266ed478b44"
     },
     {
       "slug": "moyka-plenki",
-      "sha256": "393bc99b5fadf0f5a06315c6f68a5c73e803dd4867e416c79a4662229edf0f6f"
+      "sha256": "c320a55aafe15b4d5bc2aedd094452f4a36bb053f3f208a88f0b00cade557fc8"
     }
   ],
   "details": {

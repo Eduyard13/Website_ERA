@@ -67,7 +67,7 @@ try{
   await wait(`document.readyState==='complete'&&location.pathname.endsWith(${JSON.stringify(path.split('?')[0])})`);
   if(path.startsWith('/catalog/lines/')||path.startsWith('/catalog/equipment/'))await wait(`!!document.querySelector('[data-catalog-ready="true"]')`);
  };
- const clickButton=name=>evaluate(`([...document.querySelectorAll('.catalog-branch-filters button')].find(b=>b.textContent===${JSON.stringify(name)})).click()`);
+ const clickButton=name=>evaluate(`([...document.querySelectorAll('.catalog-branch-nav [data-filter-value]')].find(b=>b.textContent===${JSON.stringify(name)})).click()`);
  const count=kind=>evaluate(`document.querySelectorAll('[data-${kind}]:not([hidden])').length`);
  const active=()=>evaluate(`document.querySelector('[data-quick-filter] [aria-pressed="true"]').textContent`);
  await command('Page.enable');await command('Runtime.enable');
@@ -84,6 +84,23 @@ try{
    }else{
     assert.equal(await count(path.includes('equipment')?'node':'line'),path.includes('equipment')?12:4);
     assert.equal(await evaluate(`document.querySelectorAll('.catalog-branch-nav [aria-current="page"]').length`),1);
+    assert.equal(await evaluate(`document.querySelectorAll('.catalog-branch-nav :is(input,select,form)').length`),0);
+    const sticky=await evaluate(`new Promise(resolve=>{
+     scrollTo({top:Math.min(900,document.documentElement.scrollHeight-innerHeight),behavior:'instant'});
+     requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      const nav=document.querySelector('.catalog-branch-nav');
+      resolve(Math.abs(nav.getBoundingClientRect().top-parseFloat(getComputedStyle(nav).top))<1);
+     }));
+    })`);
+    assert.equal(sticky,true,path+' sticky under header / '+width);
+    const endVisible=await evaluate(`(()=>{
+     const strip=document.querySelector('[data-quick-filter]'),last=strip.lastElementChild;
+     last.focus({preventScroll:true});
+     last.scrollIntoView({block:'nearest',inline:'nearest',behavior:'instant'});
+     const end=last.getBoundingClientRect(),bounds=strip.getBoundingClientRect();
+     return document.activeElement===last&&end.left>=bounds.left-1&&end.right<=bounds.right+1&&end.right<=innerWidth;
+    })()`);
+    assert.equal(endVisible,true,path+' last filter keyboard visibility / '+width);
     if(path.includes('lines')){
      const covers=await evaluate(`Promise.all([...document.querySelectorAll('.line-card-cover img')].map(async img=>{
       img.loading='eager';await img.decode();
@@ -94,6 +111,14 @@ try{
      }))`);
      assert.deepEqual(covers.map(cover=>cover.file),['base.webp','pro.webp','premium.webp','hot-wash.webp']);
      assert.ok(covers.every(cover=>cover.fits&&Math.abs(cover.height-covers[0].height)<1),`All four complete covers align at ${width}px`);
+     if(width>=768){
+      const aligned=await evaluate(`(()=>{
+       const cards=[...document.querySelectorAll('.line-card--complete')];
+       const rows=card=>[...card.querySelectorAll('.line-card-cover,.line-card-content>.eyebrow,h3,.line-card-subtitle,.line-card-features,.line-card-metrics dt,.line-card-metrics dd,.card-action')].map(el=>el.getBoundingClientRect().top);
+       return [0,2].every(i=>rows(cards[i]).every((top,j)=>Math.abs(top-rows(cards[i+1])[j])<1));
+      })()`);
+      assert.equal(aligned,true,`Card rows align at ${width}px`);
+     }
      assert.equal(await evaluate(`document.querySelector('.catalog-comparison').open`),false);
      await evaluate(`document.querySelector('.catalog-comparison summary').click()`);
      assert.equal(await evaluate('document.documentElement.scrollWidth>innerWidth'),false);
@@ -115,11 +140,11 @@ try{
    }
   }
  }
- await load('/catalog/lines/?campaign=test&group=Сепарация');assert.equal(await count('line'),3);assert.equal(await active(),'Сепарация');
+ await load('/catalog/lines/?campaign=test&group=Сепарация');assert.equal(await count('line'),3);assert.equal(await active(),'Сухая сепарация');
  await evaluate(`document.querySelector('.catalog-comparison summary').click()`);
  const table=await evaluate(`document.querySelector('.catalog-comparison table').textContent`);
  for(const value of ['225 кВт','405,2 кВт','642,4 кВт','157,5 кВт','283,64 кВт','449,68 кВт','5 × 4,7 м³','Дополнительная опция, по согласованию','Не входят в базовую комплектацию','2–10 дополнительно','56,2 × 43,4'])assert.ok(table.includes(value),value);
- await clickButton('Мойка');assert.equal(await count('line'),1);assert.equal(await active(),'Мойка');
+ await clickButton('Горячая мойка');assert.equal(await count('line'),1);assert.equal(await active(),'Горячая мойка');
  assert.equal(await evaluate(`document.querySelector('.catalog-comparison').hidden`),true);
  await clickButton('Все линии');assert.equal(await count('line'),4);assert.equal(await evaluate(`document.querySelector('.catalog-comparison').open`),true);
  assert.equal(await evaluate('location.search'),'?campaign=test');
@@ -127,8 +152,7 @@ try{
  for(const [name,n] of [['Все узлы',12],['Подготовка и подача',3],['Сухая сепарация',2],['Измельчение и мойка',2],['Обезвоживание',3],['Очистка стоков',1],['Фасовка',1]]){
   await clickButton(name);assert.equal(await count('node'),n,name);assert.equal(await active(),name);
  }
- await clickButton('Сбросить');
- await evaluate(`(()=>{const e=document.querySelector('[name=q]');e.value='флотатор';e.dispatchEvent(new Event('input',{bubbles:true}));})()`);assert.equal(await count('node'),1);
+ assert.equal(await count('node'),1);
  await evaluate(`document.querySelector('[data-node]:not([hidden])').click()`);
  await wait(`!!document.querySelector('[data-context-back]')&&document.readyState==='complete'`);
  await command('Page.navigateToHistoryEntry',{entryId:(await command('Page.getNavigationHistory')).entries.at(-2).id});
@@ -136,9 +160,9 @@ try{
  await load('/catalog/equipment/?campaign=test&category=invalid&material=invalid&q=%20%20');assert.equal(await count('node'),12);assert.equal(await evaluate('location.search'),'?campaign=test');
  await evaluate(`history.replaceState({custom:'preserved'},'',location.href)`);
  await clickButton('Обезвоживание');assert.equal(await count('node'),3);assert.equal(await evaluate('history.state.custom'),'preserved');
- await clickButton('Сбросить');assert.equal(await count('node'),12);assert.equal(await evaluate('location.search'),'?campaign=test');
+ await clickButton('Все узлы');assert.equal(await count('node'),12);assert.equal(await evaluate('location.search'),'?campaign=test');
  assert.deepEqual(errors,[],'Catalog console errors');
- console.log(`::notice title=Published catalog verified::Release ${version}: all three catalogue routes and scoped resources return HTTP 200, 32 original WebP SHA-256 checks, ${widths.length} widths, 12/3/2/2/3/1/1 nodes, 4/3/1 lines, query normalization/reset/history state, detail Back, all three comparison columns and no document overflow passed in Chrome. ${base}/catalog/`);
+ console.log(`::notice title=Published catalog verified::Release ${version}: all three catalogue routes and scoped resources return HTTP 200, 32 original WebP SHA-256 checks, ${widths.length} widths, 12/3/2/2/3/1/1 nodes, 4/3/1 lines, sticky navigation, keyboard access, query normalization/history state, detail Back, all comparison columns and aligned cards passed in Chrome. ${base}/catalog/`);
 }finally{
  socket?.close();chrome.kill('SIGTERM');await delay(250);await rm(profile,{recursive:true,force:true});
 }

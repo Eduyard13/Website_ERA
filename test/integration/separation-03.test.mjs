@@ -23,7 +23,7 @@ test('PREMIUM опубликована в каталоге с утверждён
  const cards=revisedPage('/catalog/lines').match(/<a class="line-card[\s\S]*?<\/a>/g);
  assert.equal(cards.length,4);
  const card=cards.find(html=>html.includes(`data-line-id="${line.slug}"`));
- for(const text of ['PREMIUM',line.cardTitle,line.cardDescription,line.cardFeature,'catalogue/lines/premium.webp','catalogue/lines/premium-800.webp'])assert.ok(card.includes(text),text);
+ for(const text of ['PREMIUM',line.cardTitle,'Расширенная комплектация с роторной сушильной установкой','Роторная сушка плёнки','Закрытый сортировочный бокс','catalogue/lines/premium.webp','catalogue/lines/premium-800.webp'])assert.ok(card.includes(text),text);
  assert.equal((card.match(/<dt>/g)||[]).length,6);assert.ok(!card.includes('В разработке'));
 });
 test('Исходный PDF на 28 страницах и все извлечённые изображения имеют проверенное происхождение',async()=>{

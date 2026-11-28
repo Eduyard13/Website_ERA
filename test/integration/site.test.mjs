@@ -6,6 +6,7 @@ import {routes,product,assetBaseVersion,assetRevision,basePath,previewMode,siteU
 import {canonicalOrigin} from '../../scripts/build/deploy-target.mjs';
 import {dryLineNames} from '../../content/lines/shared/line-names.mjs';
 import navigation from '../../content/shared/section-navigation.json' with {type:'json'};
+import assets from '../../content/shared/browser-assets.json' with {type:'json'};
 
 test('Общее меню сохраняет семь смысловых групп и порядок физических разделов на трёх страницах',async()=>{
  const order={
@@ -254,12 +255,12 @@ test('В каталоге четыре линии по порядку; откр�
  assert.ok(!html.includes('data-optional='));
  assert.match(cards[1][2],new RegExp(`href="${basePath}/catalog/lines/separatsiya-02"`));
  for(const [i,slug] of ['separatsiya-01','separatsiya-02','separatsiya-03'].entries()){
-  const {title,tier}=dryLineNames[slug];
-  assert.ok(cards[i][3].includes(title)&&cards[i][3].includes(tier));
+  const {tier}=dryLineNames[slug];
+  assert.ok(cards[i][3].includes(`${tier} / ГОТОВАЯ ЛИНИЯ`));
  }
  assert.equal([...cards[1][3].matchAll(/<dt>/g)].length,6);
- assert.ok(cards[2][3].includes('Расширенная комплектация с роторной сушкой, второй баллистикой и раздельным накоплением'));
- assert.ok(cards[3][3].includes('Линия горячей мойки плёнок и пакетов'));
+ assert.ok(cards[2][3].includes('Расширенная комплектация с роторной сушильной установкой'));
+ assert.ok(cards[3][3].includes('Линия горячей мойки и грануляции плёнок и пакетов'));
  assert.match(cards[2][2],new RegExp(`href="${basePath}/catalog/lines/separatsiya-03"`));
  assert.equal([...cards[2][3].matchAll(/<dt>/g)].length,6);
  assert.ok(!cards[2][3].includes('В разработке'));
@@ -332,7 +333,7 @@ test('Схемы линий сохраняют номера ТО, описани
  }
  const html=await readFile('dist/catalog/lines/index.html','utf8');
  const card=html.match(/<a[^>]+data-line-id="separatsiya-01"[\s\S]*?<\/a>/)[0];
- for(const text of ['Цветной плёночный микс','Сортировка по видам','Доп. опция','По согласованию'])assert.ok(card.includes(text));
+ for(const text of ['Один плёночный поток','Сортировка по видам','Доп. опция','По согласованию'])assert.ok(card.includes(text));
  assert.ok(!card.includes('13 позиций'));assert.ok(!card.includes('Базовая комплектация'));
  assert.match(card,/catalogue\/lines\/base\.webp\?v=/);
 });
@@ -558,7 +559,7 @@ test('Панель ЦБ РФ доступна на всех страницах �
  for(const route of new Set(routes)){
   if(['/about','/ai','/company-details'].includes(route))continue; // Legacy redirects render the destination header.
   const html=await readFile(resolve('dist','.'+route,'index.html'),'utf8');
-  const version=route.startsWith('/privacy')?assetBaseVersion:assetRevision('fx.js');
+  const version=route.startsWith('/privacy')?assets.legacyLegal['fx.js']:assetRevision('fx.js');
   assert.equal([...html.matchAll(/data-fx-bar /g)].length,1,route);
   assert.ok(html.includes('https://www.cbr.ru/currency_base/daily/'));
   assert.ok(html.includes(previewMode?'refs/heads/data/cbr-rates/cbr.json':'data-fx-feed="/data/cbr.json"'));
@@ -1027,7 +1028,8 @@ test('Заявки используют локальный POST на Рег.ру
  }else{
   assert.ok(html.includes('action="/api/request.php"')&&html.includes('name="Согласие" type="checkbox" value="1" required'));
   assert.ok(html.includes('href="/privacy/"')&&!html.includes('data-request-preview'));
-  assert.ok(thankYou.includes('Почтовый сервер принял заявку к отправке.'));
+  for(const text of ['ЗАЯВКА УСПЕШНО ОТПРАВЛЕНА','Спасибо за доверие к ЭРА.','Наши специалисты ознакомятся с вашим запросом и свяжутся с вами для обсуждения деталей проекта.','Дополнительные материалы можно направить на','href="mailto:info@era-cycle.ru"','На главную','Каталог оборудования'])assert.ok(thankYou.includes(text),text);
+  assert.doesNotMatch(thankYou,/Почтовый сервер принял заявку к отправке|Предпросмотр заявки/);
   assert.ok((await stat('dist/api/request.php')).isFile());
   assert.ok((await stat('dist/data/cbr.json')).isFile());
  }

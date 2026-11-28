@@ -29,6 +29,7 @@ test('Browser revisions follow transitive changes and preserve unrelated and leg
   await put('dist/'+path,source);
  }
  await put('content/shared/browser-assets.json',JSON.stringify(registry));
+ await copyFile(new URL('../../package.json',import.meta.url),join(root,'package.json'));
  const compiler=join(root,'scripts/build/browser-assets.mjs');
  await mkdir(dirname(compiler),{recursive:true});
  await copyFile(new URL('../../scripts/build/browser-assets.mjs',import.meta.url),compiler);

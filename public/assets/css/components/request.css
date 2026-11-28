@@ -76,11 +76,18 @@
 .request-materials-note li{margin:0 0 12px}
 .request-page-card{padding:29px;border:1px solid var(--era-border);border-radius:12px;background:#fffcf5;min-width:0}
 .request-page-card .project-request-form{scroll-margin-top:calc(var(--site-header-space) + 20px)}
-.request-sent{min-height:580px;max-width:1300px;margin:auto;padding-top:70px;padding-bottom:80px}
-.request-sent-mark{display:flex;align-items:center;justify-content:center;width:58px;height:58px;font-size:25px;color:var(--era-gold-dark);border:1px solid var(--era-gold);border-radius:50%;margin-bottom:30px}
-.request-sent h1{font-size:clamp(36px,4.7vw,64px);margin-bottom:25px}
-.request-sent .lead{font-size:20px;line-height:1.6;max-width:780px}
+.request-sent{max-width:1300px;margin:auto;padding-block:clamp(48px,6vw,90px);text-align:center}
+.request-sent-mark{display:block;width:clamp(72px,7vw,96px);height:auto;margin:0 auto 25px;color:var(--era-gold-dark)}
+.request-sent .eyebrow{margin:0 auto 15px;color:var(--era-gold-dark)}
+.request-sent h1{font-size:clamp(34px,4.1vw,54px);line-height:1.12;margin:0 0 18px;text-wrap:balance}
+.request-sent .lead{font-size:clamp(1rem,1.7vw,1.375rem);line-height:1.55;max-width:42rem;margin:0 auto;color:var(--muted)}
 .request-sent p>a{text-decoration:underline;text-underline-offset:4px;overflow-wrap:anywhere}
+.request-sent-contact{margin:25px auto 0;color:var(--muted)}
+.request-sent-contact::before{content:'';display:block;width:4.5rem;height:1px;margin:0 auto 22px;background:var(--era-gold)}
+.request-sent-contact a{display:block;margin-top:6px;color:var(--era-gold-dark);font-size:1.25rem}
+.request-sent .actions{justify-content:center;margin-top:27px}
+.request-sent .actions .button{gap:16px}
+.request-sent a:focus-visible{outline:2px solid var(--era-gold-dark);outline-offset:4px}
 @media(max-width:1000px){.request-page-layout{grid-template-columns:.7fr 1.3fr;gap:26px}.request-page-card{padding:24px}.request-page-contacts h2{font-size:33px}.request-submit-row{flex-wrap:wrap;gap:16px}.request-page-contacts .request-contact-phone{font-size:21px}}
 @media(max-width:760px){.request-page-layout{grid-template-columns:1fr;gap:28px}.request-page-contacts{padding:0}.request-materials-note{display:none}.request-page-contacts h2{font-size:28px;margin-bottom:17px}.request-page-contacts h2 br{display:none}.request-page-contacts>p:not(.eyebrow){max-width:600px;margin-bottom:14px}.request-page-contacts>a{display:inline-flex;margin-right:22px}.request-page-intro{padding-top:36px}.request-page-intro .lead{font-size:16px}.request-page-layout{padding-top:10px;padding-bottom:50px}}
 @media(max-width:560px){
@@ -100,7 +107,7 @@
  .request-submit-row p{font-size:11px}.project-request-form .request-data-note{font-size:10px}
  .request-page-intro{padding:32px 20px 25px}.request-page-intro h1{font-size:36px;line-height:1.1}.request-page-layout{padding-left:20px;padding-right:20px}
  .request-page-card{padding:23px 18px}.request-page-contacts .request-contact-phone{font-size:23px}
- .request-sent{padding:45px 20px 55px;min-height:500px}.request-sent .lead{font-size:17px}
+ .request-sent .actions .button{justify-content:space-between;width:min(100%,20rem)}
 }
 @media(prefers-reduced-motion:reduce){.request-upload{transition:none}}
 

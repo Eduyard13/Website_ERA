@@ -9,6 +9,7 @@ import {setTimeout as delay} from 'node:timers/promises';
 
 const base=(process.env.ERA_PREVIEW_URL||process.env.ERA_SITE_URL||'http://127.0.0.1:3091').replace(/\/$/,'');
 const url=base+'/contacts/';
+const channels=['https://www.youtube.com/channel/UCIPobqUb8oTZkSb1Y9ubtww','https://vkvideo.ru/@club243794064'];
 const response=await fetch(url,{cache:'no-store'});assert.equal(response.status,200);
 const html=await response.text();
 assert.ok(html.includes('От вашей задачи — к нашему решению.'));
@@ -48,6 +49,12 @@ try{
   await call('Emulation.setDeviceMetricsOverride',{width,height:960,deviceScaleFactor:1,mobile:false});await delay(160);
   const result=await evaluate(`(()=>({overflow:document.documentElement.scrollWidth>innerWidth,h1:document.querySelectorAll('main h1').length,anchors:document.querySelectorAll('.page-progress-rail a').length,photos:[...document.querySelectorAll('main img')].every(i=>i.complete&&i.naturalWidth>0),panels:[...document.querySelectorAll('.cp-direct,.cp-form-card,.cp-map,.cp-production-address,.cp-video-channel')].every(e=>e.scrollWidth<=e.clientWidth+1),fields:[...document.querySelectorAll('.cp-form-card input:not([type=hidden]):not([type=file]),.cp-form-card textarea')].every(e=>parseFloat(getComputedStyle(e).fontSize)>=16)}))()`);
   assert.deepEqual(result,{overflow:false,h1:1,anchors:5,photos:true,panels:true,fields:true},'Contacts layout '+width);
+  const videoLinks=await evaluate(`[...document.querySelectorAll('#official-videos a[data-video-channel],footer a[data-video-channel]')].map(a=>[a.href,a.target,a.rel])`);
+  assert.deepEqual(videoLinks,[...channels,...channels].map(href=>[href,'_blank','noopener noreferrer']),'Video links '+width);
+  if(width>=768){
+   const actions=await evaluate(`[...document.querySelectorAll('.cp-channel-action')].map(a=>a.getBoundingClientRect().top)`);
+   assert.ok(actions.length===2&&Math.abs(actions[0]-actions[1])<1,'Aligned video links '+width);
+  }
  }
 
  // ERA 0.48.2: visitor consent and operator approval are separate gates.
@@ -81,12 +88,12 @@ try{
  assert.equal(await evaluate("window.eraMapPreferences.read().choice"),'deny');
  assert.equal(await evaluate("document.querySelectorAll('.cp-map iframe').length"),0);
  assert.equal(await evaluate("document.querySelector('[data-cookie-notice]').hidden"),true);
- assert.equal(await evaluate('document.querySelector(".cp-video-channel[data-video-channel=vkVideo]").tagName'),'DIV');
+ assert.equal(await evaluate("document.querySelectorAll('#official-videos .is-pending,footer [data-video-channel][aria-disabled]').length"),0);
  assert.equal(await evaluate("[...document.images].filter(i=>i.src.endsWith('/assets/brands/vk-video.svg')).length"),2);
  await call('Page.navigate',{url:url+'?topic='+encodeURIComponent('Подбор линии <проект>')+'#project-form'});
  await waitFor('document.querySelector("[data-contact-optional]")?.open');
  assert.equal(await evaluate('document.querySelector("[data-request-topic]").value'),'Подбор линии <проект>');
  assert.equal(await evaluate('document.querySelectorAll("[data-request-form] script").length'),0);
  assert.deepEqual(errors,[]);
- console.log('::notice title=Published contacts verified::Version '+version+', 9 responsive widths, BEIER photo and official address, original VK Video mark, optional topic, consent-gated Google iframe and verified Yandex pin, repeated provider switching, blocked-map message and live external links passed. No forms submitted. '+url);
+ console.log('::notice title=Published contacts verified::Version '+version+', 9 responsive widths, BEIER photo and official address, both video-channel links in contacts and footer, aligned actions, optional topic, cookie preferences and external map destinations passed. No forms submitted. '+url);
 }finally{socket?.close();chrome.kill('SIGTERM');await delay(250);await rm(profile,{recursive:true,force:true});}

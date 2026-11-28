@@ -152,5 +152,5 @@ try{
  assert.deepEqual(errors,[],'Published separation-03 console errors');
  console.log(`::notice title=Published separation 03 verified::42/42 badges, leaders and equipment contours at 390 and 1440 px, 37 monitor selections, 7 widths, ${images.size+1} WebP SHA-256 checks, original 28-page PDF (5397658 bytes and SHA-256), live PDF viewer, single diagram and navigator, dimensions, catalogue filter and Back passed. ${url}`);
 }finally{
- socket?.close();chrome.kill('SIGTERM');await delay(250);await rm(profile,{recursive:true,force:true});
+ socket?.close();chrome.kill('SIGTERM');await rm(profile,{recursive:true,force:true,maxRetries:5,retryDelay:150});
 }

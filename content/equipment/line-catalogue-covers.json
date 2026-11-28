@@ -3,44 +3,44 @@
     "sourceSha256": "1e839d23d46c5d82f277778cd7ea1094d30ee70d77e98f2c989e845dd7ee11ec",
     "file": "catalogue/lines/base.webp",
     "width": 1280,
-    "height": 960,
-    "sha256": "9f0e235db157f221328645307d0ec849256d189c1d521f4ebcd5d92a93c5b1b5",
+    "height": 816,
+    "sha256": "528b5ee9265dd06e9fb02974ecc43e67f653d6df32bc1fa1fc05d7f07225cf39",
     "smallFile": "catalogue/lines/base-800.webp",
     "smallWidth": 800,
-    "smallHeight": 600,
-    "smallSha256": "96436a9bc1e01bac1744103cbb191241657014d0390770dd74b367f32aa36e42"
+    "smallHeight": 510,
+    "smallSha256": "2eef94cdcd146e9e72fe8084332f0a91e7225e563f9580a639671f9ae0057eb4"
   },
   "separatsiya-02": {
     "sourceSha256": "9791f7b03da8a465cf64b99faeaef24897cc9dd5b4de6df822221cd42e2cdaef",
     "file": "catalogue/lines/pro.webp",
     "width": 1280,
-    "height": 720,
-    "sha256": "a69e49f408e86d373f66ee0f66a23184e005b25cd8738a2fd4bc9d7b9ebbbb8b",
+    "height": 816,
+    "sha256": "08ef16911a45dfbc89ea1d7f120f71b12c98285ddd10599e6e769f34fae7dd84",
     "smallFile": "catalogue/lines/pro-800.webp",
     "smallWidth": 800,
-    "smallHeight": 450,
-    "smallSha256": "a9247ca536dd6a76b1974c816a15f05f70b6e7567a32dc7116b39c7d982f317d"
+    "smallHeight": 510,
+    "smallSha256": "0da14e42917a5ce3f7297367a66b5a4e47b441041e995aee8a1a0f268f05aca9"
   },
   "separatsiya-03": {
     "sourceSha256": "b3561ff5dd6814976d002d156d403e577f130bb517432417bd3d5d1c2e681a2e",
     "file": "catalogue/lines/premium.webp",
     "width": 1280,
-    "height": 720,
-    "sha256": "c76acee550efbe5cdaa802f079b5fae3144a4e3c38688a7b4171774eabfc29c0",
+    "height": 816,
+    "sha256": "57ff7b81df7e4bfcd4e2ac40f9a77aaa9338df1016e74684cd43618bec56a423",
     "smallFile": "catalogue/lines/premium-800.webp",
     "smallWidth": 800,
-    "smallHeight": 450,
-    "smallSha256": "e716973af9962325cc16ee4d9f0c44f0368b3a23a2bf8c23b35ff2d04c02b24c"
+    "smallHeight": 510,
+    "smallSha256": "91404443ab4adb26e3cb9ee83273e486b03ef739ad7a56ba314980223e4e1c09"
   },
   "moyka-plenki": {
     "sourceSha256": "8e471ec019a07900780c7087050247be44a9cfa87e09bf1024bed68fa72c1c15",
     "file": "catalogue/lines/hot-wash.webp",
     "width": 1280,
-    "height": 960,
-    "sha256": "8413475ef54bcd5c7fd96d11693c4d7f83fda827acd30fcdb1615a29440d94a7",
+    "height": 816,
+    "sha256": "b60ad3f69fdcde9ee8c915b63caaeb1c7a5c9b50a574664d4ce84660d3c63489",
     "smallFile": "catalogue/lines/hot-wash-800.webp",
     "smallWidth": 800,
-    "smallHeight": 600,
-    "smallSha256": "39ee2eef96271efa9e8a4b35133964c7761cffc1fcf26bd5821635a6f5ae08b0"
+    "smallHeight": 510,
+    "smallSha256": "f96b72c824d946cee77c8eaeca10ca2794122be53a6aecefaa30c3d5baf496c3"
   }
 }

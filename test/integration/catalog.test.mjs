@@ -5,8 +5,8 @@ import {readFile} from 'node:fs/promises';
 import {nodes,lines,categories} from '../../content/equipment/catalog.mjs';
 import {revisedPage} from '../../scripts/build/views.mjs';
 import {nodeCard} from '../../scripts/render/equipment/equipment-card.mjs';
-import {catalogBranchNav,equipmentFilters,lineFilters,lineComparison} from '../../scripts/render/equipment/catalog-branches.mjs';
-import {readFilterState,filterUrl,matchesEquipment} from '../../public/assets/js/catalog/catalog-filter-model.js';
+import {catalogBranchNav,lineComparison} from '../../scripts/render/equipment/catalog-branches.mjs';
+import {readFilterState,filterUrl} from '../../public/assets/js/catalog/catalog-filter-model.js';
 import {basePath,render} from '../../scripts/build/build.mjs';
 import covers from '../../content/equipment/line-catalogue-covers.json' with {type:'json'};
 import {imageSize} from '../../scripts/media/image-size.mjs';
@@ -59,7 +59,7 @@ test('Обе ветки имеют одну нативную навигацию,
  for(const active of ['lines','equipment']){
   const html=render('/catalog/'+active),nav=catalogBranchNav(active);
   assert.equal((nav.match(/aria-current="page"/g)||[]).length,1);
-  assert.equal((html.match(/aria-label="Разделы каталога"/g)||[]).length,1);
+  assert.equal((html.match(/aria-label="Навигация каталога"/g)||[]).length,1);
   assert.ok(html.includes(`href="${basePath}/catalog/"`));
   assert.ok(html.includes(`href="${basePath}/catalog/${active==='lines'?'equipment':'lines'}/"`));
   assert.ok(!html.includes('data-context-navigation '));
@@ -72,19 +72,34 @@ test('Обе ветки имеют одну нативную навигацию,
  }
  for(const line of lines.filter(l=>l.enabled))assert.ok(render(line.path).includes('data-context-navigation '));
 });
-test('Фильтры строятся из реестра, быстрые кнопки скрыты до инициализации, черновики не ссылки',()=>{
- const eq=equipmentFilters(),lf=lineFilters(),html=revisedPage('/catalog/lines');
- assert.equal((eq.match(/name="category"/g)||[]).length,1);
- assert.equal((eq.match(/data-filter-value=/g)||[]).length,categories.length+1);
- for(const value of categories)assert.ok(eq.includes(`data-filter-value="${value}"`));
- for(const material of new Set(nodes.flatMap(n=>n.materials)))assert.ok(eq.includes(`<option>${material}</option>`));
- assert.ok(eq.includes('Все виды сырья')&&eq.includes('data-quick-filter="category" hidden'));
- assert.ok(lf.includes('data-quick-filter="group" hidden'));
- assert.ok(eq.includes('name="q" placeholder="Название или назначение" disabled'));
+test('Кнопки фильтров в закреплённом меню сохраняют технические ключи и утверждённые подписи',()=>{
+ const equipment=catalogBranchNav('equipment'),linesNav=catalogBranchNav('lines'),html=revisedPage('/catalog/lines');
+ const buttons=(nav)=>[...nav.matchAll(/data-filter-value="([^"]*)" aria-pressed="(?:true|false)" disabled>([^<]+)<\/button>/g)].map(([,value,label])=>[value,label]);
+ assert.deepEqual(buttons(equipment),[['','Все узлы'],...categories.map((category,index)=>[category,['Подготовка и подача','Сухая сепарация','Измельчение и мойка','Обезвоживание','Очистка стоков','Фасовка'][index]])]);
+ assert.deepEqual(buttons(linesNav),[['','Все линии'],['Сепарация','Сухая сепарация'],['Мойка','Горячая мойка']]);
+ for(const nav of [equipment,linesNav])assert.doesNotMatch(nav,/<(?:form|input|select)\b|Сбросить/);
  assert.deepEqual([...html.matchAll(/data-line-id="([^"]+)"/g)].map(m=>m[1]),lines.map(l=>l.slug));
  assert.equal((html.match(/<article class="line-card/g)||[]).length,0);
  for(const line of lines.filter(l=>!l.enabled))assert.ok(!html.includes(`href="${line.path}"`));
- assert.ok(html.includes('Технологические решения.'));
+});
+test('Карточки используют утверждённые названия, описания и плашки, параметры остальных линий сохранены',()=>{
+ const cards=revisedPage('/catalog/lines').match(/<a class="line-card[\s\S]*?<\/a>/g);
+ const expected=[
+  ['Линия сухой сепарации плёнок — базовая комплектация','Сухая очистка плёнок без мойки',['Один плёночный поток']],
+  ['Линия сухой сепарации плёнок с сортировкой и затюковкой','С сортировкой плёнок по видам',['Закрытый сортировочный бокс','Автоматизированный пресс']],
+  ['Линия сухой сепарации и сушки плёнок с сортировкой по видам','Расширенная комплектация с роторной сушильной установкой',['Роторная сушка плёнки','Закрытый сортировочный бокс']],
+  ['Линия горячей мойки и грануляции плёнок и пакетов','Глубокая очистка после сухой сепарации',['Три вида готовой продукции','Грануляция включена']],
+ ];
+ const metrics=[['Входной поток','1 500','кг/ч','С включениями'],['Выход очищенной плёнки','750','кг/ч','При засоре около 50%'],
+  ['Установленная мощность','642,4','кВт','По актуальной спецификации'],['Потребляемая мощность','449,68','кВт','Расчётная, 70% от установленной'],
+  ['Рабочий персонал','3','чел./смена',undefined],['Остаточная влажность после сушки','до 5','%','На выходе из сушилки']];
+ for(const [index,card] of cards.entries()){
+  const parts=[card.match(/<h3[^>]*>([^<]+)/)[1],card.match(/<p class="line-card-subtitle">([^<]+)/)[1],[...card.matchAll(/<span class="line-card-feature">([^<]+)/g)].map(m=>m[1])];
+  assert.deepEqual(parts,expected[index]);
+  const values=[...card.matchAll(/<dt>([^<]+)<\/dt><dd>([^<]+)<small>([^<]*)<\/small><\/dd>(?:<p>([^<]+)<\/p>)?/g)].map(m=>m.slice(1));
+  assert.deepEqual(values,index===2?metrics:lines[index].cardMetrics.map(m=>[m.label,String(m.value),m.unit,m.note]),lines[index].slug);
+  assert.ok(card.includes(`href="${lines[index].path}"`));
+ }
 });
 test('Сравнение закрыто и включает только три комплектации сухой сепарации',()=>{
  const html=lineComparison();
@@ -103,16 +118,16 @@ test('Сравнение закрыто и включает только три 
  metric.value='1 501';assert.ok(lineComparison(shuffled).includes('1 501'));
  metric.unit='т/ч';assert.throws(()=>lineComparison(shuffled),/line metric/);
 });
-test('URL нормализует только свои фильтры, сохраняет посторонние параметры и hash, условия пересекаются',()=>{
- const current=new URL('https://example.test/Website_ERA/catalog/equipment/?q=%20%20&category=invalid&material=invalid&campaign=test#main');
- const allowed={q:null,category:['',...categories],material:['',...new Set(nodes.flatMap(n=>n.materials))]};
- const state=readFilterState(current,allowed);
- assert.deepEqual(state,{q:'',category:'',material:''});
- const normalized=filterUrl(current,state);
+test('URL сохраняет глубокие ссылки, посторонние параметры и hash, а старые фильтры убирает',()=>{
+ const url=new URL('https://example.test/Website_ERA/catalog/equipment/?q=%20%20&category=invalid&material=invalid&campaign=test#main');
+ const allowed=['',...categories];
+ assert.equal(readFilterState(url,'category',allowed),'');
+ const normalized=filterUrl(url,'category','');
  assert.equal(normalized.search,'?campaign=test');assert.equal(normalized.hash,'#main');
- const data={title:'плёночная центрифуга обезвоживание',category:'Обезвоживание',materials:'Плёнка|Пакеты'};
- assert.ok(matchesEquipment(data,{q:' Центрифуга ',category:'Обезвоживание',material:'Плёнка'}));
- assert.ok(!matchesEquipment(data,{q:'центрифуга',category:'Фасовка'}));
- assert.ok(!matchesEquipment(data,{material:'Рабочая моющая жидкость'}));
- assert.equal(filterUrl(new URL('https://example.test/catalog/lines/?optional=old&campaign=test'),{group:'',optional:''}).search,'?campaign=test');
+ const selected=filterUrl(normalized,'category','Сухая сепарация и очистка');
+ assert.equal(readFilterState(selected,'category',allowed),'Сухая сепарация и очистка');
+ assert.equal(selected.searchParams.get('campaign'),'test');
+ const wash=new URL('https://example.test/catalog/lines/?optional=old&campaign=test&group=Мойка');
+ assert.equal(readFilterState(wash,'group',['','Сепарация','Мойка']),'Мойка');
+ assert.equal(filterUrl(wash,'group','').search,'?campaign=test');
 });

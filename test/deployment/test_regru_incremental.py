@@ -1,13 +1,16 @@
 """Exercise the actual manifest, patch and SFTP transaction logic with a file transport."""
+from datetime import date
 import json
 from pathlib import Path
 import sys
 from tempfile import TemporaryDirectory
 import unittest
+from urllib.parse import urlsplit
 from zipfile import ZipFile
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'scripts' / 'deploy'))
 from regru_release import build_manifest, changes, json_bytes, read_patch, validate, write_patch
+from regru_smoke import https_host, valid_cbr
 from regru_sync import Host, LocalFiles, Release, SyncError
 
 
@@ -101,6 +104,16 @@ class Incremental(unittest.TestCase):
         result = self.apply(bundle)
         self.assertEqual(self.transport.transfers, [])
         self.assertEqual(result['release'], '0.48.0')
+
+    def test_verified_baseline_can_upgrade_directly_to_1_0_0_and_roll_back(self):
+        before = build_manifest(self.baseline_copy, '0.50.2', 'a' * 40)
+        (self.state / 'live-manifest.json').write_bytes(json_bytes(before))
+        after = build_manifest(self.dist, '1.0.0', 'b' * 40)
+        bundle, _ = write_patch(self.dist, self.output, before, after, True)
+        self.assertEqual(self.apply(bundle), after)
+        self.assertEqual(self.release.rollback(after['commit']), before)
+        self.assertEqual((self.web / '.htaccess').read_bytes(), b'protected local settings')
+        self.assertEqual((self.web / 'data/cbr.json').read_bytes(), b'latest live snapshot')
 
     def test_interruption_retries_and_rollback_preserve_existing_and_new_files(self):
         self.put(self.dist, 'a-new.js', b'new resource')
@@ -197,6 +210,26 @@ class Incremental(unittest.TestCase):
         with self.assertRaisesRegex(SyncError, 'locked'):
             self.apply(archive)
         self.assertEqual(self.transport.transfers, [])
+
+
+class SmokeInputs(unittest.TestCase):
+    def test_only_site_https_hosts_and_standard_port(self):
+        for host in ('era-cycle.ru', 'www.era-cycle.ru'):
+            for port in ('', ':443'):
+                self.assertEqual(https_host(urlsplit(f'https://{host}{port}/economics/?test=1')), host)
+        for url in ('http://era-cycle.ru/', 'https://era-cycle.ru:444/', 'https://era-cycle.ru:/',
+                    'https://user@era-cycle.ru/', 'https://era-cycle.ru.example/', 'https://example.org:443/'):
+            self.assertIsNone(https_host(urlsplit(url)), url)
+
+    def test_cbr_dates_and_positive_numeric_rates(self):
+        today = date(2026, 11, 28)
+        snapshot = {'source': 'CBR', 'requestedDate': '2026-11-28', 'effectiveDate': '2026-11-27',
+                    'rates': {code: {'rate': value} for code, value in [('USD', 81.2), ('EUR', 95), ('CNY', 11.2)]}}
+        self.assertTrue(valid_cbr(snapshot, today))
+        for effective in ('2026-11-31', '2026-11-29', '20261127', None):
+            self.assertFalse(valid_cbr(snapshot | {'effectiveDate': effective}, today))
+        for invalid in (0, -1, True, '82', float('inf'), float('nan'), None):
+            self.assertFalse(valid_cbr(snapshot | {'rates': snapshot['rates'] | {'USD': {'rate': invalid}}}, today))
 
 
 if __name__ == '__main__':

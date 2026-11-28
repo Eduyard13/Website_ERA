@@ -1,7 +1,7 @@
 import {beierProduction} from '../home/production.mjs';
 export const siteContacts={email:'info@era-cycle.ru',phone:'+7 903 281-35-35',phoneHref:'tel:+79032813535'};
 // Only confirmed account URLs belong here. A null URL never becomes a link.
-export const contactChannels={youtube:'https://www.youtube.com/@RASVET-LLC',vkVideo:null,telegram:'https://t.me/Eduyard13',max:'https://max.ru/u/f9LHodD0cOLJG4FZs3gHL3lpPmwQ0qEBZoRlKgEs72lHGd9FC0S8W-9NfpA',whatsapp:'https://wa.me/79032813535'};
+export const contactChannels={youtube:'https://www.youtube.com/channel/UCIPobqUb8oTZkSb1Y9ubtww',vkVideo:'https://vkvideo.ru/@club243794064',telegram:'https://t.me/Eduyard13',max:'https://max.ru/u/f9LHodD0cOLJG4FZs3gHL3lpPmwQ0qEBZoRlKgEs72lHGd9FC0S8W-9NfpA',whatsapp:'https://wa.me/79032813535'};
 export const videoChannelDefinitions=[
  {id:'youtube',label:'YouTube',description:'Видеопрезентации оборудования, технологические процессы и результаты испытаний.'},
  {id:'vkVideo',label:'VK Видео',description:'Материалы ЭРА для просмотра на российской видеоплатформе.'},

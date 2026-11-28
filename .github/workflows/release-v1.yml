@@ -1,0 +1,34 @@
+name: Draft the ERA 1.0.0 release
+
+on:
+  push:
+    tags: [v1.0.0]
+
+permissions:
+  contents: write
+
+jobs:
+  draft:
+    if: github.repository == 'Eduyard13/Website_ERA'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Create the draft for the verified tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test "$(jq -r .version package.json)" = 1.0.0
+          test "$(git rev-parse 'refs/tags/v1.0.0^{commit}')" = "$(git rev-parse HEAD)"
+          existing=$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate --jq '.[] | select(.tag_name == "v1.0.0") | .id')
+          test -z "$existing"
+          notes="$RUNNER_TEMP/era-release-v1.md"
+          {
+            awk '/^## 1\.0\.0 /{release=1;next} /^## /&&release{exit} release' CHANGELOG.md
+            printf '\nПроверенный коммит — `%s`. База обновления REG.RU — 0.50.2.\n' "$(git rev-parse HEAD)"
+            printf 'Установка на REG.RU согласуется отдельно. Транзакционный патч сохраняет серверную конфигурацию, обработчик заявок, юридические страницы и курсы ЦБ.\n'
+          } > "$notes"
+          url=$(gh release create v1.0.0 --draft --verify-tag \
+            --title 'ЭРА 1.0.0 — первый официальный запуск' --notes-file "$notes")
+          printf 'Draft release: %s\n' "$url" | tee -a "$GITHUB_STEP_SUMMARY"

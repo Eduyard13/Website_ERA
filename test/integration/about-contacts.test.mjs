@@ -65,10 +65,10 @@ test('О нас разделяет опыт команды, производст
   await stat('public/assets/'+image.file);await stat('public/assets/'+image.smallFile);
  }
  for(const brand of ['telegram','max','whatsapp'])await stat('public/assets/brands/'+brand+'.svg');
- assert.equal(contactChannels.youtube,'https://www.youtube.com/@RASVET-LLC');
+ assert.equal(contactChannels.youtube,'https://www.youtube.com/channel/UCIPobqUb8oTZkSb1Y9ubtww');
  assert.equal(contactChannels.telegram,'https://t.me/Eduyard13');
  assert.equal(contactChannels.max,'https://max.ru/u/f9LHodD0cOLJG4FZs3gHL3lpPmwQ0qEBZoRlKgEs72lHGd9FC0S8W-9NfpA');
- assert.equal(contactChannels.whatsapp,'https://wa.me/79032813535');assert.equal(contactChannels.vkVideo,null);
+ assert.equal(contactChannels.whatsapp,'https://wa.me/79032813535');assert.equal(contactChannels.vkVideo,'https://vkvideo.ru/@club243794064');
  assert.equal(productionSite.country,'Китай');
  assert.equal(productionSite.city,'Чжанцзяган');
  assert.equal(productionSite.address,aboutUsContent.productionBase.address);
@@ -132,7 +132,12 @@ test('Оба видеоканала видны без подставных URL; 
  assert.equal((pending.match(/Канал подключается<\/span>/g)||[]).length,2);assert.ok(!pending.includes('Ссылка будет добавлена'));
  const both={youtube:contactChannels.youtube,vkVideo:'https://vkvideo.ru/@test-fixture'};
  for(const compact of [false,true]){const active=videoChannels({compact,channels:both});assert.equal((active.match(/<a /g)||[]).length,2);assert.ok(active.includes('href="https://vkvideo.ru/@test-fixture"'));assert.ok(!active.includes('is-pending')&&!active.includes('Канал подключается'));}
- for(const compact of [false,true]){const current=videoChannels({compact});assert.equal((current.match(/<a /g)||[]).length,1);assert.equal((current.match(/aria-disabled="true"/g)||[]).length,1);assert.ok(current.includes('Канал подключается'));assert.ok(!current.includes('href="#"')&&!current.includes('Ссылка будет добавлена'));}
+ for(const compact of [false,true]){
+  const current=videoChannels({compact});
+  const links=[...current.matchAll(/<a [^>]*href="([^"]+)"[^>]*target="_blank" rel="noopener noreferrer"/g)].map(match=>match[1]);
+  assert.deepEqual(links,[contactChannels.youtube,contactChannels.vkVideo]);
+  assert.doesNotMatch(current,/aria-disabled|Канал подключается|Ссылка будет добавлена/);
+ }
  const ready=videoChannels({channels:{youtube:'https://www.youtube.com/@owner-supplied'}});
  assert.equal((ready.match(/<a /g)||[]).length,1);assert.ok(ready.includes('rel="noopener noreferrer"'));
  for(const value of [null,'','javascript:alert(1)','http://insecure.invalid','https://name:secret@example.org'])assert.equal(confirmedChannelUrl(value),null);
